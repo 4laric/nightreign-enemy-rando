@@ -2531,10 +2531,23 @@ V3_AVOID_VARIANT_NPC_IDS = {
 # Many c-prefixes have a mix of canonical variants (sample_maps non-empty —
 # vanilla NR has actually instantiated them somewhere) and ghost variants
 # (_source='post_dlc_dump' with sample_maps=[] — the chr's NPCParam table
-# contains the variant but vanilla NR never placed it). Empirically, ghost
-# variants tend to have untested ResList/FFX/SFX integration in the engine,
-# producing visual glitches when placed: missing textures, T-pose animations,
-# absent particle effects, scale wrong, etc.
+# contains the variant but vanilla NR never placed it).
+#
+# IMPORTANT — this filter is NOT cosmetic-only. It is easy to skim the
+# examples below and conclude ghost variants only glitch visually. They
+# don't. `sample_maps` non-empty proxies for "FromSoft instantiated and
+# shipped this variant" — which includes its per-chr battle/logic luabnd.
+# Ghost variants frequently LACK that script bundle (see nr_missing_chr_
+# files.json: many entries are 'no per-chr battle/logic luabnd in
+# script/nr|er|mmv' — a broken-AI failure, not a visual one). Empirically
+# ghost variants fail across the whole spectrum:
+#   - visual:   missing textures, T-pose, off-scale, absent FFX/SFX
+#   - behavior: no AI / non-aggressive (e.g. c3471 Large Albinauric's
+#               phantom-flag variant spawned non-aggressive enemies)
+#   - hard CTD: incomplete asset/param wiring (e.g. c2277 Crab, seed
+#               704822 — near-null deref on spawn)
+# So: preferring canonical variants culls AI-broken and crash-prone
+# placements too, not just ugly ones. Treat it as a STABILITY filter.
 #
 # Concrete example that triggered this fix (seed 271328, m38_10 pi=19):
 # Ulcerated Tree Spirit (c4640) placed with npc_param_id=46400030. c4640 has
@@ -2557,8 +2570,12 @@ V3_AVOID_VARIANT_NPC_IDS = {
 # (T-pose, missing textures, off-scale, absent FFX). If any specific
 # ghost variant turns up bad in playtest, surgically blocklist it via
 # its npc_param_id in a per-chr exclusion, rather than re-enabling this
-# soft filter wholesale. Mechanically the variant still functions —
-# only visuals are at risk.
+# soft filter wholesale.
+#   [CORRECTED v0.26.16] The original v0.24.101 note ended here with
+#   "Mechanically the variant still functions — only visuals are at
+#   risk." That claim is WRONG and is retracted — see the v0.26.16
+#   note below and the framing paragraph at the top of this block.
+#   Ghost variants can be AI-broken or crash-prone, not just ugly.
 #
 # v0.24.109: FLIPPED to True (then reverted). Motivated by seed 599744
 # m45_01 framerate report — but that turned out to be a host-machine
@@ -2571,6 +2588,21 @@ V3_AVOID_VARIANT_NPC_IDS = {
 # as a GUI checkbox ("Prefer canonical variants", beside test-mode).
 # oops_rando_gui sets this from the checkbox before every run; this
 # module-level value is the default for non-GUI / CLI / test callers.
+#
+# v0.26.16 (doc correction): retitled this filter's purpose. Earlier
+# comments (esp. v0.24.101) described it as guarding against "visual
+# glitches" only. That undersold it and risked a future reader — human
+# or Claude — dismissing it as cosmetic. The canonical/ghost axis tracks
+# per-chr script (luabnd) and asset/param completeness, so it culls
+# AI-broken and CTD-prone variants as well. CAVEAT for scope: it is a
+# WITHIN-PREFIX, SOFT discriminator — it picks the good variant when a
+# c-prefix has a canonical/ghost mix, and abstains (returns input
+# unchanged) when a c-prefix has ZERO canonical variants. So it does
+# NOT protect against an all-ghost / fully-imported c-prefix (every
+# variant non-canonical) — that case must be caught upstream at
+# prefix-eligibility (V3_EXCLUDE_PREFIXES / nr_missing_chr_files.json).
+# This is exactly how c2277 Crab leaked: single imported_chr variant,
+# nothing canonical to discriminate against, soft fallback passed it.
 V3_PREFER_CANONICAL_VARIANTS = True
 
 
@@ -2581,8 +2613,10 @@ def _filter_canonical_variants(variants):
     `sample_maps` list contains at least one MSB path. Empty sample_maps
     means the variant is in the NPCParam table (likely added by the
     post-DLC data dump) but was never actually instantiated by vanilla NR,
-    so its asset integration (ResList, FFX, SFX) is untested and may
-    produce visual glitches.
+    so its integration is untested — not just assets (ResList, FFX, SFX)
+    but per-chr battle/logic scripts too. Ghost variants can therefore
+    fail as visual glitches, broken/absent AI, OR hard CTDs. This is a
+    stability filter, not a cosmetic one.
 
     Returns input unchanged when no canonical variants exist (so chrs
     with only ghost variants — c70003, c3360, etc. — still get picked).

@@ -4698,10 +4698,38 @@ class RandoGUI:
             ('er_install',  'Elden Ring install'),
             ('me3_package', 'ME3 output'),
         ]
+        # v0.26.16: collapsible header. When every check is green the
+        # six rows hide behind this one-line summary; click to expand.
+        # Auto-expands again the moment any check regresses.
+        self._setup_status_all_ok = None
+        self._setup_status_collapsed = False
+        self._setup_status_summary_state = 'unknown'
+        self._setup_status_row_frames = []
+        hdr = ttk.Frame(self._setup_status_frame)
+        hdr.pack(fill='x', pady=1)
+        self._setup_status_summary_row = hdr
+        self._setup_status_caret = ttk.Label(
+            hdr, text='▼', width=2, style='Dim.TLabel')
+        self._setup_status_caret.pack(side='left')
+        self._setup_status_summary_ind = StatusIndicator(
+            hdr, 'unknown', 'Environment readiness')
+        self._setup_status_summary_ind.pack(side='left', padx=(0, 6))
+        self._setup_status_summary_label = ttk.Label(
+            hdr, text='Environment checks', style='Dim.TLabel')
+        self._setup_status_summary_label.pack(side='left', fill='x',
+                                              expand=True)
+        for _w in (hdr, self._setup_status_caret,
+                   self._setup_status_summary_label):
+            _w.configure(cursor='hand2')
+            _w.bind('<Button-1>', self._toggle_setup_status)
+        Tooltip(hdr, 'Click to show or hide the full environment '
+                     'checklist. It collapses automatically once '
+                     'every check passes.')
         self._setup_status_rows = {}
         for key, label in rows_spec:
             row = ttk.Frame(self._setup_status_frame)
             row.pack(fill='x', pady=1)
+            self._setup_status_row_frames.append(row)
             indicator = StatusIndicator(row, 'unknown', 'Not yet checked')
             indicator.pack(side='left', padx=(0, 6))
             text_label = ttk.Label(row, text=f'{label}: …', style='Dim.TLabel')
@@ -4785,6 +4813,60 @@ class RandoGUI:
             state, detail = validate_path_kind(me3, 'me3_profile')
             ind.set(state, detail)
             lbl.configure(text=f'{prefix}: {os.path.basename(me3.rstrip(os.sep)) or me3}')
+
+        # v0.26.16: collapse the checklist once every check is green.
+        # Recompute the aggregate from the six indicator states, then
+        # let the auto policy collapse (all green) or expand (anything
+        # else); a manual toggle is honored until the aggregate flips.
+        _states = [self._setup_status_rows[k][0].state
+                   for k in ('python', 'tk', 'oodle', 'nr_install',
+                             'er_install', 'me3_package')]
+        _has_error = 'error' in _states
+        _has_warn = 'warn' in _states
+        _all_ok = not _has_error and not _has_warn
+        self._setup_status_summary_state = (
+            'error' if _has_error else 'warn' if _has_warn else 'ok')
+        _prev = self._setup_status_all_ok
+        self._setup_status_all_ok = _all_ok
+        if _prev != _all_ok:
+            self._setup_status_collapsed = _all_ok
+        self._apply_setup_status_collapse()
+
+    def _apply_setup_status_collapse(self):
+        """Show or hide the six checklist rows per the collapse state.
+        Rows are hidden only when every check is green; if anything is
+        wrong they stay visible regardless of the toggle so the user
+        sees the problem. Also refreshes the summary glyph + text."""
+        if not hasattr(self, '_setup_status_summary_row'):
+            return
+        all_ok = bool(self._setup_status_all_ok)
+        collapsed = bool(self._setup_status_collapsed) and all_ok
+        for row in self._setup_status_row_frames:
+            if collapsed:
+                row.pack_forget()
+            else:
+                row.pack(fill='x', pady=1)
+        state = self._setup_status_summary_state
+        if all_ok:
+            detail = 'All environment checks passed.'
+            text = 'All checks passed'
+        elif state == 'error':
+            detail = 'A required check failed — see the list below.'
+            text = 'Setup needs attention'
+        else:
+            detail = 'A check raised a warning — see the list below.'
+            text = 'Setup needs attention'
+        self._setup_status_summary_ind.set(state, detail)
+        self._setup_status_caret.configure(text='▶' if collapsed
+                                           else '▼')
+        self._setup_status_summary_label.configure(text=text)
+
+    def _toggle_setup_status(self, *_event):
+        """Header click handler. Flip the checklist collapse state;
+        only has a visible effect when all checks pass (otherwise the
+        checklist is force-expanded by _apply_setup_status_collapse)."""
+        self._setup_status_collapsed = not self._setup_status_collapsed
+        self._apply_setup_status_collapse()
 
     # ------------------------------------------------------------------
     # v0.26.x: Live path-field validation indicators (#3 in Tier 1)

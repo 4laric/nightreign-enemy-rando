@@ -570,6 +570,13 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
     oops_v3.V3_PIPELINE_METADATA['spawn_pool_source_dir'] = spawn_pool_source_dir
     oops_v3.V3_PIPELINE_METADATA['pipeline'] = 'dcx_batch.rando_pipeline'
 
+    # v0.26.16: night-boss-arena preservation gate. With test-mode arenas
+    # OFF (normal play), hold all 25 NB arenas fully vanilla — no Part
+    # swaps. With test-mode ON, lift the gate (the test-mode template
+    # overlay handles those arenas). The healthbar step below applies the
+    # matching exclusion. See V3_NIGHT_BOSS_ARENA_MSBS in oops_v3.py.
+    oops_v3.V3_PRESERVE_NIGHT_BOSS_ARENAS = not test_mode_arenas
+
     work_dir = tempfile.mkdtemp(prefix='oops_rando_')
     try:
         vanilla_dir = os.path.join(work_dir, 'vanilla')
@@ -956,6 +963,19 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     _hb_t0 = time.time()
                     raw_emevd = os.path.join(work_dir, 'raw_emevd')
                     patched_emevd = os.path.join(work_dir, 'patched_emevd')
+                    # v0.26.16: with test-mode arenas OFF, the 25 night-
+                    # boss arenas ship byte-vanilla — exclude them from
+                    # healthbar patching so they are never written to the
+                    # mod event/ dir (me3 then serves the vanilla emevd).
+                    # Mirrors the MSB-side V3_PRESERVE_NIGHT_BOSS_ARENAS gate.
+                    hb_exclude = set()
+                    if not test_mode_arenas:
+                        hb_exclude = {m.replace('.msb', '.emevd')
+                                      for m in oops_v3.V3_NIGHT_BOSS_ARENA_MSBS}
+                        if hb_exclude:
+                            print(f"  Night-boss arenas: preserving "
+                                  f"{len(hb_exclude)} vanilla (test-mode OFF) "
+                                  f"— excluded from healthbar patching")
                     # Decompress vanilla .emevd.dcx -> raw .emevd
                     # v0.24.61: overlay_dir lets us substitute pre-patched
                     # files (typically project's patched_emevd/) for the
@@ -1013,6 +1033,7 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                         title_pool_path=_title_pool_path,
                         seed=seed,
                         compose_probability=1.0,
+                        exclude_files=hb_exclude,
                         # compose_show_arrow=True,  # ← debug mode
                     )
                     # Recompress patched .emevd -> .emevd.dcx into emevd_out_dir
@@ -1252,6 +1273,7 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                                     spoiler_path=spoiler_path,
                                     chr_to_nameid_path=chr_to_nameid_path,
                                     fallback_nameid=fallback_nameid,
+                                    exclude_files=hb_exclude,
                                 )
                                 emevd_compress_dir(patched_emevd,
                                                     emevd_out_dir, oodle)

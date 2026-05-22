@@ -1497,20 +1497,19 @@ class TestCanonicalVariantPreference:
 
     # --- Config sanity ------------------------------------------------------
 
-    def test_v3_prefer_canonical_default_is_false(self, engine):
-        # v0.24.101: flipped from True to False as part of the "open the
-        # floodgates" variety pass. Ghost variants are now eligible —
-        # trade-off accepted (potential visual glitches in exchange for
-        # variety). If a specific ghost variant proves broken, block it
-        # individually by npc_param_id rather than re-enabling this filter
-        # wholesale.
-        # v0.24.109: briefly flipped True (for ~half a ship cycle) on the
-        # basis of a framerate report that turned out to be a host issue.
-        # Restored to v0.24.101 default. See oops_v3 constant docstring.
-        assert engine.V3_PREFER_CANONICAL_VARIANTS is False, (
-            'V3_PREFER_CANONICAL_VARIANTS should be False post-v0.24.101 — '
-            'ghost variants are intentionally open for variety. If this '
-            'has flipped back to True, check the v0.24.101 floodgates work.')
+    def test_v3_prefer_canonical_default_is_true(self, engine):
+        # v0.24.101: flipped True->False ("open the floodgates" variety
+        # pass). v0.24.109: briefly True, reverted.
+        # v0.26.16: flipped back to True and exposed as a GUI checkbox
+        # ("Prefer canonical variants", beside test-mode). True is the
+        # default for non-GUI / CLI / test callers; the GUI sets it per
+        # run from the checkbox. Ghost variants stay reachable via the
+        # soft filter (a c-prefix with only ghosts is still pickable)
+        # and via turning the checkbox off.
+        assert engine.V3_PREFER_CANONICAL_VARIANTS is True, (
+            'V3_PREFER_CANONICAL_VARIANTS should default True as of '
+            'v0.26.16 — canonical-preferred for visual stability, with '
+            'the GUI checkbox / soft filter as the variety escape hatch.')
 
 
 # v0.24.36: dump-only no-file chrs are hard-excluded

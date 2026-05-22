@@ -1535,10 +1535,18 @@ class RandoGUI:
         # output, replacing their vanilla EMEVDs with MMV-style minimal
         # templates. All 19 arenas behave the same way: boss spawns,
         # player kills it, night advances. Drops playtest cycles from
-        # ~18 hours to ~1. v0.26.6: default ON (see RandoGUI init) — the
-        # test-mode flow is the recommended way to play this build until
-        # the full Night Boss EMEVD set is validated end-to-end.
-        self.test_mode_arenas_var = tk.BooleanVar(value=True)
+        # ~18 hours to ~1. v0.26.16: default OFF — normal play is the
+        # default now; the night-boss arenas ship vanilla (no rando, no
+        # healthbar patch) when this is off. Turn ON only for engine-
+        # change validation sweeps.
+        self.test_mode_arenas_var = tk.BooleanVar(value=False)
+        # v0.26.16: prefer canonical variants. When ON, the picker filters
+        # each c-prefix to the variants vanilla NR actually placed
+        # (sample_maps non-empty), skipping untested ghost variants that
+        # can render glitched (T-pose, missing textures, off-scale FFX).
+        # Soft filter — chrs with only ghost variants stay pickable.
+        # Default ON for visual stability.
+        self.prefer_canonical_variants_var = tk.BooleanVar(value=True)
         # v0.20.42: diagnostic batch — when non-empty, fragile slots are
         # restricted to ONLY this comma-separated list of c-prefixes. Used
         # to attribute CTDs to a small batch of candidates instead of
@@ -3342,7 +3350,7 @@ class RandoGUI:
                 "the template. Test-mode runs that roll Augur as the "
                 "Nightlord still get vanilla Augur N1.")
         make_info_icon(tm_row, tooltip_text=(
-            "Default: ON\n\n"
+            "Default: OFF\n\n"
             "When ON, 19 N1/N2 arenas get replaced with MMV-style "
             "minimal EMEVDs at output time. All arenas behave identically: "
             "boss spawns, you kill it, night advances. No cinematic, no "
@@ -3356,6 +3364,33 @@ class RandoGUI:
             "Augur as the Nightlord will still get vanilla Augur N1.\n\n"
             "Requires an EMEVD output dir to be set (see Healthbar tab) — "
             "without it, the overlay step skips and logs a warning."
+        ))
+
+        # v0.26.16: prefer-canonical-variants toggle, beside test-mode.
+        cv_row = ttk.Frame(diag_frame); cv_row.pack(fill='x', pady=(8, 0))
+        cv_check = ttk.Checkbutton(cv_row,
+                         text="Prefer canonical variants: skip untested ghost NPCParam variants",
+                         variable=self.prefer_canonical_variants_var,
+                         style='TCheckbutton')
+        cv_check.pack(side='left')
+        Tooltip(cv_check,
+                "When ON, each c-prefix is filtered to the variants "
+                "vanilla NR actually placed somewhere (sample_maps "
+                "non-empty). Ghost variants — present in the NPCParam "
+                "table but never instantiated by vanilla NR — often "
+                "have untested asset integration and can render glitched "
+                "(T-pose, missing textures, off-scale, absent FFX).\n\n"
+                "Soft filter: a c-prefix with ONLY ghost variants is "
+                "still pickable, so no chr is lost.")
+        make_info_icon(cv_row, tooltip_text=(
+            "Default: ON\n\n"
+            "ON  — picker prefers canonical variants; a ghost variant "
+            "is used only when its c-prefix has no canonical.\n"
+            "OFF — full pool including ghost variants: more visual "
+            "variety, higher glitch risk. Block individual bad ghosts "
+            "by npc_param_id if you want variety without this filter.\n\n"
+            "Mechanically every variant works; only visuals are at "
+            "risk with ghosts."
         ))
 
         # v0.26.15: mount/rider pair detection (cut 1 — experimental).
@@ -6984,6 +7019,7 @@ class RandoGUI:
             'multiplayer_safe': bool(self.multiplayer_safe_var.get()),
             'disable_resilient_filter': bool(self.disable_resilient_filter_var.get()),
             'test_mode_arenas': bool(self.test_mode_arenas_var.get()),
+            'prefer_canonical_variants': bool(self.prefer_canonical_variants_var.get()),
             # v0.20.38: auto-couple non_fragile_baseline_cp to the diagnostic
             # checkbox. When diagnostic is ON, force every non-fragile slot
             # to the engine's V3_DEFAULT_NON_FRAGILE_BASELINE_CP (Leyndell
@@ -7173,6 +7209,12 @@ class RandoGUI:
                 def flush(self): pass
             sys.stdout = StreamingBuf(self.log_queue)
             try:
+                # v0.26.16: variant-pool preference. Set before the
+                # pipeline branch so it applies to both the DCX
+                # (rando_pipeline) and raw-MSB (cmd_shuffle_v3) paths.
+                import oops_v3
+                oops_v3.V3_PREFER_CANONICAL_VARIANTS = bool(
+                    config.get('prefer_canonical_variants', True))
                 # Auto-detect input format: if the input dir has any .msb.dcx
                 # files, run the full DCX pipeline (decompress → shuffle →
                 # recompress). Otherwise treat as raw MSB input.

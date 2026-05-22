@@ -166,6 +166,7 @@ def apply_to_dir(
     fmg_id_base: int = DEFAULT_FMG_ID_BASE,
     fallback_nameid: int = None,
     files_to_patch=None,
+    exclude_files=None,
     title_pool_path: str = None,
     seed: int = None,
     compose_probability: float = 0.5,
@@ -196,6 +197,13 @@ def apply_to_dir(
     Valley". Useful for verifying which vanilla slot a chr came from
     when triaging spoiler issues. Off by default — bars render the new
     chr name plus title only.
+
+    v0.26.16: `exclude_files` is a set of .emevd filenames to drop from
+    the patch list entirely — not parsed, not written to output_dir. The
+    caller uses this to keep specific arenas byte-vanilla; with the file
+    absent from output_dir, dcx_batch's recompress step never produces a
+    modded copy and me3 serves the vanilla emevd. Used for the night-boss
+    arenas when test-mode arenas are off.
     """
     spoiler = load_spoiler_entity_map(spoiler_path)
     with open(chr_to_nameid_path) as f:
@@ -232,7 +240,21 @@ def apply_to_dir(
             if f.endswith('.emevd') and f not in HANDLER_DEFINITION_FILES
         )
 
-    per_file_reports = []
+    # v0.26.16: caller-supplied vanilla-preserve set. Files named here are
+    # dropped from the patch list entirely — not parsed, not written to
+    # output_dir. dcx_batch passes the 25 night-boss arenas when test-mode
+    # arenas are off; with the files absent from output_dir they are never
+    # recompressed into the mod event/ dir, so me3 serves the vanilla emevd.
+    excluded_reports = []
+    if exclude_files:
+        _excluded = [f for f in files_to_patch if f in exclude_files]
+        files_to_patch = [f for f in files_to_patch if f not in exclude_files]
+        excluded_reports = [
+            {'file': f, 'status': 'skipped_preserved_vanilla', 'rewrites': 0}
+            for f in _excluded
+        ]
+
+    per_file_reports = list(excluded_reports)
     for fname in files_to_patch:
         in_path = os.path.join(emevd_dir, fname)
         if not os.path.exists(in_path):
@@ -353,4 +375,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main()  

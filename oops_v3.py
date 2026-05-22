@@ -2541,7 +2541,12 @@ V3_AVOID_VARIANT_NPC_IDS = {
 # Restoring the v0.24.101 floodgates default since the diagnostic case
 # for the canonical filter evaporated. The per-chr blocklist remains
 # the right surgical tool for actually-broken ghost variants.
-V3_PREFER_CANONICAL_VARIANTS = False
+#
+# v0.26.16: default FLIPPED back to True, and the toggle is now exposed
+# as a GUI checkbox ("Prefer canonical variants", beside test-mode).
+# oops_rando_gui sets this from the checkbox before every run; this
+# module-level value is the default for non-GUI / CLI / test callers.
+V3_PREFER_CANONICAL_VARIANTS = True
 
 
 def _filter_canonical_variants(variants):
@@ -7015,6 +7020,45 @@ V3_ARENA_CHR_ROLES, V3_ARENA_CHR_ROLES_META = _load_arena_chr_roles()
  V3_OVERLAY_ROLE_PATCH3_LIFTED) = _apply_arena_role_catalog()
 
 
+# v0.26.16: Night-boss-arena whole-MSB preservation, gated on test-mode.
+#
+# The 25 N1/N2 night-boss arenas (m48_00..m48_90 + the m49_xx NR-original
+# NB arenas) are choreographed multi-entity fights. When the test-mode
+# arena overlay is OFF — i.e. a normal play build — the randomizer must
+# not touch them at all: no Part swaps here, the arena ships byte-vanilla
+# (and dcx_batch's healthbar step skips them in parallel). This is a hard,
+# catalog-independent guarantee — it does NOT rely on each arena being
+# correctly classified preserve_primary in nr_boss_arena_chr_roles.json
+# (the m48_80 Godskin Duo misclassification, v0.26.16, is exactly the
+# failure this backstops).
+#
+# Canonical arena set: the `arenas` key of data/nb_wave_bypass_flags.json
+# — the same 25 arenas emevd_patch.py drives from. Single source of
+# truth; no hardcoded list to drift.
+#
+# V3_PRESERVE_NIGHT_BOSS_ARENAS is the live gate. Default True (preserve
+# — the safe normal-play behavior). dcx_batch.rando_pipeline sets it to
+# `not test_mode_arenas` before the shuffle: test-mode ON lifts the gate
+# (the test-mode template overlay handles those arenas instead).
+def _load_night_boss_arena_msbs():
+    """Return frozenset of '<stem>.msb' for the 25 NB arenas."""
+    path = _data_path('nb_wave_bypass_flags.json')
+    if not os.path.isfile(path):
+        return frozenset()
+    try:
+        with open(path, encoding='utf-8') as f:
+            raw = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return frozenset()
+    arenas = raw.get('arenas', {})
+    return frozenset(f'{stem}.msb' for stem in arenas)
+
+
+V3_NIGHT_BOSS_ARENA_MSBS = _load_night_boss_arena_msbs()
+V3_PRESERVE_NIGHT_BOSS_ARENAS = True
+
+
+
 # v0.24.28: Starting encampment catalog. Asset MSBs that get instantiated
 # near the wagon spawn at the start of a Limveld Expedition. Used by:
 #
@@ -11054,6 +11098,14 @@ def pick_target_cp(recipient_cp, tags,
     # None for every Part in those MSBs, regardless of pi or tier.
     # See block comment near V3_OVERLAY_PRESERVE_VANILLA_MSBS for context.
     if slot_msb_name is not None and slot_msb_name in V3_OVERLAY_PRESERVE_VANILLA_MSBS:
+        return None
+
+    # v0.26.16: night-boss-arena whole-MSB preservation. When test-mode
+    # arenas are OFF (normal play), V3_PRESERVE_NIGHT_BOSS_ARENAS is True
+    # and every Part in a night-boss arena is held vanilla — a catalog-
+    # independent backstop. See block comment near V3_NIGHT_BOSS_ARENA_MSBS.
+    if (V3_PRESERVE_NIGHT_BOSS_ARENAS and slot_msb_name is not None
+            and slot_msb_name in V3_NIGHT_BOSS_ARENA_MSBS):
         return None
 
     # v0.24.101: V3_PRESERVE_SLOTS strict (msb, pi)-level preservation gate.

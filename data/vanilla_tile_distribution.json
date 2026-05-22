@@ -1,0 +1,96 @@
+{
+  "methodology": "Patterns classified by event flag set in LotResultMapPatternFlag col4: 7600=Default, 7601=Mountaintops, 7602=Crater, 7603=Rotted_Woods, 7605=Noklateo. 320 patterns total.",
+  "per_nightlord": {
+    "Gladius": {
+      "Default": 20,
+      "Mountaintops": 5,
+      "Crater": 5,
+      "Rotted_Woods": 5,
+      "Noklateo": 5
+    },
+    "Adel": {
+      "Default": 20,
+      "Mountaintops": 5,
+      "Crater": 5,
+      "Rotted_Woods": 5,
+      "Noklateo": 5
+    },
+    "Gnoster": {
+      "Default": 20,
+      "Mountaintops": 5,
+      "Crater": 5,
+      "Rotted_Woods": 5,
+      "Noklateo": 5
+    },
+    "Maris": {
+      "Default": 20,
+      "Mountaintops": 5,
+      "Crater": 5,
+      "Rotted_Woods": 5,
+      "Noklateo": 5
+    },
+    "Libra": {
+      "Default": 20,
+      "Mountaintops": 5,
+      "Crater": 5,
+      "Rotted_Woods": 5,
+      "Noklateo": 5
+    },
+    "Fulghor": {
+      "Default": 20,
+      "Mountaintops": 5,
+      "Crater": 5,
+      "Rotted_Woods": 5,
+      "Noklateo": 5
+    },
+    "Caligo": {
+      "Default": 20,
+      "Mountaintops": 5,
+      "Crater": 5,
+      "Rotted_Woods": 5,
+      "Noklateo": 5
+    },
+    "Heolstor": {
+      "Default": 20,
+      "Mountaintops": 5,
+      "Crater": 5,
+      "Rotted_Woods": 5,
+      "Noklateo": 5
+    }
+  },
+  "overall": {
+    "Default": 160,
+    "Mountaintops": 40,
+    "Crater": 40,
+    "Rotted_Woods": 40,
+    "Noklateo": 40
+  },
+  "per_pattern_fraction": {
+    "Default": 0.5,
+    "Mountaintops": 0.125,
+    "Crater": 0.125,
+    "Rotted_Woods": 0.125,
+    "Noklateo": 0.125
+  },
+  "tile_probabilities": {
+    "vanilla_weighted": {
+      "Default": 0.9116,
+      "Mountaintops": 0.0221,
+      "Crater": 0.0221,
+      "Rotted_Woods": 0.0221,
+      "Noklateo": 0.0221
+    },
+    "uniform": {
+      "Default": 0.5,
+      "Mountaintops": 0.125,
+      "Crater": 0.125,
+      "Rotted_Woods": 0.125,
+      "Noklateo": 0.125
+    }
+  },
+  "notes": {
+    "uniform_pattern_sampling": "If all 320 patterns equiprobable: Default 50%, each SE 12.5%. Matches \"Greatly increase one-off Shifting Earth\" option ON.",
+    "vanilla_weighted_sampling": "thefifthmatt randomizer README: Default ~91.16%, each SE ~2.21%. Set by EMEVD-side event-flag rolls (7601-7605); not directly recoverable from regulation.bin alone.",
+    "intra_bucket_variant_lottery": "Within a fixed (Nightlord, tile) bucket, MapPatternSet weights are 8400:400:400:400:400 = 84% primary + 4% each of 4 variants."
+  }
+}

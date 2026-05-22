@@ -1,0 +1,207 @@
+NEXUS LISTING COPY  —  v0.26.9 refresh
+======================================
+
+Paste-ready description for the Nexus Mods page description box. BBCode
+markup. Refreshed for the v0.26.x build: zero-setup install (bundled
+vanilla maps), test-mode arenas on by default, GUI MMV toggle.
+
+Before publishing, fill the two [BRACKETED] placeholders:
+  - the exact Nightreign game patch you've tested against
+  - your Twitch/Discord links, if you want them on the page
+
+
+SUGGESTED TITLE
+---------------
+
+4laric's Nightreign Enemy Randomizer
+
+
+SUGGESTED CATEGORY
+------------------
+
+Gameplay  (Nexus has no dedicated Randomization category for NR yet)
+
+
+SHORT DESCRIPTION (under-title blurb)
+-------------------------------------
+
+Vanilla-aware enemy and boss randomizer for Nightreign. Every swap
+respects size, locomotion, and animation class, so the world stays
+playable while every seed plays differently. Zero-setup install.
+
+
+LONG DESCRIPTION
+----------------
+
+[size=5][b]4laric's Nightreign Enemy Randomizer[/b][/size]
+
+Every enemy and boss in Nightreign gets swapped for a different one of
+comparable size, locomotion, and animation type. Mounted knights become
+other mounted knights. Dragons become other dragons. A Wandering Noble
+becomes a Mad Pumpkin Head. A Night Boss arena becomes a different Night
+Boss entirely.
+
+The result is a Nightreign that looks like an absent-minded version of
+FromSoft made it. Most encounters play correctly. A small fraction
+produce body-horror chimeras — NPCParam fields that didn't fully sync,
+so you get Mad Pumpkin Heads wearing Maris Tendril coral as hats, or
+Crucible Knights in Vulgar Militia trousers. These are not bugs. We are
+leaning into it.
+
+Every roll has a seed. Same seed, same run — so you can share a cursed
+seed, race a friend on it, or re-roll until you get one you like.
+
+[size=4][b]What makes it different[/b][/size]
+
+[list]
+[*][b]Vanilla-aware compat matching.[/b] Each slot's swap target is
+constrained by the original occupant's size class, locomotion class,
+and animation library. You won't get a Mountaintop Ice Dragon spawning
+in a hallway built for one Wandering Noble.
+[*][b]Cluster-shape preservation.[/b] Multi-part encounters — paired
+Tendrils, rider-and-mount combos, Crystalian groups, Oracle Envoy trios
+— get cluster-shape-matched replacements. A three-member ranged trio is
+swapped for another three-member trio, not three of the same enemy
+stacked on one spot.
+[*][b]Night Bosses that actually work.[/b] The 19 Night 1 / Night 2
+boss arenas run a streamlined spawn template by default — the swapped
+boss spawns, you fight it, the night advances — so randomized bosses
+never get stuck mid-cinematic or fail to wake. Marquee bosses (Maliketh,
+Romina, Midra, Fortissax, Metyr, and the rest) get a reservation system
+that guarantees they show up, and at varied locations each seed. Want
+the full vanilla cinematic intros instead? One toggle in the Diagnostic
+section.
+[*][b]Bounded variety.[/b] The roster has floors and ceilings: marquee
+bosses are guaranteed to appear at least once per run and capped so they
+stay rare events rather than wallpaper. No "swarm of Tree Spirits" runs.
+[*][b]Oops! All mode.[/b] Pick one enemy; every slot becomes that enemy.
+Wandering Noble Nightreign. Maris Tendril Nightreign. There's also an
+Oops! All Night Boss variant that only replaces the boss slots.
+[*][b]Multiplayer-safe default.[/b] The default swap pool is restricted
+to vanilla Nightreign's own chrs, so co-op partners without your
+optional content packs won't crash on cell load. Turn it off for solo
+play to unlock the full imported pool.
+[*][b]EMEVD patches included.[/b] The bundle ships pre-patched event
+scripts that fix the encounter bug classes inherent to swapping enemies
+into hand-authored slots — bosses that won't activate, sleeping enemies
+that won't wake, spawn handlers stuck mid-animation, killed bosses that
+don't dispense rewards. One-click install, no DarkScript3 needed.
+[*][b]Spoiler logs.[/b] Every roll writes a JSON + Markdown listing of
+every swap by map, entity, position, and tier — for debugging a cursed
+encounter, or just seeing what's coming.
+[/list]
+
+[size=4][b]Zero-setup install[/b][/size]
+
+The bundle ships with 300 vanilla Nightreign map files included, so you
+[b]do not need to UXM-unpack your own game install[/b]. Install, point
+the output at your me3 profile, click Randomize.
+
+[size=4][b]Requirements[/b][/size]
+
+[list]
+[*][b]Python 3.10 or newer.[/b] From
+[url=https://www.python.org/downloads/]python.org[/url]. On Windows,
+tick [b]"Add Python to PATH"[/b] during install — this is the single
+biggest source of "it doesn't work" reports.
+[*][b]me3[/b] — the Nightreign mod loader. From
+[url=https://me3-mod.github.io/]me3-mod.github.io[/url]. Set up at least
+one profile.
+[*][b]The Oodle DLL[/b] from your game install (see step 1 below). No
+compiler, no SDK, no pip packages, no Yabber/WitchyBND needed for the
+basic flow.
+[/list]
+
+[size=4][b]Installation[/b][/size]
+
+[list=1]
+[*]Install Python 3.10+ and (on Windows) tick "Add Python to PATH".
+Install me3 and set up a profile.
+[*]Download this mod and extract anywhere.
+[*][b]Copy the Oodle DLL.[/b] Nightreign compresses its map files with
+Oodle. Copy [code]oo2core_*_win64.dll[/code] from
+[code]<Steam>/steamapps/common/ELDEN RING NIGHTREIGN/Game/[/code] into
+the extracted folder. Any version of the filename works.
+[*]Run [code]python check_setup.py[/code] from the folder to verify your
+environment. Every check should print a green tick.
+[*]Launch the GUI: double-click [b]Launch.bat[/b], or double-click
+[b]oops_rando_gui.pyw[/b], or run [code]python oops_rando_gui.py[/code]
+from a terminal (use this one if you want diagnostic output for bug
+reports).
+[*]Set the output directory to your me3 profile's map folder —
+[code]<me3 profile>/<package>/map/mapstudio/[/code]. The input directory
+already defaults to the bundled vanilla maps. Set a seed for a
+reproducible roll, or leave it blank for a fresh one.
+[*]Click [b]Randomize[/b].
+[*]Click [b]Install pre-patched EMEVD[/b] and point it at your me3
+profile's [code]event/[/code] folder. Strongly recommended — these are
+the fixes that keep swapped encounters from hanging.
+[*]Launch Nightreign through me3 with your profile selected.
+[/list]
+
+If double-clicking a [code].py[/code] file pops up a "What app to open
+this with?" dialog, Python isn't on your PATH — reinstall it with the
+"Add to PATH" box ticked.
+
+[size=4][b]Optional: cross-game enemy pool[/b][/size]
+
+If you have [url=https://www.nexusmods.com/eldenringnightreign/mods/578]More
+Map Variations (MMV)[/url] installed in your me3 profile, the rando can
+fold MMV's cross-game boss imports — Malenia, Maliketh, Slave Knight
+Gael, Dragonslayer Armor, and more — into the swap pool. Toggle it on
+with the MMV checkbox in the GUI. [b]Don't enable it without MMV
+actually installed[/b] — the rando would reference chrs that aren't in
+your regulation, which crashes the game on cell load.
+
+[size=4][b]Known weirdness (intentional)[/b][/size]
+
+Some chimeric visuals are a feature, not a bug:
+
+[list]
+[*]Mad Pumpkin Heads wearing Maris Tendril coral as hats
+[*]Knights with mismatched-source equipment models
+[*]Demi-Humans with weapons attached at the wrong skeleton anchor points
+[/list]
+
+These are NPCParam attachment fields that didn't fully sync with the
+swap. The encounters function correctly — it's just cursed flavor.
+
+[size=4][b]Compatibility[/b][/size]
+
+[list]
+[*]Built and tested for [BRACKETED: current Nightreign game patch],
+the Forsaken Hollows DLC version. Older patches may work but aren't
+tested.
+[*]Python 3.10+ required.
+[*]me3 required.
+[*]Compatible with Seamless Co-op (use the multiplayer-safe default).
+[*]DarkScript3 only needed if you want to re-patch EMEVDs against a
+different NR build than the bundled one.
+[/list]
+
+[size=4][b]Found a cursed encounter that crashes?[/b][/size]
+
+Bug reports are welcome. Please include:
+
+[list]
+[*]The seed (it's in the GUI and at the top of the spoiler files)
+[*]The map name — search [code]_spoilers.md[/code] for the broken spot
+[*]The entity / c-prefix of the offender from that spoiler line
+[*]A screenshot, or a clip/VOD timestamp if you caught it on stream
+[/list]
+
+Most reports turn into either a narrower default-exclude list or a new
+EMEVD patch. A re-roll on a different seed is usually the fastest fix in
+the meantime.
+
+[size=4][b]Credits[/b][/size]
+
+[list]
+[*][url=https://github.com/AinTunez/DarkScript3]AinTunez and
+TheFifthMatt[/url] for DarkScript3
+[*]The me3 maintainers for the mod-loader infrastructure
+[*]The Smithbox / DSMapStudio communities for documenting the MSB and
+DCX formats
+[*]Everyone who's contributed to FromSoftware modding documentation
+over the years
+[/list]

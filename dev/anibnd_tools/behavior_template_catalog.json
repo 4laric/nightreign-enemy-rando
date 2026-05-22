@@ -1,0 +1,1328 @@
+{
+  "_meta": {
+    "purpose": "Behavior-template catalog for NR chrs. Derived from chr-id-normalized MD5 hash of the Behaviors/{cp}.hkx file inside each chr's .behbnd archive. Chrs sharing a template have byte-identical AI state machines (modulo the chr_id substring).",
+    "methodology": "For each behbnd, extract Behaviors/{cp}.hkx, replace the chr_number (e.g. \"4810\") with \"XXXX\" placeholder, hash with MD5, truncate to 10 chars. Chrs with the same hash share the same behavior template.",
+    "corpus_coverage": "459 chrs from c0xxx-c9xxx ranges. Behbnds extracted via Yabber + BND4 parser at dev/anibnd_tools/bnd4_reader.py.",
+    "version": "v0.24.84",
+    "archetype_taxonomy_note": "Template membership is the primary signal. Archetype labels are inferred from named members + game knowledge. Templates with 1-2 members are typically bespoke single bosses with custom AI (e.g., named remembrance bosses). Templates with 10+ members are shared archetypes."
+  },
+  "archetypes": {
+    "c880d10143": {
+      "archetype": "emerge_from_ground",
+      "description": "Sit-idle-then-rise on encounter trigger. Confirmed for: Land Squirt, Miranda, Erdtree Avatar (via cc910d90c1), Slugs, Crabs (per user), Octopi, Scarabs, Putrid Flesh, Snail, Grafted Scion, Tibia Mariner, Graven School.",
+      "gate": "V3_NO_EMERGE_SLOTS \u2014 ban at elevated/rampart/rooftop slots without subsurface terrain."
+    },
+    "cc910d90c1": {
+      "archetype": "emerge_from_ground_avatar",
+      "description": "Erdtree Avatar variant cluster (c4810, c4811 only). Separate template but same failure mode as c880d10143.",
+      "gate": "Same as emerge_from_ground."
+    },
+    "472b076cb7": {
+      "archetype": "humanoid_mob_standard",
+      "description": "45 chrs, mostly mid-size humanoids. Skeletons, Misbegotten, Albinauric, Sanguine Noble, Dominula Celebrant, Grave Warden Duelist, Exile Soldier types. Walk-and-attack mobs with normal locomotion movesets.",
+      "gate": "No gate needed \u2014 generally safe to place anywhere."
+    },
+    "f847bca359": {
+      "archetype": "humanoid_mob_combatant",
+      "description": "41 chrs, mid-size humanoids with bespoke movesets. Black Knife Assassin, Crucible Knight, Imp, Skeleton (Spear), Nomadic Merchant, Frenzied Nomad. Standing combatants with full locomotion.",
+      "gate": "No gate needed."
+    },
+    "0208788a2b": {
+      "archetype": "quadruped_dog",
+      "description": "12 chrs, all canine quadrupeds. Stray, Large Stray, Mushroom Dog, Bloodbane Stray, Rotten Stray.",
+      "gate": "No gate identified yet."
+    },
+    "aba5052255": {
+      "archetype": "flying_dragon",
+      "description": "9 chrs. Named member: c4503 Borealis (GIGA). Other 8 unnamed \u2014 likely other flying dragons.",
+      "gate": "CANDIDATE for fly_in gate when nr_no_fly_slots.json is built. Likely fails at low-ceiling indoor slots."
+    },
+    "8d23a04f8f": {
+      "archetype": "mid_tier_humanoid",
+      "description": "Night's Cavalry, Ancestral Follower, Fire Prelate, Omenkiller, Fallen Hawks Soldier. Larger humanoid/quadruped combatants.",
+      "gate": "No gate identified."
+    },
+    "127dfb6c93": {
+      "archetype": "large_humanoid_boss",
+      "description": "Omen, Wormface, Gargoyle, Gravebird, Ancestral Follower Shaman. Larger boss-tier with bespoke movesets. WORMFACE here is interesting \u2014 it's a canonical ER ground-eruption enemy but uses a different behavior template than c880d10143, meaning its emerge mechanism is different.",
+      "gate": "Wormface may need separate emerge handling. Other members likely scripted_intro."
+    },
+    "b71ec383a8": {
+      "archetype": "humanoid_combatant_specialty",
+      "description": "8 humanoids: Elemer of the Briar, Crystalian, Cleanrot Knight, Fire Monk, Disciple of Rot, Guilty. Bespoke movesets for elemental/specialty fighters.",
+      "gate": "No gate identified."
+    },
+    "b7316003d9": {
+      "archetype": "horse_quadruped",
+      "description": "5 horses including c4363 Lordsworn Knight's Horse (Night Boss). Quadruped riders.",
+      "gate": "No gate identified."
+    },
+    "07f06730ab": {
+      "archetype": "demi_human",
+      "description": "c4100 Demi-Human, c4110 Demi-Human Shaman, 2 unnamed. Small humanoid creatures.",
+      "gate": "No gate identified."
+    },
+    "27dffb5d2a": {
+      "archetype": "fingercreeper",
+      "description": "c4240 Fingercreeper, c4241 Giant Fingercreeper, 2 unnamed. SEPARATE from c880d10143 emerge cluster \u2014 Fingercreepers might have their own emerge subtype.",
+      "gate": "CANDIDATE for emerge_from_ground secondary \u2014 needs playtest validation."
+    },
+    "0fb16cc66a": {
+      "archetype": "knight_humanoid",
+      "description": "Cuckoo Knight, Leyndell Knight, Inquisitor (Staff), 1 unnamed. Standard knight class.",
+      "gate": "No gate identified."
+    },
+    "b6e4dd63f3": {
+      "archetype": "royal_revenant",
+      "description": "c4020/c4021 Royal Revenant + 1 unnamed. Specific creature family.",
+      "gate": "No gate identified."
+    },
+    "9a9fb2902a": {
+      "archetype": "ancient_dragon",
+      "description": "c4510 Ancient Dragon (GIGA) + 2 unnamed. Possibly other major dragons.",
+      "gate": "May share fly_in concerns when nr_no_fly_slots.json built."
+    },
+    "3afddc5178": {
+      "archetype": "troll_xxl",
+      "description": "3 XXL Trolls: Troll Knight, Snowfield Troll + 1 unnamed. Large-bodied bipeds.",
+      "gate": "CANDIDATE for \"large_ground\" gate \u2014 Trolls may fail at narrow indoor slots."
+    },
+    "7e687ef779": {
+      "archetype": "dlc_special",
+      "description": "3 DLC-tier specials: Libra family, Smelter Demon. Bespoke bosses.",
+      "gate": "No gate identified."
+    }
+  },
+  "chr_to_template": {
+    "c0000": "03d9b795d1",
+    "c0010": "b5ef981d1d",
+    "c0100": "3e8f92b06e",
+    "c0110": "c880d10143",
+    "c0120": "c880d10143",
+    "c0130": "c880d10143",
+    "c1000": "c880d10143",
+    "c1260": "127dfb6c93",
+    "c1310": "aba5052255",
+    "c2010": "472b076cb7",
+    "c2030": "a80d120694",
+    "c2031": "f478bae457",
+    "c2040": "c0dc2e2f17",
+    "c2041": "c880d10143",
+    "c2050": "c880d10143",
+    "c2060": "c880d10143",
+    "c2100": "f847bca359",
+    "c2110": "527e2b3b5c",
+    "c2120": "e0f0cbb30e",
+    "c2130": "d3f4a8e443",
+    "c2131": "c880d10143",
+    "c2140": "127dfb6c93",
+    "c2150": "c880d10143",
+    "c2160": "c880d10143",
+    "c2170": "c880d10143",
+    "c2180": "472b076cb7",
+    "c2190": "127dfb6c93",
+    "c2200": "5fd91da157",
+    "c2240": "aba5052255",
+    "c2270": "c880d10143",
+    "c2271": "c880d10143",
+    "c2272": "c880d10143",
+    "c2273": "c880d10143",
+    "c2274": "c880d10143",
+    "c2275": "c880d10143",
+    "c2276": "c880d10143",
+    "c2277": "c880d10143",
+    "c2500": "f847bca359",
+    "c3000": "f847bca359",
+    "c3010": "2452d53984",
+    "c3020": "d3c054d549",
+    "c3050": "fb276ea59c",
+    "c3060": "472b076cb7",
+    "c3061": "472b076cb7",
+    "c3070": "472b076cb7",
+    "c3080": "f847bca359",
+    "c3100": "b71ec383a8",
+    "c3110": "aba5052255",
+    "c3150": "8d23a04f8f",
+    "c3160": "da75a78d30",
+    "c3170": "ef6fa47dfd",
+    "c3171": "c880d10143",
+    "c3180": "0a1a0c480f",
+    "c3181": "e873ab0650",
+    "c3200": "f847bca359",
+    "c3201": "f847bca359",
+    "c3210": "2bc6671f1f",
+    "c3250": "8ad5ed39b0",
+    "c3251": "04f4a0d814",
+    "c3252": "bbfec73af0",
+    "c3300": "472b076cb7",
+    "c3320": "c880d10143",
+    "c3330": "c880d10143",
+    "c3350": "b71ec383a8",
+    "c3360": "8d23a04f8f",
+    "c3361": "8d23a04f8f",
+    "c3370": "127dfb6c93",
+    "c3371": "127dfb6c93",
+    "c3400": "472b076cb7",
+    "c3450": "472b076cb7",
+    "c3451": "f847bca359",
+    "c3460": "9c3890480e",
+    "c3470": "472b076cb7",
+    "c3471": "2b84b987cb",
+    "c3500": "f847bca359",
+    "c3510": "73dfbebb2a",
+    "c3550": "472b076cb7",
+    "c3560": "f847bca359",
+    "c3570": "f847bca359",
+    "c3600": "472b076cb7",
+    "c3610": "c880d10143",
+    "c3620": "c880d10143",
+    "c3630": "c880d10143",
+    "c3650": "472b076cb7",
+    "c3660": "e54303cd75",
+    "c3661": "cc1d0cc407",
+    "c3662": "ff71889fc2",
+    "c3664": "67c1941502",
+    "c3665": "f847bca359",
+    "c3666": "c880d10143",
+    "c3670": "0e4b088870",
+    "c3700": "f847bca359",
+    "c3701": "f847bca359",
+    "c3702": "f847bca359",
+    "c3703": "cc678c238d",
+    "c3704": "f847bca359",
+    "c3710": "3e5920bf37",
+    "c3720": "ef6fa47dfd",
+    "c3730": "c880d10143",
+    "c3750": "2bc118a8dc",
+    "c3800": "b71ec383a8",
+    "c3810": "472b076cb7",
+    "c3850": "472b076cb7",
+    "c3860": "472b076cb7",
+    "c3900": "b71ec383a8",
+    "c3901": "b71ec383a8",
+    "c3910": "8d23a04f8f",
+    "c3950": "fbef901205",
+    "c3970": "472b076cb7",
+    "c4000": "743b0174ec",
+    "c4020": "b6e4dd63f3",
+    "c4021": "b6e4dd63f3",
+    "c4040": "c880d10143",
+    "c4050": "2e0c97b93e",
+    "c4060": "02734e2141",
+    "c4070": "ee56dbe078",
+    "c4071": "e151b16ca6",
+    "c4080": "c880d10143",
+    "c4090": "c880d10143",
+    "c4100": "07f06730ab",
+    "c4101": "e73908020d",
+    "c4110": "07f06730ab",
+    "c4120": "3b197500bc",
+    "c4130": "ef6fa47dfd",
+    "c4140": "c880d10143",
+    "c4150": "5b9ba3e584",
+    "c4160": "0208788a2b",
+    "c4161": "0208788a2b",
+    "c4162": "c1ef0a8525",
+    "c4163": "c1ef0a8525",
+    "c4164": "0208788a2b",
+    "c4165": "01b2a0a836",
+    "c4166": "0208788a2b",
+    "c4167": "0208788a2b",
+    "c4170": "c880d10143",
+    "c4171": "c880d10143",
+    "c4180": "0f5c496ed1",
+    "c4181": "9c389887d0",
+    "c4190": "c880d10143",
+    "c4191": "c880d10143",
+    "c4192": "c880d10143",
+    "c4200": "637fdbcec7",
+    "c4201": "f134fb03ee",
+    "c4210": "6598e94efd",
+    "c4220": "c880d10143",
+    "c4230": "c880d10143",
+    "c4240": "27dffb5d2a",
+    "c4241": "27dffb5d2a",
+    "c4250": "c880d10143",
+    "c4260": "ef6fa47dfd",
+    "c4270": "587fa9f966",
+    "c4280": "0bd6ab3f88",
+    "c4281": "01505485cd",
+    "c4290": "37a314c721",
+    "c4300": "30a374a15a",
+    "c4310": "f847bca359",
+    "c4311": "f847bca359",
+    "c4312": "f847bca359",
+    "c4313": "f847bca359",
+    "c4314": "f847bca359",
+    "c4315": "f847bca359",
+    "c4316": "f847bca359",
+    "c4320": "472b076cb7",
+    "c4321": "472b076cb7",
+    "c4340": "4cfa339d12",
+    "c4341": "f847bca359",
+    "c4350": "0fb16cc66a",
+    "c4351": "472b076cb7",
+    "c4352": "0fb16cc66a",
+    "c4353": "0fb16cc66a",
+    "c4354": "472b076cb7",
+    "c4355": "472b076cb7",
+    "c4356": "472b076cb7",
+    "c4360": "dc9baa752b",
+    "c4361": "d87d519d5e",
+    "c4362": "b7316003d9",
+    "c4363": "b7316003d9",
+    "c4364": "b7316003d9",
+    "c4365": "b7316003d9",
+    "c4370": "f847bca359",
+    "c4371": "f847bca359",
+    "c4372": "f847bca359",
+    "c4373": "f847bca359",
+    "c4374": "f847bca359",
+    "c4375": "f847bca359",
+    "c4376": "f847bca359",
+    "c4377": "f847bca359",
+    "c4380": "64b0262a6f",
+    "c4381": "b71ec383a8",
+    "c4382": "dddff5f491",
+    "c4383": "b5193fe7ca",
+    "c4384": "3c692ddde1",
+    "c4385": "b71ec383a8",
+    "c4386": "b71ec383a8",
+    "c4420": "e9319ce403",
+    "c4430": "eaa2df4324",
+    "c4440": "c880d10143",
+    "c4441": "c880d10143",
+    "c4442": "c880d10143",
+    "c4450": "0e365b635f",
+    "c4460": "42a3fad098",
+    "c4470": "c880d10143",
+    "c4480": "c880d10143",
+    "c4481": "c880d10143",
+    "c4482": "c880d10143",
+    "c4483": "c880d10143",
+    "c4490": "472b076cb7",
+    "c4491": "f847bca359",
+    "c4492": "f847bca359",
+    "c4500": "ac30abb03e",
+    "c4501": "d095dbf35c",
+    "c4502": "7da7c7f50e",
+    "c4503": "aba5052255",
+    "c4504": "0396fdeb0e",
+    "c4505": "34b5d4cd90",
+    "c4510": "9a9fb2902a",
+    "c4511": "9a9fb2902a",
+    "c4520": "c42211b2f0",
+    "c4540": "aba5052255",
+    "c4550": "472b076cb7",
+    "c4560": "a5c2582bf6",
+    "c4561": "a5c2582bf6",
+    "c4570": "127dfb6c93",
+    "c4580": "472b076cb7",
+    "c4600": "c3f84b0475",
+    "c4601": "3afddc5178",
+    "c4602": "3afddc5178",
+    "c4603": "b76a295e80",
+    "c4604": "763464bf21",
+    "c4620": "c1e448fd83",
+    "c4630": "fa7999d8e9",
+    "c4640": "c880d10143",
+    "c4650": "c5b89d465d",
+    "c4660": "8580403044",
+    "c4670": "e6b8f5ca74",
+    "c4680": "f6cb3b06fb",
+    "c4690": "c880d10143",
+    "c4710": "5e60f04f23",
+    "c4711": "c880d10143",
+    "c4720": "655683f061",
+    "c4721": "c50aa293fe",
+    "c4730": "1b3bb7ca6d",
+    "c4750": "928f877d4d",
+    "c4751": "c880d10143",
+    "c4760": "663e578c4c",
+    "c4770": "127dfb6c93",
+    "c4800": "a1417a6f96",
+    "c4810": "cc910d90c1",
+    "c4811": "cc910d90c1",
+    "c4820": "8d23a04f8f",
+    "c4900": "e46aa1c5b9",
+    "c4901": "e46aa1c5b9",
+    "c4910": "ce856f8304",
+    "c4911": "c2f6587767",
+    "c4950": "c880d10143",
+    "c4960": "68723c7fc8",
+    "c4961": "a6d07a94c0",
+    "c4980": "5c58475092",
+    "c5000": "81e30ac83f",
+    "c5010": "a5f6158352",
+    "c5011": "a5f6158352",
+    "c5020": "e8fb3b8836",
+    "c5030": "aa309e719e",
+    "c5040": "472b076cb7",
+    "c5050": "c880d10143",
+    "c5051": "4c82da7630",
+    "c5060": "e3a9a224d7",
+    "c5061": "e3a9a224d7",
+    "c5070": "73ff564e36",
+    "c5080": "472b076cb7",
+    "c5081": "472b076cb7",
+    "c5090": "127dfb6c93",
+    "c5110": "c880d10143",
+    "c5120": "c880d10143",
+    "c5130": "7166912234",
+    "c5140": "ef9bda93c4",
+    "c5141": "6f6997693c",
+    "c5160": "472b076cb7",
+    "c5170": "129bf580dc",
+    "c5180": "c880d10143",
+    "c5181": "c880d10143",
+    "c5190": "19b840262a",
+    "c5192": "19b840262a",
+    "c5193": "c880d10143",
+    "c5194": "e72950d022",
+    "c5200": "addb3fcde5",
+    "c5210": "6faa918819",
+    "c5220": "ee861c603e",
+    "c5230": "e0822ded34",
+    "c5240": "472b076cb7",
+    "c5241": "ef6fa47dfd",
+    "c5250": "472b076cb7",
+    "c5251": "c880d10143",
+    "c5260": "ba7d0cbe90",
+    "c5261": "d3f4a8e443",
+    "c5270": "472b076cb7",
+    "c5271": "ef6fa47dfd",
+    "c5280": "472b076cb7",
+    "c5300": "472b076cb7",
+    "c5311": "472b076cb7",
+    "c5312": "0fb16cc66a",
+    "c5320": "472b076cb7",
+    "c5330": "c880d10143",
+    "c5340": "c880d10143",
+    "c5350": "c880d10143",
+    "c5360": "f847bca359",
+    "c5370": "9a9fb2902a",
+    "c5380": "c880d10143",
+    "c5381": "c880d10143",
+    "c5390": "c3f84b0475",
+    "c5391": "3afddc5178",
+    "c5401": "c880d10143",
+    "c5410": "b5de07668b",
+    "c5421": "a93b0f4f38",
+    "c5430": "c880d10143",
+    "c5440": "d3d9439042",
+    "c5450": "6c0a5d34b1",
+    "c5460": "c880d10143",
+    "c5470": "c880d10143",
+    "c5471": "c880d10143",
+    "c5472": "c880d10143",
+    "c5480": "c880d10143",
+    "c5490": "c880d10143",
+    "c5500": "c880d10143",
+    "c5511": "cc1d0cc407",
+    "c5512": "ff71889fc2",
+    "c5513": "67c1941502",
+    "c5520": "0208788a2b",
+    "c5521": "0208788a2b",
+    "c5522": "0208788a2b",
+    "c5523": "0208788a2b",
+    "c5524": "0208788a2b",
+    "c5525": "0208788a2b",
+    "c5526": "0208788a2b",
+    "c5527": "01b2a0a836",
+    "c5530": "637fdbcec7",
+    "c5540": "ee56dbe078",
+    "c5541": "e151b16ca6",
+    "c5550": "27dffb5d2a",
+    "c5551": "27dffb5d2a",
+    "c5560": "c880d10143",
+    "c5570": "472b076cb7",
+    "c5580": "ac30abb03e",
+    "c5590": "c880d10143",
+    "c5591": "c880d10143",
+    "c5600": "73dfbebb2a",
+    "c5620": "c880d10143",
+    "c5630": "e9319ce403",
+    "c5640": "c880d10143",
+    "c5641": "c880d10143",
+    "c5651": "f847bca359",
+    "c5661": "472b076cb7",
+    "c5680": "c880d10143",
+    "c5690": "bc851fb670",
+    "c5700": "07f06730ab",
+    "c5701": "e73908020d",
+    "c5710": "07f06730ab",
+    "c5720": "3b197500bc",
+    "c5730": "ef6fa47dfd",
+    "c5740": "472b076cb7",
+    "c5750": "472b076cb7",
+    "c5751": "f847bca359",
+    "c5760": "c880d10143",
+    "c5761": "c880d10143",
+    "c5780": "fa7999d8e9",
+    "c5790": "8580403044",
+    "c5800": "47644a1a29",
+    "c5810": "f847bca359",
+    "c5820": "d42b5bbdb6",
+    "c5830": "f847bca359",
+    "c5840": "ef6fa47dfd",
+    "c5850": "3d453c4fe8",
+    "c5860": "19d5b89901",
+    "c5870": "2b84b987cb",
+    "c5871": "472b076cb7",
+    "c5872": "9791228366",
+    "c5880": "472b076cb7",
+    "c5890": "b7316003d9",
+    "c5900": "cb36dbb62e",
+    "c5910": "c880d10143",
+    "c5920": "ce856f8304",
+    "c5930": "472b076cb7",
+    "c5931": "472b076cb7",
+    "c5940": "eaa2df4324",
+    "c5950": "9c3890480e",
+    "c5960": "c880d10143",
+    "c5970": "c880d10143",
+    "c5980": "8d23a04f8f",
+    "c5990": "5b9ba3e584",
+    "c6000": "c880d10143",
+    "c6001": "c880d10143",
+    "c6010": "b5de07668b",
+    "c6031": "a93b0f4f38",
+    "c6040": "c880d10143",
+    "c6050": "d3d9439042",
+    "c6060": "8625d4fa2b",
+    "c6070": "c880d10143",
+    "c6072": "c880d10143",
+    "c6080": "c880d10143",
+    "c6081": "c880d10143",
+    "c6082": "c880d10143",
+    "c6090": "c880d10143",
+    "c6091": "c880d10143",
+    "c6100": "c880d10143",
+    "c6200": "aba5052255",
+    "c6201": "c880d10143",
+    "c6210": "ef6fa47dfd",
+    "c6220": "0a1a0c480f",
+    "c6231": "f847bca359",
+    "c6232": "f847bca359",
+    "c6233": "cc678c238d",
+    "c6240": "c880d10143",
+    "c6251": "04f4a0d814",
+    "c6260": "5c58475092",
+    "c6270": "b6e4dd63f3",
+    "c6290": "472b076cb7",
+    "c6291": "f847bca359",
+    "c6300": "c880d10143",
+    "c6310": "f6cb3b06fb",
+    "c6320": "30a374a15a",
+    "c7000": "8d23a04f8f",
+    "c7100": "271d55aee3",
+    "c7500": "720e26dedc",
+    "c7510": "b50b0e6670",
+    "c7511": "b50b0e6670",
+    "c7520": "a0c81d6450",
+    "c7521": "a0c81d6450",
+    "c7530": "d5a2eb60ac",
+    "c7540": "c880d10143",
+    "c7560": "7e687ef779",
+    "c7561": "7e687ef779",
+    "c7570": "c880d10143",
+    "c7580": "b3983f2d95",
+    "c7600": "a034950a3c",
+    "c7700": "301e9f1c61",
+    "c7710": "e1ac97f26a",
+    "c7711": "c880d10143",
+    "c7712": "c880d10143",
+    "c7800": "9c0abe90e3",
+    "c7810": "c880d10143",
+    "c7820": "7e687ef779",
+    "c7900": "4cfa339d12",
+    "c7910": "75e1ee5ef7",
+    "c7920": "cc51e9095c",
+    "c8000": "d4c7acc74c",
+    "c8100": "7a1858801a",
+    "c8101": "c880d10143",
+    "c8110": "bc851fb670",
+    "c8120": "c880d10143",
+    "c8130": "c880d10143",
+    "c8131": "c880d10143",
+    "c8132": "c880d10143",
+    "c8200": "aba5052255",
+    "c8300": "aba5052255",
+    "c8400": "aba5052255",
+    "c8500": "12db429d22",
+    "c8910": "c880d10143",
+    "c8911": "c880d10143",
+    "c9001": "c880d10143"
+  },
+  "template_to_members": {
+    "03d9b795d1": [
+      "c0000"
+    ],
+    "b5ef981d1d": [
+      "c0010"
+    ],
+    "3e8f92b06e": [
+      "c0100"
+    ],
+    "c880d10143": [
+      "c0110",
+      "c0120",
+      "c0130",
+      "c1000",
+      "c2041",
+      "c2050",
+      "c2060",
+      "c2131",
+      "c2150",
+      "c2160",
+      "c2170",
+      "c2270",
+      "c2271",
+      "c2272",
+      "c2273",
+      "c2274",
+      "c2275",
+      "c2276",
+      "c2277",
+      "c3171",
+      "c3320",
+      "c3330",
+      "c3610",
+      "c3620",
+      "c3630",
+      "c3666",
+      "c3730",
+      "c4040",
+      "c4080",
+      "c4090",
+      "c4140",
+      "c4170",
+      "c4171",
+      "c4190",
+      "c4191",
+      "c4192",
+      "c4220",
+      "c4230",
+      "c4250",
+      "c4440",
+      "c4441",
+      "c4442",
+      "c4470",
+      "c4480",
+      "c4481",
+      "c4482",
+      "c4483",
+      "c4640",
+      "c4690",
+      "c4711",
+      "c4751",
+      "c4950",
+      "c5050",
+      "c5110",
+      "c5120",
+      "c5180",
+      "c5181",
+      "c5193",
+      "c5251",
+      "c5330",
+      "c5340",
+      "c5350",
+      "c5380",
+      "c5381",
+      "c5401",
+      "c5430",
+      "c5460",
+      "c5470",
+      "c5471",
+      "c5472",
+      "c5480",
+      "c5490",
+      "c5500",
+      "c5560",
+      "c5590",
+      "c5591",
+      "c5620",
+      "c5640",
+      "c5641",
+      "c5680",
+      "c5760",
+      "c5761",
+      "c5910",
+      "c5960",
+      "c5970",
+      "c6000",
+      "c6001",
+      "c6040",
+      "c6070",
+      "c6072",
+      "c6080",
+      "c6081",
+      "c6082",
+      "c6090",
+      "c6091",
+      "c6100",
+      "c6201",
+      "c6240",
+      "c6300",
+      "c7540",
+      "c7570",
+      "c7711",
+      "c7712",
+      "c7810",
+      "c8101",
+      "c8120",
+      "c8130",
+      "c8131",
+      "c8132",
+      "c8910",
+      "c8911",
+      "c9001"
+    ],
+    "127dfb6c93": [
+      "c1260",
+      "c2140",
+      "c2190",
+      "c3370",
+      "c3371",
+      "c4570",
+      "c4770",
+      "c5090"
+    ],
+    "aba5052255": [
+      "c1310",
+      "c2240",
+      "c3110",
+      "c4503",
+      "c4540",
+      "c6200",
+      "c8200",
+      "c8300",
+      "c8400"
+    ],
+    "472b076cb7": [
+      "c2010",
+      "c2180",
+      "c3060",
+      "c3061",
+      "c3070",
+      "c3300",
+      "c3400",
+      "c3450",
+      "c3470",
+      "c3550",
+      "c3600",
+      "c3650",
+      "c3810",
+      "c3850",
+      "c3860",
+      "c3970",
+      "c4320",
+      "c4321",
+      "c4351",
+      "c4354",
+      "c4355",
+      "c4356",
+      "c4490",
+      "c4550",
+      "c4580",
+      "c5040",
+      "c5080",
+      "c5081",
+      "c5160",
+      "c5240",
+      "c5250",
+      "c5270",
+      "c5280",
+      "c5300",
+      "c5311",
+      "c5320",
+      "c5570",
+      "c5661",
+      "c5740",
+      "c5750",
+      "c5871",
+      "c5880",
+      "c5930",
+      "c5931",
+      "c6290"
+    ],
+    "a80d120694": [
+      "c2030"
+    ],
+    "f478bae457": [
+      "c2031"
+    ],
+    "c0dc2e2f17": [
+      "c2040"
+    ],
+    "f847bca359": [
+      "c2100",
+      "c2500",
+      "c3000",
+      "c3080",
+      "c3200",
+      "c3201",
+      "c3451",
+      "c3500",
+      "c3560",
+      "c3570",
+      "c3665",
+      "c3700",
+      "c3701",
+      "c3702",
+      "c3704",
+      "c4310",
+      "c4311",
+      "c4312",
+      "c4313",
+      "c4314",
+      "c4315",
+      "c4316",
+      "c4341",
+      "c4370",
+      "c4371",
+      "c4372",
+      "c4373",
+      "c4374",
+      "c4375",
+      "c4376",
+      "c4377",
+      "c4491",
+      "c4492",
+      "c5360",
+      "c5651",
+      "c5751",
+      "c5810",
+      "c5830",
+      "c6231",
+      "c6232",
+      "c6291"
+    ],
+    "527e2b3b5c": [
+      "c2110"
+    ],
+    "e0f0cbb30e": [
+      "c2120"
+    ],
+    "d3f4a8e443": [
+      "c2130",
+      "c5261"
+    ],
+    "5fd91da157": [
+      "c2200"
+    ],
+    "2452d53984": [
+      "c3010"
+    ],
+    "d3c054d549": [
+      "c3020"
+    ],
+    "fb276ea59c": [
+      "c3050"
+    ],
+    "b71ec383a8": [
+      "c3100",
+      "c3350",
+      "c3800",
+      "c3900",
+      "c3901",
+      "c4381",
+      "c4385",
+      "c4386"
+    ],
+    "8d23a04f8f": [
+      "c3150",
+      "c3360",
+      "c3361",
+      "c3910",
+      "c4820",
+      "c5980",
+      "c7000"
+    ],
+    "da75a78d30": [
+      "c3160"
+    ],
+    "ef6fa47dfd": [
+      "c3170",
+      "c3720",
+      "c4130",
+      "c4260",
+      "c5241",
+      "c5271",
+      "c5730",
+      "c5840",
+      "c6210"
+    ],
+    "0a1a0c480f": [
+      "c3180",
+      "c6220"
+    ],
+    "e873ab0650": [
+      "c3181"
+    ],
+    "2bc6671f1f": [
+      "c3210"
+    ],
+    "8ad5ed39b0": [
+      "c3250"
+    ],
+    "04f4a0d814": [
+      "c3251",
+      "c6251"
+    ],
+    "bbfec73af0": [
+      "c3252"
+    ],
+    "9c3890480e": [
+      "c3460",
+      "c5950"
+    ],
+    "2b84b987cb": [
+      "c3471",
+      "c5870"
+    ],
+    "73dfbebb2a": [
+      "c3510",
+      "c5600"
+    ],
+    "e54303cd75": [
+      "c3660"
+    ],
+    "cc1d0cc407": [
+      "c3661",
+      "c5511"
+    ],
+    "ff71889fc2": [
+      "c3662",
+      "c5512"
+    ],
+    "67c1941502": [
+      "c3664",
+      "c5513"
+    ],
+    "0e4b088870": [
+      "c3670"
+    ],
+    "cc678c238d": [
+      "c3703",
+      "c6233"
+    ],
+    "3e5920bf37": [
+      "c3710"
+    ],
+    "2bc118a8dc": [
+      "c3750"
+    ],
+    "fbef901205": [
+      "c3950"
+    ],
+    "743b0174ec": [
+      "c4000"
+    ],
+    "b6e4dd63f3": [
+      "c4020",
+      "c4021",
+      "c6270"
+    ],
+    "2e0c97b93e": [
+      "c4050"
+    ],
+    "02734e2141": [
+      "c4060"
+    ],
+    "ee56dbe078": [
+      "c4070",
+      "c5540"
+    ],
+    "e151b16ca6": [
+      "c4071",
+      "c5541"
+    ],
+    "07f06730ab": [
+      "c4100",
+      "c4110",
+      "c5700",
+      "c5710"
+    ],
+    "e73908020d": [
+      "c4101",
+      "c5701"
+    ],
+    "3b197500bc": [
+      "c4120",
+      "c5720"
+    ],
+    "5b9ba3e584": [
+      "c4150",
+      "c5990"
+    ],
+    "0208788a2b": [
+      "c4160",
+      "c4161",
+      "c4164",
+      "c4166",
+      "c4167",
+      "c5520",
+      "c5521",
+      "c5522",
+      "c5523",
+      "c5524",
+      "c5525",
+      "c5526"
+    ],
+    "c1ef0a8525": [
+      "c4162",
+      "c4163"
+    ],
+    "01b2a0a836": [
+      "c4165",
+      "c5527"
+    ],
+    "0f5c496ed1": [
+      "c4180"
+    ],
+    "9c389887d0": [
+      "c4181"
+    ],
+    "637fdbcec7": [
+      "c4200",
+      "c5530"
+    ],
+    "f134fb03ee": [
+      "c4201"
+    ],
+    "6598e94efd": [
+      "c4210"
+    ],
+    "27dffb5d2a": [
+      "c4240",
+      "c4241",
+      "c5550",
+      "c5551"
+    ],
+    "587fa9f966": [
+      "c4270"
+    ],
+    "0bd6ab3f88": [
+      "c4280"
+    ],
+    "01505485cd": [
+      "c4281"
+    ],
+    "37a314c721": [
+      "c4290"
+    ],
+    "30a374a15a": [
+      "c4300",
+      "c6320"
+    ],
+    "4cfa339d12": [
+      "c4340",
+      "c7900"
+    ],
+    "0fb16cc66a": [
+      "c4350",
+      "c4352",
+      "c4353",
+      "c5312"
+    ],
+    "dc9baa752b": [
+      "c4360"
+    ],
+    "d87d519d5e": [
+      "c4361"
+    ],
+    "b7316003d9": [
+      "c4362",
+      "c4363",
+      "c4364",
+      "c4365",
+      "c5890"
+    ],
+    "64b0262a6f": [
+      "c4380"
+    ],
+    "dddff5f491": [
+      "c4382"
+    ],
+    "b5193fe7ca": [
+      "c4383"
+    ],
+    "3c692ddde1": [
+      "c4384"
+    ],
+    "e9319ce403": [
+      "c4420",
+      "c5630"
+    ],
+    "eaa2df4324": [
+      "c4430",
+      "c5940"
+    ],
+    "0e365b635f": [
+      "c4450"
+    ],
+    "42a3fad098": [
+      "c4460"
+    ],
+    "ac30abb03e": [
+      "c4500",
+      "c5580"
+    ],
+    "d095dbf35c": [
+      "c4501"
+    ],
+    "7da7c7f50e": [
+      "c4502"
+    ],
+    "0396fdeb0e": [
+      "c4504"
+    ],
+    "34b5d4cd90": [
+      "c4505"
+    ],
+    "9a9fb2902a": [
+      "c4510",
+      "c4511",
+      "c5370"
+    ],
+    "c42211b2f0": [
+      "c4520"
+    ],
+    "a5c2582bf6": [
+      "c4560",
+      "c4561"
+    ],
+    "c3f84b0475": [
+      "c4600",
+      "c5390"
+    ],
+    "3afddc5178": [
+      "c4601",
+      "c4602",
+      "c5391"
+    ],
+    "b76a295e80": [
+      "c4603"
+    ],
+    "763464bf21": [
+      "c4604"
+    ],
+    "c1e448fd83": [
+      "c4620"
+    ],
+    "fa7999d8e9": [
+      "c4630",
+      "c5780"
+    ],
+    "c5b89d465d": [
+      "c4650"
+    ],
+    "8580403044": [
+      "c4660",
+      "c5790"
+    ],
+    "e6b8f5ca74": [
+      "c4670"
+    ],
+    "f6cb3b06fb": [
+      "c4680",
+      "c6310"
+    ],
+    "5e60f04f23": [
+      "c4710"
+    ],
+    "655683f061": [
+      "c4720"
+    ],
+    "c50aa293fe": [
+      "c4721"
+    ],
+    "1b3bb7ca6d": [
+      "c4730"
+    ],
+    "928f877d4d": [
+      "c4750"
+    ],
+    "663e578c4c": [
+      "c4760"
+    ],
+    "a1417a6f96": [
+      "c4800"
+    ],
+    "cc910d90c1": [
+      "c4810",
+      "c4811"
+    ],
+    "e46aa1c5b9": [
+      "c4900",
+      "c4901"
+    ],
+    "ce856f8304": [
+      "c4910",
+      "c5920"
+    ],
+    "c2f6587767": [
+      "c4911"
+    ],
+    "68723c7fc8": [
+      "c4960"
+    ],
+    "a6d07a94c0": [
+      "c4961"
+    ],
+    "5c58475092": [
+      "c4980",
+      "c6260"
+    ],
+    "81e30ac83f": [
+      "c5000"
+    ],
+    "a5f6158352": [
+      "c5010",
+      "c5011"
+    ],
+    "e8fb3b8836": [
+      "c5020"
+    ],
+    "aa309e719e": [
+      "c5030"
+    ],
+    "4c82da7630": [
+      "c5051"
+    ],
+    "e3a9a224d7": [
+      "c5060",
+      "c5061"
+    ],
+    "73ff564e36": [
+      "c5070"
+    ],
+    "7166912234": [
+      "c5130"
+    ],
+    "ef9bda93c4": [
+      "c5140"
+    ],
+    "6f6997693c": [
+      "c5141"
+    ],
+    "129bf580dc": [
+      "c5170"
+    ],
+    "19b840262a": [
+      "c5190",
+      "c5192"
+    ],
+    "e72950d022": [
+      "c5194"
+    ],
+    "addb3fcde5": [
+      "c5200"
+    ],
+    "6faa918819": [
+      "c5210"
+    ],
+    "ee861c603e": [
+      "c5220"
+    ],
+    "e0822ded34": [
+      "c5230"
+    ],
+    "ba7d0cbe90": [
+      "c5260"
+    ],
+    "b5de07668b": [
+      "c5410",
+      "c6010"
+    ],
+    "a93b0f4f38": [
+      "c5421",
+      "c6031"
+    ],
+    "d3d9439042": [
+      "c5440",
+      "c6050"
+    ],
+    "6c0a5d34b1": [
+      "c5450"
+    ],
+    "bc851fb670": [
+      "c5690",
+      "c8110"
+    ],
+    "47644a1a29": [
+      "c5800"
+    ],
+    "d42b5bbdb6": [
+      "c5820"
+    ],
+    "3d453c4fe8": [
+      "c5850"
+    ],
+    "19d5b89901": [
+      "c5860"
+    ],
+    "9791228366": [
+      "c5872"
+    ],
+    "cb36dbb62e": [
+      "c5900"
+    ],
+    "8625d4fa2b": [
+      "c6060"
+    ],
+    "271d55aee3": [
+      "c7100"
+    ],
+    "720e26dedc": [
+      "c7500"
+    ],
+    "b50b0e6670": [
+      "c7510",
+      "c7511"
+    ],
+    "a0c81d6450": [
+      "c7520",
+      "c7521"
+    ],
+    "d5a2eb60ac": [
+      "c7530"
+    ],
+    "7e687ef779": [
+      "c7560",
+      "c7561",
+      "c7820"
+    ],
+    "b3983f2d95": [
+      "c7580"
+    ],
+    "a034950a3c": [
+      "c7600"
+    ],
+    "301e9f1c61": [
+      "c7700"
+    ],
+    "e1ac97f26a": [
+      "c7710"
+    ],
+    "9c0abe90e3": [
+      "c7800"
+    ],
+    "75e1ee5ef7": [
+      "c7910"
+    ],
+    "cc51e9095c": [
+      "c7920"
+    ],
+    "d4c7acc74c": [
+      "c8000"
+    ],
+    "7a1858801a": [
+      "c8100"
+    ],
+    "12db429d22": [
+      "c8500"
+    ]
+  }
+}

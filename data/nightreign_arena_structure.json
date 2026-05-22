@@ -1,0 +1,179 @@
+{
+  "_doc": "Nightreign arena structure: full mapping of Nightlords, expeditions, Night Boss arenas, and per-expedition NB1/NB2 pool selection.",
+  "_version": "v0.24.74",
+  "_provenance": "Cross-reference of (a) prior session enumeration of 22 NB arena MSBs from MSB inspection, (b) Sean Martin's PC Gamer per-expedition NB1/NB2 table dated 2025-05-29, (c) EMEVD survey of the v0.24.74 patched bundle.",
+
+  "_terminology": {
+    "_disclaimer": "Nightreign uses 'Night Boss' and 'Nightlord' to mean two very different things that sound almost identical. This trips up everyone, including Claude. Keep them straight:",
+    "Nightlord": "The Day-3 final boss. 8 total. FIXED per expedition — pick the Tricephalos expedition, you fight Gladius. Each Nightlord has a dedicated arena map (not in m48/m49 range — separate prefix not yet surveyed). C-prefixes: c4900 (Caligo), c7500 (Gladius/Tricephalos), c7510/c7511 (Adel), c7520 (Gnoster), c7540 (Maris), c7560/c7561/c7570 (Libra), c7580 (Heolstor), c7600 (Fulghor).",
+    "Night Boss": "The Day-1 or Day-2 encounter. 22 dedicated arena MSBs across m47/m48/m49. POOL-SELECTED per expedition — different runs of the same Nightlord can give different Night 1 / Night 2 fights. Some Dark Souls bosses (Dancer, Nameless King, Smelter Demon, Gaping Dragon, Duke's Dear Freja, Centipede Demon) are script-spawned overlays onto these same 22 arenas, not dedicated MSBs.",
+    "Expedition": "A full run. Player picks the expedition (= which Nightlord) at the Roundtable. The expedition name and the Nightlord name often differ (e.g. Tricephalos = expedition, Gladius = Nightlord c-prefix c7500). This is also confusing.",
+    "Everdark Sovereign": "Harder version of a Nightlord, unlocked after beating the base version. Same arena, upgraded movesets, +Phase 3."
+  },
+
+  "nightlords": {
+    "tricephalos":         { "expedition": "Tricephalos",         "nightlord_name": "Gladius, Beast of Night",          "c_prefix": "c7500", "weakness": "Holy",     "difficulty": "Easy/Medium" },
+    "gaping_jaw":          { "expedition": "Gaping Jaw",          "nightlord_name": "Adel, Baron of Night",             "c_prefix": "c7510", "weakness": "Poison",   "difficulty": "Easy/Medium" },
+    "sentient_pest":       { "expedition": "Sentient Pest",       "nightlord_name": "Gnoster, Wisdom of Night",         "c_prefix": "c7520", "weakness": "Fire",     "difficulty": "Easy" },
+    "augur":               { "expedition": "Augur",               "nightlord_name": "Maris, Fathom of Night",           "c_prefix": "c7540", "weakness": "Lightning","difficulty": "Easy" },
+    "equilibrious_beast":  { "expedition": "Equilibrious Beast",  "nightlord_name": "Libra, Creature of Night",         "c_prefix": "c7560", "weakness": "Madness",  "difficulty": "Medium/Hard" },
+    "darkdrift_knight":    { "expedition": "Darkdrift Knight",    "nightlord_name": "Fulghor, Champion of Nightglow",   "c_prefix": "c7600", "weakness": "Lightning","difficulty": "Hard" },
+    "fissure_in_the_fog":  { "expedition": "Fissure in the Fog",  "nightlord_name": "Caligo, Miasma of Night",          "c_prefix": "c4900", "weakness": "Fire",     "difficulty": "Medium" },
+    "night_aspect":        { "expedition": "Night Aspect",        "nightlord_name": "Heolstor the Nightlord",           "c_prefix": "c7580", "weakness": "Holy",     "difficulty": "Hard" }
+  },
+
+  "night_boss_arenas": {
+    "_doc": "All 22 dedicated Night Boss arena MSBs. NR's expedition scheduler picks one for Night 1 and one for Night 2 per run from each expedition's pool.",
+
+    "m47_70_00_00": { "entity_id": "47700800", "c_prefix": "c4950",        "boss": "Tibia Mariner",                            "tier": "solo" },
+    "m48_40_00_00": { "entity_id": "48400800", "c_prefix": "c2130",        "boss": "Morgott (Fell Omen)",                      "tier": "solo" },
+    "m48_50_00_00": { "entity_id": "48500800", "c_prefix": "c3250",        "boss": "Draconic Tree Sentinel + 2 Royal Cavalryman", "tier": "boss_plus_grunts" },
+    "m48_60_00_00": { "entity_id": "48600800", "c_prefix": "c3251",        "boss": "Tree Sentinel + 2 Royal Cavalryman",       "tier": "boss_plus_grunts" },
+    "m48_70_00_00": { "entity_id": "48700800", "c_prefix": "c3560",        "boss": "Godskin Apostle (Duo)",                    "tier": "duo" },
+    "m48_80_00_00": { "entity_id": "48800800", "c_prefix": "c3570+c3560",  "boss": "Godskin Noble + Godskin Apostle (Duo)",    "tier": "duo" },
+    "m48_90_00_00": { "entity_id": "48900800", "c_prefix": "c4580",        "boss": "Large Wormface",                           "tier": "solo" },
+    "m49_10_00_00": { "entity_id": "49100800", "c_prefix": "c4750",        "boss": "Grafted Monarch",                          "tier": "solo" },
+    "m49_17_00_00": { "entity_id": "49170800", "c_prefix": "c4770",        "boss": "Valiant Gargoyle",                         "tier": "solo" },
+    "m49_18_00_00": { "entity_id": "49180800", "c_prefix": "c4911",        "boss": "Great Wyrm Theodorix (Magma Wyrm)",        "tier": "solo" },
+    "m49_19_00_00": { "entity_id": "49190800", "c_prefix": "c4510",        "boss": "Ancient Dragon",                           "tier": "solo" },
+    "m49_20_00_00": { "entity_id": "49200800", "c_prefix": "c4680",        "boss": "Full Grown Fallingstar Beast",             "tier": "solo" },
+    "m49_21_00_00": { "entity_id": "49210800", "c_prefix": "c4980",        "boss": "Death Rite Bird",                          "tier": "solo" },
+    "m49_23_00_00": { "entity_id": "49230800", "c_prefix": "c4650",        "boss": "Dragonkin Soldier",                        "tier": "solo" },
+    "m49_24_00_00": { "entity_id": "49240800", "c_prefix": "c3100",        "boss": "Bell Bearing Hunter",                      "tier": "solo" },
+    "m49_25_00_00": { "entity_id": "49250800", "c_prefix": "c2500+c5011",  "boss": "Crucible Knight + Golden Hippopotamus",    "tier": "duo" },
+    "m49_26_00_00": { "entity_id": "49260800", "c_prefix": "c3050",        "boss": "Outland Commander (Lightning/Frostbite)",  "tier": "solo" },
+    "m49_27_00_00": { "entity_id": "49270800", "c_prefix": "c3050",        "boss": "Battlefield Commander (Scarlet Rot)",      "tier": "solo" },
+    "m49_28_00_00": { "entity_id": "49280800", "c_prefix": "c3150+c3160",  "boss": "Night's Cavalry (Glaive + Flail, mounted)","tier": "duo_mounted" },
+    "m49_29_00_00": { "entity_id": "49290800", "c_prefix": "c4130+c5810",  "boss": "Demi-Human Queen + Demi-Human Swordmaster","tier": "duo" },
+    "m49_30_00_00": { "entity_id": "49300800", "c_prefix": "c4021",        "boss": "Royal Revenant",                           "tier": "solo" },
+    "m49_90_00_00": { "entity_id": "49900800", "c_prefix": "c4640",        "boss": "Ulcerated Tree Spirit",                    "tier": "solo" }
+  },
+
+  "_dark_souls_overlays": {
+    "_doc": "Per PC Gamer's table, the following Dark Souls bosses appear at NB slots but are NOT mapped to dedicated MSB arenas — they're EMEVD-script-spawned overlays onto the 22 arena MSBs above. The rando doesn't see them as MSB Parts so they're outside the swap pool.",
+    "DS1": ["Gaping Dragon", "Centipede Demon"],
+    "DS2": ["Duke's Dear Freja", "Smelter Demon"],
+    "DS3": ["Dancer of the Boreal Valley", "Nameless King"],
+    "_note": "Nox Dragonkin Soldier is a variant of the existing Dragonkin Soldier (c4650), not a separate chr."
+  },
+
+  "expedition_to_night_boss_pool": {
+    "_doc": "Per-Nightlord NB1/NB2 pool selection. SOURCE: PC Gamer, Sean Martin, 2025-05-29 — observational ('here's every night one and night two we've fought so far'), so lists may be incomplete. Article PRE-DATES the Forsaken Hollows DLC (which may have expanded pools). c-prefix annotations added by cross-referencing the 22-arena table.",
+    "_source_url": "https://www.pcgamer.com/games/rpg/elden-ring-nightreign-bosses-nightlords-list/",
+
+    "tricephalos": {
+      "nb1_pool": [
+        { "boss": "Demi-Human Queen + Demi-Human Swordmaster", "arena": "m49_29", "c_prefix": "c4130+c5810" },
+        { "boss": "Bell Bearing Hunter",                       "arena": "m49_24", "c_prefix": "c3100" }
+      ],
+      "nb2_pool": [
+        { "boss": "Fell Omen (Morgott)",                       "arena": "m48_40", "c_prefix": "c2130", "_note": "can invade in other expeditions" },
+        { "boss": "Tree Sentinel + 2 Royal Cavalryman",        "arena": "m48_60", "c_prefix": "c3251" }
+      ],
+      "_alaric_observation": "1 in 2 to get Demi-Human Queen at NB1 in Tricephalos run — matches the 2-element NB1 pool."
+    },
+
+    "gaping_jaw": {
+      "nb1_pool": [
+        { "boss": "Wormface",          "arena": "m48_90?",  "c_prefix": "c4580",         "_note": "PC Gamer says 'Wormface' which may be Large Wormface at m48_90" },
+        { "boss": "Duke's Dear Freja", "arena": "OVERLAY",  "c_prefix": "(DS2 script-spawn, no MSB)" },
+        { "boss": "Gaping Dragon",     "arena": "OVERLAY",  "c_prefix": "(DS1 script-spawn, no MSB)" },
+        { "boss": "Valiant Gargoyle",  "arena": "m49_17",   "c_prefix": "c4770" }
+      ],
+      "nb2_pool": [
+        { "boss": "Ancient Dragon",                          "arena": "m49_19", "c_prefix": "c4510" },
+        { "boss": "Crucible Knight + Golden Hippopotamus",   "arena": "m49_25", "c_prefix": "c2500+c5011" },
+        { "boss": "Outland Commander (Lightning/Frostbite)", "arena": "m49_26", "c_prefix": "c3050" }
+      ]
+    },
+
+    "sentient_pest": {
+      "nb1_pool": [
+        { "boss": "Battlefield Commander (Scarlet Rot)", "arena": "m49_27",  "c_prefix": "c3050" },
+        { "boss": "Centipede Demon",                     "arena": "OVERLAY", "c_prefix": "(DS1 script-spawn, no MSB)" }
+      ],
+      "nb2_pool": [
+        { "boss": "Draconic Tree Sentinel + 2 Royal Cavalryman", "arena": "m48_50", "c_prefix": "c3250" },
+        { "boss": "Dragonkin Soldier",                           "arena": "m49_23", "c_prefix": "c4650" }
+      ]
+    },
+
+    "augur": {
+      "nb1_pool": [
+        { "boss": "Wormface",        "arena": "m48_90?", "c_prefix": "c4580" },
+        { "boss": "Grafted Monarch", "arena": "m49_10",  "c_prefix": "c4750" },
+        { "boss": "Gaping Dragon",   "arena": "OVERLAY", "c_prefix": "(DS1 script-spawn, no MSB)" }
+      ],
+      "nb2_pool": [
+        { "boss": "Godskin Noble + Godskin Apostle", "arena": "m48_80", "c_prefix": "c3570+c3560" },
+        { "boss": "Full Grown Fallingstar Beast",    "arena": "m49_20", "c_prefix": "c4680" }
+      ]
+    },
+
+    "equilibrious_beast": {
+      "nb1_pool": [
+        { "boss": "Battlefield Commander (Scarlet Rot)",         "arena": "m49_27",  "c_prefix": "c3050" },
+        { "boss": "Tibia Mariner (Those Who Live in Death)",     "arena": "m47_70",  "c_prefix": "c4950" },
+        { "boss": "Centipede Demon",                              "arena": "OVERLAY", "c_prefix": "(DS1 script-spawn, no MSB)" }
+      ],
+      "nb2_pool": [
+        { "boss": "Crucible Knight + Golden Hippopotamus", "arena": "m49_25", "c_prefix": "c2500+c5011" },
+        { "boss": "Death Rite Bird",                       "arena": "m49_21", "c_prefix": "c4980" },
+        { "boss": "Godskin Noble + Godskin Apostle",       "arena": "m48_80", "c_prefix": "c3570+c3560" }
+      ]
+    },
+
+    "darkdrift_knight": {
+      "nb1_pool": [
+        { "boss": "Wormface",      "arena": "m48_90?", "c_prefix": "c4580" },
+        { "boss": "Gaping Dragon", "arena": "OVERLAY", "c_prefix": "(DS1 script-spawn, no MSB)" }
+      ],
+      "nb2_pool": [
+        { "boss": "Outland Commander (Lightning/Frostbite)", "arena": "m49_26", "c_prefix": "c3050" },
+        { "boss": "Nameless King",                            "arena": "OVERLAY", "c_prefix": "(DS3 script-spawn, no MSB)" }
+      ]
+    },
+
+    "fissure_in_the_fog": {
+      "nb1_pool": [
+        { "boss": "Duke's Dear Freja", "arena": "OVERLAY", "c_prefix": "(DS2 script-spawn, no MSB)" },
+        { "boss": "Smelter Demon",     "arena": "OVERLAY", "c_prefix": "(DS2 script-spawn, no MSB)" }
+      ],
+      "nb2_pool": [
+        { "boss": "Draconic Tree Sentinel + 2 Royal Cavalryman", "arena": "m48_50", "c_prefix": "c3250" },
+        { "boss": "Godskin Noble + Godskin Apostle",             "arena": "m48_80", "c_prefix": "c3570+c3560" }
+      ]
+    },
+
+    "night_aspect": {
+      "_note": "Final expedition, unlocked after 4 prior clears. Has the largest pool — pulls from many other expeditions' rosters.",
+      "nb1_pool": [
+        { "boss": "Night's Cavalry (Glaive + Flail, mounted)",      "arena": "m49_28", "c_prefix": "c3150+c3160" },
+        { "boss": "Smelter Demon",                                   "arena": "OVERLAY", "c_prefix": "(DS2 script-spawn, no MSB)" },
+        { "boss": "Centipede Demon",                                 "arena": "OVERLAY", "c_prefix": "(DS1 script-spawn, no MSB)" },
+        { "boss": "Valiant Gargoyle",                                "arena": "m49_17", "c_prefix": "c4770" },
+        { "boss": "Demi-Human Queen + Demi-Human Swordmaster",       "arena": "m49_29", "c_prefix": "c4130+c5810" }
+      ],
+      "nb2_pool": [
+        { "boss": "Great Wyrm (Magma Wyrm)",   "arena": "m49_18",  "c_prefix": "c4911" },
+        { "boss": "Fell Omen (Morgott)",       "arena": "m48_40",  "c_prefix": "c2130" },
+        { "boss": "Dancer of the Boreal Valley","arena": "OVERLAY","c_prefix": "(DS3 script-spawn, no MSB)" },
+        { "boss": "Nox Dragonkin Soldier",     "arena": "m49_23?", "c_prefix": "c4650 variant" },
+        { "boss": "Ancient Dragon",            "arena": "m49_19",  "c_prefix": "c4510" }
+      ]
+    }
+  },
+
+  "_unmapped_arenas": {
+    "_doc": "These two arenas are in our 22-arena list but NOT in PC Gamer's per-expedition table. Either dropped from the rotation, observation-missed by the article, or used by post-DLC content not covered in May 2025 article.",
+    "m49_30_Royal_Revenant": { "c_prefix": "c4021", "_status": "Not assigned to any expedition in PC Gamer table" },
+    "m49_90_Ulcerated_Tree_Spirit": { "c_prefix": "c4640", "_status": "Not assigned to any expedition in PC Gamer table" }
+  },
+
+  "_open_questions": [
+    "Q: Where do the actual Nightlord (Day 3 final boss) arenas live? Not in m47/m48/m49 (those are Night Boss arenas). Probably a different prefix not yet surveyed.",
+    "Q: Forsaken Hollows DLC expanded the NB pools? Per Fextralife, post-DLC Bell Bearing Hunter is listed as 'Night Boss for Tricephalos AND Night Aspect' — so BBH was added to Night Aspect's pool post-DLC. Other DLC-era additions not captured by the May 2025 PC Gamer article.",
+    "Q: Is m49_30 (Royal Revenant) used in any expedition? Same question for m49_90 (Ulcerated Tree Spirit).",
+    "Q: For Dark Souls overlay bosses (Dancer, Nameless King, Smelter, Freja, Gaping Dragon, Centipede Demon) — which of the 22 MSB arenas hosts each as its script-overlay? This affects rando placement at those MSBs since the script-spawned boss appears 'on top of' MSB placeholder entities."
+  ]
+}

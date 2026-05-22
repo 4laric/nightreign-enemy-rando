@@ -1,0 +1,238 @@
+{
+  "m15_00_00_00.msb": [
+    {
+      "pos": [
+        35.0,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 10 slots on placeholder line (y=0.0, z=1.0; x-span 70u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    }
+  ],
+  "m45_52_00_00.msb": [
+    {
+      "pos": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 10 slots on placeholder line (y=0.0, z=1.0; x-span 0u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    }
+  ],
+  "m46_50_00_00.msb": [
+    {
+      "pos": [
+        97.6,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 11 slots on placeholder line (y=0.0, z=1.0; x-span 15u, 12 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    }
+  ],
+  "m60_43_36_50.msb": [
+    {
+      "pos": [
+        -74.8,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 9 slots on placeholder line (y=0.0, z=1.0; x-span 121u, 14 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    },
+    {
+      "pos": [
+        157.6,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 3 slots on placeholder line (y=0.0, z=1.0; x-span 26u, 14 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    }
+  ],
+  "m60_43_37_00.msb": [
+    {
+      "pos": [
+        -100.7,
+        0.0,
+        1.0
+      ],
+      "quals": [
+        "Castle"
+      ],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+    },
+    {
+      "pos": [
+        56.7,
+        0.0,
+        1.0
+      ],
+      "quals": [
+        "Castle"
+      ],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 2/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+    }
+  ],
+  "m60_43_37_10.msb": [
+    {
+      "pos": [
+        -100.7,
+        0.0,
+        1.0
+      ],
+      "quals": [
+        "Castle"
+      ],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+    },
+    {
+      "pos": [
+        56.7,
+        0.0,
+        1.0
+      ],
+      "quals": [
+        "Castle"
+      ],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 2/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+    }
+  ],
+  "m60_43_37_20.msb": [
+    {
+      "pos": [
+        -100.7,
+        0.0,
+        1.0
+      ],
+      "quals": [
+        "Castle"
+      ],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+    },
+    {
+      "pos": [
+        56.7,
+        0.0,
+        1.0
+      ],
+      "quals": [
+        "Castle"
+      ],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 2/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+    }
+  ],
+  "m60_43_37_50.msb": [
+    {
+      "pos": [
+        -63.3,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 5 slots on placeholder line (y=0.0, z=1.0; x-span 32u, 14 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    }
+  ],
+  "m60_44_36_00.msb": [
+    {
+      "pos": [
+        95.4,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 4 slots on placeholder line (y=0.0, z=1.0; x-span 30u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    },
+    {
+      "pos": [
+        -133.2,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 3 slots on placeholder line (y=0.0, z=1.0; x-span 14u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    }
+  ],
+  "m60_44_36_20.msb": [
+    {
+      "pos": [
+        95.4,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 4 slots on placeholder line (y=0.0, z=1.0; x-span 30u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    },
+    {
+      "pos": [
+        -133.2,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 3 slots on placeholder line (y=0.0, z=1.0; x-span 14u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    }
+  ],
+  "m60_44_36_50.msb": [
+    {
+      "pos": [
+        95.4,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 4 slots on placeholder line (y=0.0, z=1.0; x-span 30u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    },
+    {
+      "pos": [
+        -133.2,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 3 slots on placeholder line (y=0.0, z=1.0; x-span 14u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    }
+  ],
+  "m60_44_37_30.msb": [
+    {
+      "pos": [
+        63.9,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 3 slots on placeholder line (y=0.0, z=1.0; x-span 8u, 11 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    },
+    {
+      "pos": [
+        -44.5,
+        0.0,
+        1.0
+      ],
+      "quals": [],
+      "_synthetic": true,
+      "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 5 slots on placeholder line (y=0.0, z=1.0; x-span 89u, 11 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "_meta": {
+    "format_version": 1,
+    "description": "Starting encampment templates \u2014 asset MSBs instantiated near the player wagon at the start of a Limveld Expedition. Used to (a) annotate spoiler entries with `in_starting_encampment: true` so CTD investigation can correlate crashes to spawn-adjacent slots, and (b) provide a `'starting_encampment'` scope value for `oops_all_nb_marker_scope` so `oops_all_nb_target_cp` can pin into starting-encampment slots specifically.",
+    "tagging_unit": "MSB-level \u2014 every Part in a listed MSB is considered part of a starting encampment. This works because asset MSBs in NR have a single instantiation point per Expedition. If a future data point shows the same MSB being used both as a starting encampment AND somewhere else, we'll need to refine to (msb, pi-range) tagging.",
+    "added_in": "v0.24.28",
+    "maintained_by": "manual \u2014 entries added as Alaric identifies them in playtests"
+  },
+  "encampments": {
+    "m43_01_00_00.msb": {
+      "label": "wandering_noble_camp",
+      "size": "small",
+      "n_parts": 12,
+      "first_observed_seed": 612394,
+      "first_observed_at": "2026-05-14",
+      "notes": "Thieves-camp-style encampment. Vanilla composition: 6 Wandering Nobles (c4300, pi=0-4 and pi=6; pi=0 variant is Sorcerer) + 4 Godrick Foot Soldiers (c4371, pi=8-11). 10 grunt slots total. All at y\u22482.0-2.2. First confirmed via seed 612394 playtest (spoiler 1778764585057). In that run the encampment was randomized to Man-Bat + Troll Knight + Skeleton at pi=8/9/11."
+    },
+    "m43_02_00_00.msb": {
+      "label": "wandering_demi_human_camp",
+      "size": "small",
+      "n_parts": 5,
+      "first_observed_seed": 544094,
+      "first_observed_at": "2026-05-14",
+      "notes": "Small encampment matching the 'walking route demi-humans' vanilla pattern Alaric identified. Vanilla composition: 5 Godrick Foot Soldier (c4371) placements \u2014 pi=1 (0.49, 2.23, -2.94), pi=2 (-0.35, 2.22, -6.17), pi=4 (0.99, 1.76, 13.19) ground-level, plus pi=3 and pi=5 at y=-37.77 origin-sentinel (likely EMEVD-triggered spawns rather than static placements). Main cluster is pi=1 + pi=2 ~3m apart; pi=4 is an outlier ~17m north along the route. First confirmed via seed 544094 playtest (spoiler 1778770654369), where the randomized output included a Bloodfiend + Rat. Despite vanilla cp being c4371 Godrick Foot Soldier, the in-game vanilla appearance is wandering Demi-Humans (NPC param override) \u2014 hence the label."
+    },
+    "m43_41_00_00.msb": {
+      "label": "ratking_nest",
+      "size": "small",
+      "n_parts": 12,
+      "first_observed_seed": 469032,
+      "first_observed_at": "2026-05-14",
+      "notes": "Three-tier creature-nest encampment. Vanilla composition: 4 Rats (c4080, pi=0-3) + 4 Demi-Humans (c4100, pi=4-7) + 4 Demi-Human Shamans (c4110, pi=8-11). 12 grunt slots total, all at y\u22482.0-2.5. First confirmed via seed 469032 playtest (spoiler 1778765460455). In that run the encampment was randomized to a mixed menagerie: Demi-Human Chief + Demi-Human + Imp + Operatic Bat + Basilisk + Man-Bat + Stonedigger + Basilisk + Sanguine Noble + Mad Pumpkin Head + 2\u00d7 Slug."
+    },
+    "m44_01_00_00.msb": {
+      "label": "commoner_settlement",
+      "size": "small",
+      "n_parts": 8,
+      "first_observed_seed": 426415,
+      "first_observed_at": "2026-05-14",
+      "notes": "Civilian-settlement-style encampment. Vanilla composition: 8 Commoners (c3660, pi=0-7). 8 grunt slots total, footprint 17.4m \u00d7 27.7m (more spread out than the m43 templates), y range 0.9-4.2m. First identified via heuristic scan of seed 426415 (spoiler 1778766766572) and confirmed by Alaric as a starting encampment."
+    },
+    "m45_01_00_00.msb": {
+      "label": "roadside_thieves_camp",
+      "size": "small",
+      "n_parts": 6,
+      "first_observed_seed": 426415,
+      "first_observed_at": "2026-05-14",
+      "additional_observations": [
+        {
+          "seed": 924056,
+          "spoiler_id": "1778767191177",
+          "engine_fingerprint": "v0.24.28",
+          "note": "In-game observation. Encampment encountered near spawn; saw Man-Bat (pi=2), Rat (pi=3), Stray (pi=1), Basilisk (pi=5). Confirms heuristic identification from seed 426415."
+        }
+      ],
+      "notes": "Classic small thieves-camp layout. Vanilla composition: 4 Wandering Nobles (c4300, pi=0-3) + 2 Godrick Foot Soldiers (c4371, pi=4-5). 6 grunt slots total, footprint 8.6m \u00d7 21.4m (very compact), all at y=2.0. Similar vanilla pattern to m43_01 but smaller. First identified via heuristic scan of seed 426415 (spoiler 1778766766572); confirmed in-game via seed 924056 playtest."
+    }
+  }
+}

@@ -1,0 +1,299 @@
+{
+  "_meta": {
+    "description": "Manual tag promotion for scripted-spawn boss-tier c-prefixes that have no MSB placements but exist in NR regulation. These become target-only swap candidates \u2014 never used as source slots.",
+    "version": 1
+  },
+  "tags": {
+    "c4670": {
+      "name": "Ancestor Spirit",
+      "variants": 10,
+      "size_class": "XL",
+      "hit_height_median": 8.0,
+      "hit_radius_median": 4.0,
+      "weight_median": 300.0,
+      "anim_bank": 46700,
+      "anim_bank_count": 1,
+      "locomotion": 3,
+      "team": 6,
+      "hp_max": 1882,
+      "hp_median": 1786,
+      "has_boss_reward": false,
+      "anim_class": "quadruped_large",
+      "expects_boss_arena": false,
+      "move_type": 3,
+      "_source": "script_spawn",
+      "has_drops": true,
+      "has_reward": false,
+      "n_reward_variants": 0,
+      "n_noreward_variants": 10
+    },
+    "c4690": {
+      "name": "Grafted Scion",
+      "variants": 3,
+      "size_class": "L",
+      "hit_height_median": 3.5,
+      "hit_radius_median": 2.0,
+      "weight_median": 300.0,
+      "anim_bank": 46900,
+      "anim_bank_count": 1,
+      "locomotion": 0,
+      "team": 6,
+      "hp_max": 1811,
+      "hp_median": 1651,
+      "has_boss_reward": false,
+      "anim_class": "humanoid",
+      "expects_boss_arena": false,
+      "move_type": 3,
+      "_source": "script_spawn",
+      "has_drops": true,
+      "has_reward": false,
+      "n_reward_variants": 0,
+      "n_noreward_variants": 3
+    },
+    "c7900": {
+      "name": "Nameless King",
+      "variants": 4,
+      "size_class": "M",
+      "hit_height_median": 3.2,
+      "hit_radius_median": 0.8,
+      "weight_median": 100.0,
+      "anim_bank": 79000,
+      "anim_bank_count": 1,
+      "locomotion": 0,
+      "team": 7,
+      "hp_max": 1770,
+      "hp_median": 1719,
+      "has_boss_reward": false,
+      "anim_class": "humanoid",
+      "expects_boss_arena": false,
+      "move_type": 3,
+      "_source": "script_spawn",
+      "has_drops": true,
+      "has_reward": false,
+      "n_reward_variants": 0,
+      "n_noreward_variants": 4
+    },
+    "c7910": {
+      "name": "Storm King (Nameless King Mount)",
+      "variants": 4,
+      "size_class": "GIGA",
+      "hit_height_median": 10.1,
+      "hit_radius_median": 5.0,
+      "weight_median": 300.0,
+      "anim_bank": 79100,
+      "anim_bank_count": 1,
+      "locomotion": 5,
+      "team": 7,
+      "hp_max": 819,
+      "hp_median": 819,
+      "has_boss_reward": false,
+      "anim_class": "flying_dragon",
+      "expects_boss_arena": false,
+      "move_type": 13,
+      "_source": "script_spawn",
+      "has_drops": true,
+      "has_reward": false,
+      "n_reward_variants": 0,
+      "n_noreward_variants": 4
+    }
+  },
+  "variants_per_prefix": {
+    "c4670": [
+      {
+        "c_prefix": "c4670",
+        "npc_param_id": 46700000,
+        "think_param_id": 46700000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestor Spirit",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4670",
+        "npc_param_id": 46700010,
+        "think_param_id": 46700010,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestor Spirit (Field Boss)",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4670",
+        "npc_param_id": 46700020,
+        "think_param_id": 46700020,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestor Spirit",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4670",
+        "npc_param_id": 46700100,
+        "think_param_id": 46700000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestor Spirit",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4670",
+        "npc_param_id": 46700200,
+        "think_param_id": 46700000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestor Spirit",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4670",
+        "npc_param_id": 46700300,
+        "think_param_id": 46700000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestor Spirit",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4670",
+        "npc_param_id": 46700400,
+        "think_param_id": 46700000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestor Spirit",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4670",
+        "npc_param_id": 46705000,
+        "think_param_id": 46700000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestor Spirit",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4670",
+        "npc_param_id": 46705010,
+        "think_param_id": 46700000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestor Spirit",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4670",
+        "npc_param_id": 46705020,
+        "think_param_id": 46700000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "c4670 variant",
+        "has_reward": false
+      }
+    ],
+    "c4690": [
+      {
+        "c_prefix": "c4690",
+        "npc_param_id": 46900000,
+        "think_param_id": 46900000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Grafted Scion",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4690",
+        "npc_param_id": 46900010,
+        "think_param_id": 46900010,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Grafted Scion (Field Boss)",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c4690",
+        "npc_param_id": 46900020,
+        "think_param_id": 46900020,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Grafted Scion (Castle)",
+        "has_reward": false
+      }
+    ],
+    "c7900": [
+      {
+        "c_prefix": "c7900",
+        "npc_param_id": 79000000,
+        "think_param_id": 79000000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Nameless King",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c7900",
+        "npc_param_id": 79000010,
+        "think_param_id": 79000000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Nameless King (Night Boss)",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c7900",
+        "npc_param_id": 79000020,
+        "think_param_id": 79000000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Nameless King",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c7900",
+        "npc_param_id": 79009000,
+        "think_param_id": 79000000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Nameless King",
+        "has_reward": false
+      }
+    ],
+    "c7910": [
+      {
+        "c_prefix": "c7910",
+        "npc_param_id": 79100000,
+        "think_param_id": 79100000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Nameless King (Mount)",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c7910",
+        "npc_param_id": 79100010,
+        "think_param_id": 79100000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Nameless King (Mount; Night Boss)",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c7910",
+        "npc_param_id": 79100020,
+        "think_param_id": 79100000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Nameless King (Mount)",
+        "has_reward": false
+      },
+      {
+        "c_prefix": "c7910",
+        "npc_param_id": 79109000,
+        "think_param_id": 79100000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Nameless King (Mount)",
+        "has_reward": false
+      }
+    ]
+  }
+}

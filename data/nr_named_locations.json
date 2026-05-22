@@ -1,0 +1,41 @@
+{
+  "_meta": {
+    "format_version": 1,
+    "description": "Tags for named recurring locations in NR — tunnels, catacombs, sites of grace landmarks, etc. Parallel to nr_starting_encampments.json but for mid-expedition POIs that Alaric refers to by name during playtest reports. Used to (a) annotate spoiler entries with `in_named_location: {category, slug}` for CTD correlation, (b) provide stable terminology between Alaric and Claude when discussing specific locations, (c) optionally feed into oops_all_nb_marker_scope as a placement-pin scope in the future.",
+    "tagging_unit": "MSB-level — every Part in a listed MSB is considered part of the named location. Same constraint as starting_encampments: works because each named asset MSB has a single instantiation in any given expedition. If a future data point shows the same MSB being shared between multiple named locations, will need to refine to (msb, pi-range).",
+    "schema": {
+      "slug": "Stable identifier for the location (snake_case). Used in spoiler annotation.",
+      "category": "Coarse type: 'tunnel', 'catacomb', 'encampment', 'arena', 'ruin', 'site_of_grace_landmark', etc.",
+      "label": "Human-readable name as Alaric refers to it",
+      "description": "Vanilla composition, layout hints, anything useful for CTD investigation",
+      "vanilla_composition": "Map of chr_prefix → count of vanilla parts using that chr",
+      "n_parts": "Total parts in the MSB",
+      "ctd_history": "List of past CTD reports tied to this location"
+    },
+    "added_in": "v0.24.85",
+    "maintained_by": "manual — entries added as Alaric identifies recurring locations he references in playtests"
+  },
+  "locations": {
+    "m43_50_00_00.msb": {
+      "slug": "digger_tunnel_lake",
+      "category": "tunnel",
+      "label": "Digger Tunnel (Limveld Shallow Lake)",
+      "description": "Lake-adjacent tunnel asset. Vanilla composition: 6 c4381 Diggers (Guilty/Glintstone Digger variant). Entrance has 4 visible guys at Y=0-2; deeper interior slots at Y=-11 and Y=-37 (subterranean). The lake-adjacent geometry may cause emerge animation CTDs for chrs placed at entrance level (Y=0-2) since 'subsurface terrain' may not be solid earth there. Identified as 'the digger tunnel' by Alaric — when he says 'tunnel' he typically means this location.",
+      "vanilla_composition": {"c4381": 6},
+      "n_parts": 6,
+      "geometry_notes": "Tunnel entrance at Y=0-2 (level ground), then descends to Y=-11 (pi=5) and Y=-37 (pi=2). Likely instantiated near the Limveld shallow lake in m60 tiles, making the entrance geometry potentially water-adjacent.",
+      "ctd_history": [
+        {
+          "version": "v0.24.84",
+          "seed": "522250",
+          "symptom": "CTD on tunnel entry after stable Day 1",
+          "suspect_chrs": [
+            "c4250 Small Fingercreeper at pi=3 (Y=1.15)",
+            "c4040 Slug at pi=4 (Y=2.2)"
+          ],
+          "resolution": "v0.24.85 — banned emerge_from_ground at pi=0,1,2,3,4 (the entrance + near-entrance slots; pi=5 left unblocked since Y=-11 is deep enough for emerge to work)"
+        }
+      ]
+    }
+  }
+}

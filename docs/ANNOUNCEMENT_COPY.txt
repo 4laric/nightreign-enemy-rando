@@ -1,0 +1,105 @@
+SHORT-FORM ANNOUNCEMENT COPY  —  v0.26.9 update
+===============================================
+
+For Discord pings, Reddit posts, social, etc. This is UPDATE copy — the
+mod is already live on Nexus; these posts announce that it's in a much
+better state and pull back people who bounced off an early version.
+
+Fill the [BRACKETED] placeholders before posting (Nexus link, Twitch
+link if you're streaming it).
+
+
+ONE-LINER (~250 chars)
+----------------------
+
+Big update to my Nightreign Enemy Randomizer — zero-setup install
+(bundled maps, no UXM), and Night Bosses now spawn reliably and fight
+correctly on every seed. Vanilla-aware swaps, Oops! All mode, spoiler
+logs. [Nexus link]
+
+
+MEDIUM (Reddit / FromSoft modding Discord, ~500-700 chars)
+----------------------------------------------------------
+
+My Nightreign enemy randomizer got a big update.
+
+The headline: it's now zero-setup. The bundle ships 300 vanilla map
+files, so you don't UXM-unpack your own install anymore — install,
+point the output at your me3 profile, click Randomize. Double-click
+launchers included.
+
+The other big one: Night Bosses. The 19 Night 1 / Night 2 arenas run a
+streamlined spawn template now, so a randomized boss reliably spawns,
+fights, and advances the night instead of getting stuck mid-cinematic.
+Marquee bosses (Maliketh, Romina, Midra, Metyr...) are guaranteed to
+show up each seed via a reservation system, at varied locations.
+
+Still vanilla-aware (swaps respect size + locomotion + animation class),
+still has Oops! All mode and spoiler logs. If you bounced off an early
+version, it's worth another look.
+
+[Nexus link]
+
+
+LONG (Reddit r/Eldenring or r/Nightreign, ~1500 chars)
+------------------------------------------------------
+
+I've been quietly iterating on my Nightreign enemy randomizer for a
+while, and it's finally in a state I'm happy to push.
+
+What it does: shuffles every enemy and boss in the world. Each swap
+target is constrained by the original occupant's size, locomotion type,
+and animation library — so you don't get a Mountaintop Ice Dragon
+spawning in a hallway built for one Wandering Noble. Mounted knights
+become other mounted knights, dragons become other dragons, multi-part
+encounters get cluster-shape-matched replacements.
+
+What's new since the early versions:
+
+- Zero-setup install. 300 vanilla map files ship in the bundle, so no
+  UXM-unpacking your own game. Install, point output at your me3
+  profile, Randomize. Double-click launchers, no terminal needed.
+- Night Bosses actually work now. The 19 Night 1 / Night 2 arenas run a
+  streamlined spawn template, so swapped bosses spawn, fight, and
+  advance the night reliably instead of hanging mid-cinematic. Marquee
+  bosses are guaranteed an appearance per seed at varied locations.
+- A run of fresh-install reliability fixes — first-launch hangs, text
+  encoding crashes, the works.
+
+It still has the things it always had: an Oops! All mode (every slot
+becomes one chosen enemy — Maris Tendril Nightreign is a real
+experience), spoiler logs for every roll, and the cursed visual
+chimeras that happen when NPCParam attachment fields don't fully sync,
+which are 100% intentional and embraced.
+
+Every roll has a seed, so you can share a cursed one or race a friend.
+
+[Nexus link]
+
+
+STREAM ANNOUNCEMENT (Discord / social, for when you go live)
+------------------------------------------------------------
+
+Going live with my Nightreign randomizer — randomized boss runs, every
+arena is a slot-machine pull. Drop a seed in chat and I'll run it.
+[Twitch link]
+
+
+DISCORD CHANNEL TOPIC (one line)
+--------------------------------
+
+4laric's NR Enemy Randomizer — vanilla-aware enemy + boss shuffle,
+zero-setup install. Latest on Nexus: [Nexus link]
+
+
+CASUAL POST — FROMSOFT MODDING DISCORD
+--------------------------------------
+
+big update to my nr enemy randomizer. it's zero-setup now — ships the
+vanilla maps so no uxm step, just install + point at your me3 profile +
+randomize. night boss arenas run a minimal spawn template so swapped
+bosses actually spawn and fight instead of hanging, and marquee bosses
+get a reservation pass so they reliably show up. still vanilla-aware
+(size/loco/anim compat), still has the emevd patch bundle for wake and
+death-anim hangs. nexus link in #releases. eyes welcome on edge-case
+encounters that still misbehave.

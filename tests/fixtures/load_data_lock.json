@@ -1,0 +1,178 @@
+{
+  "everything_enabled": {
+    "arena_only_targets_count": 28,
+    "arena_only_targets_sha256": "d39fd347a8f7246d",
+    "avoid_variant_npc_ids_count": 116,
+    "avoid_variant_npc_ids_sha256": "8b088e19644c5f34",
+    "exclude_target_count": 136,
+    "exclude_target_sha256": "148996cdde8e0260",
+    "mp_safe_blocklist_count": 200,
+    "mp_safe_blocklist_sha256": "77f5239d300c5a0f",
+    "night_boss_caliber_count": 97,
+    "night_boss_caliber_sha256": "ab618f6f64a61cfd",
+    "night_boss_strict_count": 0,
+    "night_boss_strict_sha256": "4f53cda18c2baa0c",
+    "sample_cps": {
+      "c2130": {
+        "_source": "nr_placed",
+        "name": "Margit"
+      },
+      "c2272": {
+        "_source": "manual_retier_v0.24.100",
+        "name": "Giant Black Crab"
+      },
+      "c4385": {
+        "_source": "heritage",
+        "name": "Disciple of Rot"
+      },
+      "c4500": {
+        "_source": "nr_placed",
+        "name": "Flying Dragon (Unscaled)"
+      },
+      "c4720": {
+        "_source": "mmv_import",
+        "name": "Godfrey, First Elden Lord"
+      },
+      "c4801": {
+        "_source": "manual_retier_v0.24.100",
+        "name": "Lord of Blood Spear"
+      },
+      "c5030": {
+        "_source": "mmv_import",
+        "name": "Romina, Saint of the Bud"
+      },
+      "c5160": {
+        "_source": "heritage",
+        "name": "Fire Knight"
+      }
+    },
+    "source_breakdown": {
+      "heritage": 35,
+      "manual_retier_v0.24.100": 16,
+      "manual_tag": 2,
+      "mmv_import": 41,
+      "nr_placed": 190,
+      "post_dlc_dump": 106
+    },
+    "tags_count": 390,
+    "tags_sha256": "56b1d1f23b154915",
+    "variants_count": 3391,
+    "variants_sha256": "bcebdf5e915cc2ea"
+  },
+  "vanilla_only": {
+    "arena_only_targets_count": 13,
+    "arena_only_targets_sha256": "b596f9e9b478fbff",
+    "avoid_variant_npc_ids_count": 116,
+    "avoid_variant_npc_ids_sha256": "8b088e19644c5f34",
+    "exclude_target_count": 125,
+    "exclude_target_sha256": "71663d68a3b17a37",
+    "mp_safe_blocklist_count": 118,
+    "mp_safe_blocklist_sha256": "e379070845d8e330",
+    "night_boss_caliber_count": 82,
+    "night_boss_caliber_sha256": "1dfcac8a3bef7bb5",
+    "night_boss_strict_count": 0,
+    "night_boss_strict_sha256": "4f53cda18c2baa0c",
+    "sample_cps": {
+      "c2130": {
+        "_source": "nr_placed",
+        "name": "Margit"
+      },
+      "c2272": {
+        "_source": null,
+        "name": null
+      },
+      "c4385": {
+        "_source": null,
+        "name": null
+      },
+      "c4500": {
+        "_source": "nr_placed",
+        "name": "Flying Dragon (Unscaled)"
+      },
+      "c4720": {
+        "_source": null,
+        "name": null
+      },
+      "c4801": {
+        "_source": "manual_retier_v0.24.100",
+        "name": "Lord of Blood Spear"
+      },
+      "c5030": {
+        "_source": null,
+        "name": null
+      },
+      "c5160": {
+        "_source": null,
+        "name": null
+      }
+    },
+    "source_breakdown": {
+      "manual_retier_v0.24.100": 12,
+      "nr_placed": 190,
+      "post_dlc_dump": 106
+    },
+    "tags_count": 308,
+    "tags_sha256": "fff61233df30f3ea",
+    "variants_count": 2715,
+    "variants_sha256": "fda34755df9e51a9"
+  },
+  "vanilla_plus_heritage": {
+    "arena_only_targets_count": 13,
+    "arena_only_targets_sha256": "b596f9e9b478fbff",
+    "avoid_variant_npc_ids_count": 116,
+    "avoid_variant_npc_ids_sha256": "8b088e19644c5f34",
+    "exclude_target_count": 125,
+    "exclude_target_sha256": "71663d68a3b17a37",
+    "mp_safe_blocklist_count": 159,
+    "mp_safe_blocklist_sha256": "187a31070f7e70f7",
+    "night_boss_caliber_count": 82,
+    "night_boss_caliber_sha256": "1dfcac8a3bef7bb5",
+    "night_boss_strict_count": 0,
+    "night_boss_strict_sha256": "4f53cda18c2baa0c",
+    "sample_cps": {
+      "c2130": {
+        "_source": "nr_placed",
+        "name": "Margit"
+      },
+      "c2272": {
+        "_source": "manual_retier_v0.24.100",
+        "name": "Giant Black Crab"
+      },
+      "c4385": {
+        "_source": "heritage",
+        "name": "Disciple of Rot"
+      },
+      "c4500": {
+        "_source": "nr_placed",
+        "name": "Flying Dragon (Unscaled)"
+      },
+      "c4720": {
+        "_source": null,
+        "name": null
+      },
+      "c4801": {
+        "_source": "manual_retier_v0.24.100",
+        "name": "Lord of Blood Spear"
+      },
+      "c5030": {
+        "_source": null,
+        "name": null
+      },
+      "c5160": {
+        "_source": "heritage",
+        "name": "Fire Knight"
+      }
+    },
+    "source_breakdown": {
+      "heritage": 35,
+      "manual_retier_v0.24.100": 16,
+      "manual_tag": 2,
+      "nr_placed": 190,
+      "post_dlc_dump": 106
+    },
+    "tags_count": 349,
+    "tags_sha256": "cd8147b15ef987bb",
+    "variants_count": 3018,
+    "variants_sha256": "809966c6e48a73cc"
+  }
+}

@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Enemy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>c4580</Name>
+  <SibPath>W:\CL\data\Model\chr\c4580\sib\c4580.sib</SibPath>
+  <Unk1C>0</Unk1C>
+</Enemy>

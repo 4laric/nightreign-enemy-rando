@@ -1,0 +1,297 @@
+{
+  "_comment": "Per-Expedition Night 1 / Night 2 boss arena pools for Elden Ring Nightreign. Source: PC Gamer table at https://www.pcgamer.com/games/rpg/elden-ring-nightreign-bosses-nightlords-list/ (Sean Martin, 2025-05-29).",
+  "_schema": "expedition_id -> {nightlord, n1: [{msb, label, vanilla?}], n2: [{msb, label, vanilla?}]}",
+  "_notes": [
+    "Each Expedition draws ONE N1 boss and ONE N2 boss from its respective pool.",
+    "msb is the Map ID \u2014 matches the .msb filename in our input dir (without .msb extension).",
+    "vanilla=false marks heritage/imported bosses that don't appear in base NR's 300 MSBs. Skip these when auditing vanilla shuffles; include them when auditing installs with heritage map imports (e.g., via thefifthmatt's randomizer).",
+    "Some Expeditions have invasion events for cross-pool Nightlord encounters (Gnoster, Maris, Libra) \u2014 those are out of scope for this prediction tool.",
+    "Heolstor (Night Aspect) is unlocked after 4 Nightlord clears; its pools are the largest."
+  ],
+  "tricephalos": {
+    "nightlord": "Gladius, Beast of Night",
+    "n1": [
+      {
+        "msb": "m49_29_00_00",
+        "label": "Demi-Human Queen + Swordmaster",
+        "vanilla": true
+      },
+      {
+        "msb": "m49_24_00_00",
+        "label": "Bell Bearing Hunter",
+        "vanilla": true
+      }
+    ],
+    "n2": [
+      {
+        "msb": "m48_40_00_00",
+        "label": "Morgott (Fell Omen)",
+        "vanilla": true
+      },
+      {
+        "msb": "m48_60_00_00",
+        "label": "Tree Sentinel + 2x Royal Cavalryman",
+        "vanilla": true
+      }
+    ]
+  },
+  "gaping_jaw": {
+    "nightlord": "Adel, Baron of Night",
+    "n1": [
+      {
+        "msb": "m48_90_00_00",
+        "label": "Wormface",
+        "vanilla": true
+      },
+      {
+        "msb": null,
+        "label": "Duke's Dear Freja",
+        "vanilla": false,
+        "_note": "DS2 heritage boss"
+      },
+      {
+        "msb": null,
+        "label": "Gaping Dragon",
+        "vanilla": false,
+        "_note": "DS1 heritage boss"
+      },
+      {
+        "msb": "m49_17_00_00",
+        "label": "Valiant Gargoyle",
+        "vanilla": true
+      }
+    ],
+    "n2": [
+      {
+        "msb": "m49_19_00_00",
+        "label": "Ancient Dragon",
+        "vanilla": true
+      },
+      {
+        "msb": "m49_25_00_00",
+        "label": "Crucible Knight + Golden Hippopotamus",
+        "vanilla": true
+      },
+      {
+        "msb": "m49_26_00_00",
+        "label": "Outland Commander",
+        "vanilla": true
+      }
+    ]
+  },
+  "sentient_pest": {
+    "nightlord": "Gnoster, Wisdom of Night",
+    "n1": [
+      {
+        "msb": "m49_27_00_00",
+        "label": "Battlefield Commander (Scarlet rot)",
+        "vanilla": true
+      },
+      {
+        "msb": null,
+        "label": "Centipede Demon",
+        "vanilla": false,
+        "c_prefix": "c7710"
+      }
+    ],
+    "n2": [
+      {
+        "msb": "m48_50_00_00",
+        "label": "Draconic Tree Sentinel + 2x Royal Cavalryman",
+        "vanilla": true
+      },
+      {
+        "msb": "m49_23_00_00",
+        "label": "Dragonkin Soldier",
+        "vanilla": true
+      }
+    ]
+  },
+  "augur": {
+    "nightlord": "Maris, Fathom of Night",
+    "n1": [
+      {
+        "msb": "m48_90_00_00",
+        "label": "Wormface",
+        "vanilla": true
+      },
+      {
+        "msb": "m49_10_00_00",
+        "label": "Grafted Monarch",
+        "vanilla": true
+      },
+      {
+        "msb": null,
+        "label": "Gaping Dragon",
+        "vanilla": false,
+        "_note": "DS1 heritage"
+      }
+    ],
+    "n2": [
+      {
+        "msb": "m48_80_00_00",
+        "label": "Godskin Noble + Apostle (Duo)",
+        "vanilla": true
+      },
+      {
+        "msb": "m49_20_00_00",
+        "label": "Full-Grown Fallingstar Beast",
+        "vanilla": true
+      }
+    ]
+  },
+  "equilibrious_beast": {
+    "nightlord": "Libra, Creature of Night",
+    "n1": [
+      {
+        "msb": "m49_27_00_00",
+        "label": "Battlefield Commander (Scarlet rot)",
+        "vanilla": true
+      },
+      {
+        "msb": "m47_70_00_00",
+        "label": "Tibia Mariner / Those Who Live in Death",
+        "vanilla": true
+      },
+      {
+        "msb": null,
+        "label": "Centipede Demon",
+        "vanilla": false,
+        "c_prefix": "c7710"
+      }
+    ],
+    "n2": [
+      {
+        "msb": "m49_25_00_00",
+        "label": "Crucible Knight + Golden Hippopotamus",
+        "vanilla": true
+      },
+      {
+        "msb": "m49_21_00_00",
+        "label": "Death Rite Bird",
+        "vanilla": true
+      },
+      {
+        "msb": "m48_80_00_00",
+        "label": "Godskin Noble + Apostle (Duo)",
+        "vanilla": true
+      }
+    ]
+  },
+  "darkdrift_knight": {
+    "nightlord": "Fulghor, Champion of Nightglow",
+    "n1": [
+      {
+        "msb": "m48_90_00_00",
+        "label": "Wormface",
+        "vanilla": true
+      },
+      {
+        "msb": null,
+        "label": "Gaping Dragon",
+        "vanilla": false
+      }
+    ],
+    "n2": [
+      {
+        "msb": "m49_26_00_00",
+        "label": "Outland Commander",
+        "vanilla": true
+      },
+      {
+        "msb": "m48_20_00_00",
+        "label": "Nameless King + Storm King",
+        "vanilla": true,
+        "_note": "c7900+c7910 \u2014 not in our roster but present in vanilla MSBs; UNTAGGED in nr_enemy_tags.json"
+      }
+    ]
+  },
+  "fissure_in_the_fog": {
+    "nightlord": "Caligo, Miasma of Night",
+    "n1": [
+      {
+        "msb": null,
+        "label": "Duke's Dear Freja",
+        "vanilla": false
+      },
+      {
+        "msb": null,
+        "label": "Smelter Demon",
+        "vanilla": false,
+        "_note": "DS2 heritage boss"
+      }
+    ],
+    "n2": [
+      {
+        "msb": "m48_50_00_00",
+        "label": "Draconic Tree Sentinel + 2x Royal Cavalryman",
+        "vanilla": true
+      },
+      {
+        "msb": "m48_80_00_00",
+        "label": "Godskin Noble + Apostle (Duo)",
+        "vanilla": true
+      }
+    ]
+  },
+  "night_aspect": {
+    "nightlord": "Heolstor the Nightlord",
+    "_note": "Unlocked after 4 Nightlord clears. Largest pools \u2014 most diverse Expedition.",
+    "n1": [
+      {
+        "msb": "m49_28_00_00",
+        "label": "Night's Cavalry x2 (Glaive + Flail)",
+        "vanilla": true
+      },
+      {
+        "msb": null,
+        "label": "Smelter Demon",
+        "vanilla": false
+      },
+      {
+        "msb": null,
+        "label": "Centipede Demon",
+        "vanilla": false,
+        "c_prefix": "c7710"
+      },
+      {
+        "msb": "m49_17_00_00",
+        "label": "Valiant Gargoyle",
+        "vanilla": true
+      },
+      {
+        "msb": "m49_29_00_00",
+        "label": "Demi-Human Queen + Swordmaster",
+        "vanilla": true
+      }
+    ],
+    "n2": [
+      {
+        "msb": "m49_18_00_00",
+        "label": "Great Wyrm Theodorix (Magma Wyrm)",
+        "vanilla": true
+      },
+      {
+        "msb": "m48_40_00_00",
+        "label": "Morgott (Fell Omen)",
+        "vanilla": true
+      },
+      {
+        "msb": null,
+        "label": "Dancer of the Boreal Valley",
+        "vanilla": false,
+        "_note": "DS3 heritage boss"
+      },
+      {
+        "msb": "m49_23_00_00",
+        "label": "Dragonkin Soldier (Nox)",
+        "vanilla": true
+      },
+      {
+        "msb": "m49_19_00_00",
+        "label": "Ancient Dragon",
+        "vanilla": true
+      }
+    ]
+  }
+}

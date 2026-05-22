@@ -1,0 +1,59 @@
+{
+  "_comment": "Per-Nightlord N1/N2 arena pools. Each Nightlord rolls one N1 boss from its n1_arenas list and one N2 boss from its n2_arenas list. Per Alaric's playthrough observation, each pool is typically ~2 arenas — so a single seed played across all 8 Nightlords exposes ~16 NB arena visits with high overlap-coverage of the 22 unique arenas. Use the MSB stem (e.g. m48_40_00_00) without '.msb'. The 'Default' / 'Tricephalos' entries are placeholders for the standard/multiplayer expedition pool — adjust per actual matchmaker tables.",
+  "_arena_reference": {
+    "m47_70_00_00": "Tibia Mariner",
+    "m48_40_00_00": "Morgott",
+    "m48_50_00_00": "Draconic Tree Sentinel",
+    "m48_60_00_00": "Tree Sentinel",
+    "m48_70_00_00": "Godskin Apostle solo",
+    "m48_80_00_00": "Godskin Duo",
+    "m48_90_00_00": "Large Wormface",
+    "m49_10_00_00": "Grafted Monarch",
+    "m49_17_00_00": "Valiant Gargoyle",
+    "m49_18_00_00": "Great Wyrm Theodorix",
+    "m49_19_00_00": "Ancient Dragon",
+    "m49_20_00_00": "Fallingstar Beast",
+    "m49_21_00_00": "Death Rite Bird",
+    "m49_23_00_00": "Dragonkin Soldier",
+    "m49_24_00_00": "Bell Bearing Hunter",
+    "m49_25_00_00": "Crucible Knight + Golden Hippopotamus",
+    "m49_26_00_00": "Outland Commander",
+    "m49_27_00_00": "Battlefield Commander",
+    "m49_28_00_00": "Night's Cavalry x2",
+    "m49_29_00_00": "Demi-Human Queen + Swordmaster",
+    "m49_30_00_00": "Royal Revenant",
+    "m49_90_00_00": "Ulcerated Tree Spirit"
+  },
+  "Gladius": {
+    "n1_arenas": [],
+    "n2_arenas": []
+  },
+  "Adel": {
+    "n1_arenas": [],
+    "n2_arenas": []
+  },
+  "Gnoster": {
+    "n1_arenas": [],
+    "n2_arenas": []
+  },
+  "Maris": {
+    "n1_arenas": [],
+    "n2_arenas": []
+  },
+  "Libra": {
+    "n1_arenas": [],
+    "n2_arenas": []
+  },
+  "Fulghor": {
+    "n1_arenas": [],
+    "n2_arenas": []
+  },
+  "Caligo": {
+    "n1_arenas": [],
+    "n2_arenas": []
+  },
+  "Heolstor": {
+    "n1_arenas": [],
+    "n2_arenas": []
+  }
+}

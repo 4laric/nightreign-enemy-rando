@@ -1,0 +1,174 @@
+{
+  "_meta": {
+    "schema_version": 1,
+    "since_version": "v0.24.79",
+    "last_updated_version": "v0.24.84",
+    "purpose": "Boss \u2192 entrance-animation classification. Tracks which scripted intro a chr plays on encounter activation. Used to prevent CTDs from anim/geometry mismatch \u2014 e.g., emerge-from-ground intro at an elevated platform with no subsurface terrain.",
+    "engine_field": "V3_ENTRANCE_ANIM_CLASS",
+    "default_for_unknown": "unknown",
+    "values": {
+      "emerge_from_ground": "Chr rises out of the earth on encounter trigger. Fails at slots without subsurface terrain (rooftops, ramparts, platforms).",
+      "fly_in": "Chr flies in from offscreen on encounter trigger. Requires sky access \u2014 fails in low-ceilinged interiors.",
+      "scripted_intro": "Chr plays a slot-specific scripted intro (cinematic, position-locked). Tends to fail at non-vanilla arenas due to choreography mismatch.",
+      "pre_placed": "Chr is positioned at encounter start, no scripted intro animation. Generally safe at unusual arenas.",
+      "walk_in": "Chr walks into the arena from a fixed path. Less position-sensitive than scripted_intro but can fail if path is blocked.",
+      "unknown": "Not yet classified. Default. No gate applied \u2014 chr placement proceeds as normal."
+    },
+    "provenance": "Manual seed from empirical CTD reports (v0.24.79\u2013v0.24.80). Major expansion v0.24.82 via .behbnd behavior-template analysis: 19 new chrs added that share the EXACT same behavior tree (byte-identical modulo chr_id substring) as the confirmed emerge seeds c4441/c4442/c4480/c4481/c4482/c4483. The shared template hash is c880d10143 (size 11,124 bytes) \u2014 every chr using this template has the same AI state machine, same initial state, same scripted-reveal animation trigger. The visual intro may differ (slug crawling out of soil vs Miranda rising from pod) but the FAILURE MODE at no-emerge slots is identical because the underlying AI logic is identical. v0.24.83: Added c3730 Graven School based on empirical CTD report + refined signature (template c880d10143 \u2229 has anim 9000) \u2014 discovered after extending behbnd corpus to 459 files (c0xxx-c9xxx). The template alone is NOT sufficient: 112 chrs use it, but 35 lack anim 9000 (System objects, Crabs, Training Posts, Lightning Ball) and are demonstrably not emerge. The refined intersection (template AND anim 9000) yields 50 candidates. c3730 is one of them and is the strongest candidate for the user's CTD report. v0.24.84: User correction \u2014 Giant Crabs DO emerge from earth (despite lacking anim 9000). This invalidates the v0.24.83 'refined signature' that filtered out chrs without anim 9000. Template c880d10143 membership IS the emerge signature for placeable chrs; the 35 'no anim 9000' template members are either non-placeable (System/Training Posts/Lightning Ball) or use non-standard intro animations (Crabs, possibly Octopus/UTS/Abductor Virgin). v0.24.84: c2270-c2277 Crab family added (8 entries). The 'refined signature' analysis in research notes superseded.",
+    "tae_and_behbnd_analysis_findings": {
+      "anim_id_signature_failed": "Animation ID 9000 is too generic (73% of chrs have it). No anim ID is a discriminative signature at corpus scale.",
+      "behavior_template_signature_succeeded": "Chr-id-normalized hash of .behbnd's Behaviors/{cp}.hkx is the actual signature. Template c880d10143 = 25-chr emerge_from_ground cluster. Template cc910d90c1 (size 21,776) = c4810/c4811 Erdtree Avatar variant cluster.",
+      "variant_inheritance": "Animation data inherits via parent (c4441 inherits anims from c4440), but behavior trees do NOT inherit \u2014 each variant has its own behbnd. This is why behbnd analysis works as a classifier where anibnd analysis didn't.",
+      "coverage": "v0.24.82 classifications cover the c4xxx range (149 behbnds). Other ranges (c3xxx, c5xxx etc.) need their own behbnd dumps for full classification.",
+      "refined_signature_v0_24_83": "Behavior template c880d10143 membership is NECESSARY but not SUFFICIENT for emerge_from_ground. The full corpus (459 behbnds, c0xxx-c9xxx) reveals 112 template members \u2014 many are System objects (c0110-c0130, c1000, c9001), Crabs (c2270-c2277), Training Posts (c8130-c8132), and Lightning Ball (c2150) which are demonstrably not emerge. The refined signature requires BOTH template membership AND anim 9000 presence in the anibnd. This narrows to ~50 candidates. Empirical CTD confirmation expanded with c3730 Graven School.",
+      "v0_24_84_correction": "v0.24.83 over-corrected. User confirmed Giant Crabs emerge from earth despite lacking anim 9000 \u2014 they use a non-standard intro animation. Template c880d10143 membership IS the signature for placeable emerge chrs. The 35 'no anim 9000' template members fall into two groups: (1) non-placeable framework chrs (System objects c0110-c0130, c1000, c9001; Training Posts c8130-c8132; Lightning Ball c2150) which the rando doesn't shuffle anyway, and (2) genuine emerge chrs using non-standard intro animations (Crabs c2270-c2277, possibly Octopus c4220/c4230, UTS c4640, Abductor Virgin c4470). Therefore v0.24.82's 'false positives' weren't actually false \u2014 they were correct classifications based on template membership."
+    },
+    "growth_pattern": "Add chrs as new CTDs surface OR as behbnd-template evidence identifies new family members. Conservative \u2014 when in doubt, leave as 'unknown' (no gate)."
+  },
+  "entrance_animations": {
+    "c4040": {
+      "class": "emerge_from_ground",
+      "_source_note": "Slug. v0.24.82: shares behbnd template c880d10143 with confirmed emerge seeds. Game knowledge: slugs emerge from soil in ER (Aeonian Swamp etc.)."
+    },
+    "c4080": {
+      "class": "emerge_from_ground",
+      "_source_note": "Rat. v0.24.82: shares behbnd template c880d10143. Game knowledge: rats spawn from holes/sewers; AI logic identical to confirmed emerge chrs."
+    },
+    "c4090": {
+      "class": "emerge_from_ground",
+      "_source_note": "Giant Rat. v0.24.82: shares behbnd template c880d10143. Family of c4080."
+    },
+    "c4140": {
+      "class": "emerge_from_ground",
+      "_source_note": "Spiritcaller Snail. v0.24.82: shares behbnd template c880d10143. Game knowledge: snail emerges from shell on trigger."
+    },
+    "c4170": {
+      "class": "emerge_from_ground",
+      "_source_note": "Putrid Flesh. v0.24.82: shares behbnd template c880d10143. Game knowledge: emerges from corpse piles."
+    },
+    "c4171": {
+      "class": "emerge_from_ground",
+      "_source_note": "Giant Putrid Flesh. v0.24.82: shares behbnd template c880d10143. Family of c4170."
+    },
+    "c4190": {
+      "class": "emerge_from_ground",
+      "_source_note": "Large Scarab. v0.24.82: shares behbnd template c880d10143. Game knowledge: scarabs emerge from corpses/walls in ER."
+    },
+    "c4191": {
+      "class": "emerge_from_ground",
+      "_source_note": "Scarab. v0.24.82: shares behbnd template c880d10143. Family of c4190."
+    },
+    "c4192": {
+      "class": "emerge_from_ground",
+      "_source_note": "Large Scarab (variant). v0.24.82: shares behbnd template c880d10143. Family of c4190."
+    },
+    "c4220": {
+      "class": "emerge_from_ground",
+      "_source_note": "Giant Land Octopus. v0.24.82: shares behbnd template c880d10143. Game knowledge: octopi emerge from water/mud (Liurnia, etc.)."
+    },
+    "c4230": {
+      "class": "emerge_from_ground",
+      "_source_note": "Small Land Octopus. v0.24.82: shares behbnd template c880d10143. Family of c4220."
+    },
+    "c4250": {
+      "class": "emerge_from_ground",
+      "_source_note": "Small Fingercreeper. v0.24.82: shares behbnd template c880d10143. Game knowledge: sit-flat-then-rise on player approach."
+    },
+    "c4440": {
+      "class": "emerge_from_ground",
+      "_source_note": "Land Squirt (non-boss). v0.24.82: parent of c4441 seed entry. Shares behbnd template c880d10143."
+    },
+    "c4441": {
+      "class": "emerge_from_ground",
+      "_source_note": "Land Squirt (Boss). v0.24.18 seed 70502: CTD at m30_30 pi=45 (Fort GG rampart Y=42.8). Burrowing emerge intro fails on roof tile with no subsurface terrain. v0.24.82: confirmed via behbnd template c880d10143."
+    },
+    "c4442": {
+      "class": "emerge_from_ground",
+      "_source_note": "Land Squirt Variant. Family of c4441. v0.24.82: confirmed via behbnd template c880d10143."
+    },
+    "c4470": {
+      "class": "emerge_from_ground",
+      "_source_note": "Abductor Virgin. v0.24.82: shares behbnd template c880d10143. Game knowledge: rises-from-floor intro at vanilla arenas."
+    },
+    "c4480": {
+      "class": "emerge_from_ground",
+      "_source_note": "Miranda Blossom. v0.24.80: TAE-derived classification + game knowledge (rise from flower pod). v0.24.82: confirmed via behbnd template c880d10143."
+    },
+    "c4481": {
+      "class": "emerge_from_ground",
+      "_source_note": "Miranda Sprout. v0.24.80: same family as c4480. v0.24.82: confirmed via behbnd template c880d10143."
+    },
+    "c4482": {
+      "class": "emerge_from_ground",
+      "_source_note": "Giant Fading Miranda Sprout. v0.24.80: same family as c4480. v0.24.82: confirmed via behbnd template c880d10143."
+    },
+    "c4483": {
+      "class": "emerge_from_ground",
+      "_source_note": "Fading Miranda Sprout. v0.24.80: same family as c4480. v0.24.82: confirmed via behbnd template c880d10143."
+    },
+    "c4640": {
+      "class": "emerge_from_ground",
+      "_source_note": "Ulcerated Tree Spirit. v0.24.82: shares behbnd template c880d10143. Game knowledge: emerges from tree corpse on player approach."
+    },
+    "c4690": {
+      "class": "emerge_from_ground",
+      "_source_note": "Grafted Scion. v0.24.82: shares behbnd template c880d10143. Scripted prone-pose reveal. Failure mode at no-emerge slots identical to other template members (AI behavior tree is byte-identical modulo chr_id)."
+    },
+    "c4711": {
+      "class": "emerge_from_ground",
+      "_source_note": "Unknown chr in NR tag data (no name). v0.24.82: shares behbnd template c880d10143 \u2014 classified by template membership."
+    },
+    "c4751": {
+      "class": "emerge_from_ground",
+      "_source_note": "Unknown chr in NR tag data (no name). v0.24.82: shares behbnd template c880d10143 \u2014 classified by template membership."
+    },
+    "c4810": {
+      "class": "emerge_from_ground",
+      "_source_note": "Erdtree Avatar (Remembrance). v0.24.77 seed 886942: CTD at m30_30 pi=45 (Fort GG rampart). Rise-from-earth intro fails identically to c4441. v0.24.82: in its OWN behbnd template cc910d90c1 (only c4810/c4811 share it) \u2014 Erdtree Avatar variant cluster."
+    },
+    "c4811": {
+      "class": "emerge_from_ground",
+      "_source_note": "Erdtree Avatar Variant. v0.24.79: same family as c4810. v0.24.82: confirmed via behbnd template cc910d90c1."
+    },
+    "c4950": {
+      "class": "emerge_from_ground",
+      "_source_note": "Tibia Mariner. v0.24.82: shares behbnd template c880d10143. Game knowledge: boat-arrival scripted reveal at vanilla arenas."
+    },
+    "c3730": {
+      "class": "emerge_from_ground",
+      "_source_note": "Graven School (sphere of fused scholarly faces). v0.24.83: empirical CTD report from seed 308132 \u2014 chr placed at 4 slots in the spoiler, two suspiciously elevated (m34_10_00_00 pi=90 Y=22.44, m60_44_38_00 pi=30 Y=93.63). User reported \"CTD near scholar head big ball of faces\" during v0.24.80 playtest. Refined signature matches: behbnd template c880d10143 + anim 9000 present. Game knowledge: Graven School floats/appears via scripted reveal in vanilla scholarly arenas."
+    },
+    "c2270": {
+      "class": "emerge_from_ground",
+      "_source_note": "Giant Crab. v0.24.84: shares behbnd template c880d10143. User game-knowledge confirmation: Giant Crabs emerge from earth in vanilla ER. Lacks anim 9000 \u2014 uses non-standard intro animation. Behavioral failure mode (CTD at elevated/no-subsurface slots) matches other template members."
+    },
+    "c2271": {
+      "class": "emerge_from_ground",
+      "_source_note": "Crab. v0.24.84: shares behbnd template c880d10143. User game-knowledge confirmation: Giant Crabs emerge from earth in vanilla ER. Lacks anim 9000 \u2014 uses non-standard intro animation. Behavioral failure mode (CTD at elevated/no-subsurface slots) matches other template members."
+    },
+    "c2272": {
+      "class": "emerge_from_ground",
+      "_source_note": "Giant Black Crab. v0.24.84: shares behbnd template c880d10143. User game-knowledge confirmation: Giant Crabs emerge from earth in vanilla ER. Lacks anim 9000 \u2014 uses non-standard intro animation. Behavioral failure mode (CTD at elevated/no-subsurface slots) matches other template members."
+    },
+    "c2273": {
+      "class": "emerge_from_ground",
+      "_source_note": "Crab (Maggots). v0.24.84: shares behbnd template c880d10143. User game-knowledge confirmation: Giant Crabs emerge from earth in vanilla ER. Lacks anim 9000 \u2014 uses non-standard intro animation. Behavioral failure mode (CTD at elevated/no-subsurface slots) matches other template members."
+    },
+    "c2274": {
+      "class": "emerge_from_ground",
+      "_source_note": "Giant Sleep Crab. v0.24.84: shares behbnd template c880d10143. User game-knowledge confirmation: Giant Crabs emerge from earth in vanilla ER. Lacks anim 9000 \u2014 uses non-standard intro animation. Behavioral failure mode (CTD at elevated/no-subsurface slots) matches other template members."
+    },
+    "c2275": {
+      "class": "emerge_from_ground",
+      "_source_note": "Crab (Clean). v0.24.84: shares behbnd template c880d10143. User game-knowledge confirmation: Giant Crabs emerge from earth in vanilla ER. Lacks anim 9000 \u2014 uses non-standard intro animation. Behavioral failure mode (CTD at elevated/no-subsurface slots) matches other template members."
+    },
+    "c2276": {
+      "class": "emerge_from_ground",
+      "_source_note": "Giant Death Crab. v0.24.84: shares behbnd template c880d10143. User game-knowledge confirmation: Giant Crabs emerge from earth in vanilla ER. Lacks anim 9000 \u2014 uses non-standard intro animation. Behavioral failure mode (CTD at elevated/no-subsurface slots) matches other template members."
+    },
+    "c2277": {
+      "class": "emerge_from_ground",
+      "_source_note": "Crab (Golden Tufts). v0.24.84: shares behbnd template c880d10143. User game-knowledge confirmation: Giant Crabs emerge from earth in vanilla ER. Lacks anim 9000 \u2014 uses non-standard intro animation. Behavioral failure mode (CTD at elevated/no-subsurface slots) matches other template members."
+    }
+  }
+}

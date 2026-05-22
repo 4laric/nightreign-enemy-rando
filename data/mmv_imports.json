@@ -1,0 +1,4231 @@
+{
+  "_meta": {
+    "blacklist_active_count": 13,
+    "blacklist_breakdown": "5 CTD-unidentified + 7 DLC-assets-missing + 1 AI-broken",
+    "c_prefix_count": 41,
+    "description": "More Map Variations chr imports â€” cross-game boss ports. REQUIRES the MMV mod (https://www.nexusmods.com/eldenringnightreign/mods/578) installed in your me3 profile. Without MMV's regulation + chr assets, enabling this will cause CTDs because the rando will reference chrs that don't exist in your active regulation.",
+    "enable_instructions": "If you have MMV installed: set _meta.enabled=true and run normally. The 13 c-prefixes in blacklist_when_active are blocked because they CTD or have missing assets even WITH MMV â€” leave them. If you don't have MMV: leave _meta.enabled=false. The rando will run on vanilla NR + DLC content only.",
+    "enabled": true,
+    "requires": "MMV mod installed in me3 profile",
+    "requires_external_chr_assets": true,
+    "source_mod": "More Map Variations 2.0.5 (Team Daybreak, Nexus #578)",
+    "url": "https://www.nexusmods.com/eldenringnightreign/mods/578",
+    "user_facing_name": "More Map Variations (cross-game boss imports)",
+    "version": "1.0"
+  },
+  "blacklist_when_active": {
+    "_note": "When mmv_imports._meta.enabled=true, ALL c-prefixes in all three lists are added to V3_EXCLUDE_TARGET_PREFIXES at load_data time. Disabling MMV (set _meta.enabled=false) removes the blacklist â€” appropriate when running vanilla NR regulation where DLC chrs are functional and MMV chrs don't exist. v0.23.39: c8500 Manus added (DS1, asset graph too divergent). v0.23.46: c8300 Dragonslayer Armor was initially added â€” CTD with access violation (memory write to NULL+0x24) reported. LATER VINDICATED in subsequent playtest: works fine when properly slotted, original CTD attribution was incorrect. Removed from blacklist. v0.23.55: c4720 Godfrey was initially added â€” CTD on Castle approach (seed 961158) reported. LATER VINDICATED in subsequent playtest: works fine. Removed from blacklist. v0.23.72: new ai_broken category added for MMV imports whose AI behaves unreliably even though chrbnd/anibnd load cleanly (no CTD, no asset miss â€” just busted combat behavior). c5840 Black Knight added (DS3 port, MMV import) â€” AI unreliable in field placements. Parallels V3_HERITAGE_AI_KNOWN_ISSUES on the heritage side but uses full exclusion rather than SENSITIVE-only restriction. v0.23.72-late: user playtest sweep of MMV chrs near m60_43_37_20 encampment (Sentient Pest seed 35300). c5840 Black Knight escalated from ai_broken â†’ ctd_unidentified after confirmed CTD encountered in field. c5880 Catacombs Sorcerer (DS3 import) added to ctd_unidentified â€” CTD on encounter. c6201 Scarab (ER import) added to ctd_unidentified â€” CTD on encounter; suspect because c6201 is also the summoned Scarab attached to c6200 Gael's fight (variants 62001000-62005200 are c6200 Gael-summon Scarabs but c6201 is a separate MMV import), so c6201 may have asset linkage issues independent of Gael. c2030 Rennala added to ai_broken â€” loads + fights but renders with a floating-in-air pose anomaly (visual glitch, not CTD). v0.23.72-tunnel: c1260 Hollow Manserving Servant (Bloodborne, the only BB-origin chr in the MMV manifest) added to ctd_unidentified after user CTD entering tunnel m34_10 where c1260 was placed at pi=10. Same cross-game-engine asset divergence class as c8500 Manus (DS1) â€” BB chrbnd/anibnd format does not link cleanly into NR's loader. Banning c1260 removes all BB content from the rando, which is consistent with the cross-engine compatibility pattern observed across DS1/BB imports. v0.24.46: c8500 Manus un-banned per Alaric playtest direction. Pattern matches the c8300 Dragonslayer Armor (v0.23.46) and c4720 Godfrey (v0.23.55) vindication trajectory — original v0.23.39 attribution to 'DS1 asset graph divergence' may have been the same class of position-specific anim-slot mismatch now caught by V3_FLYING_REQUIRED_SLOTS / V3_QUADRUPED_UNSAFE_SLOTS added in subsequent releases. NOTE: the c1260 BB → c8500 DS1 parallel reasoning in the v0.23.72-tunnel entry above is now suspect; if c8500 plays well in subsequent seeds, c1260 should be a candidate for re-examination. v0.24.91 patch12: c5840 lifted to playtest. Pattern matches c8300/c4720 vindication. Rollback to ctd_unidentified if CTD recurs (cite seed/msb/pi). v0.24.93-patch15: c5840 restored to ai_broken. The v0.24.91-patch11 lift took c5840 entirely out of blacklist, but the v0.23.72 baseline status was ai_broken (never confirmed working) — only the v0.23.72-late CTD escalation was speculative-on-thin-evidence. The right lift is from ctd_unidentified back to ai_broken, not out entirely. v0.24.96-patch17: c5840 lifted from ai_broken. v0.24.95-patch16 (added 'Unused' to V3_VARIANT_TRIGGER_MARKERS) eliminated picks of MMV variant 58400000 'Black Knight CASTLE (Unused)' — the deliberately non-functional variant. User probe of PROBE_TARGET_VARIANT=(\"c5840\", 58400001) with a non-(Unused) variant: chr fights normally. The 'AI unreliable in field placements' attribution chain dating from v0.23.72 was misdiagnosis — the (Unused) variant was being picked sometimes; the rest of the variants work fine. ai_broken cleared with empirical evidence this time, not speculative parallels to c8300/c4720 vindications.",
+    "ai_broken": [
+      "c2030"
+    ],
+    "ctd_unidentified": [
+      "c1260",
+      "c5880",
+      "c6201"
+    ],
+    "dlc_assets_missing_in_mmv": [
+      "c4801",
+      "c7610",
+      "c7650",
+      "c7651",
+      "c7660",
+      "c7720",
+      "c7930"
+    ]
+  },
+  "tags": {
+    "c1260": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "name": "Hollow Manserving Servant (Saw)",
+      "origin_game": "BB",
+      "size_class": "M",
+      "tier": "field_boss",
+      "variants": 8
+    },
+    "c1310": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "name": "Outrider Knight",
+      "origin_game": "DS3",
+      "size_class": "L",
+      "tier": "miniboss",
+      "variants": 3,
+      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)",
+      "_size_correction_v0_26_x": "corrected from 'M' → 'L' based on NpcParam.csv (median hitHeight=3.00m, hitRadius=1.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c2030": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Rennala, Queen of the Full Moon",
+      "origin_game": "ER",
+      "size_class": "XL",
+      "tier": "nightlord",
+      "variants": 5,
+      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=0.60m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c2031": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Rennala (Phase 2)",
+      "origin_game": "ER",
+      "size_class": "XL",
+      "tier": "nightlord",
+      "variants": 5,
+      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=0.80m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c2110": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Beast Clergyman / Maliketh",
+      "origin_game": "ER",
+      "size_class": "XL",
+      "tier": "nightlord",
+      "variants": 13,
+      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=3.60m, hitRadius=2.50m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c2120": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Malenia, Blade of Miquella",
+      "origin_game": "ER",
+      "size_class": "M",
+      "tier": "nightlord",
+      "variants": 10
+    },
+    "c2240": {
+      "_confidence": "low",
+      "_source": "mmv_import",
+      "name": "Unknown MMV import",
+      "origin_game": "?",
+      "tier": "miniboss",
+      "variants": 1
+    },
+    "c3110": {
+      "_confidence": "low",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "name": "Unknown MMV import (likely Banished Knight variant)",
+      "origin_game": "?",
+      "size_class": "XL",
+      "tier": "miniboss",
+      "variants": 1,
+      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=1.90m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c4511": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "flying_dragon",
+      "expects_boss_arena": true,
+      "name": "Lichdragon Fortissax",
+      "origin_game": "ER",
+      "size_class": "GIGA",
+      "tier": "nightlord",
+      "variants": 4,
+      "_size_correction_v0_26_x": "corrected from 'XXL' → 'GIGA' based on NpcParam.csv (median hitHeight=14.10m, hitRadius=7.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c4540": {
+      "_confidence": "low",
+      "_source": "mmv_import",
+      "name": "Unknown MMV import",
+      "origin_game": "?",
+      "tier": "miniboss",
+      "variants": 0
+    },
+    "c4541": {
+      "_confidence": "low",
+      "_source": "mmv_import",
+      "name": "Unknown MMV import",
+      "origin_game": "?",
+      "tier": "miniboss",
+      "variants": 0
+    },
+    "c4720": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Godfrey, First Elden Lord",
+      "origin_game": "ER",
+      "size_class": "XL",
+      "tier": "nightlord",
+      "variants": 7,
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.70m, hitRadius=1.10m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c4721": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Hoarah Loux",
+      "origin_game": "ER",
+      "size_class": "XL",
+      "tier": "nightlord",
+      "variants": 3,
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.70m, hitRadius=1.10m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c4730": {
+      "_anim_class_v0_23_71_note": "Mounted-rider compound chr (rider on Leonard). Tagged quadruped_large to bias placement toward Tree Sentinel / mount-shaped arena slots whose geometry + EMEVD timing suits mounted units. Was untagged before â€” landed at any scripted-intro slot, including humanoid arenas where the missing-mount state machine froze the rider.",
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "quadruped_large",
+      "expects_boss_arena": true,
+      "name": "Starscourge Radahn",
+      "origin_game": "ER",
+      "size_class": "GIGA",
+      "tier": "nightlord",
+      "variants": 3,
+      "_size_correction_v0_26_x": "corrected from 'XL' → 'GIGA' based on NpcParam.csv (median hitHeight=8.00m, hitRadius=3.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c5000": {
+      "_backfill_justification": "known: Commander Gaius = boar-mounted centaur, quadruped_large",
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "_tags_backfilled_v0_24_72": true,
+      "anim_class": "quadruped_large",
+      "expects_boss_arena": true,
+      "name": "Commander Gaius",
+      "origin_game": "SoTE",
+      "size_class": "XL",
+      "tier": "night_boss",
+      "variants": 4,
+      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)"
+    },
+    "c5030": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Romina, Saint of the Bud",
+      "origin_game": "SoTE",
+      "size_class": "XL",
+      "tier": "nightlord",
+      "variants": 6,
+      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=3.90m, hitRadius=1.50m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c5051": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Midra, Lord of Frenzied Flame",
+      "origin_game": "SoTE",
+      "size_class": "M",
+      "tier": "nightlord",
+      "variants": 5
+    },
+    "c5060": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "name": "Lamprey",
+      "origin_game": "SoTE",
+      "size_class": "XL",
+      "tier": "field_boss",
+      "variants": 22,
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.50m, hitRadius=1.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c5061": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "name": "Lamprey (Large)",
+      "origin_game": "SoTE",
+      "size_class": "XL",
+      "tier": "field_boss",
+      "variants": 7,
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.50m, hitRadius=1.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c5130": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Messmer the Impaler",
+      "origin_game": "SoTE",
+      "size_class": "M",
+      "tier": "nightlord",
+      "variants": 7
+    },
+    "c5200": {
+      "_backfill_justification": "known: SoTE Metyr = anchored 6-eyed boss, large_boss_ground anim like Erdtree Avatar; size=XL was already set",
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "_tags_backfilled_v0_24_73": true,
+      "anim_class": "large_boss_ground",
+      "expects_boss_arena": true,
+      "name": "Metyr, Mother of Fingers",
+      "origin_game": "SoTE",
+      "size_class": "XXL",
+      "tier": "nightlord",
+      "variants": 4,
+      "_size_correction_v0_26_x": "corrected from 'XL' → 'XXL' based on NpcParam.csv (median hitHeight=5.00m, hitRadius=5.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c5230": {
+      "_backfill_justification": "known: Scadutree Avatar = SOTE giant avatar, matches c4810",
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "_tags_backfilled_v0_24_72": true,
+      "anim_class": "quadruped_large",
+      "expects_boss_arena": true,
+      "name": "Scadutree Avatar",
+      "origin_game": "SoTE",
+      "size_class": "GIGA",
+      "tier": "nightlord",
+      "variants": 20,
+      "_size_correction_v0_26_x": "corrected from 'XXL' → 'GIGA' based on NpcParam.csv (median hitHeight=8.00m, hitRadius=4.95m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c5300": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Rellana, Twin Moon Knight",
+      "origin_game": "SoTE",
+      "size_class": "M",
+      "tier": "nightlord",
+      "variants": 5
+    },
+    "c5650": {
+      "_confidence": "low",
+      "_source": "mmv_import",
+      "name": "Unknown MMV import (likely Hippopotamus)",
+      "origin_game": "?",
+      "size_class": "L",
+      "tier": "field_boss",
+      "variants": 0
+    },
+    "c5651": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "name": "Messmer Foot Soldier",
+      "origin_game": "SoTE",
+      "size_class": "M",
+      "tier": "grunt",
+      "variants": 54
+    },
+    "c5740": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "name": "Kindred of Rot (MMV variant)",
+      "origin_game": "ER",
+      "size_class": "M",
+      "tier": "miniboss",
+      "variants": 37
+    },
+    "c5840": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "name": "Black Knight",
+      "origin_game": "DS3",
+      "size_class": "M",
+      "tier": "miniboss",
+      "variants": 45,
+      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)"
+    },
+    "c5880": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "name": "Catacombs Sorcerer",
+      "origin_game": "DS3",
+      "size_class": "M",
+      "tier": "miniboss",
+      "variants": 21
+    },
+    "c5890": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "name": "Black Knight Horse",
+      "origin_game": "DS3",
+      "size_class": "XL",
+      "tier": "mount_component",
+      "variants": 6,
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.50m, hitRadius=0.70m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c5930": {
+      "_backfill_justification": "known: Giant Skeleton (ER/DS3) = giant humanoid skeleton XL",
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "_tags_backfilled_v0_24_72": true,
+      "anim_class": "humanoid",
+      "name": "Giant Skeleton",
+      "origin_game": "DS3",
+      "size_class": "XL",
+      "tier": "miniboss",
+      "variants": 4,
+      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)"
+    },
+    "c6200": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Slave Knight Gael",
+      "origin_game": "DS3",
+      "size_class": "M",
+      "tier": "nightlord",
+      "variants": 15
+    },
+    "c6201": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "name": "Scarab",
+      "origin_game": "ER",
+      "size_class": "S",
+      "tier": "trash",
+      "variants": 22
+    },
+    "c6210": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "name": "Corvian Knight",
+      "origin_game": "DS3",
+      "size_class": "M",
+      "tier": "miniboss",
+      "variants": 7,
+      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)"
+    },
+    "c6220": {
+      "_backfill_justification": "known: Fire Demon (DS3) = horned humanoid L",
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "_tags_backfilled_v0_24_72": true,
+      "anim_class": "humanoid",
+      "name": "Fire Demon",
+      "origin_game": "DS3",
+      "size_class": "XL",
+      "tier": "miniboss",
+      "variants": 3,
+      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)",
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=1.80m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c6230": {
+      "_confidence": "low",
+      "_source": "mmv_import",
+      "name": "Unknown MMV import",
+      "origin_game": "?",
+      "tier": "miniboss",
+      "variants": 0
+    },
+    "c6231": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "name": "Perfumer",
+      "origin_game": "ER",
+      "size_class": "M",
+      "tier": "grunt",
+      "variants": 9
+    },
+    "c6260": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "flying_dragon",
+      "name": "Death Rite Bird",
+      "origin_game": "ER",
+      "size_class": "GIGA",
+      "tier": "miniboss",
+      "variants": 4,
+      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)",
+      "_size_correction_v0_26_x": "corrected from 'L' → 'GIGA' based on NpcParam.csv (median hitHeight=8.00m, hitRadius=3.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    },
+    "c8200": {
+      "_confidence": "low",
+      "_source": "mmv_import",
+      "expects_boss_arena": true,
+      "name": "Unknown MMV import (likely Messmer or Romina)",
+      "origin_game": "?",
+      "tier": "nightlord",
+      "variants": 1
+    },
+    "c8300": {
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Dragonslayer Armor",
+      "origin_game": "DS3",
+      "size_class": "L",
+      "tier": "nightlord",
+      "variants": 1
+    },
+    "c8400": {
+      "_confidence": "low",
+      "_source": "mmv_import",
+      "expects_boss_arena": true,
+      "name": "Unknown MMV import (likely Promised Consort Radahn)",
+      "origin_game": "?",
+      "tier": "nightlord",
+      "variants": 1
+    },
+    "c8500": {
+      "_backfill_justification": "known: Manus (DS1) = ape-like humanoid L",
+      "_confidence": "high",
+      "_source": "mmv_import",
+      "_tags_backfilled_v0_24_72": true,
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "name": "Manus, Father of the Abyss",
+      "origin_game": "DS1",
+      "size_class": "XL",
+      "tier": "nightlord",
+      "variants": 1,
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=1.20m); MMV bulk audit surfaced 18 systematically-undersized entries"
+    }
+  },
+  "variants": [
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2030",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 20300000,
+      "sample_maps": [],
+      "think_param_id": 20300000,
+      "variant_name": "Rennala- Queen of the Full Moon"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2030",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 20300024,
+      "sample_maps": [],
+      "think_param_id": 20300000,
+      "variant_name": "Rennala- Queen of the Full Moon"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2030",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 20300100,
+      "sample_maps": [],
+      "think_param_id": 20300000,
+      "variant_name": "Rennala- Queen of the Full Moon"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2030",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 20300124,
+      "sample_maps": [],
+      "think_param_id": 20300000,
+      "variant_name": "Rennala- Queen of the Full Moon"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2030",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 20301124,
+      "sample_maps": [],
+      "think_param_id": 20300000,
+      "variant_name": "Rennala- Queen of the Full Moon"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2031",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 20310000,
+      "sample_maps": [],
+      "think_param_id": 20310000,
+      "variant_name": "Rennala- Queen of the Full Moon"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2031",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 20310050,
+      "sample_maps": [],
+      "think_param_id": 20310000,
+      "variant_name": "Rennala- Queen of the Full Moon (NB1)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2031",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 20310024,
+      "sample_maps": [],
+      "think_param_id": 20310000,
+      "variant_name": "Rennala- Queen of the Full Moon"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2031",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 20310100,
+      "sample_maps": [],
+      "think_param_id": 20310000,
+      "variant_name": "Rennala- Queen of the Full Moon"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2031",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 20310124,
+      "sample_maps": [],
+      "think_param_id": 20310000,
+      "variant_name": "Rennala- Queen of the Full Moon"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21100000,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Beast Clergyman"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21100072,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Beast Clergyman (Farum Azula)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 21100080,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Beast Clergyman GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21101000,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Maliketh"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21101072,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Maliketh (Farum Azula)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 21101080,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Maliketh GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 21101050,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Maliketh (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21101051,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Maliketh (Clone)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21102000,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Beast Clergyman"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 21109000,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Gurranq- Beast Clergyman"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 21109010,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Gurranq (Field Boss) (Tier 4)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 21109042,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Gurranq- Beast Clergyman"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2110",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 21109100,
+      "sample_maps": [],
+      "think_param_id": 21100000,
+      "variant_name": "Gurranq- Beast Clergyman (NB1) UNUSED"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2120",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21200000,
+      "sample_maps": [],
+      "think_param_id": 21200000,
+      "variant_name": "Malenia- Blade of Miquella"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2120",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21200056,
+      "sample_maps": [],
+      "think_param_id": 21200000,
+      "variant_name": "Malenia- Blade of Miquella"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2120",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 21200100,
+      "sample_maps": [],
+      "think_param_id": 21200000,
+      "variant_name": "Malenia- Blade of Miquella (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2120",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21201000,
+      "sample_maps": [],
+      "think_param_id": 21200000,
+      "variant_name": "Malenia- Blade of Miquella"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2120",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21201100,
+      "sample_maps": [],
+      "think_param_id": 21200000,
+      "variant_name": "Malenia- Blade of Miquella"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2120",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21202000,
+      "sample_maps": [],
+      "think_param_id": 21200000,
+      "variant_name": "Malenia- Blade of Miquella"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2120",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21202056,
+      "sample_maps": [],
+      "think_param_id": 21200000,
+      "variant_name": "Malenia- Blade of Miquella"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2120",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21203000,
+      "sample_maps": [],
+      "think_param_id": 21200000,
+      "variant_name": "Malenia- Blade of Miquella"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2120",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21203056,
+      "sample_maps": [],
+      "think_param_id": 21200000,
+      "variant_name": "Malenia- Blade of Miquella"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2120",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 21209000,
+      "sample_maps": [],
+      "think_param_id": 21200000,
+      "variant_name": "Malenia- Blade of Miquella"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4511",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 45110000,
+      "sample_maps": [],
+      "think_param_id": 45110000,
+      "variant_name": "Lichdragon Fortissax"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4511",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 45110010,
+      "sample_maps": [],
+      "think_param_id": 45110000,
+      "variant_name": "Fortissax (Field Boss) (Tier 4)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4511",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 45110066,
+      "sample_maps": [],
+      "think_param_id": 45110000,
+      "variant_name": "Lichdragon Fortissax"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4511",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 45110100,
+      "sample_maps": [],
+      "think_param_id": 45110000,
+      "variant_name": "Fortissax (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4720",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 47200000,
+      "sample_maps": [],
+      "think_param_id": 47200000,
+      "variant_name": "Godfrey- First Elden Lord (Unscaled)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4720",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 47200070,
+      "sample_maps": [],
+      "think_param_id": 47200000,
+      "variant_name": "Godfrey- First Elden Lord"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4720",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 47200080,
+      "sample_maps": [],
+      "think_param_id": 47200000,
+      "variant_name": "Godfrey- First Elden Lord (Field Boss) (Tier 4)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4720",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 47200090,
+      "sample_maps": [],
+      "think_param_id": 47200000,
+      "variant_name": "Godfrey- First Elden Lord GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4720",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 47200100,
+      "sample_maps": [],
+      "think_param_id": 47200000,
+      "variant_name": "Godfrey- First Elden Lord (Unscaled)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4720",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 47200134,
+      "sample_maps": [],
+      "think_param_id": 47200000,
+      "variant_name": "Godfrey- First Elden Lord (Phantom)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4720",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 47200200,
+      "sample_maps": [],
+      "think_param_id": 47200000,
+      "variant_name": "Godfrey- First Elden Lord (NB1)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4721",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 47210000,
+      "sample_maps": [],
+      "think_param_id": 47210000,
+      "variant_name": "Hoarah Loux (Unscaled)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4721",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 47210070,
+      "sample_maps": [],
+      "think_param_id": 47210000,
+      "variant_name": "Hoarah Loux"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4721",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 47210080,
+      "sample_maps": [],
+      "think_param_id": 47210000,
+      "variant_name": "Hoarah Loux GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4730",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 47300000,
+      "sample_maps": [],
+      "think_param_id": 47300000,
+      "variant_name": "Starscourge Radahn"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4730",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 47300040,
+      "sample_maps": [],
+      "think_param_id": 47300000,
+      "variant_name": "Starscourge Radahn"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c4730",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 47301000,
+      "sample_maps": [],
+      "think_param_id": 47300000,
+      "variant_name": "Starscourge Radahn (NB1)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5030",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50300000,
+      "sample_maps": [],
+      "think_param_id": 50300000,
+      "variant_name": "Romina- Saint of the Bud"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5030",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50300001,
+      "sample_maps": [],
+      "think_param_id": 50300000,
+      "variant_name": "Romina- Saint of the Bud"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5030",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 50300094,
+      "sample_maps": [],
+      "think_param_id": 50300000,
+      "variant_name": "Romina- Saint of the Bud (Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5030",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50300100,
+      "sample_maps": [],
+      "think_param_id": 50300000,
+      "variant_name": "Romina (Field Boss) (Tier 4)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5030",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50300110,
+      "sample_maps": [],
+      "think_param_id": 50300000,
+      "variant_name": "Romina- Saint of the Bud GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5030",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50301000,
+      "sample_maps": [],
+      "think_param_id": 50300000,
+      "variant_name": "Romina (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5051",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50510000,
+      "sample_maps": [],
+      "think_param_id": 50510000,
+      "variant_name": "Midra- Lord of Frenzied Flame"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5051",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50510001,
+      "sample_maps": [],
+      "think_param_id": 50510000,
+      "variant_name": "Midra- Lord of Frenzied Flame"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5051",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 50510086,
+      "sample_maps": [],
+      "think_param_id": 50510000,
+      "variant_name": "Midra- Lord of Frenzied Flame (Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5051",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50510090,
+      "sample_maps": [],
+      "think_param_id": 50510000,
+      "variant_name": "Midra- Lord of Frenzied Flame GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5051",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50510100,
+      "sample_maps": [],
+      "think_param_id": 50510000,
+      "variant_name": "Midra- Lord of Frenzied Flame (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5130",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 51300000,
+      "sample_maps": [],
+      "think_param_id": 51300000,
+      "variant_name": "Messmer the Impaler"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5130",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 51300001,
+      "sample_maps": [],
+      "think_param_id": 51300000,
+      "variant_name": "Messmer the Impaler"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5130",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 51300099,
+      "sample_maps": [],
+      "think_param_id": 51300000,
+      "variant_name": "Messmer the Impaler"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5130",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 51300100,
+      "sample_maps": [],
+      "think_param_id": 51300000,
+      "variant_name": "Messmer the Impaler GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5130",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 51301000,
+      "sample_maps": [],
+      "think_param_id": 51300000,
+      "variant_name": "Messmer the Impaler"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5130",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 51301099,
+      "sample_maps": [],
+      "think_param_id": 51300000,
+      "variant_name": "Messmer the Impaler (Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5130",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 51300200,
+      "sample_maps": [],
+      "think_param_id": 51300000,
+      "variant_name": "Messmer the Impaler (Phase 1) (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5200",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 52000000,
+      "sample_maps": [],
+      "think_param_id": 52000000,
+      "variant_name": "Metyr- Mother of Fingers"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5200",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 52000001,
+      "sample_maps": [],
+      "think_param_id": 52000000,
+      "variant_name": "Metyr- Mother of Fingers"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52000097,
+      "sample_maps": [],
+      "think_param_id": 52000000,
+      "variant_name": "Metyr- Mother of Fingers (Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5200",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 52000100,
+      "sample_maps": [],
+      "think_param_id": 52000000,
+      "variant_name": "Metyr- Mother of Fingers (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 52300000,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 52300001,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 52300080,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 52300090,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar (NB1)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300096,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar (Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300100,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300101,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300196,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300200,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300201,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300296,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300300,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300301,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300396,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300400,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300401,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300496,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300500,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300501,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5230",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 52300596,
+      "sample_maps": [],
+      "think_param_id": 52300000,
+      "variant_name": "Scadutree Avatar"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5300",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 53000000,
+      "sample_maps": [],
+      "think_param_id": 53000000,
+      "variant_name": "Rellana- Twin Moon Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5300",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 53000001,
+      "sample_maps": [],
+      "think_param_id": 53000000,
+      "variant_name": "Rellana- Twin Moon Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5300",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 53000080,
+      "sample_maps": [],
+      "think_param_id": 53000000,
+      "variant_name": "Rellana- Twin Moon Knight GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5300",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 53000082,
+      "sample_maps": [],
+      "think_param_id": 53000000,
+      "variant_name": "Rellana- Twin Moon Knight (Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5300",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 53001000,
+      "sample_maps": [],
+      "think_param_id": 53000000,
+      "variant_name": "Rellana- Twin Moon Knight (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 12600000,
+      "sample_maps": [],
+      "think_param_id": 12600000,
+      "variant_name": "Hollow manserving servant Saw"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 12600010,
+      "sample_maps": [],
+      "think_param_id": 12600000,
+      "variant_name": "Hollow manserving servant Saw and wood"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 12600020,
+      "sample_maps": [],
+      "think_param_id": 12600000,
+      "variant_name": "Slashy (Field Boss) (Tier 3)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 12600025,
+      "sample_maps": [],
+      "think_param_id": 12600000,
+      "variant_name": "Slashy (Basement Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 12601000,
+      "sample_maps": [],
+      "think_param_id": 12600000,
+      "variant_name": "Hollow manserving servant Pot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 12601010,
+      "sample_maps": [],
+      "think_param_id": 12600000,
+      "variant_name": "Hollow manserving servant Pot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 12601020,
+      "sample_maps": [],
+      "think_param_id": 12600000,
+      "variant_name": "Bashy (Field Boss) (Tier 3)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 12601025,
+      "sample_maps": [],
+      "think_param_id": 12600000,
+      "variant_name": "Bashy (Basement Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1310",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 13100005,
+      "sample_maps": [],
+      "think_param_id": 13100000,
+      "variant_name": "Outrider Knight (Basement Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1310",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 13100010,
+      "sample_maps": [],
+      "think_param_id": 13100000,
+      "variant_name": "Outrider Knight (Field Boss) (Tier 1)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c1310",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 13100000,
+      "sample_maps": [],
+      "think_param_id": 13100000,
+      "variant_name": ""
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5000",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50000000,
+      "sample_maps": [],
+      "think_param_id": 50000000,
+      "variant_name": "Commander Gaius"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5000",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50000001,
+      "sample_maps": [],
+      "think_param_id": 50000000,
+      "variant_name": "Commander Gaius"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5000",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 50000092,
+      "sample_maps": [],
+      "think_param_id": 50000000,
+      "variant_name": "Commander Gaius (Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5000",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50000100,
+      "sample_maps": [],
+      "think_param_id": 50000000,
+      "variant_name": "Commander Gaius (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600000,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600001,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600083,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600093,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600100,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600101,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600193,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600200,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600201,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600283,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600293,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600300,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600301,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600383,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600393,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600400,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600493,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600593,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600683,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600793,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600883,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5060",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50600900,
+      "sample_maps": [],
+      "think_param_id": 50600000,
+      "variant_name": "Lamprey (NB Prelude)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5061",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50610000,
+      "sample_maps": [],
+      "think_param_id": 50610000,
+      "variant_name": "Lamprey (Large)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5061",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50610001,
+      "sample_maps": [],
+      "think_param_id": 50610000,
+      "variant_name": "Lamprey (Large)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5061",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50610083,
+      "sample_maps": [],
+      "think_param_id": 50610000,
+      "variant_name": "Lamprey (Large)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5061",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50610093,
+      "sample_maps": [],
+      "think_param_id": 50610000,
+      "variant_name": "Lamprey (Large)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5061",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50610883,
+      "sample_maps": [],
+      "think_param_id": 50610000,
+      "variant_name": "Lamprey (Large)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5061",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50610893,
+      "sample_maps": [],
+      "think_param_id": 50610000,
+      "variant_name": "Lamprey (Large)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5061",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 50610900,
+      "sample_maps": [],
+      "think_param_id": 50610000,
+      "variant_name": "Lamprey (Large) (NB Prelude)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57400000,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57400090,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57400094,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57400095,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57401000,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57401090,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57401094,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57401095,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57402000,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57402090,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57402094,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57402095,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57403000,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57403090,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57403094,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57403095,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57404000,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57404090,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57404094,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57404095,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57404096,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Pink Kindred of Rot GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57405000,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57405094,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57405095,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57406000,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57406094,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57406095,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57407000,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57407050,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot CASTLE NEW w/DROPS"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57407094,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57407095,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57407100,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot (NB Prelude)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 57409000,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57409080,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 57409081,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57409083,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5740",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 57409090,
+      "sample_maps": [],
+      "think_param_id": 57400000,
+      "variant_name": "Kindred of Rot"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400000,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight CASTLE (Unused)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400001,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400050,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight (NB Prelude)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400080,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400081,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400082,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400090,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400093,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400098,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400100,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400101,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400182,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400190,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400193,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400195,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400198,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400200,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400201,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400290,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400293,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400300,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400301,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400382,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400390,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400398,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400500,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400501,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 58400590,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Garrew (Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400600,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400601,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400610,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Garrew (Field Boss) (Tier 2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400615,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Garrew (Basement Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 58400690,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Edredd (Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400700,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Edredd (Field Boss) (Tier 2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58400705,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Edredd (Basement Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58401000,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Hammer GH Castle North"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58401010,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Twinblade GH Castle North"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58401020,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Hammer GH Castle South"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58401030,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Twinblade GH Castle South"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58401290,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58401390,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58402000,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight - Castle w/DROPS"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58403000,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight Wings - CASTLE w/DROPS"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 58409000,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5840",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 58409098,
+      "sample_maps": [],
+      "think_param_id": 58400000,
+      "variant_name": "Black Knight"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800000,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800001,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800090,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800091,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800095,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800100,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800101,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800181,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800190,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800191,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800200,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800201,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800281,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800290,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58801000,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58800150,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer (NB Prelude) (Manus)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58801010,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer GH Castle Group Boss"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58802000,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58802010,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer GH Castle Group Boss"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58803000,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer GH Castle"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5880",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58803010,
+      "sample_maps": [],
+      "think_param_id": 58800000,
+      "variant_name": "Catacombs Sorcerer GH Castle Group Boss"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5930",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 59300000,
+      "sample_maps": [],
+      "think_param_id": 59300000,
+      "variant_name": "Giant Skeleton"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5930",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 59300084,
+      "sample_maps": [],
+      "think_param_id": 59300000,
+      "variant_name": "Giant Skeleton"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5930",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 59301000,
+      "sample_maps": [],
+      "think_param_id": 59300000,
+      "variant_name": "Giant Skeleton"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5930",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 59301084,
+      "sample_maps": [],
+      "think_param_id": 59300000,
+      "variant_name": "Giant Skeleton"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62000000,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Slave Knight Gael P2 (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62000001,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Slave Knight Gael P1 (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62001000,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62002000,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62002100,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62002200,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62003000,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62003100,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62003200,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62004000,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62004100,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62004200,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62005000,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62005100,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6200",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62005200,
+      "sample_maps": [],
+      "think_param_id": 62000000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6210",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62100000,
+      "sample_maps": [],
+      "think_param_id": 62100000,
+      "variant_name": "Corvian Knight (Claws)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6210",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62100005,
+      "sample_maps": [],
+      "think_param_id": 62100000,
+      "variant_name": "Corvian Knight (Rapier) (Basement Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6210",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62100015,
+      "sample_maps": [],
+      "think_param_id": 62100000,
+      "variant_name": "Corvian Knight (Rapier) (Field Boss) (Tier 2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6210",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62100020,
+      "sample_maps": [],
+      "think_param_id": 62100000,
+      "variant_name": "Corvian Knight (Claws) (Field Boss) (Tier 2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6210",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62100092,
+      "sample_maps": [],
+      "think_param_id": 62100000,
+      "variant_name": "Albinauric Archer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6210",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62109000,
+      "sample_maps": [],
+      "think_param_id": 62100000,
+      "variant_name": "Albinauric Archer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6210",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62100010,
+      "sample_maps": [],
+      "think_param_id": 62100000,
+      "variant_name": "Corvian Knight (Rapier)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6220",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62201000,
+      "sample_maps": [],
+      "think_param_id": 62200000,
+      "variant_name": "Fire Demon (NB1)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6220",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62200000,
+      "sample_maps": [],
+      "think_param_id": 62200000,
+      "variant_name": ""
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6220",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62200092,
+      "sample_maps": [],
+      "think_param_id": 62200000,
+      "variant_name": "Wolf"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62600000,
+      "sample_maps": [],
+      "think_param_id": 62600000,
+      "variant_name": "Death Rite Bird"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62600000,
+      "sample_maps": [],
+      "think_param_id": 62600000,
+      "variant_name": "Death Rite Bird"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6260",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62601000,
+      "sample_maps": [],
+      "think_param_id": 62600000,
+      "variant_name": "Death Rite Bird"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6260",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62601084,
+      "sample_maps": [],
+      "think_param_id": 62600000,
+      "variant_name": "Death Rite Bird (Charo's Hidden Grave Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c8300",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 83000000,
+      "sample_maps": [],
+      "think_param_id": 83000000,
+      "variant_name": "Dragonslayer Armor (NB1)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c8500",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 85000000,
+      "sample_maps": [],
+      "think_param_id": 85000000,
+      "variant_name": "Manus (NB2)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510000,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510080,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510081,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510082,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510090,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510093,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510095,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510098,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510100,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510150,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier (NB Prelude) Messmer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510500,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510582,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510590,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510598,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56510890,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511000,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511400,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511500,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511581,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511593,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511600,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511690,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511700,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511800,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511890,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56511900,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512000,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512050,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier (NB Prelude) Golden Hippo"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512081,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512082,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512090,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512093,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512095,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512098,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512100,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512500,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512590,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56512595,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56513000,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56514000,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56514090,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56514095,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56514098,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56516000,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56516081,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56516082,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56516090,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56516093,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56516095,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56516098,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 56517000,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 56517081,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 56517095,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5651",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 56519000,
+      "sample_maps": [],
+      "think_param_id": 56510000,
+      "variant_name": "Messmer Foot Soldier"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5890",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58900000,
+      "sample_maps": [],
+      "think_param_id": 58900000,
+      "variant_name": "Black Knight Horse"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5890",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58900001,
+      "sample_maps": [],
+      "think_param_id": 58900000,
+      "variant_name": "Black Knight Horse"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5890",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 58900010,
+      "sample_maps": [],
+      "think_param_id": 58900000,
+      "variant_name": "Black Knight Horse (Field Boss)"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5890",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58900090,
+      "sample_maps": [],
+      "think_param_id": 58900000,
+      "variant_name": "Black Knight Horse"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5890",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58900093,
+      "sample_maps": [],
+      "think_param_id": 58900000,
+      "variant_name": "Black Knight Horse"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c5890",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 58900190,
+      "sample_maps": [],
+      "think_param_id": 58900000,
+      "variant_name": "Black Knight Horse"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62010000,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62011000,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62012000,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62012090,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62012095,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62012100,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62012200,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62012290,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62013000,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62013090,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62013100,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62013200,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62014000,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62014090,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62014100,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62014200,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62015000,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62015090,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62015091,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62015095,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62015100,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6201",
+      "count": 1,
+      "has_reward": false,
+      "npc_param_id": 62015200,
+      "sample_maps": [],
+      "think_param_id": 62010000,
+      "variant_name": "Scarab"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6231",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62310000,
+      "sample_maps": [],
+      "think_param_id": 62310000,
+      "variant_name": "Perfumer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6231",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62310081,
+      "sample_maps": [],
+      "think_param_id": 62310000,
+      "variant_name": "Perfumer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6231",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62310090,
+      "sample_maps": [],
+      "think_param_id": 62310000,
+      "variant_name": "Perfumer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6231",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62310098,
+      "sample_maps": [],
+      "think_param_id": 62310000,
+      "variant_name": "Perfumer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6231",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62310190,
+      "sample_maps": [],
+      "think_param_id": 62310000,
+      "variant_name": "Perfumer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6231",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62311000,
+      "sample_maps": [],
+      "think_param_id": 62310000,
+      "variant_name": "Perfumer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6231",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62311081,
+      "sample_maps": [],
+      "think_param_id": 62310000,
+      "variant_name": "Perfumer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6231",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62311090,
+      "sample_maps": [],
+      "think_param_id": 62310000,
+      "variant_name": "Perfumer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c6231",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 62311098,
+      "sample_maps": [],
+      "think_param_id": 62310000,
+      "variant_name": "Perfumer"
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c2240",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 22400000,
+      "sample_maps": [],
+      "think_param_id": 22400000,
+      "variant_name": ""
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c3110",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 31100000,
+      "sample_maps": [],
+      "think_param_id": 31100000,
+      "variant_name": ""
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c8200",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 82000000,
+      "sample_maps": [],
+      "think_param_id": 82000000,
+      "variant_name": ""
+    },
+    {
+      "_source": "mmv_import",
+      "c_prefix": "c8400",
+      "count": 1,
+      "has_reward": true,
+      "npc_param_id": 84000000,
+      "sample_maps": [],
+      "think_param_id": 84000000,
+      "variant_name": ""
+    }
+  ]
+}

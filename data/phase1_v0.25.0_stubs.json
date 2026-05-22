@@ -1,0 +1,2330 @@
+{
+  "_meta": {
+    "_comment": [
+      "Phase 1 v0.25.0 heritage import stubs \u2014 14 chrs added to IMPORT_PLAN ",
+      "without corresponding tags or roster entries. This file STAGES the ",
+      "tags + roster entries so the user can review + verify deploy chrbnd ",
+      "presence before promoting them into the live nr_enemy_tags.json and ",
+      "nr_enemy_roster.json.",
+      "",
+      "BEFORE PROMOTING: run dev/audit_chr_assets_vs_roster.py against the ",
+      "user's deploy to confirm chrbnd/anibnd/behbnd/texbnd files exist for ",
+      "each c-prefix below. Chrs with full asset packs are safe to promote. ",
+      "Chrs missing assets should go to nr_missing_chr_files.broken_runtime_chrs ",
+      "instead, or be removed from IMPORT_PLAN entirely.",
+      "",
+      "All stat values (hp, hit_height, weight, variants) are sourced from ",
+      "the user's mod_dump/NpcParam.csv (the actual regulation deployment). ",
+      "anim_class, size_class, tier, expects_boss_arena are EDITORIAL judgments ",
+      "based on ER lore + the dimensions \u2014 these are the fields most likely ",
+      "to need adjustment during playtest. Marked _confidence: low."
+    ],
+    "_generator": "manual via Phase 1 v0.25.0 IMPORT_PLAN extension",
+    "_origin_version": "v0.25.0",
+    "_review_status": "REVIEWED v0.26.x \u2014 10 PROMOTE_AS_IS, 2 PROMOTE_WITH_CORRECTION, 2 DEFER. Asset-audit still required before lift into nr_enemy_tags.json. See dev/PHASE1_STUBS_REVIEW.md."
+  },
+  "roster_stub": [
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5020",
+      "has_reward": false,
+      "hp": 1745,
+      "npc_param_id": 50200000,
+      "think_param_id": 0,
+      "variant_name": "Putrescent Knight"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5020",
+      "has_reward": false,
+      "hp": 1745,
+      "npc_param_id": 50200001,
+      "think_param_id": 0,
+      "variant_name": "Putrescent Knight"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5020",
+      "has_reward": false,
+      "hp": 1745,
+      "npc_param_id": 50200087,
+      "think_param_id": 0,
+      "variant_name": "Putrescent Knight (Boss)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5020",
+      "has_reward": false,
+      "hp": 2045,
+      "npc_param_id": 50200090,
+      "think_param_id": 0,
+      "variant_name": "Putrescent Knight GH Castle"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5020",
+      "has_reward": false,
+      "hp": 1745,
+      "npc_param_id": 50200100,
+      "think_param_id": 0,
+      "variant_name": "Putrescent Knight"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5020",
+      "has_reward": false,
+      "hp": 1745,
+      "npc_param_id": 50200101,
+      "think_param_id": 0,
+      "variant_name": "Putrescent Knight"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5020",
+      "has_reward": false,
+      "hp": 1745,
+      "npc_param_id": 50200187,
+      "think_param_id": 0,
+      "variant_name": "Putrescent Knight"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5310",
+      "has_reward": false,
+      "hp": 2239,
+      "npc_param_id": 53100900,
+      "think_param_id": 0,
+      "variant_name": "Inquisitor"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5310",
+      "has_reward": false,
+      "hp": 2239,
+      "npc_param_id": 53100901,
+      "think_param_id": 0,
+      "variant_name": "Inquisitor"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5310",
+      "has_reward": false,
+      "hp": 2239,
+      "npc_param_id": 53100986,
+      "think_param_id": 0,
+      "variant_name": "Inquisitor"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600000,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600083,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600084,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600100,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600181,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600184,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600300,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600400,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600500,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600700,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53600790,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53601000,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53601083,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53601084,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53601100,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53601181,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53601184,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53601700,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53601790,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53602000,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53602083,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53602084,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53602100,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53602181,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53602184,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53602700,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53602790,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53603000,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53603083,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53603084,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53603100,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53603181,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53603184,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53603700,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53603790,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53604000,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53604083,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53604084,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53604100,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53604181,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53604184,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53604700,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53604790,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53605000,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53605084,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53606000,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53606084,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53607000,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53607084,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53608000,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53608084,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53609000,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53609084,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53609100,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53609183,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53609200,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53609283,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53609300,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5360",
+      "has_reward": false,
+      "hp": 148,
+      "npc_param_id": 53609383,
+      "think_param_id": 0,
+      "variant_name": "Giant Beast Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54300000,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54300080,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54300081,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54300082,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54300087,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54300090,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54300093,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54300094,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54300095,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54301086,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54302000,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54302083,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54302084,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54302086,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54302090,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54302093,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54302094,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5430",
+      "has_reward": false,
+      "hp": 27,
+      "npc_param_id": 54302095,
+      "think_param_id": 0,
+      "variant_name": "Owl"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000000,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000081,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000090,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000093,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000095,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000100,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000181,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000190,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000193,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000195,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000200,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000281,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000290,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000293,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000295,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000300,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000381,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000390,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000393,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000395,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000400,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000481,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000490,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000493,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000495,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000500,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000581,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000590,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000593,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000595,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000600,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000690,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000700,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000790,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000800,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5500",
+      "has_reward": false,
+      "hp": 111,
+      "npc_param_id": 55000890,
+      "think_param_id": 0,
+      "variant_name": "Living Magma"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5513",
+      "has_reward": false,
+      "hp": 305,
+      "npc_param_id": 55130000,
+      "think_param_id": 0,
+      "variant_name": "Cemetary Shade"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5513",
+      "has_reward": false,
+      "hp": 305,
+      "npc_param_id": 55130081,
+      "think_param_id": 0,
+      "variant_name": "Cemetary Shade"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5513",
+      "has_reward": false,
+      "hp": 305,
+      "npc_param_id": 55130083,
+      "think_param_id": 0,
+      "variant_name": "Cemetary Shade"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5513",
+      "has_reward": false,
+      "hp": 305,
+      "npc_param_id": 55130090,
+      "think_param_id": 0,
+      "variant_name": "Cemetary Shade"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5560",
+      "has_reward": false,
+      "hp": 105,
+      "npc_param_id": 55600000,
+      "think_param_id": 0,
+      "variant_name": "Fingercreeper (Small)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5560",
+      "has_reward": false,
+      "hp": 105,
+      "npc_param_id": 55600083,
+      "think_param_id": 0,
+      "variant_name": "Fingercreeper (Small)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5560",
+      "has_reward": false,
+      "hp": 105,
+      "npc_param_id": 55600093,
+      "think_param_id": 0,
+      "variant_name": "Fingercreeper (Small)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5560",
+      "has_reward": false,
+      "hp": 105,
+      "npc_param_id": 55600100,
+      "think_param_id": 0,
+      "variant_name": "Fingercreeper (Small)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5560",
+      "has_reward": false,
+      "hp": 63,
+      "npc_param_id": 55600200,
+      "think_param_id": 0,
+      "variant_name": "Fingercreeper (Small)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5560",
+      "has_reward": false,
+      "hp": 63,
+      "npc_param_id": 55600297,
+      "think_param_id": 0,
+      "variant_name": "Fingercreeper (Small)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5560",
+      "has_reward": false,
+      "hp": 296,
+      "npc_param_id": 55600300,
+      "think_param_id": 0,
+      "variant_name": "Fingercreeper (Small)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5560",
+      "has_reward": false,
+      "hp": 296,
+      "npc_param_id": 55600390,
+      "think_param_id": 0,
+      "variant_name": "Fingercreeper (Small)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56000000,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56000087,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 181,
+      "npc_param_id": 56000090,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton GH Castle"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56000100,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56000187,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56000200,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56000287,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56001000,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56001087,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 181,
+      "npc_param_id": 56001090,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton GH Castle"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56001100,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56001187,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56002000,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56002087,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56002100,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56002187,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 181,
+      "npc_param_id": 56002190,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton GH Castle"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56003000,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56003087,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56003100,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56003187,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56003200,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56003287,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56003300,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56004000,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5600",
+      "has_reward": false,
+      "hp": 281,
+      "npc_param_id": 56004100,
+      "think_param_id": 0,
+      "variant_name": "Catacomb Skeleton"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5620",
+      "has_reward": false,
+      "hp": 1918,
+      "npc_param_id": 56200000,
+      "think_param_id": 0,
+      "variant_name": "Tibia Mariner"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5620",
+      "has_reward": false,
+      "hp": 1918,
+      "npc_param_id": 56200084,
+      "think_param_id": 0,
+      "variant_name": "Tibia Mariner (Charo's Hidden Grave)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56610000,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56610081,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56610090,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56610091,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56610095,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56610098,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56610099,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56610100,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56611000,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56611081,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56611090,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56611091,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56611095,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56611098,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56611099,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56611100,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56612000,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56612081,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56612090,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56612091,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56612095,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56612098,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56612099,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5661",
+      "has_reward": false,
+      "hp": 153,
+      "npc_param_id": 56612100,
+      "think_param_id": 0,
+      "variant_name": "Shadow Militia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5800",
+      "has_reward": false,
+      "hp": 840,
+      "npc_param_id": 58000000,
+      "think_param_id": 0,
+      "variant_name": "Crucible Knight Devonia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5800",
+      "has_reward": false,
+      "hp": 840,
+      "npc_param_id": 58000001,
+      "think_param_id": 0,
+      "variant_name": "Crucible Knight Devonia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5800",
+      "has_reward": false,
+      "hp": 840,
+      "npc_param_id": 58000094,
+      "think_param_id": 0,
+      "variant_name": "Crucible Knight Devonia"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5850",
+      "has_reward": false,
+      "hp": 448,
+      "npc_param_id": 58500000,
+      "think_param_id": 0,
+      "variant_name": "Giant Ram"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5850",
+      "has_reward": false,
+      "hp": 448,
+      "npc_param_id": 58500083,
+      "think_param_id": 0,
+      "variant_name": "Giant Ram"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5850",
+      "has_reward": false,
+      "hp": 448,
+      "npc_param_id": 58500084,
+      "think_param_id": 0,
+      "variant_name": "Giant Ram"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5850",
+      "has_reward": false,
+      "hp": 448,
+      "npc_param_id": 58500100,
+      "think_param_id": 0,
+      "variant_name": "Giant Ram"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5850",
+      "has_reward": false,
+      "hp": 448,
+      "npc_param_id": 58500180,
+      "think_param_id": 0,
+      "variant_name": "Giant Ram"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5850",
+      "has_reward": false,
+      "hp": 448,
+      "npc_param_id": 58500183,
+      "think_param_id": 0,
+      "variant_name": "Giant Ram"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5850",
+      "has_reward": false,
+      "hp": 448,
+      "npc_param_id": 58500184,
+      "think_param_id": 0,
+      "variant_name": "Giant Ram"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5850",
+      "has_reward": false,
+      "hp": 448,
+      "npc_param_id": 58500190,
+      "think_param_id": 0,
+      "variant_name": "Giant Ram"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5950",
+      "has_reward": false,
+      "hp": 564,
+      "npc_param_id": 59500000,
+      "think_param_id": 0,
+      "variant_name": "Leonine Misbegotten"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5950",
+      "has_reward": false,
+      "hp": 564,
+      "npc_param_id": 59500087,
+      "think_param_id": 0,
+      "variant_name": "Leonine Misbegotten"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5950",
+      "has_reward": false,
+      "hp": 564,
+      "npc_param_id": 59501000,
+      "think_param_id": 0,
+      "variant_name": "Leonine Misbegotten"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c5950",
+      "has_reward": false,
+      "hp": 564,
+      "npc_param_id": 59501087,
+      "think_param_id": 0,
+      "variant_name": "Leonine Misbegotten"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c6310",
+      "has_reward": false,
+      "hp": 3154,
+      "npc_param_id": 63100000,
+      "think_param_id": 0,
+      "variant_name": "Fallingstar Beast (Base)"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c6310",
+      "has_reward": false,
+      "hp": 1893,
+      "npc_param_id": 63101000,
+      "think_param_id": 0,
+      "variant_name": "Fallingstar Beast"
+    },
+    {
+      "_heritage_imported": true,
+      "c_prefix": "c6310",
+      "has_reward": false,
+      "hp": 1893,
+      "npc_param_id": 63101093,
+      "think_param_id": 0,
+      "variant_name": "Fallingstar Beast (Scaduview) - Hinterland [Boss]"
+    }
+  ],
+  "tags_stub": {
+    "c5020": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "editorial fields validate; SOTE mounted boss anim driven by steed",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_AS_IS"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "SOTE mounted boss. anim_class is the mount form (quadruped_large) since chr-level animation drives the steed.",
+      "anim_bank": 50200,
+      "anim_bank_count": 1,
+      "anim_class": "quadruped_large",
+      "expects_boss_arena": true,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 3.9,
+      "hit_radius_median": 1.1,
+      "hp_max": 2045,
+      "hp_median": 1745,
+      "locomotion": 0,
+      "move_type": 11,
+      "n_noreward_variants": 7,
+      "n_reward_variants": 0,
+      "name": "Putrescent Knight",
+      "size_class": "L",
+      "team": 6,
+      "tier": "field_boss",
+      "variants": 7,
+      "weight_median": 100.0
+    },
+    "c5310": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "siblings c5311/c5312 miniboss; Base's hp=2239 outranks both, field_boss defensible",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_AS_IS"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "Base Inquisitor \u2014 c5311 (Candles) and c5312 (Staff) are sub-variants already in nr_enemy_tags.",
+      "anim_bank": 53100,
+      "anim_bank_count": 1,
+      "anim_class": "humanoid",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 2.0,
+      "hit_radius_median": 0.5,
+      "hp_max": 2239,
+      "hp_median": 2239,
+      "locomotion": 0,
+      "move_type": 3,
+      "n_noreward_variants": 3,
+      "n_reward_variants": 0,
+      "name": "Inquisitor (Base)",
+      "size_class": "M",
+      "team": 6,
+      "tier": "field_boss",
+      "variants": 3,
+      "weight_median": 150.0
+    },
+    "c5360": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "stub tier=grunt should be 'trash' to match c3500 pattern (same hp=148, M humanoid)",
+        "proposed_corrections": {
+          "tier": "trash"
+        },
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_WITH_CORRECTION"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "Name says \"Giant\" but regulation dimensions (h=1.9, r=0.3) are humanoid-sized. 59 variants suggests this is the sub-family bucket for various skeletal beast forms.",
+      "anim_bank": 53600,
+      "anim_bank_count": 1,
+      "anim_class": "humanoid",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 1.9,
+      "hit_radius_median": 0.3,
+      "hp_max": 148,
+      "hp_median": 148,
+      "locomotion": 0,
+      "move_type": 3,
+      "n_noreward_variants": 59,
+      "n_reward_variants": 0,
+      "name": "Giant Beast Skeleton (family)",
+      "size_class": "M",
+      "team": 6,
+      "tier": "grunt",
+      "variants": 59,
+      "weight_median": 100.0
+    },
+    "c5430": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "tiny flier, is_flier already set",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_AS_IS"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "Tiny flying chr (h=0.6, w=4kg). is_flier=True for slot routing.",
+      "anim_bank": 54300,
+      "anim_bank_count": 1,
+      "anim_class": "misc",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 0.6,
+      "hit_radius_median": 0.3,
+      "hp_max": 27,
+      "hp_median": 27.0,
+      "is_flier": true,
+      "locomotion": 0,
+      "move_type": 3,
+      "n_noreward_variants": 18,
+      "n_reward_variants": 0,
+      "name": "Owl",
+      "size_class": "S",
+      "team": 6,
+      "tier": "trash",
+      "variants": 18,
+      "weight_median": 4.0
+    },
+    "c5500": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "SOTE Yelough Anix; teamType=51 unusual but not blocking",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_AS_IS"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "SOTE Yelough Anix Tunnel chr \u2014 small magma-creature. teamType=51 (creature, not enemy), unusual.",
+      "anim_bank": 55000,
+      "anim_bank_count": 1,
+      "anim_class": "misc",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 1.3,
+      "hit_radius_median": 0.75,
+      "hp_max": 111,
+      "hp_median": 111.0,
+      "locomotion": 0,
+      "move_type": 3,
+      "n_noreward_variants": 36,
+      "n_reward_variants": 0,
+      "name": "Living Magma",
+      "size_class": "S",
+      "team": 51,
+      "tier": "grunt",
+      "variants": 36,
+      "weight_median": 130.0
+    },
+    "c5513": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "moveType=13 float-anim risk; ghost-type chrs can ground-clip or hover-no-aggro at standard slots (heritage-idle-roaring WONTFIX class). Playtest first.",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "DEFER"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "ER catacomb ghost \u2014 moveType=13 unusual for humanoid; may have float anim.",
+      "anim_bank": 55130,
+      "anim_bank_count": 1,
+      "anim_class": "humanoid",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 1.8,
+      "hit_radius_median": 0.3,
+      "hp_max": 305,
+      "hp_median": 305.0,
+      "locomotion": 0,
+      "move_type": 13,
+      "n_noreward_variants": 4,
+      "n_reward_variants": 0,
+      "name": "Cemetery Shade",
+      "size_class": "M",
+      "team": 6,
+      "tier": "grunt",
+      "variants": 4,
+      "weight_median": 130.0
+    },
+    "c5560": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "anim_class=misc should be 'quadruped' to match c4250 Small Fingercreeper reference (same hand-creature archetype)",
+        "proposed_corrections": {
+          "anim_class": "quadruped"
+        },
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_WITH_CORRECTION"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "Hand-creature (h=0.8, r=0.7 \u2014 wide-squat). moveType=1 (scuttle).",
+      "anim_bank": 55600,
+      "anim_bank_count": 1,
+      "anim_class": "misc",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 0.8,
+      "hit_radius_median": 0.7,
+      "hp_max": 296,
+      "hp_median": 105.0,
+      "locomotion": 0,
+      "move_type": 1,
+      "n_noreward_variants": 8,
+      "n_reward_variants": 0,
+      "name": "Fingercreeper (Small)",
+      "size_class": "S",
+      "team": 6,
+      "tier": "grunt",
+      "variants": 8,
+      "weight_median": 40.0
+    },
+    "c5600": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "mirrors c3510 exactly (tier=grunt M humanoid hp=281)",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_AS_IS"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "ER catacomb skeleton \u2014 vanilla NR has c3500/c3510 in the same skeleton family.",
+      "anim_bank": 56000,
+      "anim_bank_count": 1,
+      "anim_class": "humanoid",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 1.9,
+      "hit_radius_median": 0.3,
+      "hp_max": 281,
+      "hp_median": 281.0,
+      "locomotion": 0,
+      "move_type": 3,
+      "n_noreward_variants": 26,
+      "n_reward_variants": 0,
+      "name": "Catacomb Skeleton",
+      "size_class": "M",
+      "team": 6,
+      "tier": "grunt",
+      "variants": 26,
+      "weight_median": 100.0
+    },
+    "c5620": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "reference c4950 Tibia Mariner NB is in V3_EXCLUDE_TARGET_PREFIXES due to boat-rider component dependency; field variant may share the failure mode. Risk-bounded playtest before promotion.",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "DEFER"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "ER field Tibia Mariner. NR vanilla c4950 is the Night Boss form. This is the field-tier variant.",
+      "anim_bank": 56200,
+      "anim_bank_count": 1,
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 4.0,
+      "hit_radius_median": 1.5,
+      "hp_max": 1918,
+      "hp_median": 1918.0,
+      "locomotion": 0,
+      "move_type": 13,
+      "n_noreward_variants": 2,
+      "n_reward_variants": 0,
+      "name": "Tibia Mariner (Field)",
+      "size_class": "XL",
+      "team": 7,
+      "tier": "field_boss",
+      "variants": 2,
+      "weight_median": 200.0
+    },
+    "c5661": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "h=1.2 small for humanoid but consistent across 24 variants",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_AS_IS"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "SOTE Shadow Militia variants (24 in regulation). Dim h=1.2 unusually small.",
+      "anim_bank": 56610,
+      "anim_bank_count": 1,
+      "anim_class": "humanoid",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 1.2,
+      "hit_radius_median": 0.3,
+      "hp_max": 153,
+      "hp_median": 153.0,
+      "locomotion": 0,
+      "move_type": 3,
+      "n_noreward_variants": 24,
+      "n_reward_variants": 0,
+      "name": "Shadow Militia",
+      "size_class": "S",
+      "team": 6,
+      "tier": "grunt",
+      "variants": 24,
+      "weight_median": 130.0
+    },
+    "c5800": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "SOTE singular boss; ref c2500 is NB at M humanoid arena=True",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_AS_IS"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "SOTE Devonia variant. NR vanilla c2500 is Crucible Knight (regular).",
+      "anim_bank": 58000,
+      "anim_bank_count": 1,
+      "anim_class": "humanoid",
+      "expects_boss_arena": true,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 2.3,
+      "hit_radius_median": 0.5,
+      "hp_max": 840,
+      "hp_median": 840,
+      "locomotion": 0,
+      "move_type": 3,
+      "n_noreward_variants": 3,
+      "n_reward_variants": 0,
+      "name": "Crucible Knight Devonia",
+      "size_class": "M",
+      "team": 6,
+      "tier": "field_boss",
+      "variants": 3,
+      "weight_median": 130.0
+    },
+    "c5850": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "SOTE Cerulean Coast / Jagged Peak quadruped",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_AS_IS"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "SOTE Jagged Peak / Cerulean Coast quadruped \u2014 teamType=48 is unusual (some kind of grazer/aggressive variant split).",
+      "anim_bank": 58500,
+      "anim_bank_count": 1,
+      "anim_class": "quadruped_large",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 3.6,
+      "hit_radius_median": 0.8,
+      "hp_max": 448,
+      "hp_median": 448.0,
+      "locomotion": 0,
+      "move_type": 4,
+      "n_noreward_variants": 8,
+      "n_reward_variants": 0,
+      "name": "Giant Ram",
+      "size_class": "L",
+      "team": 6,
+      "tier": "miniboss",
+      "variants": 8,
+      "weight_median": 150.0
+    },
+    "c5950": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "mirrors c3460 (miniboss M quadruped); hp 564 vs 664 \u2014 scaled-down variant",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_AS_IS"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "Mirrors c3460 NR vanilla (h=2.4, hp=564). Likely a regulation-modded SOTE Leonine Misbegotten sub-variant.",
+      "anim_bank": 59500,
+      "anim_bank_count": 1,
+      "anim_class": "quadruped",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 2.4,
+      "hit_radius_median": 0.8,
+      "hp_max": 564,
+      "hp_median": 564.0,
+      "locomotion": 0,
+      "move_type": 3,
+      "n_noreward_variants": 4,
+      "n_reward_variants": 0,
+      "name": "Leonine Misbegotten (SOTE Variant)",
+      "size_class": "M",
+      "team": 6,
+      "tier": "miniboss",
+      "variants": 4,
+      "weight_median": 130.0
+    },
+    "c6310": {
+      "_confidence": "low",
+      "_heritage_imported": true,
+      "_review_v0_26_x": {
+        "note": "smaller variant of c4680 NB (h=6/r=4 vs h=11/r=5.5); editorial OK for scaled-down form",
+        "reviewer": "session_v0.26.x_dead_cap_cleanup",
+        "verdict": "PROMOTE_AS_IS"
+      },
+      "_source": "heritage_phase1_v0.25.0",
+      "_stub_note": "NR vanilla c4680 is Full-Grown Fallingstar Beast Night Boss. This c6310 is the field/encampment-tier base form.",
+      "anim_bank": 63100,
+      "anim_bank_count": 1,
+      "anim_class": "quadruped_large",
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "has_drops": false,
+      "has_reward": false,
+      "hit_height_median": 6.0,
+      "hit_radius_median": 4.0,
+      "hp_max": 3154,
+      "hp_median": 1893,
+      "locomotion": 0,
+      "move_type": 13,
+      "n_noreward_variants": 3,
+      "n_reward_variants": 0,
+      "name": "Fallingstar Beast (Base/Field)",
+      "size_class": "XL",
+      "team": 7,
+      "tier": "field_boss",
+      "variants": 3,
+      "weight_median": 30000.0
+    }
+  }
+}

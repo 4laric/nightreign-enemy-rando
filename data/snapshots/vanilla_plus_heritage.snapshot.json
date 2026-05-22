@@ -1,0 +1,19 @@
+{
+  "_schema": "pool_snapshot_v1",
+  "created": "2026-05-12T13:05:43.491174",
+  "description": "Standard rando config \u2014 base NR plus SoTE-flavored heritage chrs (Death Rite Bird, Dancing Lion, etc.). Requires SoTE-derived chr/script files staged via the Elden Ring Assets tab. MMV cross-game imports remain disabled to keep this configuration tightly scoped to NR + SoTE.",
+  "engine_kwargs": {},
+  "engine_version": "v0.23",
+  "name": "Vanilla NR + Heritage Pack",
+  "pack_overrides": {
+    "er_heritage_imports.json": {
+      "enabled": true
+    },
+    "heritage_pack.json": {
+      "enabled": true
+    },
+    "mmv_imports.json": {
+      "enabled": false
+    }
+  }
+}

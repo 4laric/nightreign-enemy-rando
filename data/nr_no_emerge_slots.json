@@ -1,0 +1,107 @@
+{
+  "_meta": {
+    "schema_version": 1,
+    "since_version": "v0.24.79",
+    "purpose": "Slots that lack the subsurface terrain required by emerge_from_ground chr intros. Placing an emerge-anim chr here CTDs the game on cell load or cleanup (the animation tries to push the chr up from beneath the floor, but there's no floor to push from at elevated platforms / ramparts / rooftops).",
+    "engine_field": "V3_NO_EMERGE_SLOTS",
+    "gate_logic": "If (msb, pi) is in this set AND target_cp has V3_ENTRANCE_ANIM_CLASS == 'emerge_from_ground', reject the placement. Targets without that classification (default: 'unknown') pass through.",
+    "interaction_with_other_systems": {
+      "V3_PROBLEM_SLOTS": "Independent. A slot can be both no-emerge AND in V3_PROBLEM_SLOTS (Fort GG is both). The two gates compose: V3_PROBLEM_SLOTS restricts to SAFE_CONFIRMED + EXTRA_ALLOWS; V3_NO_EMERGE_SLOTS rejects emerge-class regardless.",
+      "V3_PROBLEM_SLOT_EXTRA_BANS": "Overlapping. Fort GG explicitly bans c4441/c4810/c4811 via EXTRA_BANS AND this new system would catch them via entrance_anim. Belt-and-suspenders is fine \u2014 EXTRA_BANS is more specific (per-slot), this is per-class.",
+      "long_term": "If a chrbnd parser (Option C) derives entrance_anim systematically, this slot list should remain manual \u2014 it's geometry-dependent and shouldn't be derived from chr data."
+    },
+    "growth_pattern": "Add slots empirically as emerge-anim CTDs surface at new locations. Geometric pre-population is possible (any slot Y > X with no overhead structure), but conservative manual entry is safer until validated.",
+    "last_updated_version": "v0.24.85"
+  },
+  "slots": [
+    {
+      "msb": "m30_30_00_00.msb",
+      "part_index": 45,
+      "description": "Fort GG rampart \u2014 Guardian Golem (Fort) source on roof at Y=42.8",
+      "confirmed_failures": [
+        {
+          "cp": "c4441",
+          "version": "v0.24.18",
+          "seed": "70502",
+          "symptom": "Player CTD on approach"
+        },
+        {
+          "cp": "c4810",
+          "version": "v0.24.77",
+          "seed": "886942",
+          "symptom": "Player CTD on leaving Fort"
+        }
+      ]
+    },
+    {
+      "msb": "m34_10_00_00.msb",
+      "part_index": 90,
+      "description": "Elevated ruins slot at Y=22.44 \u2014 original vanilla source was c4480 Miranda Blossom (Ruins); plausibly a rampart or upper-floor balcony. Coordinates [-32.25, 22.44, 17.27].",
+      "confirmed_failures": [
+        {
+          "cp": "c3730",
+          "version": "v0.24.80",
+          "seed": "308132",
+          "symptom": "User-reported CTD near \"scholar head big ball of faces\" (Graven School). Slot identified by elevation + c3730 placement in this seed. Status: SUSPECTED (one of two elevated c3730 placements in this seed; user could not pin exact location)."
+        }
+      ]
+    },
+    {
+      "msb": "m60_44_38_00.msb",
+      "part_index": 30,
+      "description": "Very-high overworld slot at Y=93.63 \u2014 original vanilla source was c4110 Demi-Human Shaman, but at extreme elevation suggesting tower top or peak structure. Coordinates [21.18, 93.63, 62.65].",
+      "confirmed_failures": [
+        {
+          "cp": "c3730",
+          "version": "v0.24.80",
+          "seed": "308132",
+          "symptom": "User-reported CTD near \"scholar head big ball of faces\" (Graven School). Slot identified by extreme elevation (Y=93.63 is near-max possible) + c3730 placement in this seed. Status: SUSPECTED (one of two elevated c3730 placements in this seed; user could not pin exact location)."
+        }
+      ]
+    },
+    {
+      "msb": "m43_50_00_00.msb",
+      "part_index": 0,
+      "description": "Digger Tunnel (Lake) \u2014 slot at Y=0.24. Entrance level slot (vanilla c4381). Tagged via nr_named_locations.json::digger_tunnel_lake.",
+      "confirmed_failures": []
+    },
+    {
+      "msb": "m43_50_00_00.msb",
+      "part_index": 1,
+      "description": "Digger Tunnel (Lake) \u2014 slot at Y=2.24. Entrance level slot (vanilla c4381). Tagged via nr_named_locations.json::digger_tunnel_lake.",
+      "confirmed_failures": []
+    },
+    {
+      "msb": "m43_50_00_00.msb",
+      "part_index": 2,
+      "description": "Digger Tunnel (Lake) \u2014 slot at Y=-37.77. Deep interior slot \u2014 defensively included; if Day-1 CTD repros after banning entrance slots only, this can stay; otherwise downgrade. Tagged via nr_named_locations.json::digger_tunnel_lake.",
+      "confirmed_failures": []
+    },
+    {
+      "msb": "m43_50_00_00.msb",
+      "part_index": 3,
+      "description": "Digger Tunnel (Lake) \u2014 slot at Y=1.15. Entrance level slot \u2014 c4250 Small Fingercreeper landed here in CTD seed 522250. Tagged via nr_named_locations.json::digger_tunnel_lake.",
+      "confirmed_failures": [
+        {
+          "cp": "c4250",
+          "version": "v0.24.84",
+          "seed": "522250",
+          "symptom": "CTD entering tunnel after stable Day 1. Specific failing slot not identified \u2014 both pi=3 (Fingercreeper) and pi=4 (Slug) are plausible. Other pi positions banned defensively at MSB level."
+        }
+      ]
+    },
+    {
+      "msb": "m43_50_00_00.msb",
+      "part_index": 4,
+      "description": "Digger Tunnel (Lake) \u2014 slot at Y=2.2. Entrance level slot \u2014 c4040 Slug landed here in CTD seed 522250. Tagged via nr_named_locations.json::digger_tunnel_lake.",
+      "confirmed_failures": [
+        {
+          "cp": "c4040",
+          "version": "v0.24.84",
+          "seed": "522250",
+          "symptom": "CTD entering tunnel after stable Day 1. Specific failing slot not identified \u2014 both pi=3 (Fingercreeper) and pi=4 (Slug) are plausible. Other pi positions banned defensively at MSB level."
+        }
+      ]
+    }
+  ]
+}

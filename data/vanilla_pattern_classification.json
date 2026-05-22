@@ -1,0 +1,1602 @@
+{
+  "0": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "1": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "2": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "3": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "4": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "5": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "6": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "7": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "8": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "9": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "10": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "11": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "12": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "13": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "14": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "15": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "16": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "17": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "18": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "19": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Default"
+  },
+  "20": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Mountaintops"
+  },
+  "21": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Mountaintops"
+  },
+  "22": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Mountaintops"
+  },
+  "23": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Mountaintops"
+  },
+  "24": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Mountaintops"
+  },
+  "25": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Crater"
+  },
+  "26": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Crater"
+  },
+  "27": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Crater"
+  },
+  "28": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Crater"
+  },
+  "29": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Crater"
+  },
+  "30": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Rotted_Woods"
+  },
+  "31": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Rotted_Woods"
+  },
+  "32": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Rotted_Woods"
+  },
+  "33": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Rotted_Woods"
+  },
+  "34": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Rotted_Woods"
+  },
+  "35": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Noklateo"
+  },
+  "36": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Noklateo"
+  },
+  "37": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Noklateo"
+  },
+  "38": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Noklateo"
+  },
+  "39": {
+    "nightlord_idx": 0,
+    "nightlord_name": "Gladius",
+    "tile": "Noklateo"
+  },
+  "40": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "41": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "42": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "43": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "44": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "45": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "46": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "47": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "48": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "49": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "50": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "51": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "52": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "53": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "54": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "55": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "56": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "57": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "58": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "59": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Default"
+  },
+  "60": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Mountaintops"
+  },
+  "61": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Mountaintops"
+  },
+  "62": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Mountaintops"
+  },
+  "63": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Mountaintops"
+  },
+  "64": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Mountaintops"
+  },
+  "65": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Crater"
+  },
+  "66": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Crater"
+  },
+  "67": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Crater"
+  },
+  "68": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Crater"
+  },
+  "69": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Crater"
+  },
+  "70": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Rotted_Woods"
+  },
+  "71": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Rotted_Woods"
+  },
+  "72": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Rotted_Woods"
+  },
+  "73": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Rotted_Woods"
+  },
+  "74": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Rotted_Woods"
+  },
+  "75": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Noklateo"
+  },
+  "76": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Noklateo"
+  },
+  "77": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Noklateo"
+  },
+  "78": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Noklateo"
+  },
+  "79": {
+    "nightlord_idx": 1,
+    "nightlord_name": "Adel",
+    "tile": "Noklateo"
+  },
+  "80": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "81": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "82": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "83": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "84": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "85": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "86": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "87": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "88": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "89": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "90": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "91": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "92": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "93": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "94": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "95": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "96": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "97": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "98": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "99": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Default"
+  },
+  "100": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Mountaintops"
+  },
+  "101": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Mountaintops"
+  },
+  "102": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Mountaintops"
+  },
+  "103": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Mountaintops"
+  },
+  "104": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Mountaintops"
+  },
+  "105": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Crater"
+  },
+  "106": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Crater"
+  },
+  "107": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Crater"
+  },
+  "108": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Crater"
+  },
+  "109": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Crater"
+  },
+  "110": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Rotted_Woods"
+  },
+  "111": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Rotted_Woods"
+  },
+  "112": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Rotted_Woods"
+  },
+  "113": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Rotted_Woods"
+  },
+  "114": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Rotted_Woods"
+  },
+  "115": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Noklateo"
+  },
+  "116": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Noklateo"
+  },
+  "117": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Noklateo"
+  },
+  "118": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Noklateo"
+  },
+  "119": {
+    "nightlord_idx": 2,
+    "nightlord_name": "Gnoster",
+    "tile": "Noklateo"
+  },
+  "120": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "121": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "122": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "123": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "124": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "125": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "126": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "127": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "128": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "129": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "130": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "131": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "132": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "133": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "134": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "135": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "136": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "137": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "138": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "139": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Default"
+  },
+  "140": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Mountaintops"
+  },
+  "141": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Mountaintops"
+  },
+  "142": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Mountaintops"
+  },
+  "143": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Mountaintops"
+  },
+  "144": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Mountaintops"
+  },
+  "145": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Crater"
+  },
+  "146": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Crater"
+  },
+  "147": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Crater"
+  },
+  "148": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Crater"
+  },
+  "149": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Crater"
+  },
+  "150": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Rotted_Woods"
+  },
+  "151": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Rotted_Woods"
+  },
+  "152": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Rotted_Woods"
+  },
+  "153": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Rotted_Woods"
+  },
+  "154": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Rotted_Woods"
+  },
+  "155": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Noklateo"
+  },
+  "156": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Noklateo"
+  },
+  "157": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Noklateo"
+  },
+  "158": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Noklateo"
+  },
+  "159": {
+    "nightlord_idx": 3,
+    "nightlord_name": "Maris",
+    "tile": "Noklateo"
+  },
+  "160": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "161": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "162": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "163": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "164": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "165": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "166": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "167": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "168": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "169": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "170": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "171": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "172": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "173": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "174": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "175": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "176": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "177": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "178": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "179": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Default"
+  },
+  "180": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Mountaintops"
+  },
+  "181": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Mountaintops"
+  },
+  "182": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Mountaintops"
+  },
+  "183": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Mountaintops"
+  },
+  "184": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Mountaintops"
+  },
+  "185": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Crater"
+  },
+  "186": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Crater"
+  },
+  "187": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Crater"
+  },
+  "188": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Crater"
+  },
+  "189": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Crater"
+  },
+  "190": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Rotted_Woods"
+  },
+  "191": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Rotted_Woods"
+  },
+  "192": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Rotted_Woods"
+  },
+  "193": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Rotted_Woods"
+  },
+  "194": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Rotted_Woods"
+  },
+  "195": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Noklateo"
+  },
+  "196": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Noklateo"
+  },
+  "197": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Noklateo"
+  },
+  "198": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Noklateo"
+  },
+  "199": {
+    "nightlord_idx": 4,
+    "nightlord_name": "Libra",
+    "tile": "Noklateo"
+  },
+  "200": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "201": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "202": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "203": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "204": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "205": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "206": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "207": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "208": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "209": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "210": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "211": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "212": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "213": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "214": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "215": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "216": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "217": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "218": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "219": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Default"
+  },
+  "220": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Mountaintops"
+  },
+  "221": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Mountaintops"
+  },
+  "222": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Mountaintops"
+  },
+  "223": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Mountaintops"
+  },
+  "224": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Mountaintops"
+  },
+  "225": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Crater"
+  },
+  "226": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Crater"
+  },
+  "227": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Crater"
+  },
+  "228": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Crater"
+  },
+  "229": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Crater"
+  },
+  "230": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Rotted_Woods"
+  },
+  "231": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Rotted_Woods"
+  },
+  "232": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Rotted_Woods"
+  },
+  "233": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Rotted_Woods"
+  },
+  "234": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Rotted_Woods"
+  },
+  "235": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Noklateo"
+  },
+  "236": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Noklateo"
+  },
+  "237": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Noklateo"
+  },
+  "238": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Noklateo"
+  },
+  "239": {
+    "nightlord_idx": 5,
+    "nightlord_name": "Fulghor",
+    "tile": "Noklateo"
+  },
+  "240": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "241": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "242": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "243": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "244": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "245": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "246": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "247": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "248": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "249": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "250": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "251": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "252": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "253": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "254": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "255": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "256": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "257": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "258": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "259": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Default"
+  },
+  "260": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Mountaintops"
+  },
+  "261": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Mountaintops"
+  },
+  "262": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Mountaintops"
+  },
+  "263": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Mountaintops"
+  },
+  "264": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Mountaintops"
+  },
+  "265": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Crater"
+  },
+  "266": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Crater"
+  },
+  "267": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Crater"
+  },
+  "268": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Crater"
+  },
+  "269": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Crater"
+  },
+  "270": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Rotted_Woods"
+  },
+  "271": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Rotted_Woods"
+  },
+  "272": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Rotted_Woods"
+  },
+  "273": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Rotted_Woods"
+  },
+  "274": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Rotted_Woods"
+  },
+  "275": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Noklateo"
+  },
+  "276": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Noklateo"
+  },
+  "277": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Noklateo"
+  },
+  "278": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Noklateo"
+  },
+  "279": {
+    "nightlord_idx": 6,
+    "nightlord_name": "Caligo",
+    "tile": "Noklateo"
+  },
+  "280": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "281": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "282": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "283": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "284": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "285": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "286": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "287": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "288": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "289": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "290": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "291": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "292": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "293": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "294": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "295": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "296": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "297": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "298": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "299": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Default"
+  },
+  "300": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Mountaintops"
+  },
+  "301": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Mountaintops"
+  },
+  "302": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Mountaintops"
+  },
+  "303": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Mountaintops"
+  },
+  "304": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Mountaintops"
+  },
+  "305": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Crater"
+  },
+  "306": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Crater"
+  },
+  "307": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Crater"
+  },
+  "308": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Crater"
+  },
+  "309": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Crater"
+  },
+  "310": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Rotted_Woods"
+  },
+  "311": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Rotted_Woods"
+  },
+  "312": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Rotted_Woods"
+  },
+  "313": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Rotted_Woods"
+  },
+  "314": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Rotted_Woods"
+  },
+  "315": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Noklateo"
+  },
+  "316": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Noklateo"
+  },
+  "317": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Noklateo"
+  },
+  "318": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Noklateo"
+  },
+  "319": {
+    "nightlord_idx": 7,
+    "nightlord_name": "Heolstor",
+    "tile": "Noklateo"
+  }
+}

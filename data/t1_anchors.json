@@ -1,0 +1,1444 @@
+{
+  "note": "T1-fragility anchor positions. Most entries are derived from spoiler (slot whose vanilla source variant has a V3_FRAGILE_SOURCE_QUALIFIERS qualifier). Some entries are 'synthetic': '_synthetic' True with _provenance describing why \u2014 used when a fragile POI exists but its vanilla source variants are bare (no '(Encampment)'/'(Cathedral)'/etc. qualifier). Used at runtime for proximity-based POI fragility (T2.7).",
+  "qualifiers": [
+    "Cathedral",
+    "Mine",
+    "Crater",
+    "Encampment",
+    "Fort",
+    "Mountaintop",
+    "Ruins",
+    "Noklateo",
+    "Castle"
+  ],
+  "maps": {
+    "m30_00_00_00.msb": [
+      {
+        "pos": [
+          -12.8,
+          21.12,
+          -6.13
+        ],
+        "quals": [
+          "Fort"
+        ]
+      },
+      {
+        "pos": [
+          -42.2,
+          33.6,
+          34.44
+        ],
+        "quals": [
+          "Fort"
+        ]
+      }
+    ],
+    "m30_30_00_00.msb": [
+      {
+        "pos": [
+          1.38,
+          26.16,
+          34.34
+        ],
+        "quals": [
+          "Fort"
+        ]
+      },
+      {
+        "pos": [
+          -22.68,
+          42.83,
+          28.4
+        ],
+        "quals": [
+          "Fort"
+        ]
+      }
+    ],
+    "m32_00_00_00.msb": [
+      {
+        "pos": [
+          -18.19,
+          16.07,
+          33.62
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          20.11,
+          12.51,
+          -2.4
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          -10.73,
+          12.11,
+          -32.18
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          23.66,
+          11.88,
+          -19.29
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      }
+    ],
+    "m32_10_00_00.msb": [
+      {
+        "pos": [
+          40.1,
+          22.52,
+          4.0
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          -41.23,
+          16.68,
+          7.08
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          0.09,
+          19.19,
+          28.99
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          41.89,
+          22.85,
+          1.01
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          -32.46,
+          41.83,
+          -9.95
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          37.14,
+          23.84,
+          -8.92
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          -2.52,
+          18.98,
+          29.56
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      }
+    ],
+    "m32_20_00_00.msb": [
+      {
+        "pos": [
+          -25.6,
+          16.05,
+          35.35
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          -7.41,
+          16.09,
+          30.73
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          -13.41,
+          16.1,
+          27.84
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          -33.09,
+          16.08,
+          31.3
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      },
+      {
+        "pos": [
+          42.88,
+          0.52,
+          1.0
+        ],
+        "quals": [
+          "Encampment"
+        ]
+      }
+    ],
+    "m34_00_00_00.msb": [
+      {
+        "pos": [
+          -35.32,
+          27.14,
+          6.15
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -47.15,
+          27.14,
+          -6.98
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          41.1,
+          11.59,
+          -11.85
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          10.21,
+          19.49,
+          12.97
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -34.69,
+          27.56,
+          2.46
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -13.31,
+          23.91,
+          -25.57
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          40.69,
+          19.51,
+          18.67
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -16.38,
+          27.32,
+          16.19
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -39.08,
+          27.24,
+          4.28
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          143.0,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -8.31,
+          1.37,
+          1.0
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      }
+    ],
+    "m34_10_00_00.msb": [
+      {
+        "pos": [
+          -22.8,
+          25.05,
+          -30.92
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          24.29,
+          22.51,
+          13.32
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -32.76,
+          24.85,
+          -32.49
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          4.07,
+          15.16,
+          2.21
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -20.78,
+          24.15,
+          -8.13
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          35.97,
+          22.43,
+          25.86
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -32.25,
+          22.44,
+          17.27
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          21.63,
+          14.96,
+          -16.69
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          18.2,
+          15.15,
+          -4.68
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          12.6,
+          14.82,
+          -6.47
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          14.73,
+          15.2,
+          -10.25
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          42.77,
+          19.2,
+          6.84
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -32.28,
+          24.88,
+          -21.22
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          40.18,
+          22.56,
+          15.93
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -16.7,
+          25.47,
+          -32.15
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          35.2,
+          22.52,
+          15.27
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          38.17,
+          22.52,
+          14.04
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -19.54,
+          25.11,
+          -25.56
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          31.13,
+          23.0,
+          23.56
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          27.69,
+          22.47,
+          26.75
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          28.72,
+          22.74,
+          31.31
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          41.32,
+          22.56,
+          28.16
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -33.04,
+          22.38,
+          13.41
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          36.33,
+          19.17,
+          8.16
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -29.43,
+          22.43,
+          12.66
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          38.96,
+          19.24,
+          8.87
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -28.04,
+          22.42,
+          25.07
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -29.63,
+          22.57,
+          19.63
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          44.08,
+          19.62,
+          12.6
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          26.46,
+          22.44,
+          36.91
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -20.34,
+          25.55,
+          5.46
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      },
+      {
+        "pos": [
+          -25.67,
+          25.43,
+          -43.04
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      }
+    ],
+    "m34_20_00_00.msb": [
+      {
+        "pos": [
+          -44.4,
+          27.06,
+          -6.96
+        ],
+        "quals": [
+          "Ruins"
+        ]
+      }
+    ],
+    "m38_00_00_00.msb": [
+      {
+        "pos": [
+          -13.19,
+          7.97,
+          23.83
+        ],
+        "quals": [
+          "Cathedral"
+        ]
+      }
+    ],
+    "m38_10_00_00.msb": [
+      {
+        "pos": [
+          15.21,
+          7.15,
+          20.25
+        ],
+        "quals": [
+          "Cathedral"
+        ]
+      },
+      {
+        "pos": [
+          -8.74,
+          13.28,
+          -40.01
+        ],
+        "quals": [
+          "Cathedral"
+        ]
+      }
+    ],
+    "m60_42_36_50.msb": [
+      {
+        "pos": [
+          99.84,
+          146.68,
+          -57.91
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          142.27,
+          144.66,
+          -66.26
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          -19.15,
+          139.23,
+          65.8
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          125.0,
+          149.68,
+          -92.36
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          11.34,
+          170.44,
+          7.74
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          8.96,
+          170.1,
+          13.43
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          -48.64,
+          174.17,
+          138.98
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          39.63,
+          137.69,
+          152.27
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          -33.7,
+          176.84,
+          65.73
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          102.44,
+          146.68,
+          -62.55
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          155.04,
+          144.69,
+          -63.54
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          80.86,
+          131.58,
+          81.21
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          -35.55,
+          149.68,
+          108.59
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          38.31,
+          4.97,
+          1.0
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          63.35,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          -126.6,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          123.23,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      }
+    ],
+    "m60_42_37_50.msb": [
+      {
+        "pos": [
+          55.3,
+          117.83,
+          6.89
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          -77.93,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      }
+    ],
+    "m60_42_38_10.msb": [
+      {
+        "pos": [
+          71.26,
+          160.99,
+          -66.53
+        ],
+        "quals": [
+          "Mountaintop"
+        ]
+      }
+    ],
+    "m60_42_39_10.msb": [
+      {
+        "pos": [
+          -10.52,
+          191.01,
+          -119.79
+        ],
+        "quals": [
+          "Mountaintop"
+        ]
+      }
+    ],
+    "m60_43_37_50.msb": [
+      {
+        "pos": [
+          -151.87,
+          102.92,
+          -65.89
+        ],
+        "quals": [
+          "Noklateo"
+        ]
+      },
+      {
+        "pos": [
+          -63.3,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 5 slots on placeholder line (y=0.0, z=1.0; x-span 32u, 14 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      }
+    ],
+    "m60_43_38_00.msb": [
+      {
+        "pos": [
+          0.57,
+          162.59,
+          92.04
+        ],
+        "quals": [
+          "Mine"
+        ]
+      }
+    ],
+    "m60_43_38_10.msb": [
+      {
+        "pos": [
+          0.56,
+          191.8,
+          122.99
+        ],
+        "quals": [
+          "Mountaintop"
+        ]
+      },
+      {
+        "pos": [
+          -96.94,
+          137.15,
+          -90.23
+        ],
+        "quals": [
+          "Mountaintop"
+        ]
+      },
+      {
+        "pos": [
+          -8.55,
+          121.17,
+          -44.09
+        ],
+        "quals": [
+          "Mountaintop"
+        ]
+      }
+    ],
+    "m60_43_38_20.msb": [
+      {
+        "pos": [
+          117.17,
+          -137.4,
+          -21.16
+        ],
+        "quals": [
+          "Crater"
+        ]
+      },
+      {
+        "pos": [
+          84.36,
+          -13.54,
+          0.9
+        ],
+        "quals": [
+          "Crater"
+        ]
+      }
+    ],
+    "m60_43_38_50.msb": [
+      {
+        "pos": [
+          0.57,
+          162.59,
+          92.04
+        ],
+        "quals": [
+          "Mine"
+        ]
+      }
+    ],
+    "m60_43_39_20.msb": [
+      {
+        "pos": [
+          0.69,
+          -51.69,
+          17.34
+        ],
+        "quals": [
+          "Crater"
+        ]
+      },
+      {
+        "pos": [
+          23.31,
+          208.23,
+          -67.78
+        ],
+        "quals": [
+          "Crater"
+        ]
+      }
+    ],
+    "m60_44_36_00.msb": [
+      {
+        "pos": [
+          -20.24,
+          89.16,
+          79.95
+        ],
+        "quals": [
+          "Mine"
+        ]
+      },
+      {
+        "pos": [
+          95.4,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 4 slots on placeholder line (y=0.0, z=1.0; x-span 30u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      },
+      {
+        "pos": [
+          -133.2,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 3 slots on placeholder line (y=0.0, z=1.0; x-span 14u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      }
+    ],
+    "m60_44_36_20.msb": [
+      {
+        "pos": [
+          -20.24,
+          89.16,
+          79.95
+        ],
+        "quals": [
+          "Mine"
+        ]
+      },
+      {
+        "pos": [
+          95.4,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 4 slots on placeholder line (y=0.0, z=1.0; x-span 30u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      },
+      {
+        "pos": [
+          -133.2,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 3 slots on placeholder line (y=0.0, z=1.0; x-span 14u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      }
+    ],
+    "m60_44_36_50.msb": [
+      {
+        "pos": [
+          -20.24,
+          89.16,
+          79.95
+        ],
+        "quals": [
+          "Mine"
+        ]
+      },
+      {
+        "pos": [
+          95.4,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 4 slots on placeholder line (y=0.0, z=1.0; x-span 30u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      },
+      {
+        "pos": [
+          -133.2,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 3 slots on placeholder line (y=0.0, z=1.0; x-span 14u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      }
+    ],
+    "m60_44_38_20.msb": [
+      {
+        "pos": [
+          1.97,
+          -135.47,
+          -1.92
+        ],
+        "quals": [
+          "Crater"
+        ]
+      }
+    ],
+    "m60_44_39_00.msb": [
+      {
+        "pos": [
+          -106.55,
+          154.45,
+          -7.42
+        ],
+        "quals": [
+          "Mine"
+        ]
+      },
+      {
+        "pos": [
+          -25.0,
+          90.0,
+          -85.0
+        ],
+        "quals": [
+          "Encampment"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.21 propagated from m60_44_39_30 west bandit camp anchor. Procedural variants of a tile coord share core POI layouts \u2014 confirmed by the existing co-located Mine anchor at (-106.55, 154.45, -7.42) appearing in both _00 and _30. 100u T2.7 radius gives slack for any positional drift between variants. Verify by playtest if a sibling variant crashes."
+      },
+      {
+        "pos": [
+          120.0,
+          110.0,
+          0.0
+        ],
+        "quals": [
+          "Encampment"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.21 propagated from m60_44_39_30 east camp anchor. See west-anchor provenance for propagation rationale."
+      }
+    ],
+    "m60_44_39_20.msb": [
+      {
+        "pos": [
+          -34.38,
+          75.56,
+          30.7
+        ],
+        "quals": [
+          "Crater"
+        ]
+      },
+      {
+        "pos": [
+          -25.0,
+          90.0,
+          -85.0
+        ],
+        "quals": [
+          "Encampment"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.21 propagated from m60_44_39_30 west bandit camp anchor. Procedural variants of a tile coord share core POI layouts \u2014 confirmed by the existing co-located Mine anchor at (-106.55, 154.45, -7.42) appearing in both _00 and _30. 100u T2.7 radius gives slack for any positional drift between variants. Verify by playtest if a sibling variant crashes."
+      },
+      {
+        "pos": [
+          120.0,
+          110.0,
+          0.0
+        ],
+        "quals": [
+          "Encampment"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.21 propagated from m60_44_39_30 east camp anchor. See west-anchor provenance for propagation rationale."
+      }
+    ],
+    "m60_44_39_30.msb": [
+      {
+        "pos": [
+          -106.55,
+          154.45,
+          -7.42
+        ],
+        "quals": [
+          "Mine"
+        ]
+      },
+      {
+        "pos": [
+          -25.0,
+          90.0,
+          -85.0
+        ],
+        "quals": [
+          "Encampment"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.21 user CTD on load-in at m60_44_39_30 west bandit camp. Vanilla source variants (Highwayman c4377, Stonedigger c4382, Glintstone Digger c4383/c4384, Godrick/Leyndell Soldier c4311/c4313) are bare-named \u2014 no '(Encampment)' qualifier \u2014 so T1 didn't fire and the only existing anchor in this map (Mine at y=154) was 134u from the camp, outside the 100u T2.7 radius. Centroid covers pi 22-32, 40-58 (excluding HIGH-tier cliff slots at y>=135)."
+      },
+      {
+        "pos": [
+          120.0,
+          110.0,
+          0.0
+        ],
+        "quals": [
+          "Encampment"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.21 east-side encampment cluster in m60_44_39_30 (pi 35, 36, 39 \u2014 originals Godrick/Leyndell Soldier and Foot Soldier). Tight cluster ~9u radius, separate camp from west centroid at (-25, 90, -85). Same gap pattern."
+      }
+    ],
+    "m60_44_39_50.msb": [
+      {
+        "pos": [
+          -106.55,
+          154.45,
+          -7.42
+        ],
+        "quals": [
+          "Mine"
+        ]
+      },
+      {
+        "pos": [
+          -25.0,
+          90.0,
+          -85.0
+        ],
+        "quals": [
+          "Encampment"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.21 propagated from m60_44_39_30 west bandit camp anchor. Procedural variants of a tile coord share core POI layouts \u2014 confirmed by the existing co-located Mine anchor at (-106.55, 154.45, -7.42) appearing in both _00 and _30. 100u T2.7 radius gives slack for any positional drift between variants. Verify by playtest if a sibling variant crashes."
+      },
+      {
+        "pos": [
+          120.0,
+          110.0,
+          0.0
+        ],
+        "quals": [
+          "Encampment"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.21 propagated from m60_44_39_30 east camp anchor. See west-anchor provenance for propagation rationale."
+      }
+    ],
+    "m15_00_00_00.msb": [
+      {
+        "pos": [
+          35.0,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 10 slots on placeholder line (y=0.0, z=1.0; x-span 70u, 10 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      }
+    ],
+    "m46_50_00_00.msb": [
+      {
+        "pos": [
+          97.6,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 11 slots on placeholder line (y=0.0, z=1.0; x-span 15u, 12 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      }
+    ],
+    "m60_43_36_50.msb": [
+      {
+        "pos": [
+          -74.8,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 9 slots on placeholder line (y=0.0, z=1.0; x-span 121u, 14 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      },
+      {
+        "pos": [
+          157.6,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 3 slots on placeholder line (y=0.0, z=1.0; x-span 26u, 14 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      }
+    ],
+    "m60_43_37_00.msb": [
+      {
+        "pos": [
+          -100.7,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Castle"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+      },
+      {
+        "pos": [
+          56.7,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Castle"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 2/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+      }
+    ],
+    "m60_43_37_10.msb": [
+      {
+        "pos": [
+          -100.7,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Castle"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+      },
+      {
+        "pos": [
+          56.7,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Castle"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 2/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+      }
+    ],
+    "m60_43_37_20.msb": [
+      {
+        "pos": [
+          -100.7,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Castle"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+      },
+      {
+        "pos": [
+          56.7,
+          0.0,
+          1.0
+        ],
+        "quals": [
+          "Castle"
+        ],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 2/2 for x-clump of 58 slots on placeholder line (y=0.0, z=1.0; x-span 315u, 60 slots on full line). No T1 anchor within 100.0u. Qualifier inferred from c-prefix breakdown."
+      }
+    ],
+    "m60_44_37_30.msb": [
+      {
+        "pos": [
+          63.9,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 3 slots on placeholder line (y=0.0, z=1.0; x-span 8u, 11 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      },
+      {
+        "pos": [
+          -44.5,
+          0.0,
+          1.0
+        ],
+        "quals": [],
+        "_synthetic": true,
+        "_provenance": "v0.23.02 audit_placeholder_clusters.py \u2014 anchor 1/1 for x-clump of 5 slots on placeholder line (y=0.0, z=1.0; x-span 89u, 11 slots on full line). No T1 anchor within 100.0u. Qualifier left blank \u2014 hand-review."
+      }
+    ]
+  }
+}

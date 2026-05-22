@@ -1,0 +1,5162 @@
+{
+ "_meta": {
+  "generator": "v0.23.54 catalog build (rev 4: filtered V3_EXCLUDE_PREFIXES)",
+  "generated_at": "2026-05-09T15:09:25.054469+00:00",
+  "source": "vanilla NR MSB dump (300 MSBs, 5382 chr Parts)",
+  "total_msbs": 117,
+  "total_slots": 344,
+  "tier_counts": {
+   "boss_suffix": 4,
+   "castle_interior": 10,
+   "cathedral": 3,
+   "crater": 8,
+   "encampment": 7,
+   "fieldboss": 49,
+   "fort_boss": 1,
+   "fort_suffix": 4,
+   "mountaintop": 3,
+   "named_boss": 78,
+   "nightboss": 47,
+   "noklateo": 18,
+   "remembrance": 100,
+   "ruins_boss": 12
+  },
+  "scope_counts": {
+   "broad": 188,
+   "extended": 109,
+   "strict": 47
+  },
+  "schema_version": 1,
+  "description": "Authoritative catalog of boss-tier slots in vanilla NR MSB Part lists. Used by oops_v3 to identify OOPS_ALL_NB intercept targets without relying solely on variant-name marker substrings.",
+  "tier_categories_doc": {
+   "nightlord": "Nightlord chr (c75xx-c79xx)",
+   "nightboss": "'Night Boss' marker",
+   "fieldboss": "'Field Boss' marker",
+   "castle_boss": "'Castle Boss' marker",
+   "fort_boss": "'Fort Boss' marker",
+   "ruins_boss": "'Ruins Boss' marker",
+   "remembrance": "'Remembrance' marker",
+   "crater": "'(Crater)' marker",
+   "noklateo": "'(Noklateo)' marker",
+   "named_boss": "Curated boss chr names lacking tier markers (BKA, Astel, Mad Pumpkin Head, Troll, etc.) with non-zero entity_id.",
+   "castle_interior": "'(Castle)' suffix",
+   "castle_basement": "'Castle Basement' suffix",
+   "encampment": "'(Encampment)' suffix",
+   "cathedral": "'(Cathedral)' suffix",
+   "mountaintop": "'(Mountaintop)' suffix",
+   "underground_fort": "'Underground Fort' suffix",
+   "group_boss": "'Group Boss' suffix",
+   "boss_suffix": "'(Boss)' bare suffix (often Nightlord forms)",
+   "boss_phase": "'(Boss Phase' suffix",
+   "shrouded_boss": "'Shrouded- Boss' marker",
+   "enhanced_boss": "'(Enhanced Boss)' marker",
+   "fort_suffix": "'(Fort)' suffix"
+  },
+  "filter_note": "Excluded c-prefixes (Nightlord arenas: c7500-c7920, placeholders: c0000/c0100/c0120, etc.) are filtered out \u2014 these slots are permanently source-protected by the engine, so cataloguing them as boss-slots would give a misleading signal.",
+  "change_notes": [
+   "v0.25.0-patch2: added 4 missing NB arenas \u2014 m48_90 (Large Wormface), m49_18 (Great Wyrm Theodorix), m49_19 (Ancient Dragon), m49_20 (Fallingstar Beast). Catalog-blind status was producing is_boss=False and catalog_tier=None for imported_chr swaps at these slots; downstream the wake-handshake / scripted_intro routing didn't fire and bosses failed to start. Empirical: seed 42 N2 fail, seed 650833 N1 fail \u2014 same pattern at m49_18 + m49_20 across both. Primary boss entry only; companion/prelude slots can be added by future re-audit."
+  ]
+ },
+ "m10_00_00_00.msb": [
+  {
+   "pi": 285,
+   "eid": 10000822,
+   "cp": "c3670",
+   "npc": 36708100,
+   "name": "Aged Albinauric (Scholar Remembrance)",
+   "pos": [
+    67.6,
+    -15.0,
+    -46.8
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 296,
+   "eid": 10000301,
+   "cp": "c3850",
+   "npc": 38503120,
+   "name": "Marionette Soldier - Iron Menial (Undertaker Remembrance)",
+   "pos": [
+    -44.7,
+    7.4,
+    69.1
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 319,
+   "eid": 10001208,
+   "cp": "c4300",
+   "npc": 43009400,
+   "name": "Wandering Noble - Wandering Merchant (Guardian Remembrance)",
+   "pos": [
+    71.6,
+    -15.4,
+    -50.1
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 321,
+   "eid": 10000808,
+   "cp": "c4352",
+   "npc": 43529000,
+   "name": "Cuckoo Knight (Scholar Remembrance)",
+   "pos": [
+    -23.0,
+    10.0,
+    19.2
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 322,
+   "eid": 10000812,
+   "cp": "c4352",
+   "npc": 43529000,
+   "name": "Cuckoo Knight (Scholar Remembrance)",
+   "pos": [
+    -23.0,
+    10.0,
+    19.2
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 323,
+   "eid": 10000802,
+   "cp": "c4377",
+   "npc": 43779000,
+   "name": "Highwayman (Scholar Remembrance)",
+   "pos": [
+    -23.0,
+    10.0,
+    19.2
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 324,
+   "eid": 10000823,
+   "cp": "c4377",
+   "npc": 43779000,
+   "name": "Highwayman (Scholar Remembrance)",
+   "pos": [
+    -17.9,
+    10.9,
+    28.4
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m13_00_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 13000810,
+   "cp": "c2500",
+   "npc": 25008000,
+   "name": "Crucible Knight",
+   "pos": [
+    -12.0,
+    966.6,
+    11.4
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 4,
+   "eid": 13000820,
+   "cp": "c2500",
+   "npc": 25008100,
+   "name": "Crucible Knight",
+   "pos": [
+    0.3,
+    965.9,
+    1.8
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m13_20_00_00.msb": [
+  {
+   "pi": 2,
+   "eid": 13200800,
+   "cp": "c3400",
+   "npc": 34000700,
+   "name": "Grave Warden Duelist (Remembrance)",
+   "pos": [
+    -0.1,
+    -0.9,
+    -15.8
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 3,
+   "eid": 13200801,
+   "cp": "c4270",
+   "npc": 42700700,
+   "name": "Elder Lion (Remembrance)",
+   "pos": [
+    -0.1,
+    -0.9,
+    -15.8
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 4,
+   "eid": 13200803,
+   "cp": "c4640",
+   "npc": 46400700,
+   "name": "Ulcerated Tree Spirit (Remembrance)",
+   "pos": [
+    0.0,
+    0.0,
+    -24.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m15_00_00_00.msb": [
+  {
+   "pi": 9,
+   "eid": 15000436,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 10,
+   "eid": 15000437,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 11,
+   "eid": 15000430,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 12,
+   "eid": 15000431,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 13,
+   "eid": 15000432,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 14,
+   "eid": 15000441,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 15,
+   "eid": 15000442,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 16,
+   "eid": 15000443,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 17,
+   "eid": 15000438,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 18,
+   "eid": 15000439,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 19,
+   "eid": 15000440,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 20,
+   "eid": 15000433,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 21,
+   "eid": 15000434,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 22,
+   "eid": 15000435,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 23,
+   "eid": 15000444,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 24,
+   "eid": 15000445,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 25,
+   "eid": 15000446,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 26,
+   "eid": 15000447,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 27,
+   "eid": 15000448,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 28,
+   "eid": 15000449,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 29,
+   "eid": 15000450,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 30,
+   "eid": 15000451,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 31,
+   "eid": 15000452,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 32,
+   "eid": 15000453,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 33,
+   "eid": 15000454,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 34,
+   "eid": 15000455,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 35,
+   "eid": 15000456,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 36,
+   "eid": 15000457,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 37,
+   "eid": 15000458,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 38,
+   "eid": 15000459,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 39,
+   "eid": 15000460,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 40,
+   "eid": 15000461,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 41,
+   "eid": 15000462,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 42,
+   "eid": 15000463,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 43,
+   "eid": 15000464,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 44,
+   "eid": 15000465,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 45,
+   "eid": 15000466,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 46,
+   "eid": 15000467,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 47,
+   "eid": 15000468,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    52.1,
+    0.3,
+    26.6
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 48,
+   "eid": 15000469,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    1.3,
+    0.3,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 49,
+   "eid": 15000400,
+   "cp": "c4021",
+   "npc": 40210700,
+   "name": "Royal Revenant (Remembrance)",
+   "pos": [
+    52.3,
+    0.0,
+    37.4
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 53,
+   "eid": 15000470,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    45.0,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 54,
+   "eid": 15000471,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    50.0,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 55,
+   "eid": 15000472,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 56,
+   "eid": 15000473,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 57,
+   "eid": 15000474,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    40.0,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 58,
+   "eid": 15000475,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    70.0,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 59,
+   "eid": 15000476,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    60.0,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 60,
+   "eid": 15000477,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 61,
+   "eid": 15000478,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 62,
+   "eid": 15000479,
+   "cp": "c3661",
+   "npc": 36610710,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    40.0,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 63,
+   "eid": 15000480,
+   "cp": "c3661",
+   "npc": 36610700,
+   "name": "Putrid Corpse (Remembrance)",
+   "pos": [
+    26.9,
+    -169.3,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m20_00_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 20000800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m20_10_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 20100800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m20_20_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 20200800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m20_30_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 20300800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m20_40_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 20400800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m20_50_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 20500800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m20_60_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 20600800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m20_70_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 20700800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m20_80_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 20800800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m20_90_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 20900800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m21_00_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 21000800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m21_10_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 21100800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m21_20_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 21200800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m21_30_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 21300800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m21_40_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 21400800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m21_50_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 21500800,
+   "cp": "c4680",
+   "npc": 46801010,
+   "name": "Fallingstar Beast (Random Encounter)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m30_00_00_00.msb": [
+  {
+   "pi": 17,
+   "eid": 30000800,
+   "cp": "c4351",
+   "npc": 43510020,
+   "name": "Lordsworn Captain (Fort)",
+   "pos": [
+    -12.8,
+    21.1,
+    -6.1
+   ],
+   "tier": "fort_suffix",
+   "scope": "extended"
+  },
+  {
+   "pi": 36,
+   "eid": 30000810,
+   "cp": "c4470",
+   "npc": 44700010,
+   "name": "Abductor Virgin (Fort)",
+   "pos": [
+    -42.2,
+    33.6,
+    34.4
+   ],
+   "tier": "fort_suffix",
+   "scope": "extended"
+  }
+ ],
+ "m30_30_00_00.msb": [
+  {
+   "pi": 7,
+   "eid": 0,
+   "cp": "c3350",
+   "npc": 33500020,
+   "name": "Crystalian (Fort)",
+   "pos": [
+    1.4,
+    26.2,
+    34.3
+   ],
+   "tier": "fort_suffix",
+   "scope": "extended"
+  },
+  {
+   "pi": 11,
+   "eid": 0,
+   "cp": "c3702",
+   "npc": 37020030,
+   "name": "Glintstone Sorcerer (Fort Boss)",
+   "pos": [
+    17.9,
+    25.9,
+    23.0
+   ],
+   "tier": "fort_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 45,
+   "eid": 30300800,
+   "cp": "c4660",
+   "npc": 46601010,
+   "name": "Guardian Golem (Fort)",
+   "pos": [
+    -22.7,
+    42.8,
+    28.4
+   ],
+   "tier": "fort_suffix",
+   "scope": "extended"
+  }
+ ],
+ "m32_00_00_00.msb": [
+  {
+   "pi": 31,
+   "eid": 32000810,
+   "cp": "c4270",
+   "npc": 42700030,
+   "name": "Elder Lion (Encampment)",
+   "pos": [
+    23.7,
+    11.9,
+    -19.3
+   ],
+   "tier": "encampment",
+   "scope": "extended"
+  }
+ ],
+ "m32_10_00_00.msb": [
+  {
+   "pi": 27,
+   "eid": 32100800,
+   "cp": "c3460",
+   "npc": 34600010,
+   "name": "Leonine Misbegotten (Encampment)",
+   "pos": [
+    40.1,
+    22.5,
+    4.0
+   ],
+   "tier": "encampment",
+   "scope": "extended"
+  },
+  {
+   "pi": 45,
+   "eid": 0,
+   "cp": "c4340",
+   "npc": 43401010,
+   "name": "Mad Pumpkin Head (Encampment)",
+   "pos": [
+    -41.2,
+    16.7,
+    7.1
+   ],
+   "tier": "encampment",
+   "scope": "extended"
+  }
+ ],
+ "m32_20_00_00.msb": [
+  {
+   "pi": 60,
+   "eid": 32200280,
+   "cp": "c4460",
+   "npc": 44600010,
+   "name": "Flame Chariot (Encampment)",
+   "pos": [
+    -25.6,
+    16.1,
+    35.4
+   ],
+   "tier": "encampment",
+   "scope": "extended"
+  },
+  {
+   "pi": 61,
+   "eid": 32200281,
+   "cp": "c4460",
+   "npc": 44600010,
+   "name": "Flame Chariot (Encampment)",
+   "pos": [
+    -7.4,
+    16.1,
+    30.7
+   ],
+   "tier": "encampment",
+   "scope": "extended"
+  },
+  {
+   "pi": 62,
+   "eid": 32200282,
+   "cp": "c4460",
+   "npc": 44600010,
+   "name": "Flame Chariot (Encampment)",
+   "pos": [
+    -13.4,
+    16.1,
+    27.8
+   ],
+   "tier": "encampment",
+   "scope": "extended"
+  },
+  {
+   "pi": 63,
+   "eid": 32200810,
+   "cp": "c4600",
+   "npc": 46004010,
+   "name": "Frenzied Flame Troll (Encampment)",
+   "pos": [
+    -33.1,
+    16.1,
+    31.3
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 87,
+   "eid": 32200283,
+   "cp": "c4460",
+   "npc": 44600010,
+   "name": "Flame Chariot (Encampment)",
+   "pos": [
+    42.9,
+    0.5,
+    1.0
+   ],
+   "tier": "encampment",
+   "scope": "extended"
+  }
+ ],
+ "m34_10_00_00.msb": [
+  {
+   "pi": 8,
+   "eid": 0,
+   "cp": "c3170",
+   "npc": 31700040,
+   "name": "Albinauric Archer (Ruins Boss)",
+   "pos": [
+    -18.6,
+    25.0,
+    -25.5
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 9,
+   "eid": 0,
+   "cp": "c3170",
+   "npc": 31700040,
+   "name": "Albinauric Archer (Ruins Boss)",
+   "pos": [
+    34.7,
+    21.6,
+    10.6
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 15,
+   "eid": 0,
+   "cp": "c3180",
+   "npc": 31800030,
+   "name": "Albinauric Archer's Wolf (Ruins Boss)",
+   "pos": [
+    -18.6,
+    25.0,
+    -27.2
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 16,
+   "eid": 0,
+   "cp": "c3180",
+   "npc": 31800030,
+   "name": "Albinauric Archer's Wolf (Ruins Boss)",
+   "pos": [
+    4.1,
+    15.2,
+    -3.3
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  }
+ ],
+ "m34_20_00_00.msb": [
+  {
+   "pi": 12,
+   "eid": 0,
+   "cp": "c3970",
+   "npc": 39701120,
+   "name": "Azula Beastman (Ruins Boss)",
+   "pos": [
+    -32.4,
+    27.6,
+    -0.8
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 13,
+   "eid": 0,
+   "cp": "c3970",
+   "npc": 39701120,
+   "name": "Azula Beastman (Ruins Boss)",
+   "pos": [
+    -16.5,
+    27.3,
+    -20.6
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 29,
+   "eid": 34200800,
+   "cp": "c4580",
+   "npc": 45803020,
+   "name": "Large Wormface (Ruins)",
+   "pos": [
+    -44.4,
+    27.1,
+    -7.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m34_30_00_00.msb": [
+  {
+   "pi": 12,
+   "eid": 0,
+   "cp": "c3970",
+   "npc": 39701120,
+   "name": "Azula Beastman (Ruins Boss)",
+   "pos": [
+    -20.3,
+    24.8,
+    -41.1
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 13,
+   "eid": 0,
+   "cp": "c3970",
+   "npc": 39701120,
+   "name": "Azula Beastman (Ruins Boss)",
+   "pos": [
+    -21.3,
+    26.3,
+    6.1
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  }
+ ],
+ "m35_90_00_00.msb": [
+  {
+   "pi": 2,
+   "eid": 35900800,
+   "cp": "c2130",
+   "npc": 21300520,
+   "name": "Morgott (Tutorial)",
+   "pos": [
+    0.3,
+    17.0,
+    -31.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m38_00_00_00.msb": [
+  {
+   "pi": 51,
+   "eid": 38000850,
+   "cp": "c4660",
+   "npc": 46600030,
+   "name": "Guardian Golem (Cathedral)",
+   "pos": [
+    -13.2,
+    8.0,
+    23.8
+   ],
+   "tier": "cathedral",
+   "scope": "extended"
+  }
+ ],
+ "m38_10_00_00.msb": [
+  {
+   "pi": 6,
+   "eid": 38100800,
+   "cp": "c3900",
+   "npc": 39000020,
+   "name": "Fire Monk (Cathedral)",
+   "pos": [
+    15.2,
+    7.1,
+    20.3
+   ],
+   "tier": "cathedral",
+   "scope": "extended"
+  },
+  {
+   "pi": 19,
+   "eid": 38100810,
+   "cp": "c4355",
+   "npc": 43550020,
+   "name": "Mausoleum Knight (Cathedral)",
+   "pos": [
+    -8.7,
+    13.3,
+    -40.0
+   ],
+   "tier": "cathedral",
+   "scope": "extended"
+  }
+ ],
+ "m45_51_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 45510800,
+   "cp": "c2100",
+   "npc": 21000020,
+   "name": "Black Knife Assassin (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_50_00_00.msb": [
+  {
+   "pi": 20,
+   "eid": 46500800,
+   "cp": "c3010",
+   "npc": 30100190,
+   "name": "Banished Knight (Evergaol- Shield)",
+   "pos": [
+    93.1,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 21,
+   "eid": 46500801,
+   "cp": "c3010",
+   "npc": 30101110,
+   "name": "Banished Knight (Evergaol- Dual Swords)",
+   "pos": [
+    90.7,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 22,
+   "eid": 46500802,
+   "cp": "c3010",
+   "npc": 30102130,
+   "name": "Banished Knight (Evergaol- Halberd)",
+   "pos": [
+    105.2,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 23,
+   "eid": 46500840,
+   "cp": "c3300",
+   "npc": 33000020,
+   "name": "Nox Monk (Evergaol)",
+   "pos": [
+    97.1,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 24,
+   "eid": 46500841,
+   "cp": "c3300",
+   "npc": 33001020,
+   "name": "Nox Swordstress (Evergaol)",
+   "pos": [
+    90.0,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m46_51_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46510800,
+   "cp": "c3181",
+   "npc": 31810010,
+   "name": "Red Wolf of Radagon (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_52_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46520800,
+   "cp": "c3250",
+   "npc": 32500090,
+   "name": "Draconic Tree Sentinel (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_53_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46530800,
+   "cp": "c3251",
+   "npc": 32510020,
+   "name": "Tree Sentinel (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_54_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46540800,
+   "cp": "c3252",
+   "npc": 32520010,
+   "name": "Royal Carian Knight (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_55_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46550800,
+   "cp": "c3460",
+   "npc": 34600020,
+   "name": "Leonine Misbegotten (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_56_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46560800,
+   "cp": "c3100",
+   "npc": 31000010,
+   "name": "Bell Bearing Hunter (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_57_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46570800,
+   "cp": "c4270",
+   "npc": 42700020,
+   "name": "Elder Lion (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_58_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46580800,
+   "cp": "c4500",
+   "npc": 45000010,
+   "name": "Flying Dragon (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_59_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46590800,
+   "cp": "c4021",
+   "npc": 40210010,
+   "name": "Royal Revenant (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_60_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46600840,
+   "cp": "c3010",
+   "npc": 30100190,
+   "name": "Banished Knight (Evergaol- Shield)",
+   "pos": [
+    1.6,
+    -0.1,
+    -2.7
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 2,
+   "eid": 46600841,
+   "cp": "c3010",
+   "npc": 30101110,
+   "name": "Banished Knight (Evergaol- Dual Swords)",
+   "pos": [
+    2.2,
+    -0.1,
+    2.3
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 3,
+   "eid": 46600842,
+   "cp": "c3010",
+   "npc": 30102130,
+   "name": "Banished Knight (Evergaol- Halberd)",
+   "pos": [
+    0.2,
+    -0.2,
+    -2.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 4,
+   "eid": 46600851,
+   "cp": "c3300",
+   "npc": 33000020,
+   "name": "Nox Monk (Evergaol)",
+   "pos": [
+    1.1,
+    -0.1,
+    1.8
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 5,
+   "eid": 46600852,
+   "cp": "c3300",
+   "npc": 33001020,
+   "name": "Nox Swordstress (Evergaol)",
+   "pos": [
+    -1.0,
+    0.1,
+    4.2
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 6,
+   "eid": 46600820,
+   "cp": "c3350",
+   "npc": 33501010,
+   "name": "Crystalian (Evergaol- Spear)",
+   "pos": [
+    7.1,
+    0.5,
+    1.5
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 7,
+   "eid": 46600821,
+   "cp": "c3350",
+   "npc": 33500010,
+   "name": "Crystalian (Evergaol- Ringblade)",
+   "pos": [
+    1.8,
+    0.0,
+    -4.4
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 8,
+   "eid": 46600822,
+   "cp": "c3350",
+   "npc": 33502010,
+   "name": "Crystalian (Evergaol- Staff)",
+   "pos": [
+    -0.5,
+    0.1,
+    4.1
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 9,
+   "eid": 46600830,
+   "cp": "c3600",
+   "npc": 36000020,
+   "name": "Alabaster Lord (Evergaol)",
+   "pos": [
+    2.8,
+    0.0,
+    -2.6
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 10,
+   "eid": 46600831,
+   "cp": "c3600",
+   "npc": 36001020,
+   "name": "Onyx Lord (Evergaol)",
+   "pos": [
+    3.7,
+    -0.1,
+    1.1
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 16,
+   "eid": 46600800,
+   "cp": "c2500",
+   "npc": 25000030,
+   "name": "Crucible Knight (Evergaol- Sword)",
+   "pos": [
+    97.6,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 17,
+   "eid": 46600810,
+   "cp": "c2500",
+   "npc": 25001010,
+   "name": "Crucible Knight",
+   "pos": [
+    91.4,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m46_62_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46620800,
+   "cp": "c3150",
+   "npc": 31500010,
+   "name": "Night's Cavalry (Field Boss; Glaive)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 2,
+   "eid": 46620810,
+   "cp": "c3160",
+   "npc": 31600010,
+   "name": "Funeral Steed (Field Boss)",
+   "pos": [
+    5.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 4,
+   "eid": 46620811,
+   "cp": "c3160",
+   "npc": 31600010,
+   "name": "Funeral Steed (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_63_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46630800,
+   "cp": "c4640",
+   "npc": 46400010,
+   "name": "Ulcerated Tree Spirit (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_64_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46640800,
+   "cp": "c4670",
+   "npc": 46700010,
+   "name": "Ancestor Spirit (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_65_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46650800,
+   "cp": "c4690",
+   "npc": 46900010,
+   "name": "Grafted Scion (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_66_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46660800,
+   "cp": "c4770",
+   "npc": 47701210,
+   "name": "Black Blade Kindred (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_67_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46670800,
+   "cp": "c4810",
+   "npc": 48100010,
+   "name": "Erdtree Avatar (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_68_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46680800,
+   "cp": "c4910",
+   "npc": 49100190,
+   "name": "Magma Wyrm (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_69_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46690800,
+   "cp": "c7100",
+   "npc": 71000010,
+   "name": "Ancient Hero (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_70_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46700830,
+   "cp": "c2500",
+   "npc": 25000030,
+   "name": "Crucible Knight (Evergaol- Sword)",
+   "pos": [
+    1.1,
+    0.0,
+    0.2
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 2,
+   "eid": 46700840,
+   "cp": "c2500",
+   "npc": 25001020,
+   "name": "Crucible Knight (Evergaol- Treespear)",
+   "pos": [
+    0.1,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 5,
+   "eid": 46700800,
+   "cp": "c4650",
+   "npc": 46500210,
+   "name": "Dragonkin Soldier (Evergaol)",
+   "pos": [
+    -12.4,
+    1.2,
+    -4.3
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m46_71_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46710800,
+   "cp": "c4480",
+   "npc": 44800020,
+   "name": "Miranda Blossom (Field Boss)",
+   "pos": [
+    5.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 2,
+   "eid": 46710810,
+   "cp": "c4481",
+   "npc": 44810020,
+   "name": "Miranda Sprout (Field Boss)",
+   "pos": [
+    0.4,
+    0.0,
+    -8.5
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 3,
+   "eid": 46710811,
+   "cp": "c4481",
+   "npc": 44810020,
+   "name": "Miranda Sprout (Field Boss)",
+   "pos": [
+    -2.1,
+    0.0,
+    -4.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 4,
+   "eid": 46710812,
+   "cp": "c4481",
+   "npc": 44810020,
+   "name": "Miranda Sprout (Field Boss)",
+   "pos": [
+    1.8,
+    0.0,
+    -5.2
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 5,
+   "eid": 46710813,
+   "cp": "c4481",
+   "npc": 44810020,
+   "name": "Miranda Sprout (Field Boss)",
+   "pos": [
+    -6.0,
+    0.0,
+    -6.4
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 6,
+   "eid": 46710814,
+   "cp": "c4481",
+   "npc": 44810020,
+   "name": "Miranda Sprout (Field Boss)",
+   "pos": [
+    -2.3,
+    0.0,
+    1.7
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 7,
+   "eid": 46710815,
+   "cp": "c4481",
+   "npc": 44810020,
+   "name": "Miranda Sprout (Field Boss)",
+   "pos": [
+    -5.1,
+    0.8,
+    1.5
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 8,
+   "eid": 46710816,
+   "cp": "c4481",
+   "npc": 44810020,
+   "name": "Miranda Sprout (Field Boss)",
+   "pos": [
+    8.6,
+    0.0,
+    -3.4
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 9,
+   "eid": 46710817,
+   "cp": "c4481",
+   "npc": 44810020,
+   "name": "Miranda Sprout (Field Boss)",
+   "pos": [
+    7.1,
+    0.0,
+    -6.9
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 10,
+   "eid": 46710818,
+   "cp": "c4481",
+   "npc": 44810020,
+   "name": "Miranda Sprout (Field Boss)",
+   "pos": [
+    -1.7,
+    0.0,
+    -10.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 11,
+   "eid": 46710819,
+   "cp": "c4481",
+   "npc": 44810020,
+   "name": "Miranda Sprout (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_72_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46720800,
+   "cp": "c5011",
+   "npc": 50110010,
+   "name": "Golden Hippopotamus (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_74_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46740800,
+   "cp": "c4980",
+   "npc": 49801020,
+   "name": "Death Rite Bird (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_77_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46770810,
+   "cp": "c4100",
+   "npc": 41002040,
+   "name": "Demi-Human (Field Boss)",
+   "pos": [
+    4.4,
+    -0.0,
+    2.5
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 2,
+   "eid": 46770811,
+   "cp": "c4100",
+   "npc": 41001040,
+   "name": "Demi-Human (Field Boss)",
+   "pos": [
+    2.5,
+    -0.0,
+    -5.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 3,
+   "eid": 46770812,
+   "cp": "c4100",
+   "npc": 41001040,
+   "name": "Demi-Human (Field Boss)",
+   "pos": [
+    -2.5,
+    -0.0,
+    -5.4
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 4,
+   "eid": 46770813,
+   "cp": "c4100",
+   "npc": 41001040,
+   "name": "Demi-Human (Field Boss)",
+   "pos": [
+    -6.4,
+    0.0,
+    4.1
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 5,
+   "eid": 46770814,
+   "cp": "c4100",
+   "npc": 41000040,
+   "name": "Demi-Human (Field Boss)",
+   "pos": [
+    -7.1,
+    0.0,
+    -8.2
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 6,
+   "eid": 46770815,
+   "cp": "c4100",
+   "npc": 41000040,
+   "name": "Demi-Human (Field Boss)",
+   "pos": [
+    4.9,
+    0.0,
+    -9.6
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 7,
+   "eid": 46770816,
+   "cp": "c4100",
+   "npc": 41002040,
+   "name": "Demi-Human (Field Boss)",
+   "pos": [
+    0.7,
+    0.8,
+    -0.3
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 8,
+   "eid": 46770800,
+   "cp": "c4130",
+   "npc": 41300020,
+   "name": "Demi-Human Queen (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m46_80_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 46800810,
+   "cp": "c4510",
+   "npc": 45102010,
+   "name": "Ancient Dragon (The Oldest Gaol)",
+   "pos": [
+    0.2,
+    0.0,
+    -0.1
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 4,
+   "eid": 46800800,
+   "cp": "c4980",
+   "npc": 49801030,
+   "name": "Death Rite Bird (The Oldest Gaol)",
+   "pos": [
+    -12.4,
+    1.2,
+    -4.3
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m46_81_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46810800,
+   "cp": "c2100",
+   "npc": 21000030,
+   "name": "Black Knife Assassin (Castle)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m46_82_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46820800,
+   "cp": "c3181",
+   "npc": 31810020,
+   "name": "Red Wolf of Radagon (Castle)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "castle_interior",
+   "scope": "extended"
+  }
+ ],
+ "m46_86_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46860800,
+   "cp": "c3460",
+   "npc": 34600040,
+   "name": "Leonine Misbegotten (Castle)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "castle_interior",
+   "scope": "extended"
+  }
+ ],
+ "m46_87_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46870800,
+   "cp": "c3100",
+   "npc": 31000030,
+   "name": "Bell Bearing Hunter (Castle Basement)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m46_88_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46880800,
+   "cp": "c4021",
+   "npc": 40210030,
+   "name": "Royal Revenant (Castle)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m46_90_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46900800,
+   "cp": "c4670",
+   "npc": 46700020,
+   "name": "Ancestor Spirit",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m46_91_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46910800,
+   "cp": "c4690",
+   "npc": 46900020,
+   "name": "Grafted Scion (Castle)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "castle_interior",
+   "scope": "extended"
+  }
+ ],
+ "m46_95_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 46950800,
+   "cp": "c7100",
+   "npc": 71000020,
+   "name": "Ancient Hero (Castle)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "castle_interior",
+   "scope": "extended"
+  }
+ ],
+ "m47_70_00_00.msb": [
+  {
+   "pi": 20,
+   "eid": 47700800,
+   "cp": "c4950",
+   "npc": 49500010,
+   "name": "Tibia Mariner (Night Boss)",
+   "pos": [
+    -7.7,
+    4.0,
+    -3.5
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 22,
+   "eid": 47700840,
+   "cp": "c4980",
+   "npc": 49801110,
+   "name": "Death Rite Bird (Tibia Mariner Summon) ",
+   "pos": [
+    0.0,
+    4.0,
+    1.5
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m48_30_00_00.msb": [
+  {
+   "pi": 0,
+   "eid": 48300830,
+   "cp": "c3300",
+   "npc": 33001010,
+   "name": "Nox Swordstress/Monk/Nightmaiden (Dancer Prelude)",
+   "pos": [
+    5.6,
+    -0.1,
+    0.5
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 1,
+   "eid": 48300832,
+   "cp": "c3300",
+   "npc": 33002010,
+   "name": "Nox Swordstress/Monk/Nightmaiden (Dancer Prelude)",
+   "pos": [
+    -1.8,
+    -0.1,
+    4.1
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 2,
+   "eid": 48300833,
+   "cp": "c3300",
+   "npc": 33002010,
+   "name": "Nox Swordstress/Monk/Nightmaiden (Dancer Prelude)",
+   "pos": [
+    -0.1,
+    4.0,
+    -0.8
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m48_40_00_00.msb": [
+  {
+   "pi": 0,
+   "eid": 48400800,
+   "cp": "c2130",
+   "npc": 21300510,
+   "name": "Morgott (Night Boss)",
+   "pos": [
+    12.9,
+    4.0,
+    1.2
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 4,
+   "eid": 0,
+   "cp": "c4353",
+   "npc": 43530020,
+   "name": "Leyndell Knight (Night Boss Prelude)",
+   "pos": [
+    -55.5,
+    0.0,
+    1.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m48_50_00_00.msb": [
+  {
+   "pi": 0,
+   "eid": 48500800,
+   "cp": "c3250",
+   "npc": 32500110,
+   "name": "Draconic Tree Sentinel (Night Boss)",
+   "pos": [
+    3.5,
+    -0.0,
+    -16.6
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 3,
+   "eid": 48500810,
+   "cp": "c4353",
+   "npc": 43531110,
+   "name": "Leyndell Knight (Night Boss)",
+   "pos": [
+    -4.2,
+    -2.0,
+    3.8
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 4,
+   "eid": 48500820,
+   "cp": "c4353",
+   "npc": 43531110,
+   "name": "Leyndell Knight (Night Boss)",
+   "pos": [
+    -16.3,
+    -0.0,
+    -4.9
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 5,
+   "eid": 0,
+   "cp": "c4353",
+   "npc": 43530020,
+   "name": "Leyndell Knight (Night Boss Prelude)",
+   "pos": [
+    -6.6,
+    -2.0,
+    -4.8
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 6,
+   "eid": 48500801,
+   "cp": "c4353",
+   "npc": 43531400,
+   "name": "Leyndell Knight (Night Boss Spirit)",
+   "pos": [
+    1.6,
+    -2.0,
+    -2.6
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 7,
+   "eid": 48500802,
+   "cp": "c4353",
+   "npc": 43531400,
+   "name": "Leyndell Knight (Night Boss Spirit)",
+   "pos": [
+    16.9,
+    -0.1,
+    6.1
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 8,
+   "eid": 0,
+   "cp": "c4353",
+   "npc": 43530020,
+   "name": "Leyndell Knight (Night Boss Prelude)",
+   "pos": [
+    4.1,
+    -2.0,
+    2.4
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 9,
+   "eid": 48500811,
+   "cp": "c4363",
+   "npc": 43630010,
+   "name": "Lordsworn Knight's Horse (Night Boss)",
+   "pos": [
+    -4.2,
+    -2.0,
+    3.8
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 10,
+   "eid": 48500821,
+   "cp": "c4363",
+   "npc": 43630010,
+   "name": "Lordsworn Knight's Horse (Night Boss)",
+   "pos": [
+    -6.6,
+    -2.0,
+    -4.8
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 11,
+   "eid": 48500805,
+   "cp": "c4363",
+   "npc": 43630400,
+   "name": "Lordsworn Knight's Horse (Night Boss Spirit)",
+   "pos": [
+    1.6,
+    -2.0,
+    -2.6
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 12,
+   "eid": 48500806,
+   "cp": "c4363",
+   "npc": 43630400,
+   "name": "Lordsworn Knight's Horse (Night Boss Spirit)",
+   "pos": [
+    5.3,
+    -0.0,
+    -14.7
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m48_60_00_00.msb": [
+  {
+   "pi": 0,
+   "eid": 48600800,
+   "cp": "c3251",
+   "npc": 32510110,
+   "name": "Tree Sentinel (Night Boss)",
+   "pos": [
+    24.0,
+    -0.1,
+    0.5
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 9,
+   "eid": 48600810,
+   "cp": "c4353",
+   "npc": 43531110,
+   "name": "Leyndell Knight (Night Boss)",
+   "pos": [
+    4.4,
+    -0.1,
+    -0.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 10,
+   "eid": 48600820,
+   "cp": "c4353",
+   "npc": 43531110,
+   "name": "Leyndell Knight (Night Boss)",
+   "pos": [
+    -6.6,
+    -2.0,
+    -4.8
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 11,
+   "eid": 48600801,
+   "cp": "c4353",
+   "npc": 43531400,
+   "name": "Leyndell Knight (Night Boss Spirit)",
+   "pos": [
+    1.6,
+    -2.0,
+    -2.6
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 12,
+   "eid": 48600802,
+   "cp": "c4353",
+   "npc": 43531400,
+   "name": "Leyndell Knight (Night Boss Spirit)",
+   "pos": [
+    -1.9,
+    -0.1,
+    -4.4
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 13,
+   "eid": 48600811,
+   "cp": "c4363",
+   "npc": 43630010,
+   "name": "Lordsworn Knight's Horse (Night Boss)",
+   "pos": [
+    4.4,
+    -0.1,
+    -0.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 14,
+   "eid": 48600821,
+   "cp": "c4363",
+   "npc": 43630010,
+   "name": "Lordsworn Knight's Horse (Night Boss)",
+   "pos": [
+    -6.6,
+    -2.0,
+    -4.8
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 15,
+   "eid": 48600805,
+   "cp": "c4363",
+   "npc": 43630400,
+   "name": "Lordsworn Knight's Horse (Night Boss Spirit)",
+   "pos": [
+    1.6,
+    -2.0,
+    -2.6
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 16,
+   "eid": 48600806,
+   "cp": "c4363",
+   "npc": 43630400,
+   "name": "Lordsworn Knight's Horse (Night Boss Spirit)",
+   "pos": [
+    -9.6,
+    -0.1,
+    17.8
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m48_70_00_00.msb": [
+  {
+   "pi": 0,
+   "eid": 48700800,
+   "cp": "c3560",
+   "npc": 35600010,
+   "name": "Godskin Apostle (Duo Night Boss)",
+   "pos": [
+    18.2,
+    -0.1,
+    -9.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m48_80_00_00.msb": [
+  {
+   "pi": 0,
+   "eid": 48800810,
+   "cp": "c3560",
+   "npc": 35600010,
+   "name": "Godskin Apostle (Duo Night Boss)",
+   "pos": [
+    1.0,
+    4.0,
+    0.7
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 1,
+   "eid": 48800800,
+   "cp": "c3570",
+   "npc": 35700010,
+   "name": "Godskin Noble (Duo Night Boss)",
+   "pos": [
+    18.2,
+    -0.1,
+    -9.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m48_90_00_00.msb": [
+  {
+   "pi": 23,
+   "eid": 48900800,
+   "cp": "c4580",
+   "npc": 45803010,
+   "name": "Large Wormface (Night Boss)",
+   "pos": null,
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_10_00_00.msb": [
+  {
+   "pi": 5,
+   "eid": 49100800,
+   "cp": "c4750",
+   "npc": 47509010,
+   "name": "Grafted Monarch (Night Boss)",
+   "pos": [
+    3.9,
+    -0.1,
+    -18.7
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_17_00_00.msb": [
+  {
+   "pi": 6,
+   "eid": 49170800,
+   "cp": "c4770",
+   "npc": 47700020,
+   "name": "Valiant Gargoyle (Night Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    2.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 8,
+   "eid": 0,
+   "cp": "c4353",
+   "npc": 43530020,
+   "name": "Leyndell Knight (Night Boss Prelude)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_18_00_00.msb": [
+  {
+   "pi": 5,
+   "eid": 49180800,
+   "cp": "c4911",
+   "npc": 49110010,
+   "name": "Great Wyrm (Night Boss)",
+   "pos": null,
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_19_00_00.msb": [
+  {
+   "pi": 7,
+   "eid": 49190800,
+   "cp": "c4510",
+   "npc": 45101110,
+   "name": "Ancient Dragon (Night Boss)",
+   "pos": null,
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_20_00_00.msb": [
+  {
+   "pi": 5,
+   "eid": 49200800,
+   "cp": "c4680",
+   "npc": 46809010,
+   "name": "Fallingstar Beast (Night Boss)",
+   "pos": null,
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_21_00_00.msb": [
+  {
+   "pi": 5,
+   "eid": 49210800,
+   "cp": "c4980",
+   "npc": 49801010,
+   "name": "Death Rite Bird (Night Boss)",
+   "pos": [
+    9.0,
+    -0.1,
+    -16.1
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_23_00_00.msb": [
+  {
+   "pi": 6,
+   "eid": 49230800,
+   "cp": "c4650",
+   "npc": 46500010,
+   "name": "Dragonkin Soldier (Night Boss)",
+   "pos": [
+    4.0,
+    0.0,
+    2.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_24_00_00.msb": [
+  {
+   "pi": 0,
+   "eid": 49240800,
+   "cp": "c3100",
+   "npc": 31000020,
+   "name": "Bell Bearing Hunter (Night Boss)",
+   "pos": [
+    10.4,
+    -0.1,
+    7.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_25_00_00.msb": [
+  {
+   "pi": 0,
+   "eid": 49250800,
+   "cp": "c2500",
+   "npc": 25000020,
+   "name": "Crucible Knight (Night Boss)",
+   "pos": [
+    16.0,
+    -0.0,
+    -8.7
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 6,
+   "eid": 49250810,
+   "cp": "c5011",
+   "npc": 50110020,
+   "name": "Golden Hippopotamus (Night Boss)",
+   "pos": [
+    3.0,
+    0.0,
+    4.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_26_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 49260810,
+   "cp": "c3010",
+   "npc": 30106010,
+   "name": "Banished Knight",
+   "pos": [
+    -3.0,
+    0.0,
+    2.5
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 4,
+   "eid": 49260811,
+   "cp": "c3010",
+   "npc": 30107010,
+   "name": "Banished Knight",
+   "pos": [
+    12.9,
+    -0.1,
+    0.6
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 8,
+   "eid": 49260800,
+   "cp": "c3050",
+   "npc": 30500010,
+   "name": "Outland Commander (Night Boss)",
+   "pos": [
+    -5.0,
+    0.0,
+    6.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_27_00_00.msb": [
+  {
+   "pi": 13,
+   "eid": 49270800,
+   "cp": "c3050",
+   "npc": 30500110,
+   "name": "Battlefield Commander (Night Boss)",
+   "pos": [
+    -5.0,
+    0.0,
+    6.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_28_00_00.msb": [
+  {
+   "pi": 2,
+   "eid": 49280800,
+   "cp": "c3150",
+   "npc": 31500020,
+   "name": "Night's Cavalry (Night Boss; Glaive)",
+   "pos": [
+    -2.5,
+    0.0,
+    0.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 3,
+   "eid": 49280810,
+   "cp": "c3150",
+   "npc": 31501020,
+   "name": "Night's Cavalry (Night Boss; Flail)",
+   "pos": [
+    -1.9,
+    0.0,
+    6.4
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 4,
+   "eid": 49280801,
+   "cp": "c3160",
+   "npc": 31600020,
+   "name": "Funeral Steed (Night Boss)",
+   "pos": [
+    -0.1,
+    0.0,
+    3.3
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  },
+  {
+   "pi": 5,
+   "eid": 49280811,
+   "cp": "c3160",
+   "npc": 31600020,
+   "name": "Funeral Steed (Night Boss)",
+   "pos": [
+    -9.9,
+    -0.0,
+    6.2
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_29_00_00.msb": [
+  {
+   "pi": 16,
+   "eid": 49290800,
+   "cp": "c4130",
+   "npc": 41301010,
+   "name": "Demi-Human Queen (Night Boss)",
+   "pos": [
+    4.3,
+    -0.1,
+    1.5
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_30_00_00.msb": [
+  {
+   "pi": 7,
+   "eid": 49300800,
+   "cp": "c4021",
+   "npc": 40210020,
+   "name": "Royal Revenant (Night Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m49_42_00_00.msb": [
+  {
+   "pi": 35,
+   "eid": 49420800,
+   "cp": "c4600",
+   "npc": 46000030,
+   "name": "Troll (Castle)",
+   "pos": [
+    -12.5,
+    21.6,
+    -45.6
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 36,
+   "eid": 49420801,
+   "cp": "c4600",
+   "npc": 46000030,
+   "name": "Troll (Castle)",
+   "pos": [
+    -54.9,
+    23.9,
+    44.4
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 37,
+   "eid": 49420802,
+   "cp": "c4600",
+   "npc": 46000030,
+   "name": "Troll (Castle)",
+   "pos": [
+    -15.1,
+    27.6,
+    34.1
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 38,
+   "eid": 49420803,
+   "cp": "c4600",
+   "npc": 46000030,
+   "name": "Troll (Castle)",
+   "pos": [
+    -18.7,
+    -0.1,
+    -19.8
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m49_90_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 49900800,
+   "cp": "c4640",
+   "npc": 46400020,
+   "name": "Ulcerated Tree Spirit (Night Boss)",
+   "pos": [
+    17.8,
+    -0.1,
+    0.8
+   ],
+   "tier": "nightboss",
+   "scope": "strict"
+  }
+ ],
+ "m60_42_36_00.msb": [
+  {
+   "pi": 16,
+   "eid": 1042360281,
+   "cp": "c3650",
+   "npc": 36501020,
+   "name": "Erdtree Guardian (Remembrance)",
+   "pos": [
+    116.0,
+    65.6,
+    -70.7
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 17,
+   "eid": 1042360282,
+   "cp": "c3650",
+   "npc": 36500020,
+   "name": "Erdtree Guardian (Remembrance)",
+   "pos": [
+    121.3,
+    65.5,
+    -71.4
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 18,
+   "eid": 1042360283,
+   "cp": "c3650",
+   "npc": 36500020,
+   "name": "Erdtree Guardian (Remembrance)",
+   "pos": [
+    -112.3,
+    111.1,
+    110.7
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 43,
+   "eid": 1042360271,
+   "cp": "c4660",
+   "npc": 46600020,
+   "name": "Guardian Golem (Remembrance)",
+   "pos": [
+    -1.6,
+    91.2,
+    -73.9
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m60_42_36_10.msb": [
+  {
+   "pi": 16,
+   "eid": 1042360281,
+   "cp": "c3650",
+   "npc": 36501020,
+   "name": "Erdtree Guardian (Remembrance)",
+   "pos": [
+    116.0,
+    65.6,
+    -70.7
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 17,
+   "eid": 1042360282,
+   "cp": "c3650",
+   "npc": 36500020,
+   "name": "Erdtree Guardian (Remembrance)",
+   "pos": [
+    121.3,
+    65.5,
+    -71.4
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 18,
+   "eid": 1042360283,
+   "cp": "c3650",
+   "npc": 36500020,
+   "name": "Erdtree Guardian (Remembrance)",
+   "pos": [
+    -112.3,
+    111.1,
+    110.7
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 43,
+   "eid": 1042360271,
+   "cp": "c4660",
+   "npc": 46600020,
+   "name": "Guardian Golem (Remembrance)",
+   "pos": [
+    -1.6,
+    91.2,
+    -73.9
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m60_42_36_20.msb": [
+  {
+   "pi": 16,
+   "eid": 1042360281,
+   "cp": "c3650",
+   "npc": 36501020,
+   "name": "Erdtree Guardian (Remembrance)",
+   "pos": [
+    116.0,
+    65.6,
+    -70.7
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 17,
+   "eid": 1042360282,
+   "cp": "c3650",
+   "npc": 36500020,
+   "name": "Erdtree Guardian (Remembrance)",
+   "pos": [
+    121.3,
+    65.5,
+    -71.4
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 18,
+   "eid": 1042360283,
+   "cp": "c3650",
+   "npc": 36500020,
+   "name": "Erdtree Guardian (Remembrance)",
+   "pos": [
+    -112.3,
+    111.1,
+    110.7
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 43,
+   "eid": 1042360271,
+   "cp": "c4660",
+   "npc": 46600020,
+   "name": "Guardian Golem (Remembrance)",
+   "pos": [
+    -1.6,
+    91.2,
+    -73.9
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m60_42_36_50.msb": [
+  {
+   "pi": 17,
+   "eid": 1026500830,
+   "cp": "c2100",
+   "npc": 21000040,
+   "name": "Black Knife Assassin (Noklateo)",
+   "pos": [
+    99.8,
+    146.7,
+    -57.9
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 18,
+   "eid": 1026500840,
+   "cp": "c2100",
+   "npc": 21000040,
+   "name": "Black Knife Assassin (Noklateo)",
+   "pos": [
+    142.3,
+    144.7,
+    -66.3
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 25,
+   "eid": 1026500860,
+   "cp": "c4020",
+   "npc": 40200030,
+   "name": "Royal Revenant (Noklateo)",
+   "pos": [
+    -19.1,
+    139.2,
+    65.8
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 44,
+   "eid": 1026500252,
+   "cp": "c4355",
+   "npc": 43550010,
+   "name": "Mausoleum Knight (Noklateo)",
+   "pos": [
+    125.0,
+    149.7,
+    -92.4
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 45,
+   "eid": 1026500253,
+   "cp": "c4355",
+   "npc": 43551010,
+   "name": "Mausoleum Knight (Noklateo)",
+   "pos": [
+    11.3,
+    170.4,
+    7.7
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 46,
+   "eid": 0,
+   "cp": "c4355",
+   "npc": 43550010,
+   "name": "Mausoleum Knight (Noklateo)",
+   "pos": [
+    9.0,
+    170.1,
+    13.4
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 49,
+   "eid": 0,
+   "cp": "c4355",
+   "npc": 43550010,
+   "name": "Mausoleum Knight (Noklateo)",
+   "pos": [
+    -33.7,
+    176.8,
+    65.7
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 50,
+   "eid": 1026500200,
+   "cp": "c4355",
+   "npc": 43550010,
+   "name": "Mausoleum Knight (Noklateo)",
+   "pos": [
+    102.4,
+    146.7,
+    -62.5
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 58,
+   "eid": 1026500810,
+   "cp": "c4600",
+   "npc": 46000230,
+   "name": "Headless Troll (Noklateo)",
+   "pos": [
+    155.0,
+    144.7,
+    -63.5
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 59,
+   "eid": 1026500281,
+   "cp": "c4600",
+   "npc": 46000220,
+   "name": "Headless Troll (Remembrance)",
+   "pos": [
+    -60.6,
+    170.2,
+    -60.8
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 60,
+   "eid": 1026500800,
+   "cp": "c4620",
+   "npc": 46200010,
+   "name": "Naturalborn of the Void (Noklateo)",
+   "pos": [
+    80.9,
+    131.6,
+    81.2
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 61,
+   "eid": 1026500850,
+   "cp": "c4650",
+   "npc": 46500230,
+   "name": "Dragonkin Soldier (Noklateo)",
+   "pos": [
+    -35.6,
+    149.7,
+    108.6
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 91,
+   "eid": 0,
+   "cp": "c4020",
+   "npc": 40200030,
+   "name": "Royal Revenant (Noklateo)",
+   "pos": [
+    38.3,
+    5.0,
+    1.0
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 96,
+   "eid": 1026500820,
+   "cp": "c4021",
+   "npc": 40210010,
+   "name": "Royal Revenant (Field Boss)",
+   "pos": [
+    -81.3,
+    0.0,
+    1.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 97,
+   "eid": 0,
+   "cp": "c4355",
+   "npc": 43551010,
+   "name": "Mausoleum Knight (Noklateo)",
+   "pos": [
+    63.3,
+    0.0,
+    1.0
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 98,
+   "eid": 0,
+   "cp": "c4355",
+   "npc": 43550010,
+   "name": "Mausoleum Knight (Noklateo)",
+   "pos": [
+    -126.6,
+    0.0,
+    1.0
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 100,
+   "eid": 1026500251,
+   "cp": "c4355",
+   "npc": 43551010,
+   "name": "Mausoleum Knight (Noklateo)",
+   "pos": [
+    123.2,
+    0.0,
+    1.0
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  }
+ ],
+ "m60_42_37_50.msb": [
+  {
+   "pi": 10,
+   "eid": 1027500800,
+   "cp": "c3252",
+   "npc": 32520010,
+   "name": "Royal Carian Knight (Field Boss)",
+   "pos": [
+    -20.8,
+    118.6,
+    123.2
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 34,
+   "eid": 1027500215,
+   "cp": "c4340",
+   "npc": 43400610,
+   "name": "Mad Pumpkin Head",
+   "pos": [
+    19.9,
+    122.9,
+    -32.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 38,
+   "eid": 0,
+   "cp": "c4355",
+   "npc": 43551010,
+   "name": "Mausoleum Knight (Noklateo)",
+   "pos": [
+    55.3,
+    117.8,
+    6.9
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  },
+  {
+   "pi": 55,
+   "eid": 1027500200,
+   "cp": "c4620",
+   "npc": 46202010,
+   "name": "Astel- Naturalborn of the Void",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 80,
+   "eid": 0,
+   "cp": "c2100",
+   "npc": 21000020,
+   "name": "Black Knife Assassin (Field Boss)",
+   "pos": [
+    -109.6,
+    0.0,
+    1.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 81,
+   "eid": 1027500201,
+   "cp": "c4020",
+   "npc": 40200030,
+   "name": "Royal Revenant (Noklateo)",
+   "pos": [
+    -77.9,
+    0.0,
+    1.0
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  }
+ ],
+ "m60_42_38_10.msb": [
+  {
+   "pi": 9,
+   "eid": 0,
+   "cp": "c3170",
+   "npc": 31700020,
+   "name": "Albinauric Archer (Mountaintop Ruins Boss)",
+   "pos": [
+    -47.1,
+    222.3,
+    -30.0
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 11,
+   "eid": 0,
+   "cp": "c3170",
+   "npc": 31700020,
+   "name": "Albinauric Archer (Mountaintop Ruins Boss)",
+   "pos": [
+    23.4,
+    202.6,
+    -4.5
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 14,
+   "eid": 0,
+   "cp": "c3180",
+   "npc": 31800020,
+   "name": "Albinauric Archer's Wolf (Mountaintop Ruins Boss)",
+   "pos": [
+    -63.3,
+    233.8,
+    -82.9
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 15,
+   "eid": 0,
+   "cp": "c3180",
+   "npc": 31800020,
+   "name": "Albinauric Archer's Wolf (Mountaintop Ruins Boss)",
+   "pos": [
+    -25.2,
+    229.6,
+    -66.0
+   ],
+   "tier": "ruins_boss",
+   "scope": "broad"
+  },
+  {
+   "pi": 45,
+   "eid": 0,
+   "cp": "c4351",
+   "npc": 43510030,
+   "name": "Lordsworn Captain (Mountaintop)",
+   "pos": [
+    71.3,
+    161.0,
+    -66.5
+   ],
+   "tier": "mountaintop",
+   "scope": "extended"
+  },
+  {
+   "pi": 49,
+   "eid": 1028100800,
+   "cp": "c4503",
+   "npc": 45030010,
+   "name": "Mountaintop Ice Dragon (Boss)",
+   "pos": [
+    83.3,
+    192.6,
+    100.2
+   ],
+   "tier": "boss_suffix",
+   "scope": "extended"
+  },
+  {
+   "pi": 87,
+   "eid": 1028100281,
+   "cp": "c4810",
+   "npc": 48100020,
+   "name": "Erdtree Avatar (Remembrance)",
+   "pos": [
+    -68.4,
+    0.0,
+    1.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m60_42_39_10.msb": [
+  {
+   "pi": 11,
+   "eid": 1029100800,
+   "cp": "c4503",
+   "npc": 45030010,
+   "name": "Mountaintop Ice Dragon (Boss)",
+   "pos": [
+    44.0,
+    213.4,
+    90.7
+   ],
+   "tier": "boss_suffix",
+   "scope": "extended"
+  },
+  {
+   "pi": 12,
+   "eid": 1029100281,
+   "cp": "c4810",
+   "npc": 48100020,
+   "name": "Erdtree Avatar (Remembrance)",
+   "pos": [
+    -10.2,
+    236.1,
+    60.4
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 13,
+   "eid": 1029100820,
+   "cp": "c5810",
+   "npc": 58100920,
+   "name": "Demi-Human Swordmaster (Mountaintop)",
+   "pos": [
+    -10.5,
+    191.0,
+    -119.8
+   ],
+   "tier": "mountaintop",
+   "scope": "extended"
+  }
+ ],
+ "m60_43_36_50.msb": [
+  {
+   "pi": 21,
+   "eid": 1036500210,
+   "cp": "c4340",
+   "npc": 43400610,
+   "name": "Mad Pumpkin Head",
+   "pos": [
+    15.4,
+    116.8,
+    34.6
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 23,
+   "eid": 1036500800,
+   "cp": "c4500",
+   "npc": 45000010,
+   "name": "Flying Dragon (Field Boss)",
+   "pos": [
+    -13.8,
+    106.1,
+    44.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 24,
+   "eid": 1036500250,
+   "cp": "c4620",
+   "npc": 46202010,
+   "name": "Astel- Naturalborn of the Void",
+   "pos": [
+    3.3,
+    87.1,
+    4.1
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 59,
+   "eid": 1036500200,
+   "cp": "c2100",
+   "npc": 21000000,
+   "name": "Black Knife Assassin",
+   "pos": [
+    -14.4,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 60,
+   "eid": 0,
+   "cp": "c4021",
+   "npc": 40210010,
+   "name": "Royal Revenant (Field Boss)",
+   "pos": [
+    -135.2,
+    0.0,
+    1.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  },
+  {
+   "pi": 70,
+   "eid": 1036500820,
+   "cp": "c4600",
+   "npc": 46000210,
+   "name": "Troll",
+   "pos": [
+    -14.8,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  }
+ ],
+ "m60_43_37_00.msb": [
+  {
+   "pi": 120,
+   "eid": 1043370350,
+   "cp": "c3010",
+   "npc": 30101010,
+   "name": "Banished Knight (Castle- Dual Swords)",
+   "pos": [
+    -100.0,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 122,
+   "eid": 1043370345,
+   "cp": "c3010",
+   "npc": 30100010,
+   "name": "Banished Knight (Castle- Shield)",
+   "pos": [
+    38.1,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 123,
+   "eid": 1043370346,
+   "cp": "c3010",
+   "npc": 30101210,
+   "name": "Banished Knight",
+   "pos": [
+    -6.1,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 124,
+   "eid": 1043370347,
+   "cp": "c3010",
+   "npc": 30100010,
+   "name": "Banished Knight (Castle- Shield)",
+   "pos": [
+    86.6,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 125,
+   "eid": 1043370349,
+   "cp": "c3010",
+   "npc": 30100010,
+   "name": "Banished Knight (Castle- Shield)",
+   "pos": [
+    125.9,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 133,
+   "eid": 1043370300,
+   "cp": "c4270",
+   "npc": 42700040,
+   "name": "Elder Lion (Castle)",
+   "pos": [
+    -91.7,
+    0.0,
+    1.0
+   ],
+   "tier": "castle_interior",
+   "scope": "extended"
+  },
+  {
+   "pi": 134,
+   "eid": 0,
+   "cp": "c4600",
+   "npc": 46000030,
+   "name": "Troll (Castle)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "castle_interior",
+   "scope": "extended"
+  }
+ ],
+ "m60_43_37_10.msb": [
+  {
+   "pi": 120,
+   "eid": 1043370350,
+   "cp": "c3010",
+   "npc": 30101010,
+   "name": "Banished Knight (Castle- Dual Swords)",
+   "pos": [
+    -100.0,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 122,
+   "eid": 1043370345,
+   "cp": "c3010",
+   "npc": 30100010,
+   "name": "Banished Knight (Castle- Shield)",
+   "pos": [
+    38.1,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 123,
+   "eid": 1043370346,
+   "cp": "c3010",
+   "npc": 30101210,
+   "name": "Banished Knight",
+   "pos": [
+    -6.1,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 124,
+   "eid": 1043370347,
+   "cp": "c3010",
+   "npc": 30100010,
+   "name": "Banished Knight (Castle- Shield)",
+   "pos": [
+    86.6,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 125,
+   "eid": 1043370349,
+   "cp": "c3010",
+   "npc": 30100010,
+   "name": "Banished Knight (Castle- Shield)",
+   "pos": [
+    125.9,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 133,
+   "eid": 1043370300,
+   "cp": "c4270",
+   "npc": 42700040,
+   "name": "Elder Lion (Castle)",
+   "pos": [
+    -91.7,
+    0.0,
+    1.0
+   ],
+   "tier": "castle_interior",
+   "scope": "extended"
+  },
+  {
+   "pi": 134,
+   "eid": 0,
+   "cp": "c4600",
+   "npc": 46000030,
+   "name": "Troll (Castle)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "castle_interior",
+   "scope": "extended"
+  }
+ ],
+ "m60_43_37_20.msb": [
+  {
+   "pi": 120,
+   "eid": 1043370350,
+   "cp": "c3010",
+   "npc": 30101010,
+   "name": "Banished Knight (Castle- Dual Swords)",
+   "pos": [
+    -100.0,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 122,
+   "eid": 1043370345,
+   "cp": "c3010",
+   "npc": 30100010,
+   "name": "Banished Knight (Castle- Shield)",
+   "pos": [
+    38.1,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 123,
+   "eid": 1043370346,
+   "cp": "c3010",
+   "npc": 30101210,
+   "name": "Banished Knight",
+   "pos": [
+    -6.1,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 124,
+   "eid": 1043370347,
+   "cp": "c3010",
+   "npc": 30100010,
+   "name": "Banished Knight (Castle- Shield)",
+   "pos": [
+    86.6,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 125,
+   "eid": 1043370349,
+   "cp": "c3010",
+   "npc": 30100010,
+   "name": "Banished Knight (Castle- Shield)",
+   "pos": [
+    125.9,
+    0.0,
+    1.0
+   ],
+   "tier": "named_boss",
+   "scope": "extended"
+  },
+  {
+   "pi": 133,
+   "eid": 1043370300,
+   "cp": "c4270",
+   "npc": 42700040,
+   "name": "Elder Lion (Castle)",
+   "pos": [
+    -91.7,
+    0.0,
+    1.0
+   ],
+   "tier": "castle_interior",
+   "scope": "extended"
+  },
+  {
+   "pi": 134,
+   "eid": 0,
+   "cp": "c4600",
+   "npc": 46000030,
+   "name": "Troll (Castle)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "castle_interior",
+   "scope": "extended"
+  }
+ ],
+ "m60_43_37_50.msb": [
+  {
+   "pi": 45,
+   "eid": 1037500800,
+   "cp": "c5011",
+   "npc": 50110040,
+   "name": "Golden Hippopotamus (Noklateo)",
+   "pos": [
+    -151.9,
+    102.9,
+    -65.9
+   ],
+   "tier": "noklateo",
+   "scope": "broad"
+  }
+ ],
+ "m60_43_38_10.msb": [
+  {
+   "pi": 48,
+   "eid": 0,
+   "cp": "c4602",
+   "npc": 46020050,
+   "name": "Snowfield Troll (Mountaintop)",
+   "pos": [
+    -8.6,
+    121.2,
+    -44.1
+   ],
+   "tier": "mountaintop",
+   "scope": "extended"
+  }
+ ],
+ "m60_43_38_20.msb": [
+  {
+   "pi": 18,
+   "eid": 0,
+   "cp": "c3910",
+   "npc": 39100140,
+   "name": "Fire Prelate (Crater)",
+   "pos": [
+    117.2,
+    -137.4,
+    -21.2
+   ],
+   "tier": "crater",
+   "scope": "broad"
+  },
+  {
+   "pi": 103,
+   "eid": 1038200800,
+   "cp": "c4770",
+   "npc": 47701030,
+   "name": "Valiant Gargoyle (Crater)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "crater",
+   "scope": "broad"
+  },
+  {
+   "pi": 113,
+   "eid": 0,
+   "cp": "c4910",
+   "npc": 49100120,
+   "name": "Magma Wyrm (Crater)",
+   "pos": [
+    84.4,
+    -13.5,
+    0.9
+   ],
+   "tier": "crater",
+   "scope": "broad"
+  }
+ ],
+ "m60_43_39_10.msb": [
+  {
+   "pi": 19,
+   "eid": 1039100800,
+   "cp": "c4503",
+   "npc": 45030010,
+   "name": "Mountaintop Ice Dragon (Boss)",
+   "pos": [
+    -47.0,
+    211.6,
+    80.5
+   ],
+   "tier": "boss_suffix",
+   "scope": "extended"
+  },
+  {
+   "pi": 20,
+   "eid": 1039100801,
+   "cp": "c4503",
+   "npc": 45030010,
+   "name": "Mountaintop Ice Dragon (Boss)",
+   "pos": [
+    -115.9,
+    282.1,
+    57.4
+   ],
+   "tier": "boss_suffix",
+   "scope": "extended"
+  }
+ ],
+ "m60_43_39_20.msb": [
+  {
+   "pi": 20,
+   "eid": 0,
+   "cp": "c3910",
+   "npc": 39101120,
+   "name": "Fire Prelate (Crater)",
+   "pos": [
+    0.7,
+    -51.7,
+    17.3
+   ],
+   "tier": "crater",
+   "scope": "broad"
+  },
+  {
+   "pi": 63,
+   "eid": 1039200800,
+   "cp": "c4130",
+   "npc": 41300030,
+   "name": "Demi-Human Queen (Crater)",
+   "pos": [
+    23.3,
+    208.2,
+    -67.8
+   ],
+   "tier": "crater",
+   "scope": "broad"
+  }
+ ],
+ "m60_44_36_00.msb": [
+  {
+   "pi": 16,
+   "eid": 1044360281,
+   "cp": "c3350",
+   "npc": 33500030,
+   "name": "Crystalian (Remembrance)",
+   "pos": [
+    -113.1,
+    101.7,
+    101.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m60_44_36_20.msb": [
+  {
+   "pi": 16,
+   "eid": 1044360281,
+   "cp": "c3350",
+   "npc": 33500030,
+   "name": "Crystalian (Remembrance)",
+   "pos": [
+    -113.1,
+    101.7,
+    101.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m60_44_36_50.msb": [
+  {
+   "pi": 16,
+   "eid": 1044360281,
+   "cp": "c3350",
+   "npc": 33500030,
+   "name": "Crystalian (Remembrance)",
+   "pos": [
+    -113.1,
+    101.7,
+    101.0
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m60_44_38_20.msb": [
+  {
+   "pi": 90,
+   "eid": 1048200830,
+   "cp": "c4680",
+   "npc": 46801020,
+   "name": "Fallingstar Beast (Crater)",
+   "pos": [
+    2.0,
+    -135.5,
+    -1.9
+   ],
+   "tier": "crater",
+   "scope": "broad"
+  },
+  {
+   "pi": 91,
+   "eid": 1048200800,
+   "cp": "c4910",
+   "npc": 49100120,
+   "name": "Magma Wyrm (Crater)",
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tier": "crater",
+   "scope": "broad"
+  }
+ ],
+ "m60_44_39_20.msb": [
+  {
+   "pi": 44,
+   "eid": 1049200810,
+   "cp": "c4130",
+   "npc": 41300030,
+   "name": "Demi-Human Queen (Crater)",
+   "pos": [
+    -34.4,
+    75.6,
+    30.7
+   ],
+   "tier": "crater",
+   "scope": "broad"
+  }
+ ],
+ "m60_45_37_00.msb": [
+  {
+   "pi": 39,
+   "eid": 1045370800,
+   "cp": "c3460",
+   "npc": 34600020,
+   "name": "Leonine Misbegotten (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m60_45_37_20.msb": [
+  {
+   "pi": 39,
+   "eid": 1045370800,
+   "cp": "c3460",
+   "npc": 34600020,
+   "name": "Leonine Misbegotten (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m60_45_37_50.msb": [
+  {
+   "pi": 39,
+   "eid": 1045370800,
+   "cp": "c3460",
+   "npc": 34600020,
+   "name": "Leonine Misbegotten (Field Boss)",
+   "pos": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "tier": "fieldboss",
+   "scope": "broad"
+  }
+ ],
+ "m60_45_39_00.msb": [
+  {
+   "pi": 16,
+   "eid": 1045390271,
+   "cp": "c4050",
+   "npc": 40500120,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -62.5,
+    100.8,
+    -131.9
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 17,
+   "eid": 1045390272,
+   "cp": "c4050",
+   "npc": 40500120,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -62.1,
+    100.6,
+    -127.1
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 18,
+   "eid": 1045390273,
+   "cp": "c4050",
+   "npc": 40500020,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -51.3,
+    99.4,
+    -15.8
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 28,
+   "eid": 1045390281,
+   "cp": "c4290",
+   "npc": 42900020,
+   "name": "Bloodhound Knight (Remembrance)",
+   "pos": [
+    -104.8,
+    107.0,
+    -115.5
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 36,
+   "eid": 1045390290,
+   "cp": "c5011",
+   "npc": 50110030,
+   "name": "Golden Hippopotamus (Remembrance)",
+   "pos": [
+    -111.7,
+    95.8,
+    -18.4
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m60_45_39_20.msb": [
+  {
+   "pi": 16,
+   "eid": 1045390271,
+   "cp": "c4050",
+   "npc": 40500120,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -62.5,
+    100.8,
+    -131.9
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 17,
+   "eid": 1045390272,
+   "cp": "c4050",
+   "npc": 40500120,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -62.1,
+    100.6,
+    -127.1
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 18,
+   "eid": 1045390273,
+   "cp": "c4050",
+   "npc": 40500020,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -51.3,
+    99.4,
+    -15.8
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 28,
+   "eid": 1045390281,
+   "cp": "c4290",
+   "npc": 42900020,
+   "name": "Bloodhound Knight (Remembrance)",
+   "pos": [
+    -104.8,
+    107.0,
+    -115.5
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 36,
+   "eid": 1045390290,
+   "cp": "c5011",
+   "npc": 50110030,
+   "name": "Golden Hippopotamus (Remembrance)",
+   "pos": [
+    -111.7,
+    95.8,
+    -18.4
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m60_45_39_30.msb": [
+  {
+   "pi": 16,
+   "eid": 1045390271,
+   "cp": "c4050",
+   "npc": 40500120,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -62.5,
+    100.8,
+    -131.9
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 17,
+   "eid": 1045390272,
+   "cp": "c4050",
+   "npc": 40500120,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -62.1,
+    100.6,
+    -127.1
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 18,
+   "eid": 1045390273,
+   "cp": "c4050",
+   "npc": 40500020,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -51.3,
+    99.4,
+    -15.8
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 28,
+   "eid": 1045390281,
+   "cp": "c4290",
+   "npc": 42900020,
+   "name": "Bloodhound Knight (Remembrance)",
+   "pos": [
+    -104.8,
+    107.0,
+    -115.5
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 36,
+   "eid": 1045390290,
+   "cp": "c5011",
+   "npc": 50110030,
+   "name": "Golden Hippopotamus (Remembrance)",
+   "pos": [
+    -111.7,
+    95.8,
+    -18.4
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m60_45_39_50.msb": [
+  {
+   "pi": 16,
+   "eid": 1045390271,
+   "cp": "c4050",
+   "npc": 40500120,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -62.5,
+    100.8,
+    -131.9
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 17,
+   "eid": 1045390272,
+   "cp": "c4050",
+   "npc": 40500120,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -62.1,
+    100.6,
+    -127.1
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 18,
+   "eid": 1045390273,
+   "cp": "c4050",
+   "npc": 40500020,
+   "name": "Kaiden Sellsword (Remembrance)",
+   "pos": [
+    -51.3,
+    99.4,
+    -15.8
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 28,
+   "eid": 1045390281,
+   "cp": "c4290",
+   "npc": 42900020,
+   "name": "Bloodhound Knight (Remembrance)",
+   "pos": [
+    -104.8,
+    107.0,
+    -115.5
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  },
+  {
+   "pi": 36,
+   "eid": 1045390290,
+   "cp": "c5011",
+   "npc": 50110030,
+   "name": "Golden Hippopotamus (Remembrance)",
+   "pos": [
+    -111.7,
+    95.8,
+    -18.4
+   ],
+   "tier": "remembrance",
+   "scope": "broad"
+  }
+ ],
+ "m47_80_00_00.msb": [
+  {
+   "pi": 8,
+   "eid": 47800800,
+   "cp": "c7700",
+   "npc": 77000010,
+   "name": "Gaping Dragon (Night Boss)",
+   "pos": [
+    8.7,
+    4.0,
+    5.45
+   ],
+   "tier": "nightboss",
+   "scope": "strict",
+   "_source": "nr_boss_slots_regen_v0_26_x"
+  }
+ ],
+ "m47_90_00_00.msb": [
+  {
+   "pi": 7,
+   "eid": 47900800,
+   "cp": "c7710",
+   "npc": 77100010,
+   "name": "Centipede Demon (Night Boss)",
+   "pos": [
+    -5.82,
+    -20.0,
+    -3.84
+   ],
+   "tier": "nightboss",
+   "scope": "strict",
+   "_source": "nr_boss_slots_regen_v0_26_x"
+  }
+ ],
+ "m48_00_00_00.msb": [
+  {
+   "pi": 1,
+   "eid": 48000800,
+   "cp": "c7800",
+   "npc": 78000010,
+   "name": "Duke's Dear Freja (Night Boss)",
+   "pos": [
+    6.76,
+    4.0,
+    14.02
+   ],
+   "tier": "nightboss",
+   "scope": "strict",
+   "_source": "nr_boss_slots_regen_v0_26_x"
+  }
+ ],
+ "m48_10_00_00.msb": [
+  {
+   "pi": 3,
+   "eid": 48100800,
+   "cp": "c7820",
+   "npc": 78200010,
+   "name": "Smelter Demon (Night Boss)",
+   "pos": [
+    3.07,
+    -0.11,
+    3.96
+   ],
+   "tier": "nightboss",
+   "scope": "strict",
+   "_source": "nr_boss_slots_regen_v0_26_x"
+  }
+ ]
+}

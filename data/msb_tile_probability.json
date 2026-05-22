@@ -1,0 +1,979 @@
+{
+  "methodology": "Per-MSB per-tile presence rate, derived from regulation.bin LotResultSmallBaseAndSpot. For each pattern row, smallBaseMapId is decoded as m{id//100:02d}_{id%100:02d}_00_00.msb (100% match rate against vanilla MSBs). presence_rate[tile] = (# patterns of that tile that include the MSB) / (# patterns of that tile). visibility_vanilla = \u03a3_T P(tile T rolled) \u00d7 presence_rate[T] using vanilla rates (Default ~91.16%, each SE ~2.21%).",
+  "tile_probabilities_used": {
+    "vanilla": {
+      "Default": 0.9116,
+      "Mountaintops": 0.0221,
+      "Crater": 0.0221,
+      "Rotted_Woods": 0.0221,
+      "Noklateo": 0.0221
+    },
+    "uniform": {
+      "Default": 0.5,
+      "Mountaintops": 0.125,
+      "Crater": 0.125,
+      "Rotted_Woods": 0.125,
+      "Noklateo": 0.125
+    }
+  },
+  "caveats": "visibility values are upper bounds: P(MSB loaded during expedition) assuming the player fully explores. MSBs NOT in this table are not referenced by LotResultSmallBaseAndSpot \u2014 they load via other mechanisms (Nightlord-keyed arenas via the boss matchmaker, tile-base MSBs like m10/m11/m12/m13/m15, or m60 open-world chunks). For those, fall back to the prefix heuristic in healthbar_tools/prep_demo.py `_msb_tiles()`.",
+  "msb_presence": {
+    "m41_00_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 1.0,
+        "Mountaintops": 1.0,
+        "Crater": 1.0,
+        "Rotted_Woods": 1.0,
+        "Noklateo": 1.0
+      },
+      "visibility_vanilla": 1.0,
+      "visibility_uniform": 1.0
+    },
+    "m40_00_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 1.0,
+        "Mountaintops": 1.0,
+        "Crater": 1.0,
+        "Rotted_Woods": 1.0,
+        "Noklateo": 1.0
+      },
+      "visibility_vanilla": 1.0,
+      "visibility_uniform": 1.0
+    },
+    "m46_60_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 1.0,
+        "Mountaintops": 1.0,
+        "Crater": 1.0,
+        "Rotted_Woods": 1.0,
+        "Noklateo": 1.0
+      },
+      "visibility_vanilla": 1.0,
+      "visibility_uniform": 1.0
+    },
+    "m46_50_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 1.0,
+        "Mountaintops": 1.0,
+        "Crater": 1.0,
+        "Rotted_Woods": 1.0,
+        "Noklateo": 1.0
+      },
+      "visibility_vanilla": 1.0,
+      "visibility_uniform": 1.0
+    },
+    "m46_70_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 1.0,
+        "Mountaintops": 1.0,
+        "Crater": 1.0,
+        "Rotted_Woods": 1.0,
+        "Noklateo": 1.0
+      },
+      "visibility_vanilla": 1.0,
+      "visibility_uniform": 1.0
+    },
+    "m45_00_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 1.0,
+        "Mountaintops": 0.375,
+        "Crater": 0.475,
+        "Rotted_Woods": 0.375,
+        "Noklateo": 0.475
+      },
+      "visibility_vanilla": 0.9492,
+      "visibility_uniform": 0.7125
+    },
+    "m34_10_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.8875,
+        "Mountaintops": 0.75,
+        "Crater": 0.8,
+        "Rotted_Woods": 0.725,
+        "Noklateo": 0.9
+      },
+      "visibility_vanilla": 0.8792,
+      "visibility_uniform": 0.8406
+    },
+    "m38_00_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.8625,
+        "Mountaintops": 0.85,
+        "Crater": 0.7,
+        "Rotted_Woods": 0.875,
+        "Noklateo": 0.9
+      },
+      "visibility_vanilla": 0.8597,
+      "visibility_uniform": 0.8469
+    },
+    "m30_30_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.8375,
+        "Mountaintops": 0.95,
+        "Crater": 0.8,
+        "Rotted_Woods": 0.9,
+        "Noklateo": 0.825
+      },
+      "visibility_vanilla": 0.8403,
+      "visibility_uniform": 0.8531
+    },
+    "m32_10_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.8375,
+        "Mountaintops": 0.775,
+        "Crater": 0.775,
+        "Rotted_Woods": 0.725,
+        "Noklateo": 0.925
+      },
+      "visibility_vanilla": 0.8342,
+      "visibility_uniform": 0.8187
+    },
+    "m30_00_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.8313,
+        "Mountaintops": 0.8,
+        "Crater": 0.8,
+        "Rotted_Woods": 0.8,
+        "Noklateo": 0.85
+      },
+      "visibility_vanilla": 0.8296,
+      "visibility_uniform": 0.8219
+    },
+    "m38_10_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.825,
+        "Mountaintops": 0.9,
+        "Crater": 0.775,
+        "Rotted_Woods": 0.8,
+        "Noklateo": 0.925
+      },
+      "visibility_vanilla": 0.8272,
+      "visibility_uniform": 0.8375
+    },
+    "m32_20_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.7625,
+        "Mountaintops": 0.45,
+        "Crater": 0.375,
+        "Rotted_Woods": 0.5,
+        "Noklateo": 0.75
+      },
+      "visibility_vanilla": 0.741,
+      "visibility_uniform": 0.6406
+    },
+    "m34_00_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.7438,
+        "Mountaintops": 0.6,
+        "Crater": 0.5,
+        "Rotted_Woods": 0.45,
+        "Noklateo": 0.7
+      },
+      "visibility_vanilla": 0.7278,
+      "visibility_uniform": 0.6532
+    },
+    "m32_00_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.7375,
+        "Mountaintops": 0.55,
+        "Crater": 0.525,
+        "Rotted_Woods": 0.575,
+        "Noklateo": 0.675
+      },
+      "visibility_vanilla": 0.7237,
+      "visibility_uniform": 0.6594
+    },
+    "m43_00_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.7188,
+        "Mountaintops": 0.7,
+        "Crater": 0.75,
+        "Rotted_Woods": 0.425,
+        "Noklateo": 0.675
+      },
+      "visibility_vanilla": 0.7116,
+      "visibility_uniform": 0.6782
+    },
+    "m43_40_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.6813,
+        "Mountaintops": 0.725,
+        "Crater": 0.75,
+        "Rotted_Woods": 0.65,
+        "Noklateo": 0.5
+      },
+      "visibility_vanilla": 0.6791,
+      "visibility_uniform": 0.6688
+    },
+    "m46_71_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.6562,
+        "Mountaintops": 0.35,
+        "Crater": 0.3,
+        "Rotted_Woods": 0.625,
+        "Noklateo": 0.575
+      },
+      "visibility_vanilla": 0.6391,
+      "visibility_uniform": 0.5594
+    },
+    "m46_57_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.6312,
+        "Mountaintops": 0.375,
+        "Crater": 0.2,
+        "Rotted_Woods": 0.6,
+        "Noklateo": 0.55
+      },
+      "visibility_vanilla": 0.6135,
+      "visibility_uniform": 0.5312
+    },
+    "m46_72_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.6,
+        "Mountaintops": 0.3,
+        "Crater": 0.325,
+        "Rotted_Woods": 0.6,
+        "Noklateo": 0.375
+      },
+      "visibility_vanilla": 0.5823,
+      "visibility_uniform": 0.5
+    },
+    "m46_77_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.575,
+        "Mountaintops": 0.225,
+        "Crater": 0.225,
+        "Rotted_Woods": 0.325,
+        "Noklateo": 0.425
+      },
+      "visibility_vanilla": 0.5507,
+      "visibility_uniform": 0.4375
+    },
+    "m46_65_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.55,
+        "Mountaintops": 0.25,
+        "Crater": 0.15,
+        "Rotted_Woods": 0.7,
+        "Noklateo": 0.5
+      },
+      "visibility_vanilla": 0.5367,
+      "visibility_uniform": 0.475
+    },
+    "m46_68_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.5312,
+        "Mountaintops": 0.425,
+        "Crater": 0.375,
+        "Rotted_Woods": 0.75,
+        "Noklateo": 0.275
+      },
+      "visibility_vanilla": 0.5246,
+      "visibility_uniform": 0.4937
+    },
+    "m46_67_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.5188,
+        "Mountaintops": 0.35,
+        "Crater": 0.35,
+        "Rotted_Woods": 0.925,
+        "Noklateo": 0.225
+      },
+      "visibility_vanilla": 0.5138,
+      "visibility_uniform": 0.4907
+    },
+    "m46_62_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.5125,
+        "Mountaintops": 0.25,
+        "Crater": 0.45,
+        "Rotted_Woods": 0.625,
+        "Noklateo": 0.55
+      },
+      "visibility_vanilla": 0.5086,
+      "visibility_uniform": 0.4906
+    },
+    "m46_55_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.5188,
+        "Mountaintops": 0.25,
+        "Crater": 0.15,
+        "Rotted_Woods": 0.45,
+        "Noklateo": 0.425
+      },
+      "visibility_vanilla": 0.5011,
+      "visibility_uniform": 0.4188
+    },
+    "m46_69_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.5125,
+        "Mountaintops": 0.2,
+        "Crater": 0.25,
+        "Rotted_Woods": 0.35,
+        "Noklateo": 0.375
+      },
+      "visibility_vanilla": 0.4932,
+      "visibility_uniform": 0.4031
+    },
+    "m46_54_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4875,
+        "Mountaintops": 0.45,
+        "Crater": 0.35,
+        "Rotted_Woods": 0.925,
+        "Noklateo": 0.3
+      },
+      "visibility_vanilla": 0.4892,
+      "visibility_uniform": 0.4969
+    },
+    "m46_51_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4938,
+        "Mountaintops": 0.2,
+        "Crater": 0.35,
+        "Rotted_Woods": 0.525,
+        "Noklateo": 0.475
+      },
+      "visibility_vanilla": 0.4844,
+      "visibility_uniform": 0.4406
+    },
+    "m45_51_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4875,
+        "Mountaintops": 0.325,
+        "Crater": 0.325,
+        "Rotted_Woods": 0.65,
+        "Noklateo": 0.375
+      },
+      "visibility_vanilla": 0.4814,
+      "visibility_uniform": 0.4531
+    },
+    "m46_63_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4562,
+        "Mountaintops": 0.425,
+        "Crater": 0.525,
+        "Rotted_Woods": 0.9,
+        "Noklateo": 0.325
+      },
+      "visibility_vanilla": 0.4639,
+      "visibility_uniform": 0.5
+    },
+    "m46_53_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4562,
+        "Mountaintops": 0.35,
+        "Crater": 0.45,
+        "Rotted_Woods": 0.85,
+        "Noklateo": 0.225
+      },
+      "visibility_vanilla": 0.4573,
+      "visibility_uniform": 0.4625
+    },
+    "m46_52_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4562,
+        "Mountaintops": 0.4,
+        "Crater": 0.275,
+        "Rotted_Woods": 0.825,
+        "Noklateo": 0.3
+      },
+      "visibility_vanilla": 0.4557,
+      "visibility_uniform": 0.4531
+    },
+    "m46_66_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4562,
+        "Mountaintops": 0.375,
+        "Crater": 0.35,
+        "Rotted_Woods": 0.75,
+        "Noklateo": 0.275
+      },
+      "visibility_vanilla": 0.4545,
+      "visibility_uniform": 0.4468
+    },
+    "m46_59_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4625,
+        "Mountaintops": 0.275,
+        "Crater": 0.275,
+        "Rotted_Woods": 0.55,
+        "Noklateo": 0.375
+      },
+      "visibility_vanilla": 0.4542,
+      "visibility_uniform": 0.4156
+    },
+    "m46_64_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4375,
+        "Mountaintops": 0.325,
+        "Crater": 0.35,
+        "Rotted_Woods": 0.85,
+        "Noklateo": 0.225
+      },
+      "visibility_vanilla": 0.4375,
+      "visibility_uniform": 0.4375
+    },
+    "m46_74_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4375,
+        "Mountaintops": 0.275,
+        "Crater": 0.25,
+        "Rotted_Woods": 0.775,
+        "Noklateo": 0.275
+      },
+      "visibility_vanilla": 0.4336,
+      "visibility_uniform": 0.4156
+    },
+    "m37_90_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4188,
+        "Mountaintops": 0.275,
+        "Crater": 0.5,
+        "Rotted_Woods": 0.425,
+        "Noklateo": 0.55
+      },
+      "visibility_vanilla": 0.4205,
+      "visibility_uniform": 0.4282
+    },
+    "m46_58_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4313,
+        "Mountaintops": 0.35,
+        "Crater": 0.4,
+        "Rotted_Woods": 0.125,
+        "Noklateo": 0.325
+      },
+      "visibility_vanilla": 0.4197,
+      "visibility_uniform": 0.3657
+    },
+    "m43_50_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.4188,
+        "Mountaintops": 0.4,
+        "Crater": 0.35,
+        "Rotted_Woods": 0.35,
+        "Noklateo": 0.225
+      },
+      "visibility_vanilla": 0.4111,
+      "visibility_uniform": 0.375
+    },
+    "m49_42_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.3625,
+        "Mountaintops": 0.4,
+        "Crater": 0.375,
+        "Rotted_Woods": 0.2,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.352,
+      "visibility_uniform": 0.3031
+    },
+    "m46_56_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.3312,
+        "Mountaintops": 0.275,
+        "Crater": 0.325,
+        "Rotted_Woods": 0.75,
+        "Noklateo": 0.25
+      },
+      "visibility_vanilla": 0.3373,
+      "visibility_uniform": 0.3656
+    },
+    "m49_43_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.3312,
+        "Mountaintops": 0.225,
+        "Crater": 0.275,
+        "Rotted_Woods": 0.475,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.3235,
+      "visibility_uniform": 0.2875
+    },
+    "m49_41_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.3063,
+        "Mountaintops": 0.375,
+        "Crater": 0.35,
+        "Rotted_Woods": 0.325,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.3024,
+      "visibility_uniform": 0.2844
+    },
+    "m34_20_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.2938,
+        "Mountaintops": 0.225,
+        "Crater": 0.225,
+        "Rotted_Woods": 0.3,
+        "Noklateo": 0.4
+      },
+      "visibility_vanilla": 0.2932,
+      "visibility_uniform": 0.2907
+    },
+    "m34_30_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.275,
+        "Mountaintops": 0.3,
+        "Crater": 0.125,
+        "Rotted_Woods": 0.275,
+        "Noklateo": 0.175
+      },
+      "visibility_vanilla": 0.27,
+      "visibility_uniform": 0.2469
+    },
+    "m43_01_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.2437,
+        "Mountaintops": 0.25,
+        "Crater": 0.225,
+        "Rotted_Woods": 0.15,
+        "Noklateo": 0.1
+      },
+      "visibility_vanilla": 0.2382,
+      "visibility_uniform": 0.2125
+    },
+    "m46_80_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.2313,
+        "Mountaintops": 0.125,
+        "Crater": 0.2,
+        "Rotted_Woods": 0.225,
+        "Noklateo": 0.25
+      },
+      "visibility_vanilla": 0.2285,
+      "visibility_uniform": 0.2157
+    },
+    "m43_41_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.2,
+        "Mountaintops": 0.35,
+        "Crater": 0.325,
+        "Rotted_Woods": 0.2,
+        "Noklateo": 0.375
+      },
+      "visibility_vanilla": 0.2099,
+      "visibility_uniform": 0.2562
+    },
+    "m49_40_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.1562,
+        "Mountaintops": 0.25,
+        "Crater": 0.25,
+        "Rotted_Woods": 0.2,
+        "Noklateo": 0.225
+      },
+      "visibility_vanilla": 0.1628,
+      "visibility_uniform": 0.1937
+    },
+    "m46_87_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.1688,
+        "Mountaintops": 0.125,
+        "Crater": 0.1,
+        "Rotted_Woods": 0.175,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.1627,
+      "visibility_uniform": 0.1344
+    },
+    "m41_01_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.1625,
+        "Mountaintops": 0.1,
+        "Crater": 0.125,
+        "Rotted_Woods": 0.1,
+        "Noklateo": 0.175
+      },
+      "visibility_vanilla": 0.1592,
+      "visibility_uniform": 0.1437
+    },
+    "m46_82_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.1562,
+        "Mountaintops": 0.2,
+        "Crater": 0.025,
+        "Rotted_Woods": 0.175,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.1512,
+      "visibility_uniform": 0.1281
+    },
+    "m46_91_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.15,
+        "Mountaintops": 0.125,
+        "Crater": 0.3,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.1467,
+      "visibility_uniform": 0.1313
+    },
+    "m46_88_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.15,
+        "Mountaintops": 0.1,
+        "Crater": 0.1,
+        "Rotted_Woods": 0.1,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.1434,
+      "visibility_uniform": 0.1125
+    },
+    "m46_86_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.1437,
+        "Mountaintops": 0.125,
+        "Crater": 0.175,
+        "Rotted_Woods": 0.225,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.1426,
+      "visibility_uniform": 0.1375
+    },
+    "m44_01_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.1375,
+        "Mountaintops": 0.1,
+        "Crater": 0.1,
+        "Rotted_Woods": 0.2,
+        "Noklateo": 0.2
+      },
+      "visibility_vanilla": 0.1386,
+      "visibility_uniform": 0.1438
+    },
+    "m43_02_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.1313,
+        "Mountaintops": 0.125,
+        "Crater": 0.075,
+        "Rotted_Woods": 0.275,
+        "Noklateo": 0.1
+      },
+      "visibility_vanilla": 0.1324,
+      "visibility_uniform": 0.1375
+    },
+    "m45_01_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.125,
+        "Mountaintops": 0.075,
+        "Crater": 0.15,
+        "Rotted_Woods": 0.075,
+        "Noklateo": 0.05
+      },
+      "visibility_vanilla": 0.1217,
+      "visibility_uniform": 0.1062
+    },
+    "m46_95_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.1187,
+        "Mountaintops": 0.175,
+        "Crater": 0.15,
+        "Rotted_Woods": 0.225,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.1204,
+      "visibility_uniform": 0.1281
+    },
+    "m46_81_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.1125,
+        "Mountaintops": 0.15,
+        "Crater": 0.15,
+        "Rotted_Woods": 0.075,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.1108,
+      "visibility_uniform": 0.1031
+    },
+    "m45_53_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0625,
+        "Mountaintops": 0.075,
+        "Crater": 0.075,
+        "Rotted_Woods": 0.05,
+        "Noklateo": 0.05
+      },
+      "visibility_vanilla": 0.0625,
+      "visibility_uniform": 0.0625
+    },
+    "m45_52_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0625,
+        "Mountaintops": 0.075,
+        "Crater": 0.05,
+        "Rotted_Woods": 0.0,
+        "Noklateo": 0.075
+      },
+      "visibility_vanilla": 0.0614,
+      "visibility_uniform": 0.0563
+    },
+    "m46_78_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0563,
+        "Mountaintops": 0.05,
+        "Crater": 0.05,
+        "Rotted_Woods": 0.075,
+        "Noklateo": 0.05
+      },
+      "visibility_vanilla": 0.0563,
+      "visibility_uniform": 0.0563
+    },
+    "m45_55_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0563,
+        "Mountaintops": 0.05,
+        "Crater": 0.025,
+        "Rotted_Woods": 0.075,
+        "Noklateo": 0.05
+      },
+      "visibility_vanilla": 0.0557,
+      "visibility_uniform": 0.0532
+    },
+    "m46_05_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.05,
+        "Mountaintops": 0.05,
+        "Crater": 0.05,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.075
+      },
+      "visibility_vanilla": 0.05,
+      "visibility_uniform": 0.05
+    },
+    "m46_01_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.05,
+        "Mountaintops": 0.05,
+        "Crater": 0.05,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.075
+      },
+      "visibility_vanilla": 0.05,
+      "visibility_uniform": 0.05
+    },
+    "m46_00_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.05,
+        "Mountaintops": 0.05,
+        "Crater": 0.05,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.075
+      },
+      "visibility_vanilla": 0.05,
+      "visibility_uniform": 0.05
+    },
+    "m46_06_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.05,
+        "Mountaintops": 0.05,
+        "Crater": 0.05,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.075
+      },
+      "visibility_vanilla": 0.05,
+      "visibility_uniform": 0.05
+    },
+    "m46_03_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.05,
+        "Mountaintops": 0.05,
+        "Crater": 0.05,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.075
+      },
+      "visibility_vanilla": 0.05,
+      "visibility_uniform": 0.05
+    },
+    "m46_04_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.05,
+        "Mountaintops": 0.05,
+        "Crater": 0.05,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.075
+      },
+      "visibility_vanilla": 0.05,
+      "visibility_uniform": 0.05
+    },
+    "m46_02_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.05,
+        "Mountaintops": 0.05,
+        "Crater": 0.05,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.075
+      },
+      "visibility_vanilla": 0.05,
+      "visibility_uniform": 0.05
+    },
+    "m21_50_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.025,
+        "Mountaintops": 0.0,
+        "Crater": 0.0,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0233,
+      "visibility_uniform": 0.0156
+    },
+    "m41_30_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0,
+        "Mountaintops": 0.0,
+        "Crater": 0.0,
+        "Rotted_Woods": 1.0,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0221,
+      "visibility_uniform": 0.125
+    },
+    "m43_30_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0,
+        "Mountaintops": 0.0,
+        "Crater": 0.0,
+        "Rotted_Woods": 1.0,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0221,
+      "visibility_uniform": 0.125
+    },
+    "m40_90_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0187,
+        "Mountaintops": 0.0,
+        "Crater": 0.025,
+        "Rotted_Woods": 0.05,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0187,
+      "visibility_uniform": 0.0187
+    },
+    "m21_10_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0187,
+        "Mountaintops": 0.0,
+        "Crater": 0.0,
+        "Rotted_Woods": 0.0,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.017,
+      "visibility_uniform": 0.0094
+    },
+    "m20_80_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0125,
+        "Mountaintops": 0.0,
+        "Crater": 0.0,
+        "Rotted_Woods": 0.0,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0114,
+      "visibility_uniform": 0.0063
+    },
+    "m21_20_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0125,
+        "Mountaintops": 0.0,
+        "Crater": 0.0,
+        "Rotted_Woods": 0.0,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0114,
+      "visibility_uniform": 0.0063
+    },
+    "m20_40_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0063,
+        "Mountaintops": 0.025,
+        "Crater": 0.0,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0068,
+      "visibility_uniform": 0.0094
+    },
+    "m20_60_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0063,
+        "Mountaintops": 0.0,
+        "Crater": 0.0,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0063,
+      "visibility_uniform": 0.0063
+    },
+    "m21_30_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0063,
+        "Mountaintops": 0.0,
+        "Crater": 0.0,
+        "Rotted_Woods": 0.0,
+        "Noklateo": 0.025
+      },
+      "visibility_vanilla": 0.0063,
+      "visibility_uniform": 0.0063
+    },
+    "m21_00_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0063,
+        "Mountaintops": 0.0,
+        "Crater": 0.0,
+        "Rotted_Woods": 0.0,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0057,
+      "visibility_uniform": 0.0032
+    },
+    "m20_30_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0063,
+        "Mountaintops": 0.0,
+        "Crater": 0.0,
+        "Rotted_Woods": 0.0,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0057,
+      "visibility_uniform": 0.0032
+    },
+    "m21_40_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0,
+        "Mountaintops": 0.0,
+        "Crater": 0.05,
+        "Rotted_Woods": 0.0,
+        "Noklateo": 0.025
+      },
+      "visibility_vanilla": 0.0017,
+      "visibility_uniform": 0.0094
+    },
+    "m20_90_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0,
+        "Mountaintops": 0.025,
+        "Crater": 0.0,
+        "Rotted_Woods": 0.025,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0011,
+      "visibility_uniform": 0.0063
+    },
+    "m20_10_00_00.msb": {
+      "per_tile_presence_rate": {
+        "Default": 0.0,
+        "Mountaintops": 0.0,
+        "Crater": 0.025,
+        "Rotted_Woods": 0.0,
+        "Noklateo": 0.0
+      },
+      "visibility_vanilla": 0.0006,
+      "visibility_uniform": 0.0031
+    }
+  }
+}

@@ -1,0 +1,659 @@
+{
+  "_meta": {
+    "purpose": "High-confidence NOT emerge_from_ground classification. Chrs in this list lack animation ID 9000 in their TAE (or inherited parent TAE) \u2014 they use bespoke cinematic intros instead of the standard \"encounter wake-up\" animation.",
+    "generated": "2026-05-15T15:17:21.972866",
+    "methodology": "Sweep of 396 chrs across the 0xxx-5xxx range from Yabber-decompressed anibnds. Confirmed via direct TAE parsing + variant-inheritance resolution (skeleton-only chrs inherit from last-digit-zeroed parent).",
+    "use": "Reference. These chrs do NOT need emerge_from_ground entries in data/entrance_animations.json. Future workstreams (fly_in, scripted_intro classification) could draw on this set.",
+    "count_total": 105
+  },
+  "by_anim_class": {
+    "?": [
+      {
+        "cp": "c0000",
+        "name": "Player Template",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c0100",
+        "name": "Standin Template",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c0110",
+        "name": "System",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c0120",
+        "name": "System",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c0130",
+        "name": "System",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c1000",
+        "name": "System Object",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c2050",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c2131",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c2240",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c3110",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c4511",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c4520",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c4540",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c4541",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c4604",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c4710",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c4711",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c4751",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c4760",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5000",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5020",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5030",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5120",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5140",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5141",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5170",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5180",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5181",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5200",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5230",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5330",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5340",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5350",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5370",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5390",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5391",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5400",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5401",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5430",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5450",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5480",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5580",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5630",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5640",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5641",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5780",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5790",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5910",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5920",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5960",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5970",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      },
+      {
+        "cp": "c5990",
+        "name": "???",
+        "anim_class": "?",
+        "size_class": "?"
+      }
+    ],
+    "aquatic": [
+      {
+        "cp": "c2270",
+        "name": "Giant Crab",
+        "anim_class": "aquatic",
+        "size_class": "XL"
+      },
+      {
+        "cp": "c2271",
+        "name": "Crab",
+        "anim_class": "aquatic",
+        "size_class": "S"
+      },
+      {
+        "cp": "c2272",
+        "name": "Giant Black Crab",
+        "anim_class": "aquatic",
+        "size_class": "XL"
+      },
+      {
+        "cp": "c2273",
+        "name": "Crab (Maggots)",
+        "anim_class": "aquatic",
+        "size_class": "S"
+      },
+      {
+        "cp": "c2274",
+        "name": "Giant Sleep Crab",
+        "anim_class": "aquatic",
+        "size_class": "XL"
+      },
+      {
+        "cp": "c2275",
+        "name": "Crab (Clean)",
+        "anim_class": "aquatic",
+        "size_class": "S"
+      },
+      {
+        "cp": "c2276",
+        "name": "Giant Death Crab",
+        "anim_class": "aquatic",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c2277",
+        "name": "Crab (Golden Tufts)",
+        "anim_class": "aquatic",
+        "size_class": "S"
+      },
+      {
+        "cp": "c4220",
+        "name": "Giant Land Octopus",
+        "anim_class": "aquatic",
+        "size_class": "XL"
+      },
+      {
+        "cp": "c4230",
+        "name": "Small Land Octopus",
+        "anim_class": "aquatic",
+        "size_class": "S"
+      },
+      {
+        "cp": "c4420",
+        "name": "Giant Crayfish",
+        "anim_class": "aquatic",
+        "size_class": "XXL"
+      }
+    ],
+    "flying_dragon": [
+      {
+        "cp": "c4500",
+        "name": "Flying Dragon (Unscaled)",
+        "anim_class": "flying_dragon",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4501",
+        "name": "Decaying Ekzykes (Unscaled)",
+        "anim_class": "flying_dragon",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4502",
+        "name": "Decaying Ekzykes-class Dragon",
+        "anim_class": "flying_dragon",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4503",
+        "name": "Borealis the Freezing Fog (Unscaled)",
+        "anim_class": "flying_dragon",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4504",
+        "name": "Elder Dragon Greyoll",
+        "anim_class": "flying_dragon",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4505",
+        "name": "Flying Dragon (Small)",
+        "anim_class": "flying_dragon",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4680",
+        "name": "Full-Grown Fallingstar Beast (Unscaled)",
+        "anim_class": "flying_dragon",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4911",
+        "name": "Great Wyrm Theodorix",
+        "anim_class": "flying_dragon",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c5860",
+        "name": "Ghostflame Dragon",
+        "anim_class": "flying_dragon",
+        "size_class": "GIGA"
+      }
+    ],
+    "giga_boss": [
+      {
+        "cp": "c4510",
+        "name": "Ancient Dragon",
+        "anim_class": "giga_boss",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4580",
+        "name": "Giant Wormface",
+        "anim_class": "giga_boss",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4620",
+        "name": "Astel- Stars of Darkness",
+        "anim_class": "giga_boss",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4660",
+        "name": "Guardian Golem",
+        "anim_class": "giga_boss",
+        "size_class": "GIGA"
+      }
+    ],
+    "humanoid": [
+      {
+        "cp": "c3650",
+        "name": "Guardian",
+        "anim_class": "humanoid",
+        "size_class": "M"
+      },
+      {
+        "cp": "c4000",
+        "name": "Revenant Follower",
+        "anim_class": "humanoid",
+        "size_class": "M"
+      },
+      {
+        "cp": "c4550",
+        "name": "Giant Dog",
+        "anim_class": "humanoid",
+        "size_class": "XL"
+      },
+      {
+        "cp": "c4600",
+        "name": "Troll",
+        "anim_class": "humanoid",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4601",
+        "name": "Troll Knight",
+        "anim_class": "humanoid",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4602",
+        "name": "Snowfield Troll",
+        "anim_class": "humanoid",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4603",
+        "name": "Stonedigger Troll",
+        "anim_class": "humanoid",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4670",
+        "name": "Ancestor Spirit",
+        "anim_class": "humanoid",
+        "size_class": "XL"
+      },
+      {
+        "cp": "c4770",
+        "name": "Gargoyle",
+        "anim_class": "humanoid",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4900",
+        "name": "Caligo - Miasma of Night",
+        "anim_class": "humanoid",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4901",
+        "name": "Caligo - Miasma of Night (Phase 2)",
+        "anim_class": "humanoid",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c4961",
+        "name": "Giant Skeleton Torso",
+        "anim_class": "humanoid",
+        "size_class": "M"
+      }
+    ],
+    "large_boss_ground": [
+      {
+        "cp": "c4450",
+        "name": "Walking Mausoleum",
+        "anim_class": "large_boss_ground",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4640",
+        "name": "Ulcerated Tree Spirit",
+        "anim_class": "large_boss_ground",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4650",
+        "name": "Dragonkin Soldier (Ice Lightning) (Unscaled)",
+        "anim_class": "large_boss_ground",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4980",
+        "name": "Death Bird",
+        "anim_class": "large_boss_ground",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c5010",
+        "name": "Golden Hippopotamus",
+        "anim_class": "large_boss_ground",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c5011",
+        "name": "Golden Hippopotamus (Golden Wings)",
+        "anim_class": "large_boss_ground",
+        "size_class": "XXL"
+      }
+    ],
+    "misc": [
+      {
+        "cp": "c2150",
+        "name": "Lightning Ball",
+        "anim_class": "misc",
+        "size_class": "S"
+      }
+    ],
+    "quadruped": [
+      {
+        "cp": "c4150",
+        "name": "Basilisk",
+        "anim_class": "quadruped",
+        "size_class": "S"
+      },
+      {
+        "cp": "c4960",
+        "name": "Giant Skeleton Torso",
+        "anim_class": "quadruped",
+        "size_class": "S"
+      }
+    ],
+    "quadruped_large": [
+      {
+        "cp": "c4210",
+        "name": "Warhawk",
+        "anim_class": "quadruped_large",
+        "size_class": "L"
+      },
+      {
+        "cp": "c4460",
+        "name": "Flame Chariot",
+        "anim_class": "quadruped_large",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4470",
+        "name": "Abductor Virgin (Unscaled)",
+        "anim_class": "quadruped_large",
+        "size_class": "XL"
+      },
+      {
+        "cp": "c4560",
+        "name": "Giant Crow",
+        "anim_class": "quadruped_large",
+        "size_class": "XL"
+      },
+      {
+        "cp": "c4561",
+        "name": "Bloodbane Giant Crow",
+        "anim_class": "quadruped_large",
+        "size_class": "XL"
+      },
+      {
+        "cp": "c4630",
+        "name": "Runebear",
+        "anim_class": "quadruped_large",
+        "size_class": "XXL"
+      },
+      {
+        "cp": "c4910",
+        "name": "Magma Wyrm",
+        "anim_class": "quadruped_large",
+        "size_class": "GIGA"
+      },
+      {
+        "cp": "c5820",
+        "name": "Great Red Bear",
+        "anim_class": "quadruped_large",
+        "size_class": "XXL"
+      }
+    ]
+  }
+}

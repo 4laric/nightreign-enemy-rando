@@ -1,0 +1,137 @@
+{
+  "_meta": {
+    "schema_version": 1,
+    "since_version": "v0.24.105",
+    "purpose": "Per-NB-arena bypass + guard flag picks for the nb_wave_bypass patch. Each entry maps a per-map .emevd file stem to (a) the XXXX2810 event ID where the WaitFor gate lives, (b) the bypass_flag that gets OR-injected into that WaitFor, and (c) the guard_flag used by common_func event 99055100 for idempotency.",
+    "picker_rule": "bypass = prefix*1000+290, guard = prefix*1000+291, where prefix is the 5-digit per-arena ID (m48_00 \u2192 48000, m49_29 \u2192 49290). The XXX029X slot is empirically unused in every scanned NB arena; assert_slot_free() verifies this at build time so a stale file is impossible to ship.",
+    "generator": "dev/build_nb_wave_bypass_flags.py",
+    "arena_count": 25
+  },
+  "arenas": {
+    "m48_00_00_00": {
+      "event_id": 48002810,
+      "bypass_flag": 48000290,
+      "guard_flag": 48000291
+    },
+    "m48_10_00_00": {
+      "event_id": 48102810,
+      "bypass_flag": 48100290,
+      "guard_flag": 48100291
+    },
+    "m48_20_00_00": {
+      "event_id": 48202810,
+      "bypass_flag": 48200290,
+      "guard_flag": 48200291
+    },
+    "m48_30_00_00": {
+      "event_id": 48302810,
+      "bypass_flag": 48300290,
+      "guard_flag": 48300291
+    },
+    "m48_40_00_00": {
+      "event_id": 48402810,
+      "bypass_flag": 48400290,
+      "guard_flag": 48400291
+    },
+    "m48_50_00_00": {
+      "event_id": 48502810,
+      "bypass_flag": 48500290,
+      "guard_flag": 48500291
+    },
+    "m48_60_00_00": {
+      "event_id": 48602810,
+      "bypass_flag": 48600290,
+      "guard_flag": 48600291
+    },
+    "m48_70_00_00": {
+      "event_id": 48702810,
+      "bypass_flag": 48700290,
+      "guard_flag": 48700291
+    },
+    "m48_80_00_00": {
+      "event_id": 48802810,
+      "bypass_flag": 48800290,
+      "guard_flag": 48800291
+    },
+    "m48_90_00_00": {
+      "event_id": 48902810,
+      "bypass_flag": 48900290,
+      "guard_flag": 48900291
+    },
+    "m49_10_00_00": {
+      "event_id": 49102810,
+      "bypass_flag": 49100290,
+      "guard_flag": 49100291
+    },
+    "m49_17_00_00": {
+      "event_id": 49172810,
+      "bypass_flag": 49170290,
+      "guard_flag": 49170291
+    },
+    "m49_18_00_00": {
+      "event_id": 49182810,
+      "bypass_flag": 49180290,
+      "guard_flag": 49180291
+    },
+    "m49_19_00_00": {
+      "event_id": 49192810,
+      "bypass_flag": 49190290,
+      "guard_flag": 49190291
+    },
+    "m49_20_00_00": {
+      "event_id": 49202810,
+      "bypass_flag": 49200290,
+      "guard_flag": 49200291
+    },
+    "m49_21_00_00": {
+      "event_id": 49212810,
+      "bypass_flag": 49210290,
+      "guard_flag": 49210291
+    },
+    "m49_23_00_00": {
+      "event_id": 49232810,
+      "bypass_flag": 49230290,
+      "guard_flag": 49230291
+    },
+    "m49_24_00_00": {
+      "event_id": 49242810,
+      "bypass_flag": 49240290,
+      "guard_flag": 49240291
+    },
+    "m49_25_00_00": {
+      "event_id": 49252810,
+      "bypass_flag": 49250290,
+      "guard_flag": 49250291
+    },
+    "m49_26_00_00": {
+      "event_id": 49262810,
+      "bypass_flag": 49260290,
+      "guard_flag": 49260291
+    },
+    "m49_27_00_00": {
+      "event_id": 49272810,
+      "bypass_flag": 49270290,
+      "guard_flag": 49270291
+    },
+    "m49_28_00_00": {
+      "event_id": 49282810,
+      "bypass_flag": 49280290,
+      "guard_flag": 49280291
+    },
+    "m49_29_00_00": {
+      "event_id": 49292810,
+      "bypass_flag": 49290290,
+      "guard_flag": 49290291
+    },
+    "m49_30_00_00": {
+      "event_id": 49302810,
+      "bypass_flag": 49300290,
+      "guard_flag": 49300291
+    },
+    "m49_90_00_00": {
+      "event_id": 49902810,
+      "bypass_flag": 49900290,
+      "guard_flag": 49900291
+    }
+  }
+}

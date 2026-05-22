@@ -1,0 +1,100 @@
+{
+  "_meta": {
+    "purpose": "Candidate review list for emerge_from_ground entrance-anim classification. Used during v0.24.80 playtest by alaric.",
+    "generated": "2026-05-15T15:16:32.947300",
+    "methodology": "Combined TAE evidence (anim 9000 presence/absence from 396-chr corpus scan) with manual game-knowledge identification of ER chrs known to emerge from ground in vanilla gameplay. NOT auto-derived \u2014 pure TAE signal cannot distinguish emerge from generic scripted-intro at anim-ID level (validated across 396 chrs).",
+    "how_to_use": "If a placement of one of these chrs at an unusual arena CTDs during playtest, add cp to data/entrance_animations.json with 'class': 'emerge_from_ground' and the new arena to data/nr_no_emerge_slots.json. Watch especially for placements at Fort GG (m30_30 pi=45) or any rampart/roof tile.",
+    "already_classified": [
+      "c4441",
+      "c4442",
+      "c4480",
+      "c4481",
+      "c4482",
+      "c4483",
+      "c4810",
+      "c4811"
+    ]
+  },
+  "candidates": [
+    {
+      "cp": "c4570",
+      "name": "Wormface",
+      "anim_class": "humanoid",
+      "size_class": "XL",
+      "has_anim_9000": true,
+      "tae_evidence": "confirmed",
+      "game_knowledge_reason": "Canonical ER lore \u2014 Wormface enemies erupt from soil when player approaches. Field placement in Caelid and Lake of Rot. STRONG candidate.",
+      "confidence_for_emerge": "high (matches Erdtree Avatar / Land Squirt class)"
+    },
+    {
+      "cp": "c4280",
+      "name": "Giant Ant",
+      "anim_class": "quadruped",
+      "size_class": "L",
+      "has_anim_9000": true,
+      "tae_evidence": "confirmed",
+      "game_knowledge_reason": "Ants emerge from underground tunnels in ER (Siofra River, Ainsel River). Field-boss tier in some encounters.",
+      "confidence_for_emerge": "medium-high"
+    },
+    {
+      "cp": "c4281",
+      "name": "Skull Plate Giant Ant",
+      "anim_class": "quadruped_large",
+      "size_class": "XL",
+      "has_anim_9000": true,
+      "tae_evidence": "confirmed",
+      "game_knowledge_reason": "Variant of c4280, same emerge intro family.",
+      "confidence_for_emerge": "medium-high (family rule)"
+    },
+    {
+      "cp": "c4240",
+      "name": "Fingercreeper",
+      "anim_class": "quadruped",
+      "size_class": "XL",
+      "has_anim_9000": true,
+      "tae_evidence": "confirmed",
+      "game_knowledge_reason": "Fingercreepers sit flat on ground in vanilla; AI triggers rise-up on approach. Could be emerge or just \"wake up from prone.\"",
+      "confidence_for_emerge": "medium (ambiguous)"
+    },
+    {
+      "cp": "c4241",
+      "name": "Giant Fingercreeper",
+      "anim_class": "giga_boss",
+      "size_class": "GIGA",
+      "has_anim_9000": true,
+      "tae_evidence": "confirmed",
+      "game_knowledge_reason": "Variant of c4240, GIGA boss tier. Same emerge concern.",
+      "confidence_for_emerge": "medium (ambiguous)"
+    },
+    {
+      "cp": "c4140",
+      "name": "Spiritcaller Snail (Great Church Boss)",
+      "anim_class": "misc",
+      "size_class": "M",
+      "has_anim_9000": true,
+      "tae_evidence": "confirmed",
+      "game_knowledge_reason": "Hidden in shell, emerges on damage. But typically pre-placed in scripted arenas \u2014 may NOT be emerge_from_ground per se.",
+      "confidence_for_emerge": "low (more likely pre_placed)"
+    },
+    {
+      "cp": "c4170",
+      "name": "Putrid Flesh",
+      "anim_class": "misc",
+      "size_class": "S",
+      "has_anim_9000": true,
+      "tae_evidence": "confirmed",
+      "game_knowledge_reason": "Putrid flesh blob emerges from corpse piles. Probable emerge intro.",
+      "confidence_for_emerge": "medium"
+    },
+    {
+      "cp": "c4171",
+      "name": "Giant Putrid Flesh (Blood)",
+      "anim_class": "large_boss_ground",
+      "size_class": "XXL",
+      "has_anim_9000": true,
+      "tae_evidence": "confirmed",
+      "game_knowledge_reason": "Variant of c4170, XXL boss. Same emerge concern.",
+      "confidence_for_emerge": "medium (family)"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "_schema": "pool_snapshot_v1",
+  "created": "2026-05-12T13:05:43.491986",
+  "description": "All packs enabled \u2014 base NR + Heritage Pack + MMV cross-game imports + ER heritage. Requires the corresponding chr/script assets staged in the me3 profile. Useful for testing the maximum-variety pool.",
+  "engine_kwargs": {},
+  "engine_version": "v0.23",
+  "name": "Everything enabled",
+  "pack_overrides": {
+    "er_heritage_imports.json": {
+      "enabled": true
+    },
+    "heritage_pack.json": {
+      "enabled": true
+    },
+    "mmv_imports.json": {
+      "enabled": true
+    }
+  }
+}

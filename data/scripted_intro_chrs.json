@@ -1,0 +1,57 @@
+{
+  "_meta": {
+    "schema_version": 1,
+    "since_version": "v0.24.85",
+    "last_updated_version": "v0.24.85",
+    "purpose": "Boss → scripted-intro-dependence classification. Tracks which chrs freeze in a pre-aggro idle pose because their AI is gated on a scripted intro signal (NB fog-wall cinematic, SmallBase-attach, NPC dialogue trigger) that the slot's EMEVD either does or does not fire. Same failure family as the c4490 Jar Warrior issue documented in dev/WONTFIX.md and the c3100 Bell Bearing Hunter / c4355 Mausoleum Knight Crater Cathedral report.",
+    "engine_field": "V3_SCRIPTED_INTRO_CLASS  (proposed — not yet wired)",
+    "default_for_unknown": "unknown",
+    "values": {
+      "scripted_intro_required": "Chr's AI state machine waits on an NB-anchor-style scripted intro (fog wall + cinematic + SmallBase attach) before transitioning to aggro. Freezes in a pre-aggro combat pose at slots that don't fire the intro — e.g., shifting-earth Cathedral entrances. Player can walk around the chr, damaging it sometimes wakes it. Existing WONTFIX, but classification kept for the hypothetical V3_NB_INTRO_DEPENDENT_TARGETS gate noted in WONTFIX.md.",
+      "scripted_intro_intolerant": "Chr is an NPC-style entity (quest dialogue, challenge prompt) whose AI does NOT expect an NB-anchor scripted intro. When placed at an NB anchor, the unwanted intro stimulus leaves the chr in an arms-crossed idle and it never aggros. Inverse of scripted_intro_required. Currently gated via V3_NIGHT_BOSS_EXCLUDE_TARGETS in oops_v3.py (c4490 only).",
+      "unknown": "Not yet classified. Default. No gate applied — chr placement proceeds as normal."
+    },
+    "provenance": "Manual seed from empirical reports in dev/WONTFIX.md and direct user playtest. Four confirmed chrs: c4490 (NB-anchor freeze, intolerant), c3100 (Crater Cathedral freeze, required), c4355 (Cathedral entrance freeze, required), c5750 (preboss-wave inactive, intolerant — empirical confirmation v0.24.85, promoted from candidate). v0.24.85 ATTEMPTED a v0.24.82-style behbnd-template expansion using the same chr-id-normalized hash methodology that worked for emerge_from_ground — but the methodology DOES NOT REPLICATE for this failure mode. See methodology_findings below.",
+    "methodology_findings": {
+      "attempted": "Replicate v0.24.82 entrance_animations approach: hash Behaviors/{cp}.hkx (chr-id-normalized MD5, 10-char truncation) and cluster chrs by template. Look up the 3 seeds against dev/anibnd_tools/behavior_template_catalog.json (459-file corpus) and identify the shared template(s).",
+      "result_seed_templates": {
+        "c4490_jar_warrior": "472b076cb7  (45 members, archetype: humanoid_mob_standard)",
+        "c4355_mausoleum_knight": "472b076cb7  (same cluster as c4490)",
+        "c3100_bell_bearing_hunter": "b71ec383a8  (8 members, archetype: humanoid_combatant_specialty)"
+      },
+      "why_template_signature_fails": "The two templates contain 53 chrs total. 51 of them are chrs that demonstrably aggro fine at random slots throughout existing playtesting — Skeletons (c3060/c3061), Misbegotten (c3450), Albinauric (c3470), Crystalians (c3350), Cleanrot Knights (c3800), Fire Monks (c3900/c3901), Godrick/Redmane/Haligtree Knights (c4351/c4354/c4356), Bloodfiends (c5080/c5081), Fire Knights (c5160). If template membership were the signature, every one of these would be a frozen-pose offender at non-vanilla NB / non-NB slots respectively. They are not. Signal-to-noise is ~2/53 = 4%. Templates 472b076cb7 and b71ec383a8 are both labeled as 'No gate needed' in the existing catalog precisely because of this pattern.",
+      "structural_reason_template_fails_here": "Behaviors/{cp}.hkx encodes the chr's INTRINSIC AI state machine. v0.24.82 emerge_from_ground worked because 'sit-idle-then-rise' is an intrinsic state transition baked into the behavior tree — every emerge chr literally has the same state machine modulo chr_id substitution. Scripted-intro dependence is EXTRINSIC: the behavior tree is fine, but the chr's NpcParam / NpcThinkParam / EMEVD wiring expects an external SpEffect or event flag (NB fog-wall set, SmallBase attach signal, dialogue trigger) which the slot fails to set/clear. Two chrs can share an identical behavior tree but have different external-event-flag wiring — and that's exactly what's happening across the 472b076cb7 / b71ec383a8 clusters. The discriminating signal lives one layer further out than the behbnd.",
+      "where_the_signal_probably_lives": [
+        "NpcParam.ThinkID — routes the chr to a specific NpcThinkParam row that may include 'wait for external trigger' conditions. ThinkID matches across chrs may correlate with the failure family.",
+        "NpcThinkParam.disableParam_Npc / activate flags / spEffectID gates on the AI logic table.",
+        "Per-chr EMEVD (events that pin chr to a paused state until a specific flag is set) — e.g., the Bell Bearing Hunter / Mausoleum Knight vanilla NB-anchor handler. The pattern from the gaming context: CharacterHasSpEffect + WaitFor in common_func.",
+        "NPC dialogue / interactProtocol gates — c4490 specifically is described as an NPC expecting a 'challenge' dialogue trigger."
+      ],
+      "recommended_next_steps_for_widening": "Three plausible paths, in order of estimated payoff: (1) Pull NpcParam rows for the 3 seeds, get their ThinkID values, and run a reverse lookup — any chr sharing those ThinkIDs is a candidate. ThinkID clustering is the natural analog to behbnd template clustering, but one layer up the AI stack. (2) Hash NpcThink_{cp}.hkx inside the behbnd (the AI behavior tree for high-level decision logic, separate from Behaviors/{cp}.hkx which is the locomotion/animation state machine). NpcThink is where 'wait for fog wall' style conditions would live if anywhere in the behbnd. Worth re-running the chr-id-normalized hash on NpcThink files specifically. (3) Empirical: add CTD/freeze report fields to playtest reporting and grow this list organically as new instances surface. This is the path WONTFIX.md already recommends and is the safest given the cost (roster restriction per gated chr) vs benefit (rare freeze avoidance) trade documented there.",
+      "candidate_families_NOT_added": {
+        "c4351_c4354_c4356": "Godrick / Redmane / Haligtree Knight variants. Share template with c4355 Mausoleum Knight (all are Knight-family). Anatomy and animations are likely identical, but it is NOT established that they share the NB-intro dependency — c4355's freeze may be a property of the Mausoleum Knight NpcParam row specifically (e.g., a unique ThinkID), not the chr file. Leave as unknown until either (a) NpcParam analysis confirms shared ThinkID, or (b) an empirical freeze report at a shifting-earth cathedral lands for one of them."
+      },
+      "family_name_within_template_heuristic": "Promotion of c5750 in v0.24.85 (preboss-wave inactive report) confirms a tighter heuristic than template alone: exact display-name duplicates within a shared behbnd template are likely to share NpcParam-level scripted-intro wiring. Within template 472b076cb7, c4490 + c5750 are the only exact-name pair ('Living Jar Warrior') and both fail in NB-scripted contexts (anchor for c4490, preboss wave for c5750). c3060 'Giant Skeleton' / c3061 'Giant Beast Skeleton' are close-but-not-identical names and have no freeze reports — consistent with the exact-match version of the heuristic. Useful as a watchlist filter for future empirical promotion, NOT as an automatic gate."
+    },
+    "relationship_to_wontfix": "Both classes here are currently WONTFIX in dev/WONTFIX.md. scripted_intro_intolerant has a partial gate (V3_NIGHT_BOSS_EXCLUDE_TARGETS {c4490} at oops_v3.py:8266). scripted_intro_required is ungated — the hypothetical V3_NB_INTRO_DEPENDENT_TARGETS noted in WONTFIX. This JSON is shaped to feed both gates if/when they are wired.",
+    "growth_pattern": "Add chrs as new freeze reports surface OR as NpcParam ThinkID / NpcThink_{cp}.hkx analysis identifies new family members. Conservative — when in doubt, leave as 'unknown' (no gate). Family-name inheritance (c4490 → c5750 'Living Jar Warrior') is a candidate signal but NOT sufficient on its own."
+  },
+  "scripted_intro_chrs": {
+    "c3100": {
+      "class": "scripted_intro_required",
+      "_source_note": "Bell Bearing Hunter. v0.23.11 report: frozen combat pose at m60_42_36_50.msb pi=100 (Crater Cathedral entrance). Source slot was c4355 Mausoleum Knight at Noklateo. AI expects NB-anchor scripted intro (fog wall + cinematic) that shifting-earth Cathedral tiles do not fire. Behbnd template: b71ec383a8 (humanoid_combatant_specialty, 8 members). NOTE: nr_enemy_tags labels c3100 as 'Elemer of the Briar' — either the tag is a placeholder or chr-id is reused; the failure source is the id itself, regardless of display name."
+    },
+    "c4355": {
+      "class": "scripted_intro_required",
+      "_source_note": "Mausoleum Knight. v0.23.11 report (paired with c3100 above): same failure mode at Cathedral entrance shifting-earth tiles. Behbnd template: 472b076cb7 (humanoid_mob_standard, 45 members — majority of cluster aggros fine at random slots, so template is NOT a sufficient signature, see _meta.methodology_findings)."
+    },
+    "c4490": {
+      "class": "scripted_intro_intolerant",
+      "_source_note": "Living Jar Warrior. NPC-style chr expecting a quest/challenge dialogue trigger. Freezes in arms-crossed idle when placed at NB anchors because the NB-intro stimulus is unwanted and never resolves to a dialogue transition. Already gated via V3_NIGHT_BOSS_EXCLUDE_TARGETS in oops_v3.py:8266. Behbnd template: 472b076cb7 (same cluster as c4355 — shared template, opposite failure mechanism, evidence that template alone is not the discriminator). Family confirmed v0.24.85: c5750 shares display name 'Living Jar Warrior' and template, fails similarly in preboss waves."
+    },
+    "c5750": {
+      "class": "scripted_intro_intolerant",
+      "_source_note": "Living Jar Warrior (variant). v0.24.85 empirical report: inactive / does not aggro when placed in preboss-wave slots. Same display name and same behbnd template (472b076cb7) as c4490, fails in NB-adjacent scripted context (preboss waves rather than the anchor itself). Promoted from candidate to confirmed on the strength of (a) exact display-name match with c4490, (b) shared template, (c) consistent NB-scripted-context failure profile. Strong candidate for inclusion in any future V3_NIGHT_BOSS_EXCLUDE_TARGETS extension or symmetric preboss-wave exclude gate."
+    }
+  }
+}

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<msbe WitchyVersion="2080001">
+  <filename>m48_90_00_00.msb.dcx</filename>
+  <compression>DCX_DFLT</compression>
+  <dfltUnk04>69632</dfltUnk04>
+  <dfltUnk10>68</dfltUnk10>
+  <dfltUnk14>76</dfltUnk14>
+  <dfltUnk30>9</dfltUnk30>
+  <dfltUnk38>15</dfltUnk38>
+  <events />
+  <regions />
+  <parts>
+    <part type="Enemy" name="c4770_9000" />
+    <part type="Enemy" name="c4580_9000" />
+    <part type="Enemy" name="c4510_9000" />
+    <part type="Enemy" name="c4690_9000" />
+  </parts>
+  <models>
+    <model type="Enemy" name="c4770" />
+    <model type="Enemy" name="c4580" />
+    <model type="Enemy" name="c4510" />
+    <model type="Enemy" name="c4690" />
+  </models>
+  <routes />
+  <layers version="79" />
+</msbe>

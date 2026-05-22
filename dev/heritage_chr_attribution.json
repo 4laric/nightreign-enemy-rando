@@ -1,0 +1,64 @@
+{
+  "er_base": {
+    "c2272": "Giant Black Crab \u2014 ER (Limgrave/Caelid)",
+    "c3061": "Giant Beast Skeleton \u2014 ER",
+    "c3070": "Dominula Celebrant \u2014 ER (Dominula Windmill Village)",
+    "c3330": "Giant Silver Tear \u2014 ER (Nokron)",
+    "c3510": "Skeleton (Sword and Shield) \u2014 ER (Catacombs)",
+    "c3670": "Aged Albinauric (Scholar Remembrance) \u2014 ER (Mountaintops)",
+    "c3730": "Graven School \u2014 ER (Academy)",
+    "c3750": "Clayman - Spear \u2014 ER",
+    "c3800": "Cleanrot Knight \u2014 ER (Caelid/Swamp)",
+    "c3860": "Avionette \u2014 ER",
+    "c4210": "Warhawk \u2014 ER (Stormveil)",
+    "c4220": "Giant Land Octopus \u2014 ER",
+    "c4341": "Thin Mad Pumpkin Head \u2014 ER",
+    "c4352": "Cuckoo Knight (Scholar Remembrance) \u2014 ER (Raya Lucaria)",
+    "c4385": "Disciple of Rot \u2014 ER (Lake of Rot)",
+    "c4420": "Giant Crayfish \u2014 ER",
+    "c4561": "Bloodbane Giant Crow \u2014 ER",
+    "c4603": "Stonedigger Troll \u2014 ER",
+    "c4800": "Mohg- the Omen \u2014 ER (Mohgwyn Palace)",
+    "c4820": "Omenkiller \u2014 ER"
+  },
+  "sote": {
+    "c5040": "Curseblade \u2014 SOTE",
+    "c5070": "Death Knight \u2014 SOTE",
+    "c5080": "Bloodfiend \u2014 SOTE",
+    "c5081": "Chief Bloodfiend \u2014 SOTE",
+    "c5090": "Gravebird \u2014 SOTE",
+    "c5160": "Fire Knight \u2014 SOTE",
+    "c5190": "Spider Scorpion \u2014 SOTE",
+    "c5192": "Spider Scorpion \u2014 SOTE",
+    "c5193": "Spider Scorpion \u2014 SOTE",
+    "c5250": "Horned Warrior \u2014 SOTE",
+    "c5320": "Fat Inquisitor \u2014 SOTE",
+    "c5820": "Great Red Bear \u2014 SOTE",
+    "c5830": "Messmer Soldier \u2014 SOTE",
+    "c5860": "Ghostflame Dragon \u2014 SOTE",
+    "c5870": "Imp (Lion Head) \u2014 SOTE",
+    "c5900": "Man-Fly \u2014 SOTE"
+  },
+  "wildlife_dlc": {
+    "c6031": "Bear (variant) \u2014 likely SOTE (vanilla NR has c6001 base Bear)",
+    "c6060": "Goat \u2014 likely SOTE"
+  },
+  "unclear": {
+    "c5522": "Stray \u2014 likely ER (Stray dog family)",
+    "c5523": "Stray (variant) \u2014 likely ER"
+  },
+  "er_heritage_v1": {
+    "c2010": "Margit, the Fell Omen \u2014 ER (need its chr file too if it lands)",
+    "c2030": "Rennala P1 \u2014 ER",
+    "c2031": "Rennala P2 \u2014 ER",
+    "c2050": "Radagon \u2014 ER",
+    "c2060": "Mohg LoB \u2014 ER",
+    "c2110": "Maliketh \u2014 ER",
+    "c2120": "Malenia \u2014 ER",
+    "c2131": "Morgott P2 \u2014 ER (chr file is c2130 + div, or distinct?)",
+    "c2160": "Astel \u2014 ER",
+    "c2190": "Godrick \u2014 ER",
+    "c2191": "Godrick P2 \u2014 ER",
+    "c2200": "Godfrey/Hoarah Loux \u2014 ER"
+  }
+}

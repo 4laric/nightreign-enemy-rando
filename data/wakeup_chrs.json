@@ -1,0 +1,69 @@
+{
+  "_meta": {
+    "schema_version": 1,
+    "since_version": "v0.24.86",
+    "last_updated_version": "v0.24.86",
+    "purpose": "Boss → wakeup-class classification. Tracks chrs whose AI starts in a dormant pose (kneeling, sitting, curled, half-buried) and requires an external wake-handshake to transition to active combat. Distinct from entrance_animations.json (which gates emerge-from-ground geometry) and scripted_intro_chrs.json (which gates NB-anchor cinematic dependencies). Wakeup chrs fail by sitting indefinitely in their dormant pose at slots whose EMEVD doesn't fire a recognized wake handshake.",
+    "engine_field": "V3_WAKEUP_CLASS  (proposed — not yet wired)",
+    "default_for_unknown": "unknown",
+    "values": {
+      "wakeup_dormant": "Chr starts in a dormant pose and AI does not tick to combat without an external wake trigger. Vanilla slots fire this trigger via encounter EMEVD that calls EnableCharacterAI + a proximity/damage wake condition. Non-vanilla slots may lack the call entirely (chr spawns dormant and never wakes) or may use a wake handler whose Combat-only gate doesn't pass for chrs that idle in Recognition/Alert states. Runtime mitigations: permissive_boss_wake (wake handshakes, emevd_patch.py:131) and permissive_spawn_emerge (spawn-and-anim handlers, emevd_patch.py:172). Coverage gap: slots whose spawn scripts dispatch through events NOT in those allowlists.",
+      "unknown": "Not yet classified. Default. No gate applied — chr placement proceeds as normal."
+    },
+    "provenance": "Manual seed from empirical reports + historical exclude-set archaeology. Five confirmed chrs: c4660 Guardian Golem (Cathedral instances; user report v0.24.86), c5790 (Guardian Golem variant, behbnd template-mate of c4660 with identical hp/hitHeight in vanilla NpcParam), c4603 Stonedigger Troll (Cave/Tunnel mid-boss; user report v0.24.86), c4470 Abductor Virgin (historical exclude per oops_v3.py:455 comment, removed after permissive_boss_wake landed), c5110 Maris Tendril (same exclude history, same comment).",
+    "relationship_to_other_classifications": "Wakeup is INDEPENDENT of entrance_animations and scripted_intro_chrs. A chr may be classified in multiple files (e.g. c4470 is emerge_from_ground in entrance_animations.json AND wakeup_dormant here — different failure modes, different gates). Cross-classification is expected and load-time merge is additive: chr is gated by EACH applicable class's slot blacklist.",
+    "structural_caveat_per_instance_vs_per_chr": "Wakeup is partly a per-MSB-INSTANCE property, not purely per-chr. Vanilla ER positions Guardian Golems (c4660) in dormant pose at Cathedral instances and active stance at Fort Faroth instances — same chr-id, different initial states authored at the MSB level. The rando shuffles chr-ids into slots; the slot's EMEVD determines whether to spawn dormant or active. If a wakeup chr is placed at a slot whose EMEVD doesn't impose dormant pose, the chr just spawns awake and aggros normally — no failure. The failure mode is the OPPOSITE: a wakeup chr placed at a slot that DOES impose dormant pose, then fails to fire a recognized wake handshake. The classification here marks chrs that HAVE a dormant default state (so the gate is conservative — may block placements that would have worked fine because the slot didn't dormant-pose them). Empirically, this conservative false-positive rate is acceptable per the same logic v0.24.83 used for emerge false positives in template c880d10143.",
+    "methodology_limit": "Unlike emerge_from_ground (template c880d10143, 25-chr cluster from a single seed via v0.24.82 behbnd hashing), wakeup chrs sit in small bespoke behbnd templates: c4660 in template 8580403044 (cluster size 2 with c5790), c4603 in singleton template b76a295e80, c4382 Stonedigger variant in singleton template dddff5f491. Template clustering provides minimal expansion leverage — each wakeup chr is essentially its own AI authoring. Growth path for this list is empirical playtest reports and historical-exclude archaeology, NOT template expansion.",
+    "candidate_chrs_NOT_added": {
+      "c4382": "'Stonedigger' (grunt variant of c4603). Singleton behbnd template dddff5f491. 49 NpcParam rows suggest broad placement coverage in vanilla. Unclear whether the grunt variant has the same dormant initial state as the c4603 mid-boss. Hold pending empirical report or game-knowledge confirmation.",
+      "c4600_c4601_c4602": "Troll family (Troll, Troll Knight, Snowfield Troll). NOT typically dormant-pose in vanilla — standing patrol AI. Skip unless evidence surfaces."
+    },
+    "engine_integration_proposal": "v0.24.86 empirical audit (above) concluded the slot-side file nr_no_wake_slots.json is not needed: 100% of vanilla wakeup-chr placements are covered by existing patches. The chr-level V3_WAKEUP_CLASS hook is still useful for future per-chr engine logic if a non-covered case surfaces, but the gate-on-slot mechanism sketched in earlier revisions is not warranted at this time.",
+    "growth_pattern": "Add chrs as new freeze-dormant reports surface OR as historical-exclude archaeology surfaces previously-excluded chrs whose exclusion was lifted by EMEVD patches. Conservative — when in doubt, leave as 'unknown'.",
+    "empirical_audit_v0_24_86": {
+      "method": "Full vanilla NR audit using nr_decompiled_msbs (300 MSBs) + vanilla_decompressed_emevd (194 per-map EMEVD files). For every Part in every MSB whose model is a wakeup-class chr (c4470, c4603, c4660, c5110, c5790), look up the Part's own_entity_id and check whether that entity is referenced by any allowlisted (8) or cinematic-excluded (4) common_func wake-handshake event.",
+      "placement_counts": {
+        "c4470": 1,
+        "c4603": 0,
+        "c4660": 8,
+        "c5110": 94,
+        "c5790": 0,
+        "_total": 103
+      },
+      "wake_coverage_buckets": {
+        "covered_by_allowlisted_event": 6,
+        "cinematic_only_no_allowlisted": 0,
+        "no_wake_dispatch_at_all": 97
+      },
+      "interpretation": "v0.24.86 permissive_boss_wake covers 100% of chr wake-handshake dispatches that exist. Most wakeup-chr placements (97/103) do NOT use a scripted wake handshake at all — they spawn via AI proximity-aggro (already enabled by permissive_spawn_emerge on the 90085XXX/90035XXX spawn handlers) or as death-linked minions of multi-entity boss orchestrators (90075351/352) that call EnableCharacterAI explicitly. The 6 covered placements are the m46_60 Nightlord arena Guardian Golems via paired 90015000+90015030, fully patched.",
+      "legacy_dungeon_midboss_fingerprint": "All audited mid-boss chrs (c4660, c4470, c4600 in m30/m32 sample) share an identical 15-dispatch EMEVD fingerprint: 2x 90015007 (allowlisted) + 2x 90015031 (allowlisted) for wake; 1x 90015002 (cinematic-excluded) supplementary for HP-bar/BGM timing; 3x 90035280 + 1x 90035281 for time-of-day spawn scheduling (network event flags only, no chr ops); 1x 90085700 for mission progress. The wake critical path goes through the allowlisted events; the cinematic 90015002 doesn't gate the chr's AI activation.",
+      "no_slot_blacklist_needed": "nr_no_wake_slots.json is NOT needed. There is no slot subset whose wakeup-chr placement fails under v0.24.86. The chr-level wakeup_chrs.json classification stands as documentation and as a hook for any future per-chr engine logic, but no slot-side gate is warranted by vanilla data. If empirical CTD/freeze reports surface later, they can grow nr_no_wake_slots.json organically from those reports — same growth pattern as nr_no_emerge_slots.json.",
+      "false_alarms_during_audit": [
+        "11 entities under '<map_prefix>5300' across m30/m32/m34/m38 routed ONLY through 90015301: NOT chr targets. Resolved as c0100 player-spawn group IDs used by 90015301 to track player combat state. Event correctly excluded from patch on different grounds than originally documented (player-state tracker, not cinematic encounter).",
+        "c4660 has 3 placements in m46_05_00_00 with entity_id=0: shell MSB (1352-char EMEVD with zero spawn calls). Dev placeholder, not live vanilla content."
+      ]
+    }
+  },
+  "wakeup_chrs": {
+    "c4470": {
+      "class": "wakeup_dormant",
+      "_source_note": "Abductor Virgin (Fort instances). Historical exclude per oops_v3.py:455 comment: 'previously excluded due to wake-trigger / dormant-spawn bugs'. Exclusion lifted after permissive_boss_wake + permissive_spawn_emerge EMEVD patches landed. Classified here so the gate is in data form for any slot the runtime patches don't reach. Cross-classified as emerge_from_ground in entrance_animations.json (rises-from-floor intro — separate failure mode, separate gate)."
+    },
+    "c4603": {
+      "class": "wakeup_dormant",
+      "_source_note": "Stonedigger Troll. v0.24.86 user-named seed. Cave/tunnel mid-boss with curled-up dormant pose intro in vanilla (Old Altus Tunnel, Sellia Crystal Tunnel etc.). Singleton behbnd template b76a295e80. 3 NpcParam rows in vanilla — narrow placement scope, consistent with a bespoke mid-boss authoring."
+    },
+    "c4660": {
+      "class": "wakeup_dormant",
+      "_source_note": "Guardian Golem. v0.24.86 user-named seed, specifically the Cathedral instances (Cathedral of Manus Celes etc.), NOT the Fort Faroth instances which are standing/active in vanilla. Same chr-id covers both presentations — dormant vs active is imposed by per-MSB EMEVD authoring. 41 NpcParam rows split into stat tiers (small: hp 2442 / hitHeight 5; large: hp 5236 / hitHeight 12.5); teamType varies 7 vs 65 across rows — possibly the Cathedral-vs-Fort marker but unconfirmed without MSB context. Behbnd template 8580403044, cluster size 2 (with c5790)."
+    },
+    "c5110": {
+      "class": "wakeup_dormant",
+      "_source_note": "Maris Tendril. Historical exclude per oops_v3.py:455 comment, same history as c4470. Wake-trigger dormant-spawn class; exclusion lifted after EMEVD patches landed. Classified here for data-form coverage of any slot the runtime patches don't reach."
+    },
+    "c5790": {
+      "class": "wakeup_dormant",
+      "_source_note": "Guardian Golem variant (unnamed in nr_enemy_tags). Behbnd template-mate of c4660 (template 8580403044), shares vanilla mechanical profile (hp 5236, hitHeight 12.5 same as large-tier c4660 rows) — structurally a Guardian Golem variant in everything but display label. 21 NpcParam rows. Promoted via template + mechanical-profile match with c4660; same dormant initial state assumed."
+    }
+  }
+}

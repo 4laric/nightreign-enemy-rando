@@ -1,0 +1,306 @@
+{
+  "_meta": {
+    "enabled": true,
+    "version": "v1",
+    "engine_authored": "v0.23.11",
+    "description": "Tier 1 vanilla promotions \u2014 chrs whose NpcParam + behaviorVariationId chains exist in vanilla NR's regulation but weren't surfaced by the MSB-scan-driven roster build (because they lack vanilla MSB Parts). These are 'just needs tagging' \u2014 no Smithbox CSV imports required, in contrast to the er_heritage_v1 batch which needed CSV authoring for non-NR chrs.\n\nConfidence tiers (per-tag _confidence field):\n  high    \u2014 chr identity confirmed via Name + multi-variant + consistent geometry. Safe to ship.\n  medium  \u2014 chr unnamed in NpcParam but geometry/HP consistent with a known anim_class family. Tag conservatively, playtest will reveal any issues.\n\nRemoval: set _meta.enabled=false to disable without deleting, or delete this file entirely."
+  },
+  "tags": {
+    "c3360": {
+      "name": "Ancestral Follower",
+      "variants": 34,
+      "size_class": "M",
+      "hit_height_median": 2.6,
+      "hit_radius_median": 0.7,
+      "weight_median": 130.0,
+      "anim_class": "humanoid",
+      "tier": "miniboss",
+      "hp_max": 316,
+      "hp_median": 316,
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "_confidence": "high",
+      "_source": "vanilla_promotions_v1"
+    },
+    "c3370": {
+      "name": "Ancestral Follower Shaman",
+      "variants": 5,
+      "size_class": "M",
+      "hit_height_median": 3.2,
+      "hit_radius_median": 0.8,
+      "weight_median": 260.0,
+      "anim_class": "humanoid",
+      "tier": "miniboss",
+      "hp_max": 450,
+      "hp_median": 450,
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "_confidence": "high",
+      "_source": "vanilla_promotions_v1"
+    },
+    "c4190": {
+      "name": "Large Scarab",
+      "variants": 14,
+      "size_class": "S",
+      "hit_height_median": 1.9,
+      "hit_radius_median": 1.0,
+      "weight_median": 100.0,
+      "anim_class": "quadruped",
+      "tier": "grunt",
+      "hp_max": 213,
+      "hp_median": 213,
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "_confidence": "high",
+      "_source": "vanilla_promotions_v1"
+    },
+    "c4192": {
+      "name": "Large Scarab (variant)",
+      "variants": 10,
+      "size_class": "M",
+      "hit_height_median": 2.9,
+      "hit_radius_median": 1.5,
+      "weight_median": 100.0,
+      "anim_class": "quadruped",
+      "tier": "grunt",
+      "hp_max": 271,
+      "hp_median": 271,
+      "expects_boss_arena": false,
+      "has_boss_reward": false,
+      "_confidence": "medium",
+      "_source": "vanilla_promotions_v1"
+    },
+    "c4441": {
+      "name": "Land Squirt (Unscaled)",
+      "variants": 1,
+      "size_class": "XL",
+      "hit_height_median": 7.0,
+      "hit_radius_median": 2.5,
+      "weight_median": 100.0,
+      "anim_class": "large_boss_ground",
+      "tier": "field_boss",
+      "hp_max": 1429,
+      "hp_median": 1429,
+      "expects_boss_arena": true,
+      "has_boss_reward": false,
+      "_confidence": "medium",
+      "_source": "vanilla_promotions_v1"
+    },
+    "c4442": {
+      "name": "Land Squirt (Unscaled, variant)",
+      "variants": 2,
+      "size_class": "XL",
+      "hit_height_median": 7.0,
+      "hit_radius_median": 2.5,
+      "weight_median": 100.0,
+      "anim_class": "large_boss_ground",
+      "tier": "field_boss",
+      "hp_max": 1429,
+      "hp_median": 1429,
+      "expects_boss_arena": true,
+      "has_boss_reward": false,
+      "_confidence": "medium",
+      "_source": "vanilla_promotions_v1"
+    },
+    "c4502": {
+      "name": "Flying Dragon (Unscaled, variant)",
+      "variants": 3,
+      "size_class": "GIGA",
+      "hit_height_median": 12.0,
+      "hit_radius_median": 12.0,
+      "weight_median": 300.0,
+      "anim_class": "flying_dragon",
+      "tier": "field_boss",
+      "hp_max": 1518,
+      "hp_median": 1310,
+      "expects_boss_arena": true,
+      "has_boss_reward": false,
+      "_confidence": "medium",
+      "_source": "vanilla_promotions_v1"
+    },
+    "c4641": {
+      "name": "Tree Spirit (Unscaled, variant)",
+      "variants": 2,
+      "size_class": "GIGA",
+      "hit_height_median": 18.0,
+      "hit_radius_median": 9.0,
+      "weight_median": 100.0,
+      "anim_class": "large_boss_ground",
+      "tier": "field_boss",
+      "hp_max": 1280,
+      "hp_median": 851,
+      "expects_boss_arena": true,
+      "has_boss_reward": false,
+      "_confidence": "medium",
+      "_source": "vanilla_promotions_v1"
+    }
+  },
+  "variants_per_prefix": {
+    "c3360": [
+      {
+        "c_prefix": "c3360",
+        "npc_param_id": 33600000,
+        "think_param_id": 33600000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestral Follower",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      },
+      {
+        "c_prefix": "c3360",
+        "npc_param_id": 33600100,
+        "think_param_id": 33600000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestral Follower (variant 100)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      }
+    ],
+    "c3370": [
+      {
+        "c_prefix": "c3370",
+        "npc_param_id": 33700000,
+        "think_param_id": 33700000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestral Follower Shaman",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      },
+      {
+        "c_prefix": "c3370",
+        "npc_param_id": 33700100,
+        "think_param_id": 33700000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Ancestral Follower Shaman (variant 100)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      }
+    ],
+    "c4190": [
+      {
+        "c_prefix": "c4190",
+        "npc_param_id": 41900000,
+        "think_param_id": 41900000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Large Scarab",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      },
+      {
+        "c_prefix": "c4190",
+        "npc_param_id": 41902000,
+        "think_param_id": 41900000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Large Scarab (variant 2000)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      }
+    ],
+    "c4192": [
+      {
+        "c_prefix": "c4192",
+        "npc_param_id": 41920000,
+        "think_param_id": 41920000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Large Scarab (variant)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      },
+      {
+        "c_prefix": "c4192",
+        "npc_param_id": 41922000,
+        "think_param_id": 41920000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Large Scarab (variant 2000)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      }
+    ],
+    "c4441": [
+      {
+        "c_prefix": "c4441",
+        "npc_param_id": 44410000,
+        "think_param_id": 44410000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Land Squirt (Unscaled, Field Boss)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      }
+    ],
+    "c4442": [
+      {
+        "c_prefix": "c4442",
+        "npc_param_id": 44420000,
+        "think_param_id": 44420000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Land Squirt (Unscaled, Field Boss)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      },
+      {
+        "c_prefix": "c4442",
+        "npc_param_id": 44420010,
+        "think_param_id": 44420000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Land Squirt (Unscaled, variant 010)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      }
+    ],
+    "c4502": [
+      {
+        "c_prefix": "c4502",
+        "npc_param_id": 45020000,
+        "think_param_id": 45020000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Flying Dragon (Unscaled, Field Boss)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      },
+      {
+        "c_prefix": "c4502",
+        "npc_param_id": 45021000,
+        "think_param_id": 45020000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Flying Dragon (Unscaled, variant 1000)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      }
+    ],
+    "c4641": [
+      {
+        "c_prefix": "c4641",
+        "npc_param_id": 46410000,
+        "think_param_id": 46410000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Tree Spirit (Unscaled, Field Boss)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      },
+      {
+        "c_prefix": "c4641",
+        "npc_param_id": 46410010,
+        "think_param_id": 46410000,
+        "count": 1,
+        "sample_maps": [],
+        "mmv_name": "Tree Spirit (Unscaled, variant 010)",
+        "has_reward": false,
+        "_source": "vanilla_promotions_v1"
+      }
+    ]
+  }
+}

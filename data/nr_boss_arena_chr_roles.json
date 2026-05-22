@@ -1,0 +1,7013 @@
+{
+  "_meta": {
+    "generator": "v0.25.1 build_arena_chr_roles.py",
+    "source_emevd_dir": "/home/claude/vanilla_emevd/vanilla_decompressed_emevd",
+    "total_msbs": 194,
+    "strategy_counts": {
+      "none": 95,
+      "preserve_primary": 30,
+      "swap_actual_chr": 69
+    },
+    "top_unmatched_events": [
+      [
+        90015070,
+        312
+      ],
+      [
+        90085002,
+        272
+      ],
+      [
+        90075302,
+        140
+      ],
+      [
+        90015005,
+        132
+      ],
+      [
+        90015150,
+        103
+      ],
+      [
+        90015151,
+        103
+      ],
+      [
+        90015152,
+        103
+      ],
+      [
+        9005810,
+        95
+      ],
+      [
+        90015004,
+        76
+      ],
+      [
+        90055000,
+        56
+      ]
+    ],
+    "schema_version": 1
+  },
+  "m10_00_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005701",
+      "9045010",
+      "9045011"
+    ],
+    "hardcoded_anims": {
+      "10002500": [
+        200,
+        210,
+        100,
+        110,
+        200,
+        210
+      ],
+      "10001500": [
+        90100,
+        90100
+      ],
+      "10001000": [
+        90100
+      ],
+      "10000711": [
+        90100,
+        90302,
+        90100,
+        90103,
+        0,
+        90104,
+        90302,
+        0,
+        90302
+      ],
+      "10001002": [
+        90100
+      ],
+      "10001003": [
+        90100
+      ],
+      "10001001": [
+        90100
+      ],
+      "10001106": [
+        90203
+      ],
+      "10001105": [
+        90101
+      ],
+      "10002100": [
+        1
+      ],
+      "10001201": [
+        90108
+      ],
+      "10001204": [
+        90101,
+        90202
+      ],
+      "10001209": [
+        90210,
+        90211,
+        90211
+      ],
+      "10001211": [
+        20055,
+        30016
+      ],
+      "10001208": [
+        20031
+      ],
+      "10001303": [
+        90330,
+        90330
+      ],
+      "10001411": [
+        90101
+      ],
+      "10001409": [
+        90101,
+        90101,
+        90100,
+        0
+      ],
+      "10001430": [
+        1830
+      ],
+      "10001431": [
+        1830
+      ],
+      "10001432": [
+        1830
+      ],
+      "10001413": [
+        20027
+      ],
+      "10001200": [
+        90105
+      ],
+      "10001207": [
+        30016
+      ],
+      "10000700": [
+        90107,
+        90105,
+        90102
+      ],
+      "10000760": [
+        90107,
+        90105,
+        90106
+      ],
+      "10000750": [
+        90108,
+        90105,
+        90104,
+        90100
+      ],
+      "10000720": [
+        90103,
+        90101,
+        90108
+      ],
+      "10000770": [
+        90107,
+        90106,
+        90105
+      ],
+      "10000740": [
+        0,
+        90103,
+        0,
+        90101,
+        90100
+      ],
+      "10000730": [
+        90106,
+        90108,
+        90105
+      ],
+      "10000780": [
+        30021,
+        30016
+      ],
+      "10001701": [
+        30016,
+        30014,
+        30015,
+        30019
+      ],
+      "10001702": [
+        20047
+      ],
+      "10001710": [
+        90200
+      ],
+      "10001703": [
+        30024
+      ],
+      "10002700": [
+        1,
+        1
+      ],
+      "10001802": [
+        90315,
+        90315
+      ],
+      "10001806": [
+        30016
+      ],
+      "10001501": [
+        90306,
+        90307
+      ],
+      "10001610": [
+        30028
+      ],
+      "10001608": [
+        90103,
+        90103
+      ]
+    },
+    "n_init_calls": 3,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": true,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m11_00_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {
+      "11001400": [
+        0,
+        1,
+        1
+      ]
+    },
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": true,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m12_00_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015004"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 1,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m13_00_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {
+      "13000800": [
+        90201,
+        90102
+      ],
+      "13000811": [
+        90107,
+        90107
+      ],
+      "13000810": [
+        20026,
+        20026
+      ]
+    },
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": true,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m13_20_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {
+      "13200803": [
+        30005,
+        20005
+      ]
+    },
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": true,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m15_00_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {
+      "15000303": [
+        90109
+      ]
+    },
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": true,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m18_00_00_00.msb": {
+    "actual_chr_eids": [
+      18000800,
+      18000801
+    ],
+    "hp_bar_ref_eids": [
+      18002800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015012",
+      "90015020",
+      "90015200",
+      "90015201",
+      "90075700",
+      "90075701",
+      "90075702",
+      "90075703",
+      "90075704",
+      "90075705",
+      "90075706",
+      "90075710",
+      "90075901",
+      "90075902",
+      "90075930"
+    ],
+    "hardcoded_anims": {
+      "18000890": [
+        30000
+      ],
+      "18001510": [
+        100,
+        101
+      ]
+    },
+    "n_init_calls": 24,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": true,
+    "complexity_score": 9,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m19_00_00_00.msb": {
+    "actual_chr_eids": [
+      19000800,
+      19000810,
+      19000830,
+      19000850,
+      19000860,
+      19005801,
+      19005821,
+      19005840,
+      19010800,
+      19010810,
+      19010830,
+      19010831,
+      19010850,
+      19010860,
+      19015801,
+      19015821,
+      19015840,
+      19015842,
+      19015843,
+      19015844
+    ],
+    "hp_bar_ref_eids": [
+      19000800,
+      19000810,
+      19000830,
+      19000850,
+      19000860,
+      19005821
+    ],
+    "companion_eids": [
+      19000800,
+      19005801
+    ],
+    "helpers_used": [
+      "90015008",
+      "90015012",
+      "90015018",
+      "90015020",
+      "90015022",
+      "90015200",
+      "90015201",
+      "90065920",
+      "90075000",
+      "90075001",
+      "90075002",
+      "90075005",
+      "90075006",
+      "90075008",
+      "90075051",
+      "90075060",
+      "90075070",
+      "90075100",
+      "90075101",
+      "90075102",
+      "90075150",
+      "90075160",
+      "90075161",
+      "90075162",
+      "90075163",
+      "90075164",
+      "90075165",
+      "90075200",
+      "90075201",
+      "90075202",
+      "90075210",
+      "90075211",
+      "90075212",
+      "90075220",
+      "90075230",
+      "90075231",
+      "90075232",
+      "90075233",
+      "90075234",
+      "90075240",
+      "90075250",
+      "90075251",
+      "90075255",
+      "90075256",
+      "90075257",
+      "90075260",
+      "90075261",
+      "90075262",
+      "90075263",
+      "90075264",
+      "90075265",
+      "90075266",
+      "90075267",
+      "90075300",
+      "90075301",
+      "90075302",
+      "90075310",
+      "90075311",
+      "90075312",
+      "90075313",
+      "90075320",
+      "90075330",
+      "90075340",
+      "90075350",
+      "90075351",
+      "90075352",
+      "90075360",
+      "90075400",
+      "90075401",
+      "90075402",
+      "90075403",
+      "90075404",
+      "90075405",
+      "90075450",
+      "90075452",
+      "90075500",
+      "90075501",
+      "90075510",
+      "90075520",
+      "90075551",
+      "90075600",
+      "90075601",
+      "90075602",
+      "90075610",
+      "90075651",
+      "90075652",
+      "90075660",
+      "90075900",
+      "90075901",
+      "90075902",
+      "90075903",
+      "90075910",
+      "90075920",
+      "90075931",
+      "90075950",
+      "90085027",
+      "99075205",
+      "99075406",
+      "99075410",
+      "99075420",
+      "99075421",
+      "99075422",
+      "99075430",
+      "99075440",
+      "99075466",
+      "99075467",
+      "99075468",
+      "99075470",
+      "99075471",
+      "99075480",
+      "99075481",
+      "99075482",
+      "99075483",
+      "99075485",
+      "99075486",
+      "99075620"
+    ],
+    "hardcoded_anims": {
+      "19000801": [
+        30000
+      ],
+      "19000802": [
+        30000
+      ],
+      "19006901": [
+        100
+      ],
+      "19006902": [
+        100
+      ],
+      "19006903": [
+        100
+      ],
+      "19001510": [
+        100,
+        110
+      ],
+      "19005835": [
+        30005
+      ],
+      "19005836": [
+        30005
+      ],
+      "19000820": [
+        20035,
+        30015,
+        20036,
+        20035,
+        30015,
+        20035,
+        30015,
+        30015,
+        20036
+      ],
+      "19000821": [
+        20035,
+        30015,
+        20036,
+        20035,
+        30015,
+        30015,
+        20036,
+        20035,
+        30015
+      ],
+      "19000828": [
+        20010,
+        20011,
+        20012,
+        20013,
+        20013,
+        20015,
+        20011,
+        20012,
+        20013,
+        20013,
+        20015
+      ]
+    },
+    "n_init_calls": 542,
+    "n_recognized": 42,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 75,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m20_00_00_00.msb": {
+    "actual_chr_eids": [
+      20000800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m20_10_00_00.msb": {
+    "actual_chr_eids": [
+      20100800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m20_20_00_00.msb": {
+    "actual_chr_eids": [
+      20200800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m20_30_00_00.msb": {
+    "actual_chr_eids": [
+      20300800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m20_40_00_00.msb": {
+    "actual_chr_eids": [
+      20400800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m20_50_00_00.msb": {
+    "actual_chr_eids": [
+      20500800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m20_60_00_00.msb": {
+    "actual_chr_eids": [
+      20600800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m20_70_00_00.msb": {
+    "actual_chr_eids": [
+      20700800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m20_80_00_00.msb": {
+    "actual_chr_eids": [
+      20800800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m20_90_00_00.msb": {
+    "actual_chr_eids": [
+      20900800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m21_00_00_00.msb": {
+    "actual_chr_eids": [
+      21000800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m21_10_00_00.msb": {
+    "actual_chr_eids": [
+      21100800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m21_20_00_00.msb": {
+    "actual_chr_eids": [
+      21200800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m21_30_00_00.msb": {
+    "actual_chr_eids": [
+      21300800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m21_40_00_00.msb": {
+    "actual_chr_eids": [
+      21400800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m21_50_00_00.msb": {
+    "actual_chr_eids": [
+      21500800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015030",
+      "90035010",
+      "90035011",
+      "90035012",
+      "90035013",
+      "90035020",
+      "90035021",
+      "90035022",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 2,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m30_00_00_00.msb": {
+    "actual_chr_eids": [
+      30000490,
+      30000800,
+      30000810
+    ],
+    "hp_bar_ref_eids": [
+      30000800,
+      30000810
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005915",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015007",
+      "90015008",
+      "90015009",
+      "90015025",
+      "90015030",
+      "90015031",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90085700"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 44,
+    "n_recognized": 11,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 10,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m30_30_00_00.msb": {
+    "actual_chr_eids": [
+      30300490,
+      30300800,
+      30300810
+    ],
+    "hp_bar_ref_eids": [
+      30300510,
+      30300800,
+      30305810
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005915",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015007",
+      "90015008",
+      "90015009",
+      "90015025",
+      "90015031",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90085700"
+    ],
+    "hardcoded_anims": {
+      "30301200": [
+        10,
+        11,
+        11
+      ],
+      "30301201": [
+        10,
+        11,
+        11
+      ]
+    },
+    "n_init_calls": 44,
+    "n_recognized": 7,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 12,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m31_90_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005211",
+      "90005934",
+      "90015005",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 12,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m32_00_00_00.msb": {
+    "actual_chr_eids": [
+      32000490,
+      32000800,
+      32000810
+    ],
+    "hp_bar_ref_eids": [
+      32000500,
+      32000810,
+      32005800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015007",
+      "90015008",
+      "90015025",
+      "90015031",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90085700"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 41,
+    "n_recognized": 7,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 12,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m32_10_00_00.msb": {
+    "actual_chr_eids": [
+      32100490,
+      32100800,
+      32100810,
+      32100820
+    ],
+    "hp_bar_ref_eids": [
+      32100510,
+      32100520,
+      32100800,
+      32105810,
+      32105820
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015007",
+      "90015008",
+      "90015025",
+      "90015031",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90085700"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 52,
+    "n_recognized": 10,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 18,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m32_20_00_00.msb": {
+    "actual_chr_eids": [
+      32200490,
+      32200800,
+      32200810
+    ],
+    "hp_bar_ref_eids": [
+      32200500,
+      32200810,
+      32205800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015007",
+      "90015008",
+      "90015025",
+      "90015031",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90085700"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 41,
+    "n_recognized": 7,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 12,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m34_00_00_00.msb": {
+    "actual_chr_eids": [
+      34000490,
+      34000800,
+      34000810,
+      34000820,
+      34000830
+    ],
+    "hp_bar_ref_eids": [
+      34000500,
+      34000520,
+      34000530,
+      34000810,
+      34005800,
+      34005820,
+      34005830
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005526",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015007",
+      "90015008",
+      "90015025",
+      "90015031",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90045040",
+      "90045041",
+      "90085700"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 70,
+    "n_recognized": 13,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 24,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m34_10_00_00.msb": {
+    "actual_chr_eids": [
+      34100490,
+      34100800,
+      34100810,
+      34100820,
+      34100830,
+      34100840
+    ],
+    "hp_bar_ref_eids": [
+      34100520,
+      34100530,
+      34100800,
+      34100810,
+      34100840,
+      34105820,
+      34105830
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005526",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015007",
+      "90015008",
+      "90015010",
+      "90015025",
+      "90015031",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90085700"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 114,
+    "n_recognized": 16,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 26,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m34_20_00_00.msb": {
+    "actual_chr_eids": [
+      34200490,
+      34200800,
+      34200810
+    ],
+    "hp_bar_ref_eids": [
+      34200510,
+      34200800,
+      34205810
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005526",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015007",
+      "90015008",
+      "90015025",
+      "90015031",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90085700"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 42,
+    "n_recognized": 7,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 12,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m34_30_00_00.msb": {
+    "actual_chr_eids": [
+      34300490,
+      34300800
+    ],
+    "hp_bar_ref_eids": [
+      34300500,
+      34305800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005526",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015007",
+      "90015008",
+      "90015025",
+      "90015031",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90085700"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 31,
+    "n_recognized": 4,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 8,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m35_90_00_00.msb": {
+    "actual_chr_eids": [
+      35900800,
+      35900801
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005261",
+      "90005934",
+      "90015030",
+      "9045010",
+      "9045011"
+    ],
+    "hardcoded_anims": {
+      "35900800": [
+        20024
+      ],
+      "35900802": [
+        1830
+      ],
+      "35900803": [
+        1830
+      ],
+      "35900804": [
+        1830
+      ]
+    },
+    "n_init_calls": 9,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": true,
+    "complexity_score": 7,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m37_90_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015004",
+      "90015500",
+      "91005550"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 3,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m38_00_00_00.msb": {
+    "actual_chr_eids": [
+      38000490,
+      38000810,
+      38000850,
+      38005810
+    ],
+    "hp_bar_ref_eids": [
+      38000510,
+      38000850,
+      38005810
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005251",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015008",
+      "90015025",
+      "90015030",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90085700"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 42,
+    "n_recognized": 15,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 14,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m38_10_00_00.msb": {
+    "actual_chr_eids": [
+      38100490,
+      38100800,
+      38100810
+    ],
+    "hp_bar_ref_eids": [
+      38100800,
+      38100810
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005250",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015007",
+      "90015008",
+      "90015025",
+      "90015031",
+      "90015050",
+      "90015301",
+      "90015303",
+      "90015304",
+      "90015305",
+      "90015306",
+      "90015310",
+      "90035280",
+      "90035281",
+      "90035282",
+      "90035283",
+      "90035284",
+      "90035285",
+      "90035286",
+      "90035288",
+      "90085700"
+    ],
+    "hardcoded_anims": {
+      "38101200": [
+        0,
+        2,
+        1
+      ],
+      "38101201": [
+        0,
+        2,
+        1
+      ],
+      "38101210": [
+        1,
+        2
+      ]
+    },
+    "n_init_calls": 61,
+    "n_recognized": 7,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 10,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m40_00_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015500"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 1,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m40_90_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015500"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 1,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m41_00_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015004",
+      "90015009",
+      "90015208",
+      "90015500",
+      "90085000",
+      "90085002",
+      "90085003",
+      "90085008"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 21,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m41_01_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015009",
+      "90015208",
+      "90015500"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 3,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m41_30_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015004",
+      "90015009",
+      "90015208"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 5,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m43_00_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m43_01_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m43_02_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m43_30_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m43_40_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m43_41_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m43_50_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m44_01_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m45_00_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m45_01_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m45_51_00_00.msb": {
+    "actual_chr_eids": [
+      45510800
+    ],
+    "hp_bar_ref_eids": [
+      45510800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m45_52_00_00.msb": {
+    "actual_chr_eids": [
+      45520800
+    ],
+    "hp_bar_ref_eids": [
+      45520800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015002",
+      "90015030",
+      "90035050",
+      "90035210",
+      "90035212",
+      "90035213",
+      "90035214",
+      "90035215",
+      "90035216",
+      "90035217",
+      "90035219",
+      "9005211"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 17,
+    "n_recognized": 2,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m45_53_00_00.msb": {
+    "actual_chr_eids": [
+      45530800
+    ],
+    "hp_bar_ref_eids": [
+      45530800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015030",
+      "90035230",
+      "90035231",
+      "90035232",
+      "90035233",
+      "90035234",
+      "90035235",
+      "90035236",
+      "90035237",
+      "90035238"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m45_55_00_00.msb": {
+    "actual_chr_eids": [
+      45550800
+    ],
+    "hp_bar_ref_eids": [
+      45550800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015030",
+      "90035240",
+      "90035241",
+      "90035242",
+      "90035243",
+      "90035244",
+      "90035245",
+      "90035246",
+      "90035247",
+      "90035248",
+      "90035249",
+      "90035252",
+      "90035253"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 16,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_00_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90035040",
+      "90035041",
+      "90035042",
+      "90035043",
+      "90035044",
+      "90035045",
+      "90035046",
+      "90035047",
+      "90035048"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m46_01_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90035040",
+      "90035041",
+      "90035042",
+      "90035043",
+      "90035044",
+      "90035045",
+      "90035046",
+      "90035047",
+      "90035048"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m46_02_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90035040",
+      "90035041",
+      "90035042",
+      "90035043",
+      "90035044",
+      "90035045",
+      "90035046",
+      "90035047",
+      "90035048"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m46_03_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90035040",
+      "90035041",
+      "90035042",
+      "90035043",
+      "90035044",
+      "90035045",
+      "90035046",
+      "90035047",
+      "90035048"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m46_04_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90035040",
+      "90035041",
+      "90035042",
+      "90035043",
+      "90035044",
+      "90035045",
+      "90035046",
+      "90035047",
+      "90035048"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m46_05_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90035040",
+      "90035041",
+      "90035042",
+      "90035043",
+      "90035044",
+      "90035045",
+      "90035046",
+      "90035047",
+      "90035048"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m46_06_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90035040",
+      "90035041",
+      "90035042",
+      "90035043",
+      "90035044",
+      "90035045",
+      "90035046",
+      "90035047",
+      "90035048"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 11,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m46_50_00_00.msb": {
+    "actual_chr_eids": [
+      46500860,
+      46500870,
+      46505840,
+      46505850
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015009",
+      "90015030",
+      "90015042",
+      "90045000",
+      "90045001",
+      "90045002",
+      "90045004",
+      "90045005",
+      "90045006",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 42,
+    "n_recognized": 8,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 8,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_51_00_00.msb": {
+    "actual_chr_eids": [
+      46510800
+    ],
+    "hp_bar_ref_eids": [
+      46510800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_52_00_00.msb": {
+    "actual_chr_eids": [
+      46520800
+    ],
+    "hp_bar_ref_eids": [
+      46520800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_53_00_00.msb": {
+    "actual_chr_eids": [
+      46530800
+    ],
+    "hp_bar_ref_eids": [
+      46530800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_54_00_00.msb": {
+    "actual_chr_eids": [
+      46540800
+    ],
+    "hp_bar_ref_eids": [
+      46540800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_55_00_00.msb": {
+    "actual_chr_eids": [
+      46550800
+    ],
+    "hp_bar_ref_eids": [
+      46550800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_56_00_00.msb": {
+    "actual_chr_eids": [
+      46560800
+    ],
+    "hp_bar_ref_eids": [
+      46560800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_57_00_00.msb": {
+    "actual_chr_eids": [
+      46570800
+    ],
+    "hp_bar_ref_eids": [
+      46570800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_58_00_00.msb": {
+    "actual_chr_eids": [
+      46580800
+    ],
+    "hp_bar_ref_eids": [
+      46580800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_59_00_00.msb": {
+    "actual_chr_eids": [
+      46590800
+    ],
+    "hp_bar_ref_eids": [
+      46590800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_60_00_00.msb": {
+    "actual_chr_eids": [
+      46600860,
+      46605820,
+      46605830,
+      46605840,
+      46605850
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015009",
+      "90015030",
+      "90015042",
+      "90045000",
+      "90045001",
+      "90045002",
+      "90045004",
+      "90045005",
+      "90045006",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 52,
+    "n_recognized": 10,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 10,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_62_00_00.msb": {
+    "actual_chr_eids": [
+      46620800
+    ],
+    "hp_bar_ref_eids": [
+      46620800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810",
+      "90065111",
+      "90065112"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 15,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_63_00_00.msb": {
+    "actual_chr_eids": [
+      46630800
+    ],
+    "hp_bar_ref_eids": [
+      46630800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_64_00_00.msb": {
+    "actual_chr_eids": [
+      46640800
+    ],
+    "hp_bar_ref_eids": [
+      46640800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_65_00_00.msb": {
+    "actual_chr_eids": [
+      46650800
+    ],
+    "hp_bar_ref_eids": [
+      46650800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_66_00_00.msb": {
+    "actual_chr_eids": [
+      46660800
+    ],
+    "hp_bar_ref_eids": [
+      46660800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_67_00_00.msb": {
+    "actual_chr_eids": [
+      46670800
+    ],
+    "hp_bar_ref_eids": [
+      46670800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_68_00_00.msb": {
+    "actual_chr_eids": [
+      46680800
+    ],
+    "hp_bar_ref_eids": [
+      46680800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_69_00_00.msb": {
+    "actual_chr_eids": [
+      46690800
+    ],
+    "hp_bar_ref_eids": [
+      46690800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_70_00_00.msb": {
+    "actual_chr_eids": [
+      46700800,
+      46700810,
+      46700820,
+      46700830,
+      46700840
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015009",
+      "90015030",
+      "90015042",
+      "90045000",
+      "90045001",
+      "90045002",
+      "90045004",
+      "90045005",
+      "90045006",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 52,
+    "n_recognized": 10,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 10,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_71_00_00.msb": {
+    "actual_chr_eids": [
+      46710800,
+      46715800
+    ],
+    "hp_bar_ref_eids": [
+      46710500,
+      46715800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 12,
+    "n_recognized": 4,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 8,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_72_00_00.msb": {
+    "actual_chr_eids": [
+      46720800
+    ],
+    "hp_bar_ref_eids": [
+      46720800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_74_00_00.msb": {
+    "actual_chr_eids": [
+      46740800
+    ],
+    "hp_bar_ref_eids": [
+      46740800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_77_00_00.msb": {
+    "actual_chr_eids": [
+      46770800
+    ],
+    "hp_bar_ref_eids": [
+      46770800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015040",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 13,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_78_00_00.msb": {
+    "actual_chr_eids": [
+      46780800
+    ],
+    "hp_bar_ref_eids": [
+      46780800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015030",
+      "90035050",
+      "90035200",
+      "90035201",
+      "90035202",
+      "90035203",
+      "90035204",
+      "90035205",
+      "90035206",
+      "90035207",
+      "90035208",
+      "90035209",
+      "90035300"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 21,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_80_00_00.msb": {
+    "actual_chr_eids": [
+      46800800,
+      46800810,
+      46800820,
+      46800821,
+      46805800
+    ],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015005",
+      "90015009",
+      "90015030",
+      "90015042",
+      "90045000",
+      "90045001",
+      "90045002",
+      "90045004",
+      "90045005",
+      "90045006",
+      "9005810"
+    ],
+    "hardcoded_anims": {
+      "46801210": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "n_init_calls": 33,
+    "n_recognized": 7,
+    "is_multi_entity": false,
+    "is_multi_wave": true,
+    "complexity_score": 10,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_81_00_00.msb": {
+    "actual_chr_eids": [
+      46810800
+    ],
+    "hp_bar_ref_eids": [
+      46810800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 12,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_82_00_00.msb": {
+    "actual_chr_eids": [
+      46820800
+    ],
+    "hp_bar_ref_eids": [
+      46820800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 12,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_86_00_00.msb": {
+    "actual_chr_eids": [
+      46860800
+    ],
+    "hp_bar_ref_eids": [
+      46860800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 12,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_87_00_00.msb": {
+    "actual_chr_eids": [
+      46870800
+    ],
+    "hp_bar_ref_eids": [
+      46870800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 12,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_88_00_00.msb": {
+    "actual_chr_eids": [
+      46880800
+    ],
+    "hp_bar_ref_eids": [
+      46880800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 12,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_90_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m46_91_00_00.msb": {
+    "actual_chr_eids": [
+      46910800
+    ],
+    "hp_bar_ref_eids": [
+      46910800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 12,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m46_95_00_00.msb": {
+    "actual_chr_eids": [
+      46950800
+    ],
+    "hp_bar_ref_eids": [
+      46950800
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015071",
+      "90015199",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 12,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m47_70_00_00.msb": {
+    "actual_chr_eids": [
+      47700800,
+      47705800,
+      47705801
+    ],
+    "hp_bar_ref_eids": [
+      47700800,
+      47705800,
+      47705801
+    ],
+    "companion_eids": [
+      47705801
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015470",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065000",
+      "90065001",
+      "90065002",
+      "90065003",
+      "90065004",
+      "90065005",
+      "90065006",
+      "90065007",
+      "90065008",
+      "90065009",
+      "90065010",
+      "90065011",
+      "90065012",
+      "90065013",
+      "90065014",
+      "90065015",
+      "90065016",
+      "90065900"
+    ],
+    "hardcoded_anims": {
+      "47700840": [
+        20007
+      ]
+    },
+    "n_init_calls": 76,
+    "n_recognized": 12,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 16,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m47_80_00_00.msb": {
+    "actual_chr_eids": [
+      47800800
+    ],
+    "hp_bar_ref_eids": [
+      47800800
+    ],
+    "companion_eids": [
+      47800800,
+      47800810
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015471",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065070",
+      "90065071",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "47800800": [
+        20005,
+        20000
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 15,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 11,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m47_90_00_00.msb": {
+    "actual_chr_eids": [
+      47900800,
+      47905801
+    ],
+    "hp_bar_ref_eids": [
+      47900800,
+      47905801
+    ],
+    "companion_eids": [
+      47900800,
+      47900801,
+      47900802
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015471",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065030",
+      "90065031",
+      "90065032",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "47900800": [
+        20005,
+        20000,
+        20001
+      ],
+      "47900801": [
+        20000
+      ],
+      "47900802": [
+        20000
+      ]
+    },
+    "n_init_calls": 44,
+    "n_recognized": 19,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 22,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m48_00_00_00.msb": {
+    "actual_chr_eids": [
+      48000800,
+      48005800
+    ],
+    "hp_bar_ref_eids": [
+      48000800,
+      48005800
+    ],
+    "companion_eids": [
+      48000800,
+      48000810,
+      48000811,
+      48000812,
+      48000813,
+      48000814,
+      48000815,
+      48000816,
+      48000817,
+      48000818,
+      48000819,
+      48000820,
+      48000821,
+      48000822,
+      48000823,
+      48000824,
+      48000825,
+      48000826,
+      48000827,
+      48000828,
+      48000829,
+      48000830,
+      48005800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015474",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065080",
+      "90065081",
+      "90065082",
+      "90065083",
+      "90065084",
+      "90065085",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 85,
+    "n_recognized": 59,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 33,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m48_10_00_00.msb": {
+    "actual_chr_eids": [
+      48100800,
+      48105210
+    ],
+    "hp_bar_ref_eids": [
+      48100800,
+      48105210
+    ],
+    "companion_eids": [
+      48100800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48100800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m48_20_00_00.msb": {
+    "actual_chr_eids": [
+      48200800,
+      48200801
+    ],
+    "hp_bar_ref_eids": [
+      48200800,
+      48200801
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015012",
+      "90015020",
+      "90015442",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065090",
+      "90065091",
+      "90065092",
+      "90065900",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48200800": [
+        20005,
+        20000
+      ],
+      "48200801": [
+        20000
+      ]
+    },
+    "n_init_calls": 15,
+    "n_recognized": 6,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 16,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m48_30_00_00.msb": {
+    "actual_chr_eids": [
+      48300800,
+      48305210
+    ],
+    "hp_bar_ref_eids": [
+      48300800,
+      48305210
+    ],
+    "companion_eids": [
+      48300800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48300800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m48_40_00_00.msb": {
+    "actual_chr_eids": [
+      48400800
+    ],
+    "hp_bar_ref_eids": [
+      48400800
+    ],
+    "companion_eids": [
+      48400800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90015476",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065140",
+      "90065900",
+      "90065910",
+      "90065911",
+      "90065920"
+    ],
+    "hardcoded_anims": {
+      "48400800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 16,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 10,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m48_50_00_00.msb": {
+    "actual_chr_eids": [
+      48500800,
+      48505800
+    ],
+    "hp_bar_ref_eids": [
+      48500800,
+      48500810,
+      48500820,
+      48505800
+    ],
+    "companion_eids": [
+      48500800,
+      48500801,
+      48500802,
+      48500805,
+      48500806,
+      48500810,
+      48500811,
+      48500820,
+      48500821,
+      48505801,
+      48505802
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015011",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90015476",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065050",
+      "90065051",
+      "90065052",
+      "90065053",
+      "90065054",
+      "90065055",
+      "90065056",
+      "90065057",
+      "90065900",
+      "90065911",
+      "90065920"
+    ],
+    "hardcoded_anims": {
+      "48500800": [
+        20005
+      ]
+    },
+    "n_init_calls": 76,
+    "n_recognized": 55,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 33,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m48_60_00_00.msb": {
+    "actual_chr_eids": [
+      48600800,
+      48605800
+    ],
+    "hp_bar_ref_eids": [
+      48600800,
+      48600810,
+      48600820,
+      48605800
+    ],
+    "companion_eids": [
+      48600800,
+      48600801,
+      48600802,
+      48600805,
+      48600806,
+      48600810,
+      48600811,
+      48600820,
+      48600821,
+      48605805,
+      48605806
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015011",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065050",
+      "90065051",
+      "90065052",
+      "90065053",
+      "90065054",
+      "90065055",
+      "90065056",
+      "90065057",
+      "90065900",
+      "90065911",
+      "90065920"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 74,
+    "n_recognized": 55,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 33,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m48_70_00_00.msb": {
+    "actual_chr_eids": [
+      48700800,
+      48705210
+    ],
+    "hp_bar_ref_eids": [
+      48700800,
+      48705210
+    ],
+    "companion_eids": [
+      48700800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48700800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m48_80_00_00.msb": {
+    "actual_chr_eids": [
+      48800800,
+      48805210
+    ],
+    "hp_bar_ref_eids": [
+      48800800,
+      48800810,
+      48805210
+    ],
+    "companion_eids": [
+      48800800,
+      48800810
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015026",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90015476",
+      "90015478",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065130",
+      "90065131",
+      "90065132",
+      "90065900",
+      "90065911"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 46,
+    "n_recognized": 19,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 14,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m48_90_00_00.msb": {
+    "actual_chr_eids": [
+      48900800,
+      48905210
+    ],
+    "hp_bar_ref_eids": [
+      48900800,
+      48905210
+    ],
+    "companion_eids": [
+      48900800,
+      48905210
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065100",
+      "90065101",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48900800": [
+        20005
+      ]
+    },
+    "n_init_calls": 36,
+    "n_recognized": 16,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 15,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_10_00_00.msb": {
+    "actual_chr_eids": [
+      49100800,
+      49105210
+    ],
+    "hp_bar_ref_eids": [
+      49100800,
+      49105210
+    ],
+    "companion_eids": [
+      49100800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "49100800": [
+        20012
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_17_00_00.msb": {
+    "actual_chr_eids": [
+      49170800,
+      49175210
+    ],
+    "hp_bar_ref_eids": [
+      49170800,
+      49175210
+    ],
+    "companion_eids": [
+      49170800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_18_00_00.msb": {
+    "actual_chr_eids": [
+      49180800,
+      49185210
+    ],
+    "hp_bar_ref_eids": [
+      49180800,
+      49185210
+    ],
+    "companion_eids": [
+      49180800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_19_00_00.msb": {
+    "actual_chr_eids": [
+      49190800,
+      49195210
+    ],
+    "hp_bar_ref_eids": [
+      49190800,
+      49195210
+    ],
+    "companion_eids": [
+      49190800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_20_00_00.msb": {
+    "actual_chr_eids": [
+      49200800,
+      49205210
+    ],
+    "hp_bar_ref_eids": [
+      49200800,
+      49205210
+    ],
+    "companion_eids": [
+      49200800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "49200800": [
+        20009
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_21_00_00.msb": {
+    "actual_chr_eids": [
+      49210800,
+      49215210
+    ],
+    "hp_bar_ref_eids": [
+      49210800,
+      49215210
+    ],
+    "companion_eids": [
+      49210800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_23_00_00.msb": {
+    "actual_chr_eids": [
+      49230800,
+      49235210
+    ],
+    "hp_bar_ref_eids": [
+      49230800,
+      49235210
+    ],
+    "companion_eids": [
+      49230800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_24_00_00.msb": {
+    "actual_chr_eids": [
+      49240800,
+      49245210
+    ],
+    "hp_bar_ref_eids": [
+      49240800,
+      49245210
+    ],
+    "companion_eids": [
+      49240800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911",
+      "90065920"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 27,
+    "n_recognized": 21,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_25_00_00.msb": {
+    "actual_chr_eids": [
+      49250800,
+      49255210
+    ],
+    "hp_bar_ref_eids": [
+      49250800,
+      49250810,
+      49255210
+    ],
+    "companion_eids": [
+      49250800,
+      49250810
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015026",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90015478",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065120",
+      "90065121",
+      "90065122",
+      "90065900",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 43,
+    "n_recognized": 19,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 17,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_26_00_00.msb": {
+    "actual_chr_eids": [
+      49260800,
+      49265801
+    ],
+    "hp_bar_ref_eids": [
+      49260800,
+      49265801
+    ],
+    "companion_eids": [
+      49260800,
+      49260810,
+      49260811,
+      49265801
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065060",
+      "90065061",
+      "90065062",
+      "90065063",
+      "90065064",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 46,
+    "n_recognized": 21,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 17,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_27_00_00.msb": {
+    "actual_chr_eids": [
+      49270800,
+      49275801
+    ],
+    "hp_bar_ref_eids": [
+      49270800,
+      49275801
+    ],
+    "companion_eids": [
+      49270800,
+      49270810,
+      49270811,
+      49270812,
+      49270813,
+      49270814,
+      49270820,
+      49270821,
+      49270822,
+      49275801
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065061",
+      "90065062",
+      "90065064",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 68,
+    "n_recognized": 33,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 23,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_28_00_00.msb": {
+    "actual_chr_eids": [
+      49280800,
+      49285800,
+      49285801
+    ],
+    "hp_bar_ref_eids": [
+      49280800,
+      49280810,
+      49285800,
+      49285801
+    ],
+    "companion_eids": [
+      49280800,
+      49280801,
+      49280810,
+      49280811,
+      49285801
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90015478",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065110",
+      "90065111",
+      "90065112",
+      "90065113",
+      "90065900",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 49,
+    "n_recognized": 22,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 24,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_29_00_00.msb": {
+    "actual_chr_eids": [
+      49290800,
+      49295210,
+      49295220
+    ],
+    "hp_bar_ref_eids": [
+      49290800,
+      49290810,
+      49295220
+    ],
+    "companion_eids": [
+      49290800,
+      49290810,
+      49290811,
+      49290812,
+      49290813,
+      49290814,
+      49290815,
+      49290816,
+      49290821,
+      49290822,
+      49295210
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90015478",
+      "90035000",
+      "90055000",
+      "90055001",
+      "90065040",
+      "90065041",
+      "90065900",
+      "90065910",
+      "90065911",
+      "90065920"
+    ],
+    "hardcoded_anims": {
+      "49290800": [
+        20026
+      ],
+      "49290810": [
+        20026
+      ],
+      "49290880": [
+        30026,
+        20026
+      ],
+      "49290881": [
+        30026,
+        20026
+      ],
+      "49290882": [
+        30026,
+        20026
+      ],
+      "49290883": [
+        30026,
+        20026
+      ],
+      "49290884": [
+        30026,
+        20026
+      ],
+      "49290885": [
+        30026,
+        20026
+      ],
+      "49290886": [
+        30026,
+        20026
+      ],
+      "49290887": [
+        30026,
+        20026
+      ],
+      "49290888": [
+        30026,
+        20026
+      ],
+      "49290889": [
+        30026,
+        20026
+      ]
+    },
+    "n_init_calls": 60,
+    "n_recognized": 41,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 64,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_30_00_00.msb": {
+    "actual_chr_eids": [
+      49300800,
+      49305210
+    ],
+    "hp_bar_ref_eids": [
+      49300800,
+      49305210
+    ],
+    "companion_eids": [
+      49300800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "49300800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m49_40_00_00.msb": {
+    "actual_chr_eids": [
+      49400851
+    ],
+    "hp_bar_ref_eids": [
+      49400851
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015030",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90085005",
+      "90085221"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 10,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 4,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m49_42_00_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m49_90_00_00.msb": {
+    "actual_chr_eids": [
+      49900800,
+      49905210
+    ],
+    "hp_bar_ref_eids": [
+      49900800,
+      49905210
+    ],
+    "companion_eids": [
+      49900800
+    ],
+    "helpers_used": [
+      "90015002",
+      "90015008",
+      "90015012",
+      "90015020",
+      "90015023",
+      "90015030",
+      "90015070",
+      "90015442",
+      "90015443",
+      "90015446",
+      "90015460",
+      "90015470",
+      "90015475",
+      "90035000",
+      "90035001",
+      "90055000",
+      "90055001",
+      "90065900",
+      "90065910",
+      "90065911"
+    ],
+    "hardcoded_anims": {
+      "48600800": [
+        20005
+      ]
+    },
+    "n_init_calls": 38,
+    "n_recognized": 20,
+    "is_multi_entity": true,
+    "is_multi_wave": true,
+    "complexity_score": 14,
+    "recommended_strategy": "preserve_primary"
+  },
+  "m60_00_00_99.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_36_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90005931",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085030",
+      "90085034",
+      "90085035",
+      "90085037",
+      "90085802",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 63,
+    "n_recognized": 8,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_36_10.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90005931",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085030",
+      "90085034",
+      "90085035",
+      "90085037",
+      "90085802",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 63,
+    "n_recognized": 8,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_36_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90005931",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085030",
+      "90085034",
+      "90085035",
+      "90085037",
+      "90085802",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 63,
+    "n_recognized": 8,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_36_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005200",
+      "90005201",
+      "90005211",
+      "90005261",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015017",
+      "90015030",
+      "90015041",
+      "90015071",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015468",
+      "9005810",
+      "9005811",
+      "90085002",
+      "90085005",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085023",
+      "90085030",
+      "90085031"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 130,
+    "n_recognized": 31,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_37_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015004",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 19,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_37_10.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015004",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 19,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_37_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015004",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 19,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_37_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005200",
+      "90005201",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015017",
+      "90015030",
+      "90015041",
+      "90015071",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015450",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 26,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_38_00.msb": {
+    "actual_chr_eids": [
+      42380800,
+      42380805
+    ],
+    "hp_bar_ref_eids": [
+      42380800,
+      42380805
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "1042382900",
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015071",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015316",
+      "90015468",
+      "9005810",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085030",
+      "90085032",
+      "90085036",
+      "90085802",
+      "91005504",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 63,
+    "n_recognized": 11,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 8,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m60_42_38_10.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005526",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015006",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015017",
+      "90015021",
+      "90015030",
+      "90015031",
+      "90015041",
+      "90015071",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015400",
+      "90015401",
+      "90015402",
+      "90015403",
+      "90015404",
+      "90015405",
+      "90015406",
+      "90015407",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 43,
+    "n_recognized": 9,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_38_20.msb": {
+    "actual_chr_eids": [
+      42380800,
+      42380805
+    ],
+    "hp_bar_ref_eids": [
+      42380800,
+      42380805
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "1042382900",
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015071",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015316",
+      "90015468",
+      "9005810",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085030",
+      "90085032",
+      "90085036",
+      "90085802",
+      "91005504",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 63,
+    "n_recognized": 11,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 8,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m60_42_38_50.msb": {
+    "actual_chr_eids": [
+      42380800,
+      42380805
+    ],
+    "hp_bar_ref_eids": [
+      42380800,
+      42380805
+    ],
+    "companion_eids": [],
+    "helpers_used": [
+      "1042382900",
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015030",
+      "90015071",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015316",
+      "90015468",
+      "9005810",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085030",
+      "90085032",
+      "90085036",
+      "90085802",
+      "91005504",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 63,
+    "n_recognized": 11,
+    "is_multi_entity": true,
+    "is_multi_wave": false,
+    "complexity_score": 8,
+    "recommended_strategy": "swap_actual_chr"
+  },
+  "m60_42_39_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "9005810",
+      "90065901",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 20,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_39_10.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015017",
+      "90015030",
+      "90015031",
+      "90015041",
+      "90015071",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015400",
+      "90015401",
+      "90015402",
+      "90015403",
+      "90015404",
+      "90015405",
+      "90015406",
+      "90015407",
+      "90015468",
+      "9005810",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085023",
+      "90085032"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 45,
+    "n_recognized": 7,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_39_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "9005810",
+      "90065901",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 20,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_39_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "9005810",
+      "90065901",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 20,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_42_40_10.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [],
+    "hardcoded_anims": {},
+    "n_init_calls": 0,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_36_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005221",
+      "90005580",
+      "90005910",
+      "90015004",
+      "90015005",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005810",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 28,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_36_10.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005221",
+      "90005580",
+      "90005910",
+      "90015004",
+      "90015005",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005810",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 28,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_36_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005221",
+      "90005580",
+      "90005910",
+      "90015004",
+      "90015005",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005810",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 28,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_36_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005200",
+      "90005201",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015017",
+      "90015030",
+      "90015041",
+      "90015071",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015450",
+      "90015468",
+      "9005810"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 24,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_37_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "9005811",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085802",
+      "91005503",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 27,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_37_10.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "9005811",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085802",
+      "91005503",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 27,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_37_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "9005811",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085802",
+      "91005503",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 27,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_37_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005201",
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015017",
+      "90015030",
+      "90015041",
+      "90015071",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015468",
+      "9005810",
+      "90065901"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 23,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_38_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005200",
+      "90005580",
+      "90005910",
+      "90005931",
+      "90005933",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 34,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_38_10.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005211",
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015017",
+      "90015030",
+      "90015041",
+      "90015071",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005810",
+      "90065901",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 25,
+    "n_recognized": 4,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_38_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015006",
+      "90015008",
+      "90015009",
+      "90015017",
+      "90015030",
+      "90015041",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015208",
+      "90015501",
+      "91005503"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 22,
+    "n_recognized": 7,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_38_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005200",
+      "90005580",
+      "90005910",
+      "90005931",
+      "90005933",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 34,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_39_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005933",
+      "90005934",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015501",
+      "90085001",
+      "90085002",
+      "90085802",
+      "91005503",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 23,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_39_10.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015008",
+      "90015013",
+      "90015015",
+      "90015016",
+      "90015017",
+      "90015030",
+      "90015031",
+      "90015041",
+      "90015071",
+      "90015400",
+      "90015401",
+      "90015402",
+      "90015403",
+      "90015404",
+      "90015405",
+      "90015406",
+      "90015407",
+      "90015468",
+      "9005810",
+      "91005503"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 61,
+    "n_recognized": 8,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_39_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015008",
+      "90015017",
+      "90015030",
+      "90015041",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90065901",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 31,
+    "n_recognized": 14,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_43_39_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005933",
+      "90005934",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015501",
+      "90085001",
+      "90085002",
+      "90085802",
+      "91005503",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 23,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_36_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "1044362930",
+      "90005904",
+      "90005931",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "90035070",
+      "90035075",
+      "90035076",
+      "90035077",
+      "90035078",
+      "90035079",
+      "90035080",
+      "90035081",
+      "90035082",
+      "90035083",
+      "90035084",
+      "90035085",
+      "90035087",
+      "90035088",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085023",
+      "91005504"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 61,
+    "n_recognized": 9,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_36_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "1044362930",
+      "90005904",
+      "90005931",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "90035070",
+      "90035075",
+      "90035076",
+      "90035077",
+      "90035078",
+      "90035079",
+      "90035080",
+      "90035081",
+      "90035082",
+      "90035083",
+      "90035084",
+      "90035085",
+      "90035087",
+      "90035088",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085023",
+      "91005504"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 61,
+    "n_recognized": 9,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_36_30.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005211",
+      "90005251",
+      "90005580",
+      "90005910",
+      "90015004",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90065901",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 14,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_36_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "1044362930",
+      "90005904",
+      "90005931",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015501",
+      "90035070",
+      "90035075",
+      "90035076",
+      "90035077",
+      "90035078",
+      "90035079",
+      "90035080",
+      "90035081",
+      "90035082",
+      "90035083",
+      "90035084",
+      "90035085",
+      "90035087",
+      "90035088",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085023",
+      "91005504"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 61,
+    "n_recognized": 9,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_37_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "90085802",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 41,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_37_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "90085802",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 41,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_37_30.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005251",
+      "90015004",
+      "90015150",
+      "90015151",
+      "90015152"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 7,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_37_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90015004",
+      "90065901"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 5,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_38_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015004",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015501",
+      "90035070",
+      "90035072",
+      "90035075",
+      "90035076",
+      "90035077",
+      "90035078",
+      "90035079",
+      "90035080",
+      "90035081",
+      "90035082",
+      "90035083",
+      "90035084",
+      "90035085",
+      "90035087",
+      "90035088",
+      "90085001",
+      "90085002",
+      "90085802",
+      "91005504",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 41,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_38_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005200",
+      "90005250",
+      "90005260",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015005",
+      "90015006",
+      "90015008",
+      "90015017",
+      "90015030",
+      "90015041",
+      "90015150",
+      "90015151",
+      "90015152",
+      "91005503"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 39,
+    "n_recognized": 14,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_38_30.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015004",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015501",
+      "90035070",
+      "90035072",
+      "90035075",
+      "90035076",
+      "90035077",
+      "90035078",
+      "90035079",
+      "90035080",
+      "90035081",
+      "90035082",
+      "90035083",
+      "90035084",
+      "90035085",
+      "90035087",
+      "90035088",
+      "90085001",
+      "90085002",
+      "90085802",
+      "91005504",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 41,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_38_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015004",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015501",
+      "90035070",
+      "90035072",
+      "90035075",
+      "90035076",
+      "90035077",
+      "90035078",
+      "90035079",
+      "90035080",
+      "90035081",
+      "90035082",
+      "90035083",
+      "90035084",
+      "90035085",
+      "90035087",
+      "90035088",
+      "90085001",
+      "90085002",
+      "90085802",
+      "91005504",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 41,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_39_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "1044393000",
+      "90005580",
+      "90005910",
+      "90005933",
+      "90005934",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "90085802",
+      "91005503",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 46,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_39_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90015000",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015008",
+      "90015017",
+      "90015030",
+      "90015041",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005811"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 39,
+    "n_recognized": 21,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_39_30.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "1044393000",
+      "90005580",
+      "90005910",
+      "90005933",
+      "90005934",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "90085802",
+      "91005503",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 46,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_44_39_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "1044393000",
+      "90005580",
+      "90005910",
+      "90005933",
+      "90005934",
+      "90015000",
+      "90015002",
+      "90015004",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90065901",
+      "90085001",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "90085802",
+      "91005503",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 46,
+    "n_recognized": 3,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_36_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005211",
+      "90005250",
+      "90005580",
+      "90005904",
+      "90005910",
+      "90015005",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005810",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 25,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_36_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005211",
+      "90005250",
+      "90005580",
+      "90005904",
+      "90005910",
+      "90015005",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005810",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 25,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_36_30.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005904",
+      "90005917",
+      "90015002",
+      "90015005",
+      "90015006",
+      "90015008",
+      "90015021",
+      "90015030",
+      "90015150",
+      "90015151",
+      "90015152"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 14,
+    "n_recognized": 5,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_36_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005211",
+      "90005250",
+      "90005580",
+      "90005904",
+      "90005910",
+      "90015005",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005810",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 25,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_37_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005201",
+      "90005580",
+      "90005910",
+      "90015004",
+      "90015005",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005810",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 32,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_37_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005201",
+      "90005580",
+      "90005910",
+      "90015004",
+      "90015005",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005810",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 32,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_37_30.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005251",
+      "90005580",
+      "90005910",
+      "90015004",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90065901",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 15,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_37_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005201",
+      "90005580",
+      "90005910",
+      "90015004",
+      "90015005",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "9005810",
+      "90065901",
+      "90085002",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005503",
+      "91005505"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 32,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_38_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "1045382910",
+      "90005931",
+      "90015004",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015501"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 9,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_38_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "1045382910",
+      "90005931",
+      "90015004",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015501"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 9,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_38_30.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "1045382910",
+      "90005931",
+      "90015004",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015501"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 9,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_38_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "1045382910",
+      "90005931",
+      "90015004",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015501"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 9,
+    "n_recognized": 0,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_39_00.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90005931",
+      "90015000",
+      "90015002",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015316",
+      "90065901",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085023",
+      "90085030",
+      "90085032",
+      "90085037",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005504",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 64,
+    "n_recognized": 12,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_39_20.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90005931",
+      "90015000",
+      "90015002",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015316",
+      "90065901",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085023",
+      "90085030",
+      "90085032",
+      "90085037",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005504",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 64,
+    "n_recognized": 12,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_39_30.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90005931",
+      "90015000",
+      "90015002",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015316",
+      "90065901",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085023",
+      "90085030",
+      "90085032",
+      "90085037",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005504",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 64,
+    "n_recognized": 12,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  },
+  "m60_45_39_50.msb": {
+    "actual_chr_eids": [],
+    "hp_bar_ref_eids": [],
+    "companion_eids": [],
+    "helpers_used": [
+      "90005580",
+      "90005910",
+      "90005931",
+      "90015000",
+      "90015002",
+      "90015030",
+      "90015140",
+      "90015150",
+      "90015151",
+      "90015152",
+      "90015160",
+      "90015161",
+      "90015162",
+      "90015163",
+      "90015164",
+      "90015316",
+      "90065901",
+      "90085002",
+      "90085016",
+      "90085020",
+      "90085021",
+      "90085022",
+      "90085023",
+      "90085030",
+      "90085032",
+      "90085037",
+      "90085612",
+      "90085613",
+      "90085614",
+      "91005504",
+      "91005505",
+      "91005506"
+    ],
+    "hardcoded_anims": {},
+    "n_init_calls": 64,
+    "n_recognized": 12,
+    "is_multi_entity": false,
+    "is_multi_wave": false,
+    "complexity_score": 0,
+    "recommended_strategy": "none"
+  }
+}

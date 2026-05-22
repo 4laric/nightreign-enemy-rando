@@ -1,0 +1,21 @@
+{
+  "_schema": "pool_snapshot_v1",
+  "created": "2026-05-12T13:39:42.554011",
+  "description": "No cross-game imports, no SoTE-flavored heritage chrs. Use for friends who only own base Nightreign without DLC, or to taste pure vanilla-only randomization. As of v0.23.72-late, heritage_pack.json functions as a real pool toggle \u2014 its 41 SoTE-dependent c-prefixes get dropped from the engine tag set + roster when disabled here. Previously this preset used engine_kwargs.excluded_prefixes as a workaround; that mechanism is no longer needed for the heritage case.",
+  "engine_kwargs": {
+    "multiplayer_safe": false
+  },
+  "engine_version": "v0.23",
+  "name": "Vanilla NR only",
+  "pack_overrides": {
+    "er_heritage_imports.json": {
+      "enabled": false
+    },
+    "heritage_pack.json": {
+      "enabled": false
+    },
+    "mmv_imports.json": {
+      "enabled": false
+    }
+  }
+}

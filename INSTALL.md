@@ -70,7 +70,7 @@ on — the rest of the steps assume the environment is healthy.
 
 **Windows (recommended — no command prompt window):**
 
-Double-click `Launch.bat` — uses `pythonw` to run the GUI without a console window.
+Double-click `oops_rando_gui.pyw` — Windows runs `.pyw` files with `pythonw`, so the GUI opens with no console window.
 
 Or from PowerShell with no console window:
 ```

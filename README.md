@@ -19,8 +19,8 @@ history).
 3. Copy your game's Oodle DLL — `oo2core_*_win64.dll`, from the
    Nightreign `Game/` folder — into the bundle folder.
 4. Run `python check_setup.py` to confirm the environment is healthy.
-5. Launch the GUI: double-click `Launch.bat` or `oops_rando_gui.pyw`,
-   or run `python oops_rando_gui.py` from a terminal (use this one for
+5. Launch the GUI: double-click `oops_rando_gui.pyw`, or run
+   `python oops_rando_gui.py` from a terminal (use this one for
    diagnostic output).
 6. Point the output at your me3 profile's `map/mapstudio/` directory,
    click Randomize, then click **Install pre-patched EMEVD**.

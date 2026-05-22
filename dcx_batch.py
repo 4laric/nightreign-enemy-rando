@@ -540,7 +540,8 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     fallback_nameid=None,
                     chr_to_nameid_path=None,
                     test_mode_arenas=False,
-                    randomize_safe_nb_arenas=False):
+                    randomize_safe_nb_arenas=False,
+                    randomize_all_nb_arenas=False):
     """Full pipeline: decompress → shuffle → recompress.
 
     Cluster modes (multi-Part encounters within 2m of each other):
@@ -584,6 +585,11 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
     # swapped; EMEVD stays vanilla via the healthbar-step NB exclude.
     oops_v3.V3_RANDOMIZE_SAFE_NB_ARENAS = (
         randomize_safe_nb_arenas and not test_mode_arenas)
+    # v0.26.16: EXPERIMENTAL all-NB-arena MSB randomization. Same
+    # test-mode gate. Randomizes all 25 NB arenas incl. the multi-
+    # entity ones — expect breakage there. ORs with the safe flag.
+    oops_v3.V3_RANDOMIZE_ALL_NB_ARENAS = (
+        randomize_all_nb_arenas and not test_mode_arenas)
 
     work_dir = tempfile.mkdtemp(prefix='oops_rando_')
     try:

@@ -7093,6 +7093,16 @@ V3_SAFE_NB_RANDOMIZE_MSBS = frozenset({
 })
 V3_RANDOMIZE_SAFE_NB_ARENAS = False
 
+# v0.26.16: EXPERIMENTAL — randomize ALL 25 night-boss arenas, including
+# the 6 multi-entity arenas (Godskin Duo etc.) whose vanilla emevd runs
+# a synchronized multi-healthbar boss-init that is KNOWN to break under
+# a boss swap. When True, _force_rando_nb in pick_target_cp fires for
+# any arena in V3_NIGHT_BOSS_ARENA_MSBS (all 25), not just the safe
+# set. Expect CTDs / failed boss-init on the multi-entity arenas — a
+# diagnostic switch, not a play setting. ORs with the safe flag; emevd
+# stays vanilla either way.
+V3_RANDOMIZE_ALL_NB_ARENAS = False
+
 
 
 # v0.24.28: Starting encampment catalog. Asset MSBs that get instantiated
@@ -11126,16 +11136,20 @@ def pick_target_cp(recipient_cp, tags,
                                 slot_pos=slot_pos):
             return non_fragile_baseline_cp
 
-    # v0.26.16: safe-NB-arena randomization override. When the
-    # "randomize safe NB arenas" option is on, the 12 single-boss N1/N2
-    # arenas in V3_SAFE_NB_RANDOMIZE_MSBS are exempted from ALL THREE NB
-    # preservation gates below — their boss Part gets swapped while their
-    # EMEVD stays vanilla (healthbar step preserves NB EMEVD separately).
-    # Multi-entity arenas are NOT in the set, so their synchronized
-    # boss-init is never disturbed.
-    _force_rando_nb = (V3_RANDOMIZE_SAFE_NB_ARENAS
-                       and slot_msb_name is not None
-                       and slot_msb_name in V3_SAFE_NB_RANDOMIZE_MSBS)
+    # v0.26.16: NB-arena randomization override. Exempts an arena from
+    # ALL THREE NB preservation gates below so its boss Part gets
+    # swapped; EMEVD stays vanilla either way (the healthbar step
+    # preserves NB-arena EMEVD separately). Two scopes, OR-combined:
+    #   V3_RANDOMIZE_SAFE_NB_ARENAS — the 12 single-boss arenas only.
+    #   V3_RANDOMIZE_ALL_NB_ARENAS  — all 25, incl. the multi-entity
+    #     arenas whose synchronized boss-init is known to break (the
+    #     experimental switch).
+    _force_rando_nb = (
+        slot_msb_name is not None
+        and ((V3_RANDOMIZE_ALL_NB_ARENAS
+              and slot_msb_name in V3_NIGHT_BOSS_ARENA_MSBS)
+             or (V3_RANDOMIZE_SAFE_NB_ARENAS
+                 and slot_msb_name in V3_SAFE_NB_RANDOMIZE_MSBS)))
 
     # v0.25.1: arena-chr-role catalog whole-MSB vanilla preservation.
     # MSBs in V3_OVERLAY_PRESERVE_VANILLA_MSBS are flagged

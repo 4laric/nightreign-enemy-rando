@@ -738,20 +738,17 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
             print(f"  DIAGNOSTIC: oops_all_target_cp forced to "
                   f"{PLACED_PART_FORCE_CP!r} (was {oops_all_target_cp!r})")
             oops_all_target_cp = PLACED_PART_FORCE_CP
-        # v0.23.78: `mode` is rando_pipeline's local log-label variable;
-        # cmd_shuffle_v3's actual signature has NO `mode` parameter
-        # (its 4th positional is randomize_clusters). Passing mode here
-        # collided with the explicit `randomize_clusters=...` kwarg below
-        # — "TypeError: got multiple values for argument 'randomize_clusters'".
-        # Pre-existing latent bug; only fired now because Step 1a/2a make
-        # this code path get exercised end-to-end. mode stays in
-        # rando_pipeline's signature for log-label use; it just doesn't
-        # forward to the shuffler.
+        # `mode` is rando_pipeline's local log-label variable only —
+        # cmd_shuffle_v3 has no `mode` parameter, so it is not forwarded.
+        # v0.26.x: the cluster triad (randomize_clusters / cluster_shape /
+        # cluster_aware) was retired from cmd_shuffle_v3's signature when
+        # the shuffler was refactored; the GUI dropped its cluster toggles
+        # back at v0.19.27. These three remain as inert rando_pipeline
+        # parameters (for the cluster_label log line above and backward-
+        # compatible callers) but are NOT forwarded — passing them raised
+        # "unexpected keyword argument 'randomize_clusters'".
         oops_v3.cmd_shuffle_v3(vanilla_dir, shuffled_dir, seed,
-                                randomize_clusters=randomize_clusters,
-                                cluster_shape=cluster_shape,
                                 oops_all_target_cp=oops_all_target_cp,
-                                cluster_aware=cluster_aware,
                                 merchant_model_swap=merchant_model_swap,
                                 terrain_test_targets=terrain_test_targets,
                                 excluded_prefixes=excluded_prefixes,

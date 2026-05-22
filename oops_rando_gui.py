@@ -1547,6 +1547,12 @@ class RandoGUI:
         # Soft filter — chrs with only ghost variants stay pickable.
         # Default ON for visual stability.
         self.prefer_canonical_variants_var = tk.BooleanVar(value=True)
+        # v0.26.16: randomize the safe single-boss night-boss arenas.
+        # When ON (and test-mode OFF), the 13 single-boss N1/N2 arenas
+        # get their boss Part swapped while their EMEVD stays vanilla.
+        # Multi-entity arenas (Godskin Duo etc.) are excluded. Default
+        # OFF — opt-in; normal play keeps all night bosses vanilla.
+        self.randomize_safe_nb_arenas_var = tk.BooleanVar(value=False)
         # v0.20.42: diagnostic batch — when non-empty, fragile slots are
         # restricted to ONLY this comma-separated list of c-prefixes. Used
         # to attribute CTDs to a small batch of candidates instead of
@@ -3391,6 +3397,32 @@ class RandoGUI:
             "by npc_param_id if you want variety without this filter.\n\n"
             "Mechanically every variant works; only visuals are at "
             "risk with ghosts."
+        ))
+
+        # v0.26.16: randomize-safe-night-boss-arenas toggle.
+        rn_row = ttk.Frame(diag_frame); rn_row.pack(fill='x', pady=(8, 0))
+        rn_check = ttk.Checkbutton(rn_row,
+                         text="Randomize safe night-boss arenas (13 single-boss N1/N2, vanilla EMEVD)",
+                         variable=self.randomize_safe_nb_arenas_var,
+                         style='TCheckbutton')
+        rn_check.pack(side='left')
+        Tooltip(rn_check,
+                "When ON, the 13 single-boss N1/N2 arenas get their "
+                "boss randomized like any other slot — but their EMEVD "
+                "is left vanilla (no patch, no test-mode template). The "
+                "vanilla single-boss intro handles a swapped boss fine.\n\n"
+                "The 6 multi-entity arenas (Godskin Duo, the Cavalryman "
+                "duos, etc.) are NOT randomized — their synchronized "
+                "multi-healthbar init breaks under a boss swap.\n\n"
+                "Has no effect when Test-mode arenas is ON (test-mode "
+                "overlays the EMEVD, which this option needs left vanilla).")
+        make_info_icon(rn_row, tooltip_text=(
+            "Default: OFF\n\n"
+            "OFF — all 25 night-boss arenas ship fully vanilla.\n"
+            "ON  — the 13 safe single-boss arenas get a randomized "
+            "boss with vanilla EMEVD; the 6 multi-entity arenas and the "
+            "Augur descent stay vanilla.\n\n"
+            "Requires Test-mode arenas OFF."
         ))
 
         # v0.26.15: mount/rider pair detection (cut 1 — experimental).
@@ -7020,6 +7052,7 @@ class RandoGUI:
             'disable_resilient_filter': bool(self.disable_resilient_filter_var.get()),
             'test_mode_arenas': bool(self.test_mode_arenas_var.get()),
             'prefer_canonical_variants': bool(self.prefer_canonical_variants_var.get()),
+            'randomize_safe_nb_arenas': bool(self.randomize_safe_nb_arenas_var.get()),
             # v0.20.38: auto-couple non_fragile_baseline_cp to the diagnostic
             # checkbox. When diagnostic is ON, force every non-fragile slot
             # to the engine's V3_DEFAULT_NON_FRAGILE_BASELINE_CP (Leyndell
@@ -7273,6 +7306,7 @@ class RandoGUI:
                         fallback_nameid=fallback_nameid,
                         chr_to_nameid_path=chr_nameid if os.path.exists(chr_nameid) else None,
                         test_mode_arenas=bool(config.get('test_mode_arenas')),
+                        randomize_safe_nb_arenas=bool(config.get('randomize_safe_nb_arenas')),
                         **engine_kwargs)
                 else:
                     # cmd_shuffle_v3 takes (input_dir, output_dir, seed, ...)

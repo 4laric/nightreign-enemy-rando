@@ -539,7 +539,8 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     mod_msg_bundle=None,
                     fallback_nameid=None,
                     chr_to_nameid_path=None,
-                    test_mode_arenas=False):
+                    test_mode_arenas=False,
+                    randomize_safe_nb_arenas=False):
     """Full pipeline: decompress → shuffle → recompress.
 
     Cluster modes (multi-Part encounters within 2m of each other):
@@ -576,6 +577,13 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
     # overlay handles those arenas). The healthbar step below applies the
     # matching exclusion. See V3_NIGHT_BOSS_ARENA_MSBS in oops_v3.py.
     oops_v3.V3_PRESERVE_NIGHT_BOSS_ARENAS = not test_mode_arenas
+    # v0.26.16: safe-NB-arena MSB randomization. Only takes effect
+    # when test-mode is OFF (test-mode overlays the EMEVD, which would
+    # void the "vanilla EMEVD" promise). When on, the 13 single-boss
+    # N1/N2 arenas in V3_SAFE_NB_RANDOMIZE_MSBS get their boss Part
+    # swapped; EMEVD stays vanilla via the healthbar-step NB exclude.
+    oops_v3.V3_RANDOMIZE_SAFE_NB_ARENAS = (
+        randomize_safe_nb_arenas and not test_mode_arenas)
 
     work_dir = tempfile.mkdtemp(prefix='oops_rando_')
     try:

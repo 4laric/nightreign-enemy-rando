@@ -7058,6 +7058,39 @@ V3_NIGHT_BOSS_ARENA_MSBS = _load_night_boss_arena_msbs()
 V3_PRESERVE_NIGHT_BOSS_ARENAS = True
 
 
+# v0.26.16: safe single-boss N1/N2 arenas — eligible for MSB
+# randomization under VANILLA emevd.
+#
+# Derived from the v0.25.9 N1/N2 expedition-arena set
+# (dev/generate_test_mode_arenas.py:N1_N2_ARENAS, 19 arenas) minus the
+# 6 multi-entity arenas whose vanilla emevd runs a synchronized multi-
+# healthbar / multi-boss init that breaks when the primary boss chr is
+# swapped (the m48_80 Godskin Duo failure class):
+#   m48_50  Draconic Tree Sentinel + 2x Royal Cavalryman
+#   m48_60  Tree Sentinel + 2x Royal Cavalryman
+#   m48_80  Godskin Duo (Noble + Apostle)
+#   m49_25  Crucible Knight + Golden Hippopotamus
+#   m49_28  Night's Cavalry x2 (Glaive + Flail)
+#   m49_29  Demi-Human Queen + Swordmaster
+# Nameless King (m48_20) is KEPT — single headline boss (the Storm
+# King is its phase-1 mount, not a co-equal second boss).
+#
+# When V3_RANDOMIZE_SAFE_NB_ARENAS is True these 13 arenas are exempted
+# from all three NB-preservation gates in pick_target_cp, so their boss
+# Part gets swapped. Their EMEVD is NOT touched — the healthbar step
+# preserves NB-arena EMEVD vanilla independently. dcx_batch sets the
+# flag and only enables it when test-mode arenas are OFF (test-mode
+# would overlay the EMEVD and void the vanilla-EMEVD guarantee).
+V3_SAFE_NB_RANDOMIZE_MSBS = frozenset({
+    'm48_20_00_00.msb', 'm48_40_00_00.msb', 'm48_70_00_00.msb',
+    'm48_90_00_00.msb', 'm49_10_00_00.msb', 'm49_17_00_00.msb',
+    'm49_18_00_00.msb', 'm49_19_00_00.msb', 'm49_20_00_00.msb',
+    'm49_21_00_00.msb', 'm49_23_00_00.msb', 'm49_26_00_00.msb',
+    'm49_27_00_00.msb',
+})
+V3_RANDOMIZE_SAFE_NB_ARENAS = False
+
+
 
 # v0.24.28: Starting encampment catalog. Asset MSBs that get instantiated
 # near the wagon spawn at the start of a Limveld Expedition. Used by:
@@ -11090,6 +11123,17 @@ def pick_target_cp(recipient_cp, tags,
                                 slot_pos=slot_pos):
             return non_fragile_baseline_cp
 
+    # v0.26.16: safe-NB-arena randomization override. When the
+    # "randomize safe NB arenas" option is on, the 13 single-boss N1/N2
+    # arenas in V3_SAFE_NB_RANDOMIZE_MSBS are exempted from ALL THREE NB
+    # preservation gates below — their boss Part gets swapped while their
+    # EMEVD stays vanilla (healthbar step preserves NB EMEVD separately).
+    # Multi-entity arenas are NOT in the set, so their synchronized
+    # boss-init is never disturbed.
+    _force_rando_nb = (V3_RANDOMIZE_SAFE_NB_ARENAS
+                       and slot_msb_name is not None
+                       and slot_msb_name in V3_SAFE_NB_RANDOMIZE_MSBS)
+
     # v0.25.1: arena-chr-role catalog whole-MSB vanilla preservation.
     # MSBs in V3_OVERLAY_PRESERVE_VANILLA_MSBS are flagged
     # 'preserve_primary' by data/nr_boss_arena_chr_roles.json — multi-
@@ -11097,7 +11141,9 @@ def pick_target_cp(recipient_cp, tags,
     # risks breaking the choreographed wake-handshake chain. Return
     # None for every Part in those MSBs, regardless of pi or tier.
     # See block comment near V3_OVERLAY_PRESERVE_VANILLA_MSBS for context.
-    if slot_msb_name is not None and slot_msb_name in V3_OVERLAY_PRESERVE_VANILLA_MSBS:
+    if (slot_msb_name is not None
+            and slot_msb_name in V3_OVERLAY_PRESERVE_VANILLA_MSBS
+            and not _force_rando_nb):
         return None
 
     # v0.26.16: night-boss-arena whole-MSB preservation. When test-mode
@@ -11105,7 +11151,8 @@ def pick_target_cp(recipient_cp, tags,
     # and every Part in a night-boss arena is held vanilla — a catalog-
     # independent backstop. See block comment near V3_NIGHT_BOSS_ARENA_MSBS.
     if (V3_PRESERVE_NIGHT_BOSS_ARENAS and slot_msb_name is not None
-            and slot_msb_name in V3_NIGHT_BOSS_ARENA_MSBS):
+            and slot_msb_name in V3_NIGHT_BOSS_ARENA_MSBS
+            and not _force_rando_nb):
         return None
 
     # v0.24.101: V3_PRESERVE_SLOTS strict (msb, pi)-level preservation gate.
@@ -11118,7 +11165,8 @@ def pick_target_cp(recipient_cp, tags,
     # Rellana and Bell Bearing Hunter at the supposedly-preserved m49_28
     # arena. Adding the gate here closes that loop.
     if slot_msb_name is not None and slot_pi is not None:
-        if (slot_msb_name, slot_pi) in V3_PRESERVE_SLOTS:
+        if ((slot_msb_name, slot_pi) in V3_PRESERVE_SLOTS
+                and not _force_rando_nb):
             return None
 
     # v0.23.07: Unique-target reservation early-return. If this slot was

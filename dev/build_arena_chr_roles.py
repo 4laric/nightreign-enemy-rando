@@ -433,7 +433,19 @@ def _classify_strategy(parsed: dict[str, Any]) -> tuple[str, int]:
     #   - chr-init hardcoded anims (filtered) OR
     #   - many companions (>=4) under wave-sync coordination
     # Was previously: any hardcoded_anims OR many companions — too lenient.
-    REAL_MULTI_ENTITY_HELPERS = {'90065050', '90065040', '90065041'}
+    #
+    # v0.26.16: added 90065130/131/132 — the Godskin-duo HP-bar helper
+    # family. m48_80 (Godskin Duo NB) is a genuine two-entity simultaneous
+    # fight (boss eids 48800800 + 48800810, two healthbars) but has no
+    # hardcoded intro anim and isn't wave-based, so the v0.25.2 criteria
+    # produced a false NEGATIVE: it classified swap_actual_chr, the Noble
+    # half (48800800) got swapped to Apostle, and the duo intro handshake
+    # hung — boss never started. The duo uses 90065130/131/132 rather than
+    # the 90065050/040/041 family the classifier knew about. This helper
+    # family is exclusive to m48_80, so the addition has zero blast radius
+    # on other arenas.
+    REAL_MULTI_ENTITY_HELPERS = {'90065050', '90065040', '90065041',
+                                 '90065130', '90065131', '90065132'}
     has_real_me = bool(helpers & REAL_MULTI_ENTITY_HELPERS)
     if has_real_me or chr_init_hardcoded or len(companion) >= 4:
         return ('preserve_primary', score)

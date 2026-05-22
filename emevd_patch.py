@@ -2158,6 +2158,31 @@ def cmd_audit(input_dir):
         print(f"✓ All known dormant-AI bug shapes covered.")
 
 
+# v0.26.16: per-map EMEVD vanilla-preserve set. Arenas listed here are
+# skipped entirely by cmd_patch — no patch functions run, nothing is
+# written, so the vanilla .emevd.dcx ships untouched. Use this for
+# arenas whose MSB is also fully preserved (preserve_primary in
+# data/nr_boss_arena_chr_roles.json): if the chr layout is vanilla, the
+# compensation patches have nothing to compensate for, and the safest
+# script is the original. Keyed by stem (no .emevd.dcx.js suffix).
+#
+#   m48_80_00_00 — Godskin Duo NB. Reclassified preserve_primary after
+#                  the Noble→Apostle swap broke the duo intro handshake.
+#                  MSB now vanilla; keep the EMEVD vanilla to match.
+EMEVD_PRESERVE_VANILLA = {
+    'm48_80_00_00',
+}
+
+
+def _emevd_stem(filename):
+    """Strip emevd JS suffixes to get the data-file stem (m48_80_00_00)."""
+    stem = filename
+    for suffix in ('.emevd.dcx.js', '.emevd.js', '.dcx.js', '.js'):
+        if stem.endswith(suffix):
+            return stem[:-len(suffix)]
+    return stem
+
+
 def cmd_patch(in_dir, out_dir, patch_names=None):
     if patch_names is None:
         patch_names = list(PATCHES.keys())
@@ -2177,8 +2202,16 @@ def cmd_patch(in_dir, out_dir, patch_names=None):
 
     summary = {p: 0 for p in patch_names}  # patch_name -> total substitutions
     files_modified = 0
+    files_preserved = 0
 
     for fname in files:
+        # v0.26.16: vanilla-preserve skip. Arenas in EMEVD_PRESERVE_VANILLA
+        # are never patched and never written — DarkScript3 won't recompile
+        # them and the game loads the original .emevd.dcx.
+        if _emevd_stem(fname) in EMEVD_PRESERVE_VANILLA:
+            files_preserved += 1
+            print(f"  {fname}: SKIPPED (EMEVD_PRESERVE_VANILLA — vanilla)")
+            continue
         # v0.23.72-late: read/write in binary mode to preserve CRLF line
         # endings. DarkScript3 was decompiled on Windows and emits CRLF
         # throughout. Python's default text-mode I/O on Linux normalizes
@@ -2218,6 +2251,8 @@ def cmd_patch(in_dir, out_dir, patch_names=None):
         return
 
     print(f"✓ Patched {files_modified}/{len(files)} files, {sum(summary.values())} total substitutions")
+    if files_preserved:
+        print(f"  ({files_preserved} file(s) skipped — EMEVD_PRESERVE_VANILLA)")
     print()
     print("Substitutions per patch:")
     for pname, n in summary.items():

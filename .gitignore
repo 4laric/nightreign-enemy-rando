@@ -1,0 +1,85 @@
+# Python bytecode caches
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Backup / temp files we may produce
+*.bak
+*.tmp
+
+# User-specific local outputs. The rando writes spoilers, patched MSBs,
+# and patched emevd wherever the user picks — but Alaric (and probably
+# others) habitually configure the output dir at the repo root, so these
+# patterns catch the common cases. /output/ and /build/ are bonus catches
+# for anyone using those as convention.
+/output/
+/build/
+/spoilers/
+/shuffled_msbs/
+
+# scripts/test_*.py write into per-test out-dirs at the repo root
+/test_*_out/
+
+# Old archived backups (item_dlc01.msgbnd.dcx history, etc.) — keep
+# locally, don't ship.
+/archive/
+
+# dump_vanilla_fmg.py output. Regeneratable from a vanilla install; no
+# reason to commit the 1MB dump.
+vanilla_npcname_dump.txt
+
+# Oodle DLL — copied in by the user from their NR install. Should never
+# be committed; it's redistributable but version-specific to NR.
+oo2core_*.dll
+
+# Per-user GUI settings + remembered paths. The GUI persists install
+# locations, last-used dirs, MMV path, etc. into these dotfiles — all
+# user-specific.
+.4laric_*.json
+
+# ---------------------------------------------------------------------
+# Bundled game-derived assets — NOT tracked in git.
+#
+# These are FromSoftware's copyrighted data, included in RELEASE BUNDLES
+# as a convenience for people who own Nightreign. They must not live in
+# git history (history is permanent, and this isn't ours to redistribute
+# via a repo). The release/build step copies them into the shipping zip;
+# git only ever holds our own code, docs, data catalogs, and authored
+# content.
+#
+# To work locally: unzip a release bundle, or UXM-unpack your own NR
+# install, to repopulate these directories.
+# ---------------------------------------------------------------------
+
+# Game-derived BINARY assets — excluded by file type, anywhere in the
+# tree. These are FromSoftware's data; the .js text dumps alongside them
+# (DarkScript3 EMEVD dumps) ARE kept — they're our reviewable source for
+# the patch work.
+*.msb.dcx
+*.msb
+*.emevd.dcx
+*.emevd
+*.fmg
+*.msgbnd
+*.msgbnd.dcx
+*.anibnd.dcx
+*.chrbnd.dcx
+*.behbnd.dcx
+
+# Bundled vanilla map directory (redundant with *.msb.dcx above, but
+# explicit — this whole dir is game data, shipped only in release zips).
+/vanilla_msbs/
+
+# Pre-patched EMEVD bundle directory — .dcx excluded by type above; the
+# directory pattern also catches anything else game-derived dropped here.
+/patched_emevd/*.dcx
+
+# Game-derived aicommon bundles
+/bundled_aicommon/*.dcx

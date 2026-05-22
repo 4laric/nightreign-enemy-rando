@@ -473,6 +473,31 @@ V3_EXCLUDE_PREFIXES = {
     'c4500',
     'c4504',
     'c4505',
+
+    # v0.26.16: ban the three unverified regular-crab imports.
+    # CTD root cause (seed 704822, v0.26.15): c2277 "Crab (Golden Tufts)"
+    # CTDs on spawn — write fault to 0x24, near-null deref during chr
+    # init. c2277 is an imported_chr that was NEVER playtest-verified:
+    #   - v0.24.40 proactively banned c2273/c2274/c2275/c2277 (no
+    #     anim_class/locomotion/size_class — matched the c3360/c4430
+    #     confirmed-broken-runtime profile).
+    #   - v0.24.41 un-banned ONLY c2274 (Giant Sleep Crab), because it
+    #     was specifically playtest-confirmed. c2273/c2275/c2277 stayed
+    #     banned, explicitly flagged "probably aren't broken" = unverified.
+    #   - v0.24.72 tag-backfill filled c2273/c2275/c2277 -> aquatic/S by
+    #     *family inference*. That satisfied has-tags gates but verified
+    #     nothing about the actual assets.
+    #   - v0.24.102 removed their caps from _LIFTED_V0_24_65.
+    # Net: c2277 went banned -> uncapped-and-live without ever being
+    # verified the way c2274 was. Same failure shape as the c5840
+    # '(Unused)' leak — the detection signal was removed, not the defect.
+    # Likely an incomplete heritage/MMV deployment (NpcThinkParam row or
+    # behaviorVariationId mismatch on the imported behbnd).
+    # c2273/c2275 are the same unverified import batch — banning all three.
+    # c2271 (vanilla) and c2274/c2276 (verified giants) stay eligible.
+    'c2273',  # Crab (Maggots)       — unverified import, CTD-suspect
+    'c2275',  # Crab (Clean)         — unverified import, CTD-suspect
+    'c2277',  # Crab (Golden Tufts)  — confirmed CTD, seed 704822
 }
 
 # C-prefixes excluded as SOURCES only (slot stays vanilla) but allowed as targets.

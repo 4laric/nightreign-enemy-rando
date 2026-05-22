@@ -1,0 +1,5256 @@
+{
+ "_meta": {
+  "generator": "extract_npc_think_pairs.py",
+  "msb_dir": "/tmp/nrmsb/nr_decompiled_msbs",
+  "n_msbs": 300,
+  "n_parts": 4513,
+  "prefix_filter": "(none)",
+  "parse_failures": []
+ },
+ "pairs": {
+  "5570639": {
+   "prefix": "c3160",
+   "placements": 1,
+   "thinks": {
+    "5373952": 1
+   },
+   "dominant_think": "5373952"
+  },
+  "20410010": {
+   "prefix": "c2041",
+   "placements": 25,
+   "thinks": {
+    "20410000": 25
+   },
+   "dominant_think": "20410000"
+  },
+  "21000000": {
+   "prefix": "c2100",
+   "placements": 1,
+   "thinks": {
+    "21000000": 1
+   },
+   "dominant_think": "21000000"
+  },
+  "21000020": {
+   "prefix": "c2100",
+   "placements": 2,
+   "thinks": {
+    "21000010": 2
+   },
+   "dominant_think": "21000010"
+  },
+  "21000030": {
+   "prefix": "c2100",
+   "placements": 1,
+   "thinks": {
+    "21000020": 1
+   },
+   "dominant_think": "21000020"
+  },
+  "21000040": {
+   "prefix": "c2100",
+   "placements": 2,
+   "thinks": {
+    "21000010": 2
+   },
+   "dominant_think": "21000010"
+  },
+  "21300030": {
+   "prefix": "c2130",
+   "placements": 1,
+   "thinks": {
+    "21300500": 1
+   },
+   "dominant_think": "21300500"
+  },
+  "21300510": {
+   "prefix": "c2130",
+   "placements": 1,
+   "thinks": {
+    "21300500": 1
+   },
+   "dominant_think": "21300500"
+  },
+  "21300520": {
+   "prefix": "c2130",
+   "placements": 1,
+   "thinks": {
+    "21300500": 1
+   },
+   "dominant_think": "21300500"
+  },
+  "21400020": {
+   "prefix": "c2140",
+   "placements": 2,
+   "thinks": {
+    "21400010": 1,
+    "21400000": 1
+   },
+   "dominant_think": "21400010"
+  },
+  "21400210": {
+   "prefix": "c2140",
+   "placements": 1,
+   "thinks": {
+    "21400020": 1
+   },
+   "dominant_think": "21400020"
+  },
+  "21400220": {
+   "prefix": "c2140",
+   "placements": 1,
+   "thinks": {
+    "21400010": 1
+   },
+   "dominant_think": "21400010"
+  },
+  "21401020": {
+   "prefix": "c2140",
+   "placements": 2,
+   "thinks": {
+    "21401010": 2
+   },
+   "dominant_think": "21401010"
+  },
+  "21401030": {
+   "prefix": "c2140",
+   "placements": 1,
+   "thinks": {
+    "21401000": 1
+   },
+   "dominant_think": "21401000"
+  },
+  "21401210": {
+   "prefix": "c2140",
+   "placements": 1,
+   "thinks": {
+    "21401010": 1
+   },
+   "dominant_think": "21401010"
+  },
+  "21401410": {
+   "prefix": "c2140",
+   "placements": 1,
+   "thinks": {
+    "21401010": 1
+   },
+   "dominant_think": "21401010"
+  },
+  "21500200": {
+   "prefix": "c2150",
+   "placements": 6,
+   "thinks": {
+    "21500000": 6
+   },
+   "dominant_think": "21500000"
+  },
+  "21500300": {
+   "prefix": "c2150",
+   "placements": 1,
+   "thinks": {
+    "21500000": 1
+   },
+   "dominant_think": "21500000"
+  },
+  "21500310": {
+   "prefix": "c2150",
+   "placements": 1,
+   "thinks": {
+    "21500000": 1
+   },
+   "dominant_think": "21500000"
+  },
+  "21500400": {
+   "prefix": "c2150",
+   "placements": 3,
+   "thinks": {
+    "21500400": 3
+   },
+   "dominant_think": "21500400"
+  },
+  "21500500": {
+   "prefix": "c2150",
+   "placements": 1,
+   "thinks": {
+    "0": 1
+   },
+   "dominant_think": "0"
+  },
+  "21500510": {
+   "prefix": "c2150",
+   "placements": 1,
+   "thinks": {
+    "21500000": 1
+   },
+   "dominant_think": "21500000"
+  },
+  "22700010": {
+   "prefix": "c2270",
+   "placements": 10,
+   "thinks": {
+    "22700000": 10
+   },
+   "dominant_think": "22700000"
+  },
+  "22710010": {
+   "prefix": "c2271",
+   "placements": 131,
+   "thinks": {
+    "22710000": 110,
+    "22710010": 21
+   },
+   "dominant_think": "22710000"
+  },
+  "22761010": {
+   "prefix": "c2276",
+   "placements": 1,
+   "thinks": {
+    "22760010": 1
+   },
+   "dominant_think": "22760010"
+  },
+  "22761020": {
+   "prefix": "c2276",
+   "placements": 1,
+   "thinks": {
+    "22760020": 1
+   },
+   "dominant_think": "22760020"
+  },
+  "25000020": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "25000020": 1
+   },
+   "dominant_think": "25000020"
+  },
+  "25000030": {
+   "prefix": "c2500",
+   "placements": 2,
+   "thinks": {
+    "25000010": 2
+   },
+   "dominant_think": "25000010"
+  },
+  "25000040": {
+   "prefix": "c2500",
+   "placements": 6,
+   "thinks": {
+    "25000030": 6
+   },
+   "dominant_think": "25000030"
+  },
+  "25001010": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "25001010": 1
+   },
+   "dominant_think": "25001010"
+  },
+  "25001020": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "25001010": 1
+   },
+   "dominant_think": "25001010"
+  },
+  "25001030": {
+   "prefix": "c2500",
+   "placements": 3,
+   "thinks": {
+    "25001020": 3
+   },
+   "dominant_think": "25001020"
+  },
+  "25008000": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "25008000": 1
+   },
+   "dominant_think": "25008000"
+  },
+  "25008100": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "1": 1
+   },
+   "dominant_think": "1"
+  },
+  "30000010": {
+   "prefix": "c3000",
+   "placements": 88,
+   "thinks": {
+    "30000000": 87,
+    "30000010": 1
+   },
+   "dominant_think": "30000000"
+  },
+  "30000020": {
+   "prefix": "c3000",
+   "placements": 4,
+   "thinks": {
+    "30000050": 4
+   },
+   "dominant_think": "30000050"
+  },
+  "30000110": {
+   "prefix": "c3000",
+   "placements": 38,
+   "thinks": {
+    "30000100": 5,
+    "30000000": 33
+   },
+   "dominant_think": "30000000"
+  },
+  "30000120": {
+   "prefix": "c3000",
+   "placements": 2,
+   "thinks": {
+    "30000110": 2
+   },
+   "dominant_think": "30000110"
+  },
+  "30001010": {
+   "prefix": "c3000",
+   "placements": 48,
+   "thinks": {
+    "30001000": 45,
+    "30000000": 3
+   },
+   "dominant_think": "30001000"
+  },
+  "30001020": {
+   "prefix": "c3000",
+   "placements": 2,
+   "thinks": {
+    "30001050": 2
+   },
+   "dominant_think": "30001050"
+  },
+  "30003010": {
+   "prefix": "c3000",
+   "placements": 9,
+   "thinks": {
+    "30003000": 9
+   },
+   "dominant_think": "30003000"
+  },
+  "30003210": {
+   "prefix": "c3000",
+   "placements": 18,
+   "thinks": {
+    "30003000": 18
+   },
+   "dominant_think": "30003000"
+  },
+  "30004010": {
+   "prefix": "c3000",
+   "placements": 2,
+   "thinks": {
+    "30000050": 2
+   },
+   "dominant_think": "30000050"
+  },
+  "30004020": {
+   "prefix": "c3000",
+   "placements": 23,
+   "thinks": {
+    "30000000": 23
+   },
+   "dominant_think": "30000000"
+  },
+  "30004110": {
+   "prefix": "c3000",
+   "placements": 1,
+   "thinks": {
+    "30000110": 1
+   },
+   "dominant_think": "30000110"
+  },
+  "30004120": {
+   "prefix": "c3000",
+   "placements": 19,
+   "thinks": {
+    "30000100": 19
+   },
+   "dominant_think": "30000100"
+  },
+  "30005010": {
+   "prefix": "c3000",
+   "placements": 1,
+   "thinks": {
+    "30001050": 1
+   },
+   "dominant_think": "30001050"
+  },
+  "30005030": {
+   "prefix": "c3000",
+   "placements": 5,
+   "thinks": {
+    "30001000": 5
+   },
+   "dominant_think": "30001000"
+  },
+  "30006030": {
+   "prefix": "c3000",
+   "placements": 16,
+   "thinks": {
+    "30002000": 16
+   },
+   "dominant_think": "30002000"
+  },
+  "30008020": {
+   "prefix": "c3000",
+   "placements": 5,
+   "thinks": {
+    "30000120": 5
+   },
+   "dominant_think": "30000120"
+  },
+  "30100010": {
+   "prefix": "c3010",
+   "placements": 15,
+   "thinks": {
+    "30100000": 15
+   },
+   "dominant_think": "30100000"
+  },
+  "30100120": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30100030": 1
+   },
+   "dominant_think": "30100030"
+  },
+  "30100190": {
+   "prefix": "c3010",
+   "placements": 2,
+   "thinks": {
+    "30100010": 2
+   },
+   "dominant_think": "30100010"
+  },
+  "30100270": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30100000": 1
+   },
+   "dominant_think": "30100000"
+  },
+  "30100280": {
+   "prefix": "c3010",
+   "placements": 2,
+   "thinks": {
+    "30100040": 2
+   },
+   "dominant_think": "30100040"
+  },
+  "30101010": {
+   "prefix": "c3010",
+   "placements": 7,
+   "thinks": {
+    "30101000": 7
+   },
+   "dominant_think": "30101000"
+  },
+  "30101110": {
+   "prefix": "c3010",
+   "placements": 2,
+   "thinks": {
+    "30101010": 2
+   },
+   "dominant_think": "30101010"
+  },
+  "30101210": {
+   "prefix": "c3010",
+   "placements": 3,
+   "thinks": {
+    "30101000": 3
+   },
+   "dominant_think": "30101000"
+  },
+  "30101240": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30101030": 1
+   },
+   "dominant_think": "30101030"
+  },
+  "30101250": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30101000": 1
+   },
+   "dominant_think": "30101000"
+  },
+  "30101260": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30101040": 1
+   },
+   "dominant_think": "30101040"
+  },
+  "30102010": {
+   "prefix": "c3010",
+   "placements": 4,
+   "thinks": {
+    "30102000": 2,
+    "30102020": 2
+   },
+   "dominant_think": "30102000"
+  },
+  "30102120": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30102050": 1
+   },
+   "dominant_think": "30102050"
+  },
+  "30102130": {
+   "prefix": "c3010",
+   "placements": 2,
+   "thinks": {
+    "30102010": 2
+   },
+   "dominant_think": "30102010"
+  },
+  "30102240": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30102000": 1
+   },
+   "dominant_think": "30102000"
+  },
+  "30102420": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30102050": 1
+   },
+   "dominant_think": "30102050"
+  },
+  "30106010": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30100020": 1
+   },
+   "dominant_think": "30100020"
+  },
+  "30107010": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30101020": 1
+   },
+   "dominant_think": "30101020"
+  },
+  "30200010": {
+   "prefix": "c3020",
+   "placements": 38,
+   "thinks": {
+    "30200000": 38
+   },
+   "dominant_think": "30200000"
+  },
+  "30200020": {
+   "prefix": "c3020",
+   "placements": 2,
+   "thinks": {
+    "30200050": 2
+   },
+   "dominant_think": "30200050"
+  },
+  "30200120": {
+   "prefix": "c3020",
+   "placements": 2,
+   "thinks": {
+    "30200050": 2
+   },
+   "dominant_think": "30200050"
+  },
+  "30208010": {
+   "prefix": "c3020",
+   "placements": 3,
+   "thinks": {
+    "30200010": 3
+   },
+   "dominant_think": "30200010"
+  },
+  "30500010": {
+   "prefix": "c3050",
+   "placements": 1,
+   "thinks": {
+    "30500000": 1
+   },
+   "dominant_think": "30500000"
+  },
+  "30500110": {
+   "prefix": "c3050",
+   "placements": 1,
+   "thinks": {
+    "30500000": 1
+   },
+   "dominant_think": "30500000"
+  },
+  "30600020": {
+   "prefix": "c3060",
+   "placements": 1,
+   "thinks": {
+    "30600020": 1
+   },
+   "dominant_think": "30600020"
+  },
+  "30600030": {
+   "prefix": "c3060",
+   "placements": 2,
+   "thinks": {
+    "30600090": 2
+   },
+   "dominant_think": "30600090"
+  },
+  "30600040": {
+   "prefix": "c3350",
+   "placements": 3,
+   "thinks": {
+    "30600000": 3
+   },
+   "dominant_think": "30600000"
+  },
+  "30601020": {
+   "prefix": "c3060",
+   "placements": 2,
+   "thinks": {
+    "30601020": 2
+   },
+   "dominant_think": "30601020"
+  },
+  "30601030": {
+   "prefix": "c3060",
+   "placements": 1,
+   "thinks": {
+    "30601010": 1
+   },
+   "dominant_think": "30601010"
+  },
+  "30800010": {
+   "prefix": "c3080",
+   "placements": 12,
+   "thinks": {
+    "30800000": 12
+   },
+   "dominant_think": "30800000"
+  },
+  "30801010": {
+   "prefix": "c3080",
+   "placements": 4,
+   "thinks": {
+    "30800000": 4
+   },
+   "dominant_think": "30800000"
+  },
+  "30801020": {
+   "prefix": "c3080",
+   "placements": 3,
+   "thinks": {
+    "30800010": 3
+   },
+   "dominant_think": "30800010"
+  },
+  "30806010": {
+   "prefix": "c3080",
+   "placements": 1,
+   "thinks": {
+    "30802000": 1
+   },
+   "dominant_think": "30802000"
+  },
+  "30807010": {
+   "prefix": "c3080",
+   "placements": 1,
+   "thinks": {
+    "30802000": 1
+   },
+   "dominant_think": "30802000"
+  },
+  "30807020": {
+   "prefix": "c3080",
+   "placements": 1,
+   "thinks": {
+    "30802010": 1
+   },
+   "dominant_think": "30802010"
+  },
+  "30808010": {
+   "prefix": "c3080",
+   "placements": 1,
+   "thinks": {
+    "30802000": 1
+   },
+   "dominant_think": "30802000"
+  },
+  "31000010": {
+   "prefix": "c3100",
+   "placements": 1,
+   "thinks": {
+    "31000020": 1
+   },
+   "dominant_think": "31000020"
+  },
+  "31000020": {
+   "prefix": "c3100",
+   "placements": 1,
+   "thinks": {
+    "31000010": 1
+   },
+   "dominant_think": "31000010"
+  },
+  "31000030": {
+   "prefix": "c3100",
+   "placements": 1,
+   "thinks": {
+    "31000030": 1
+   },
+   "dominant_think": "31000030"
+  },
+  "31500010": {
+   "prefix": "c3150",
+   "placements": 1,
+   "thinks": {
+    "31500020": 1
+   },
+   "dominant_think": "31500020"
+  },
+  "31500020": {
+   "prefix": "c3150",
+   "placements": 1,
+   "thinks": {
+    "31500010": 1
+   },
+   "dominant_think": "31500010"
+  },
+  "31501010": {
+   "prefix": "c3150",
+   "placements": 1,
+   "thinks": {
+    "31501000": 1
+   },
+   "dominant_think": "31501000"
+  },
+  "31501020": {
+   "prefix": "c3150",
+   "placements": 1,
+   "thinks": {
+    "31501010": 1
+   },
+   "dominant_think": "31501010"
+  },
+  "31600010": {
+   "prefix": "c3160",
+   "placements": 2,
+   "thinks": {
+    "31600020": 1,
+    "31600000": 1
+   },
+   "dominant_think": "31600020"
+  },
+  "31600020": {
+   "prefix": "c3160",
+   "placements": 2,
+   "thinks": {
+    "31600010": 2
+   },
+   "dominant_think": "31600010"
+  },
+  "31700010": {
+   "prefix": "c3170",
+   "placements": 9,
+   "thinks": {
+    "31700000": 9
+   },
+   "dominant_think": "31700000"
+  },
+  "31700020": {
+   "prefix": "c3170",
+   "placements": 2,
+   "thinks": {
+    "31700010": 2
+   },
+   "dominant_think": "31700010"
+  },
+  "31700040": {
+   "prefix": "c3170",
+   "placements": 2,
+   "thinks": {
+    "31700020": 1,
+    "31700010": 1
+   },
+   "dominant_think": "31700020"
+  },
+  "31800010": {
+   "prefix": "c3180",
+   "placements": 4,
+   "thinks": {
+    "31800000": 4
+   },
+   "dominant_think": "31800000"
+  },
+  "31800020": {
+   "prefix": "c3180",
+   "placements": 2,
+   "thinks": {
+    "31800010": 2
+   },
+   "dominant_think": "31800010"
+  },
+  "31800030": {
+   "prefix": "c3180",
+   "placements": 2,
+   "thinks": {
+    "31800020": 1,
+    "31800010": 1
+   },
+   "dominant_think": "31800020"
+  },
+  "31810010": {
+   "prefix": "c3181",
+   "placements": 1,
+   "thinks": {
+    "31810010": 1
+   },
+   "dominant_think": "31810010"
+  },
+  "31810020": {
+   "prefix": "c3181",
+   "placements": 1,
+   "thinks": {
+    "31810020": 1
+   },
+   "dominant_think": "31810020"
+  },
+  "31810030": {
+   "prefix": "c3181",
+   "placements": 1,
+   "thinks": {
+    "31810010": 1
+   },
+   "dominant_think": "31810010"
+  },
+  "32000000": {
+   "prefix": "c3200",
+   "placements": 21,
+   "thinks": {
+    "32000000": 21
+   },
+   "dominant_think": "32000000"
+  },
+  "32500090": {
+   "prefix": "c3250",
+   "placements": 1,
+   "thinks": {
+    "32500010": 1
+   },
+   "dominant_think": "32500010"
+  },
+  "32500110": {
+   "prefix": "c3250",
+   "placements": 1,
+   "thinks": {
+    "32500500": 1
+   },
+   "dominant_think": "32500500"
+  },
+  "32510020": {
+   "prefix": "c3251",
+   "placements": 1,
+   "thinks": {
+    "32510010": 1
+   },
+   "dominant_think": "32510010"
+  },
+  "32510110": {
+   "prefix": "c3251",
+   "placements": 1,
+   "thinks": {
+    "32510500": 1
+   },
+   "dominant_think": "32510500"
+  },
+  "32520010": {
+   "prefix": "c3252",
+   "placements": 2,
+   "thinks": {
+    "32520010": 2
+   },
+   "dominant_think": "32520010"
+  },
+  "33000010": {
+   "prefix": "c3300",
+   "placements": 1,
+   "thinks": {
+    "33000020": 1
+   },
+   "dominant_think": "33000020"
+  },
+  "33000020": {
+   "prefix": "c3300",
+   "placements": 2,
+   "thinks": {
+    "33000010": 2
+   },
+   "dominant_think": "33000010"
+  },
+  "33001010": {
+   "prefix": "c3300",
+   "placements": 2,
+   "thinks": {
+    "33100020": 1,
+    "33100800": 1
+   },
+   "dominant_think": "33100020"
+  },
+  "33001020": {
+   "prefix": "c3300",
+   "placements": 2,
+   "thinks": {
+    "33100010": 2
+   },
+   "dominant_think": "33100010"
+  },
+  "33002010": {
+   "prefix": "c3300",
+   "placements": 2,
+   "thinks": {
+    "33101010": 2
+   },
+   "dominant_think": "33101010"
+  },
+  "33202010": {
+   "prefix": "c3320",
+   "placements": 2,
+   "thinks": {
+    "33200010": 2
+   },
+   "dominant_think": "33200010"
+  },
+  "33202110": {
+   "prefix": "c3320",
+   "placements": 2,
+   "thinks": {
+    "33200010": 2
+   },
+   "dominant_think": "33200010"
+  },
+  "33202210": {
+   "prefix": "c3320",
+   "placements": 1,
+   "thinks": {
+    "33200010": 1
+   },
+   "dominant_think": "33200010"
+  },
+  "33500010": {
+   "prefix": "c3350",
+   "placements": 1,
+   "thinks": {
+    "33500910": 1
+   },
+   "dominant_think": "33500910"
+  },
+  "33500020": {
+   "prefix": "c3350",
+   "placements": 1,
+   "thinks": {
+    "33500010": 1
+   },
+   "dominant_think": "33500010"
+  },
+  "33500030": {
+   "prefix": "c3350",
+   "placements": 3,
+   "thinks": {
+    "33500020": 3
+   },
+   "dominant_think": "33500020"
+  },
+  "33501010": {
+   "prefix": "c3350",
+   "placements": 1,
+   "thinks": {
+    "33501910": 1
+   },
+   "dominant_think": "33501910"
+  },
+  "33502010": {
+   "prefix": "c3350",
+   "placements": 1,
+   "thinks": {
+    "33502910": 1
+   },
+   "dominant_think": "33502910"
+  },
+  "33611010": {
+   "prefix": "c3361",
+   "placements": 5,
+   "thinks": {
+    "33611000": 5
+   },
+   "dominant_think": "33611000"
+  },
+  "33710010": {
+   "prefix": "c3371",
+   "placements": 1,
+   "thinks": {
+    "33710000": 1
+   },
+   "dominant_think": "33710000"
+  },
+  "34000700": {
+   "prefix": "c3400",
+   "placements": 1,
+   "thinks": {
+    "34000700": 1
+   },
+   "dominant_think": "34000700"
+  },
+  "34001010": {
+   "prefix": "c3400",
+   "placements": 1,
+   "thinks": {
+    "34001010": 1
+   },
+   "dominant_think": "34001010"
+  },
+  "34500010": {
+   "prefix": "c3450",
+   "placements": 2,
+   "thinks": {
+    "34500030": 2
+   },
+   "dominant_think": "34500030"
+  },
+  "34500030": {
+   "prefix": "c3450",
+   "placements": 75,
+   "thinks": {
+    "34500000": 75
+   },
+   "dominant_think": "34500000"
+  },
+  "34500040": {
+   "prefix": "c3450",
+   "placements": 3,
+   "thinks": {
+    "34500020": 3
+   },
+   "dominant_think": "34500020"
+  },
+  "34501010": {
+   "prefix": "c3450",
+   "placements": 2,
+   "thinks": {
+    "34501030": 2
+   },
+   "dominant_think": "34501030"
+  },
+  "34501030": {
+   "prefix": "c3450",
+   "placements": 7,
+   "thinks": {
+    "34501000": 7
+   },
+   "dominant_think": "34501000"
+  },
+  "34501040": {
+   "prefix": "c3450",
+   "placements": 2,
+   "thinks": {
+    "34501020": 2
+   },
+   "dominant_think": "34501020"
+  },
+  "34510010": {
+   "prefix": "c3451",
+   "placements": 4,
+   "thinks": {
+    "34510800": 1,
+    "34510040": 3
+   },
+   "dominant_think": "34510040"
+  },
+  "34510030": {
+   "prefix": "c3451",
+   "placements": 5,
+   "thinks": {
+    "34510000": 5
+   },
+   "dominant_think": "34510000"
+  },
+  "34510040": {
+   "prefix": "c3451",
+   "placements": 3,
+   "thinks": {
+    "34510030": 3
+   },
+   "dominant_think": "34510030"
+  },
+  "34600010": {
+   "prefix": "c3460",
+   "placements": 1,
+   "thinks": {
+    "34600030": 1
+   },
+   "dominant_think": "34600030"
+  },
+  "34600020": {
+   "prefix": "c3460",
+   "placements": 4,
+   "thinks": {
+    "34600020": 1,
+    "34600000": 3
+   },
+   "dominant_think": "34600000"
+  },
+  "34600040": {
+   "prefix": "c3460",
+   "placements": 1,
+   "thinks": {
+    "34600040": 1
+   },
+   "dominant_think": "34600040"
+  },
+  "34700220": {
+   "prefix": "c3470",
+   "placements": 2,
+   "thinks": {
+    "34700000": 2
+   },
+   "dominant_think": "34700000"
+  },
+  "34700310": {
+   "prefix": "c3470",
+   "placements": 2,
+   "thinks": {
+    "34700000": 2
+   },
+   "dominant_think": "34700000"
+  },
+  "34700410": {
+   "prefix": "c3470",
+   "placements": 2,
+   "thinks": {
+    "34700100": 2
+   },
+   "dominant_think": "34700100"
+  },
+  "34701410": {
+   "prefix": "c3470",
+   "placements": 2,
+   "thinks": {
+    "34701500": 2
+   },
+   "dominant_think": "34701500"
+  },
+  "34701510": {
+   "prefix": "c3470",
+   "placements": 2,
+   "thinks": {
+    "34701000": 2
+   },
+   "dominant_think": "34701000"
+  },
+  "34701610": {
+   "prefix": "c3470",
+   "placements": 2,
+   "thinks": {
+    "34701100": 2
+   },
+   "dominant_think": "34701100"
+  },
+  "34702510": {
+   "prefix": "c3470",
+   "placements": 3,
+   "thinks": {
+    "34702100": 3
+   },
+   "dominant_think": "34702100"
+  },
+  "34703210": {
+   "prefix": "c3470",
+   "placements": 2,
+   "thinks": {
+    "34703000": 2
+   },
+   "dominant_think": "34703000"
+  },
+  "34704210": {
+   "prefix": "c3470",
+   "placements": 2,
+   "thinks": {
+    "34704000": 2
+   },
+   "dominant_think": "34704000"
+  },
+  "34704310": {
+   "prefix": "c3470",
+   "placements": 2,
+   "thinks": {
+    "34704000": 2
+   },
+   "dominant_think": "34704000"
+  },
+  "34715230": {
+   "prefix": "c3471",
+   "placements": 3,
+   "thinks": {
+    "34705000": 3
+   },
+   "dominant_think": "34705000"
+  },
+  "34715310": {
+   "prefix": "c3471",
+   "placements": 3,
+   "thinks": {
+    "34705000": 3
+   },
+   "dominant_think": "34705000"
+  },
+  "35000010": {
+   "prefix": "c3500",
+   "placements": 48,
+   "thinks": {
+    "35000000": 48
+   },
+   "dominant_think": "35000000"
+  },
+  "35000020": {
+   "prefix": "c3500",
+   "placements": 4,
+   "thinks": {
+    "35000090": 4
+   },
+   "dominant_think": "35000090"
+  },
+  "35000030": {
+   "prefix": "c3500",
+   "placements": 4,
+   "thinks": {
+    "35000000": 4
+   },
+   "dominant_think": "35000000"
+  },
+  "35000110": {
+   "prefix": "c3500",
+   "placements": 2,
+   "thinks": {
+    "35000000": 2
+   },
+   "dominant_think": "35000000"
+  },
+  "35002010": {
+   "prefix": "c3500",
+   "placements": 3,
+   "thinks": {
+    "35002000": 3
+   },
+   "dominant_think": "35002000"
+  },
+  "35002030": {
+   "prefix": "c3500",
+   "placements": 4,
+   "thinks": {
+    "35002010": 4
+   },
+   "dominant_think": "35002010"
+  },
+  "35002110": {
+   "prefix": "c3500",
+   "placements": 5,
+   "thinks": {
+    "35002000": 5
+   },
+   "dominant_think": "35002000"
+  },
+  "35003010": {
+   "prefix": "c3500",
+   "placements": 12,
+   "thinks": {
+    "35003000": 12
+   },
+   "dominant_think": "35003000"
+  },
+  "35003020": {
+   "prefix": "c3500",
+   "placements": 1,
+   "thinks": {
+    "35003010": 1
+   },
+   "dominant_think": "35003010"
+  },
+  "35003110": {
+   "prefix": "c3500",
+   "placements": 8,
+   "thinks": {
+    "35003000": 8
+   },
+   "dominant_think": "35003000"
+  },
+  "35004010": {
+   "prefix": "c3500",
+   "placements": 14,
+   "thinks": {
+    "35004000": 14
+   },
+   "dominant_think": "35004000"
+  },
+  "35004020": {
+   "prefix": "c3500",
+   "placements": 2,
+   "thinks": {
+    "35004010": 2
+   },
+   "dominant_think": "35004010"
+  },
+  "35004110": {
+   "prefix": "c3500",
+   "placements": 2,
+   "thinks": {
+    "35004000": 2
+   },
+   "dominant_think": "35004000"
+  },
+  "35005010": {
+   "prefix": "c3500",
+   "placements": 3,
+   "thinks": {
+    "35000020": 3
+   },
+   "dominant_think": "35000020"
+  },
+  "35005510": {
+   "prefix": "c3500",
+   "placements": 1,
+   "thinks": {
+    "35000020": 1
+   },
+   "dominant_think": "35000020"
+  },
+  "35006010": {
+   "prefix": "c3500",
+   "placements": 2,
+   "thinks": {
+    "35001030": 2
+   },
+   "dominant_think": "35001030"
+  },
+  "35007010": {
+   "prefix": "c3500",
+   "placements": 1,
+   "thinks": {
+    "35002020": 1
+   },
+   "dominant_think": "35002020"
+  },
+  "35008010": {
+   "prefix": "c3500",
+   "placements": 2,
+   "thinks": {
+    "35003020": 2
+   },
+   "dominant_think": "35003020"
+  },
+  "35009010": {
+   "prefix": "c3500",
+   "placements": 2,
+   "thinks": {
+    "35004020": 2
+   },
+   "dominant_think": "35004020"
+  },
+  "35500010": {
+   "prefix": "c3550",
+   "placements": 1,
+   "thinks": {
+    "35500010": 1
+   },
+   "dominant_think": "35500010"
+  },
+  "35600010": {
+   "prefix": "c3560",
+   "placements": 2,
+   "thinks": {
+    "35600020": 1,
+    "35600120": 1
+   },
+   "dominant_think": "35600020"
+  },
+  "35600020": {
+   "prefix": "c3560",
+   "placements": 1,
+   "thinks": {
+    "35600010": 1
+   },
+   "dominant_think": "35600010"
+  },
+  "35600110": {
+   "prefix": "c3560",
+   "placements": 1,
+   "thinks": {
+    "35600110": 1
+   },
+   "dominant_think": "35600110"
+  },
+  "35700010": {
+   "prefix": "c3570",
+   "placements": 1,
+   "thinks": {
+    "35700120": 1
+   },
+   "dominant_think": "35700120"
+  },
+  "35700020": {
+   "prefix": "c3570",
+   "placements": 1,
+   "thinks": {
+    "35700010": 1
+   },
+   "dominant_think": "35700010"
+  },
+  "35700110": {
+   "prefix": "c3570",
+   "placements": 1,
+   "thinks": {
+    "35700110": 1
+   },
+   "dominant_think": "35700110"
+  },
+  "36000010": {
+   "prefix": "c3600",
+   "placements": 1,
+   "thinks": {
+    "36000050": 1
+   },
+   "dominant_think": "36000050"
+  },
+  "36000020": {
+   "prefix": "c3600",
+   "placements": 1,
+   "thinks": {
+    "36000010": 1
+   },
+   "dominant_think": "36000010"
+  },
+  "36001010": {
+   "prefix": "c3600",
+   "placements": 1,
+   "thinks": {
+    "36001010": 1
+   },
+   "dominant_think": "36001010"
+  },
+  "36001020": {
+   "prefix": "c3600",
+   "placements": 1,
+   "thinks": {
+    "36001020": 1
+   },
+   "dominant_think": "36001020"
+  },
+  "36100010": {
+   "prefix": "c3610",
+   "placements": 10,
+   "thinks": {
+    "1": 10
+   },
+   "dominant_think": "1"
+  },
+  "36100011": {
+   "prefix": "c3610",
+   "placements": 4,
+   "thinks": {
+    "1": 4
+   },
+   "dominant_think": "1"
+  },
+  "36100020": {
+   "prefix": "c3610",
+   "placements": 7,
+   "thinks": {
+    "36100000": 7
+   },
+   "dominant_think": "36100000"
+  },
+  "36200010": {
+   "prefix": "c3620",
+   "placements": 4,
+   "thinks": {
+    "36200000": 4
+   },
+   "dominant_think": "36200000"
+  },
+  "36500010": {
+   "prefix": "c3650",
+   "placements": 5,
+   "thinks": {
+    "36500010": 5
+   },
+   "dominant_think": "36500010"
+  },
+  "36500020": {
+   "prefix": "c3650",
+   "placements": 6,
+   "thinks": {
+    "36500020": 6
+   },
+   "dominant_think": "36500020"
+  },
+  "36501020": {
+   "prefix": "c3650",
+   "placements": 3,
+   "thinks": {
+    "36500020": 3
+   },
+   "dominant_think": "36500020"
+  },
+  "36501110": {
+   "prefix": "c3650",
+   "placements": 1,
+   "thinks": {
+    "36500010": 1
+   },
+   "dominant_think": "36500010"
+  },
+  "36600010": {
+   "prefix": "c3660",
+   "placements": 7,
+   "thinks": {
+    "36600000": 7
+   },
+   "dominant_think": "36600000"
+  },
+  "36600020": {
+   "prefix": "c3660",
+   "placements": 15,
+   "thinks": {
+    "36600000": 15
+   },
+   "dominant_think": "36600000"
+  },
+  "36600620": {
+   "prefix": "c3660",
+   "placements": 48,
+   "thinks": {
+    "36600020": 18,
+    "36600500": 30
+   },
+   "dominant_think": "36600500"
+  },
+  "36601220": {
+   "prefix": "c3660",
+   "placements": 24,
+   "thinks": {
+    "36601500": 24
+   },
+   "dominant_think": "36601500"
+  },
+  "36602010": {
+   "prefix": "c3660",
+   "placements": 1,
+   "thinks": {
+    "36602000": 1
+   },
+   "dominant_think": "36602000"
+  },
+  "36610010": {
+   "prefix": "c3661",
+   "placements": 4,
+   "thinks": {
+    "36610010": 4
+   },
+   "dominant_think": "36610010"
+  },
+  "36610020": {
+   "prefix": "c3661",
+   "placements": 27,
+   "thinks": {
+    "36610000": 27
+   },
+   "dominant_think": "36610000"
+  },
+  "36610700": {
+   "prefix": "c3661",
+   "placements": 30,
+   "thinks": {
+    "36610700": 30
+   },
+   "dominant_think": "36610700"
+  },
+  "36610710": {
+   "prefix": "c3661",
+   "placements": 21,
+   "thinks": {
+    "36610700": 21
+   },
+   "dominant_think": "36610700"
+  },
+  "36612010": {
+   "prefix": "c3661",
+   "placements": 31,
+   "thinks": {
+    "36610100": 31
+   },
+   "dominant_think": "36610100"
+  },
+  "36615010": {
+   "prefix": "c3661",
+   "placements": 35,
+   "thinks": {
+    "36615000": 35
+   },
+   "dominant_think": "36615000"
+  },
+  "36616010": {
+   "prefix": "c3661",
+   "placements": 44,
+   "thinks": {
+    "36610000": 44
+   },
+   "dominant_think": "36610000"
+  },
+  "36620010": {
+   "prefix": "c3662",
+   "placements": 1,
+   "thinks": {
+    "36620020": 1
+   },
+   "dominant_think": "36620020"
+  },
+  "36620020": {
+   "prefix": "c3662",
+   "placements": 4,
+   "thinks": {
+    "36620010": 4
+   },
+   "dominant_think": "36620010"
+  },
+  "36620120": {
+   "prefix": "c3662",
+   "placements": 2,
+   "thinks": {
+    "36620000": 2
+   },
+   "dominant_think": "36620000"
+  },
+  "36622010": {
+   "prefix": "c3662",
+   "placements": 6,
+   "thinks": {
+    "36620100": 6
+   },
+   "dominant_think": "36620100"
+  },
+  "36640010": {
+   "prefix": "c3664",
+   "placements": 1,
+   "thinks": {
+    "36640010": 1
+   },
+   "dominant_think": "36640010"
+  },
+  "36708100": {
+   "prefix": "c3670",
+   "placements": 1,
+   "thinks": {
+    "0": 1
+   },
+   "dominant_think": "0"
+  },
+  "37000010": {
+   "prefix": "c3700",
+   "placements": 1,
+   "thinks": {
+    "37000020": 1
+   },
+   "dominant_think": "37000020"
+  },
+  "37000030": {
+   "prefix": "c3700",
+   "placements": 2,
+   "thinks": {
+    "37000010": 2
+   },
+   "dominant_think": "37000010"
+  },
+  "37010030": {
+   "prefix": "c3701",
+   "placements": 1,
+   "thinks": {
+    "37010020": 1
+   },
+   "dominant_think": "37010020"
+  },
+  "37011020": {
+   "prefix": "c3701",
+   "placements": 1,
+   "thinks": {
+    "37010010": 1
+   },
+   "dominant_think": "37010010"
+  },
+  "37020020": {
+   "prefix": "c3702",
+   "placements": 10,
+   "thinks": {
+    "37020000": 10
+   },
+   "dominant_think": "37020000"
+  },
+  "37020030": {
+   "prefix": "c3702",
+   "placements": 1,
+   "thinks": {
+    "37020010": 1
+   },
+   "dominant_think": "37020010"
+  },
+  "37022010": {
+   "prefix": "c3702",
+   "placements": 10,
+   "thinks": {
+    "37020000": 10
+   },
+   "dominant_think": "37020000"
+  },
+  "37023010": {
+   "prefix": "c3702",
+   "placements": 1,
+   "thinks": {
+    "37020120": 1
+   },
+   "dominant_think": "37020120"
+  },
+  "37024010": {
+   "prefix": "c3702",
+   "placements": 1,
+   "thinks": {
+    "37020120": 1
+   },
+   "dominant_think": "37020120"
+  },
+  "37030020": {
+   "prefix": "c3703",
+   "placements": 4,
+   "thinks": {
+    "37030000": 4
+   },
+   "dominant_think": "37030000"
+  },
+  "37030110": {
+   "prefix": "c3703",
+   "placements": 7,
+   "thinks": {
+    "37030000": 7
+   },
+   "dominant_think": "37030000"
+  },
+  "37031010": {
+   "prefix": "c3703",
+   "placements": 2,
+   "thinks": {
+    "37030010": 2
+   },
+   "dominant_think": "37030010"
+  },
+  "37031020": {
+   "prefix": "c3703",
+   "placements": 2,
+   "thinks": {
+    "37030000": 2
+   },
+   "dominant_think": "37030000"
+  },
+  "37031110": {
+   "prefix": "c3703",
+   "placements": 1,
+   "thinks": {
+    "37030000": 1
+   },
+   "dominant_think": "37030000"
+  },
+  "37040000": {
+   "prefix": "c3704",
+   "placements": 4,
+   "thinks": {
+    "37040000": 4
+   },
+   "dominant_think": "37040000"
+  },
+  "37040020": {
+   "prefix": "c3704",
+   "placements": 2,
+   "thinks": {
+    "37040010": 2
+   },
+   "dominant_think": "37040010"
+  },
+  "38100010": {
+   "prefix": "c3810",
+   "placements": 15,
+   "thinks": {
+    "38100000": 15
+   },
+   "dominant_think": "38100000"
+  },
+  "38103010": {
+   "prefix": "c3810",
+   "placements": 4,
+   "thinks": {
+    "38100010": 4
+   },
+   "dominant_think": "38100010"
+  },
+  "38500010": {
+   "prefix": "c3850",
+   "placements": 1,
+   "thinks": {
+    "38500000": 1
+   },
+   "dominant_think": "38500000"
+  },
+  "38501010": {
+   "prefix": "c3850",
+   "placements": 5,
+   "thinks": {
+    "38501000": 5
+   },
+   "dominant_think": "38501000"
+  },
+  "38502010": {
+   "prefix": "c3850",
+   "placements": 3,
+   "thinks": {
+    "38502000": 3
+   },
+   "dominant_think": "38502000"
+  },
+  "38502100": {
+   "prefix": "c3850",
+   "placements": 1,
+   "thinks": {
+    "38502100": 1
+   },
+   "dominant_think": "38502100"
+  },
+  "38503000": {
+   "prefix": "c3850",
+   "placements": 27,
+   "thinks": {
+    "0": 26,
+    "38500000": 1
+   },
+   "dominant_think": "0"
+  },
+  "38503100": {
+   "prefix": "c3850",
+   "placements": 2,
+   "thinks": {
+    "0": 1,
+    "38500000": 1
+   },
+   "dominant_think": "0"
+  },
+  "38503110": {
+   "prefix": "c3850",
+   "placements": 1,
+   "thinks": {
+    "0": 1
+   },
+   "dominant_think": "0"
+  },
+  "38503120": {
+   "prefix": "c3850",
+   "placements": 1,
+   "thinks": {
+    "38501010": 1
+   },
+   "dominant_think": "38501010"
+  },
+  "39000010": {
+   "prefix": "c3900",
+   "placements": 10,
+   "thinks": {
+    "39000000": 10
+   },
+   "dominant_think": "39000000"
+  },
+  "39000020": {
+   "prefix": "c3900",
+   "placements": 1,
+   "thinks": {
+    "39000020": 1
+   },
+   "dominant_think": "39000020"
+  },
+  "39000030": {
+   "prefix": "c3900",
+   "placements": 1,
+   "thinks": {
+    "39000000": 1
+   },
+   "dominant_think": "39000000"
+  },
+  "39001010": {
+   "prefix": "c3900",
+   "placements": 6,
+   "thinks": {
+    "39001000": 6
+   },
+   "dominant_think": "39001000"
+  },
+  "39001030": {
+   "prefix": "c3900",
+   "placements": 1,
+   "thinks": {
+    "39001000": 1
+   },
+   "dominant_think": "39001000"
+  },
+  "39010010": {
+   "prefix": "c3901",
+   "placements": 1,
+   "thinks": {
+    "39010010": 1
+   },
+   "dominant_think": "39010010"
+  },
+  "39011010": {
+   "prefix": "c3901",
+   "placements": 3,
+   "thinks": {
+    "39011010": 3
+   },
+   "dominant_think": "39011010"
+  },
+  "39100130": {
+   "prefix": "c3910",
+   "placements": 1,
+   "thinks": {
+    "39100110": 1
+   },
+   "dominant_think": "39100110"
+  },
+  "39100140": {
+   "prefix": "c3910",
+   "placements": 1,
+   "thinks": {
+    "39100000": 1
+   },
+   "dominant_think": "39100000"
+  },
+  "39101120": {
+   "prefix": "c3910",
+   "placements": 1,
+   "thinks": {
+    "39101100": 1
+   },
+   "dominant_think": "39101100"
+  },
+  "39501110": {
+   "prefix": "c3950",
+   "placements": 1,
+   "thinks": {
+    "39500010": 1
+   },
+   "dominant_think": "39500010"
+  },
+  "39502010": {
+   "prefix": "c3950",
+   "placements": 3,
+   "thinks": {
+    "39502010": 3
+   },
+   "dominant_think": "39502010"
+  },
+  "39504010": {
+   "prefix": "c3950",
+   "placements": 1,
+   "thinks": {
+    "39504010": 1
+   },
+   "dominant_think": "39504010"
+  },
+  "39700010": {
+   "prefix": "c3970",
+   "placements": 2,
+   "thinks": {
+    "39700020": 2
+   },
+   "dominant_think": "39700020"
+  },
+  "39700110": {
+   "prefix": "c3970",
+   "placements": 1,
+   "thinks": {
+    "39700020": 1
+   },
+   "dominant_think": "39700020"
+  },
+  "39700210": {
+   "prefix": "c3970",
+   "placements": 4,
+   "thinks": {
+    "39700000": 4
+   },
+   "dominant_think": "39700000"
+  },
+  "39700310": {
+   "prefix": "c3970",
+   "placements": 4,
+   "thinks": {
+    "39700000": 4
+   },
+   "dominant_think": "39700000"
+  },
+  "39701010": {
+   "prefix": "c3970",
+   "placements": 1,
+   "thinks": {
+    "39701020": 1
+   },
+   "dominant_think": "39701020"
+  },
+  "39701110": {
+   "prefix": "c3970",
+   "placements": 3,
+   "thinks": {
+    "39701010": 3
+   },
+   "dominant_think": "39701010"
+  },
+  "39701120": {
+   "prefix": "c3970",
+   "placements": 4,
+   "thinks": {
+    "39701000": 2,
+    "39701030": 2
+   },
+   "dominant_think": "39701000"
+  },
+  "39701130": {
+   "prefix": "c3970",
+   "placements": 1,
+   "thinks": {
+    "39701020": 1
+   },
+   "dominant_think": "39701020"
+  },
+  "39702010": {
+   "prefix": "c3970",
+   "placements": 2,
+   "thinks": {
+    "39702020": 2
+   },
+   "dominant_think": "39702020"
+  },
+  "39702210": {
+   "prefix": "c3970",
+   "placements": 4,
+   "thinks": {
+    "39702000": 4
+   },
+   "dominant_think": "39702000"
+  },
+  "39702310": {
+   "prefix": "c3970",
+   "placements": 3,
+   "thinks": {
+    "39702010": 1,
+    "39702000": 2
+   },
+   "dominant_think": "39702000"
+  },
+  "39703010": {
+   "prefix": "c3970",
+   "placements": 2,
+   "thinks": {
+    "39703010": 2
+   },
+   "dominant_think": "39703010"
+  },
+  "39703110": {
+   "prefix": "c3970",
+   "placements": 1,
+   "thinks": {
+    "39703020": 1
+   },
+   "dominant_think": "39703020"
+  },
+  "39709010": {
+   "prefix": "c3010",
+   "placements": 3,
+   "thinks": {
+    "39700000": 3
+   },
+   "dominant_think": "39700000"
+  },
+  "40000010": {
+   "prefix": "c4000",
+   "placements": 2,
+   "thinks": {
+    "40000010": 2
+   },
+   "dominant_think": "40000010"
+  },
+  "40000110": {
+   "prefix": "c4000",
+   "placements": 4,
+   "thinks": {
+    "40000010": 4
+   },
+   "dominant_think": "40000010"
+  },
+  "40001010": {
+   "prefix": "c4000",
+   "placements": 2,
+   "thinks": {
+    "40001010": 1,
+    "40001000": 1
+   },
+   "dominant_think": "40001010"
+  },
+  "40001020": {
+   "prefix": "c4000",
+   "placements": 12,
+   "thinks": {
+    "40001020": 12
+   },
+   "dominant_think": "40001020"
+  },
+  "40200010": {
+   "prefix": "c4020",
+   "placements": 4,
+   "thinks": {
+    "40200000": 4
+   },
+   "dominant_think": "40200000"
+  },
+  "40200020": {
+   "prefix": "c4020",
+   "placements": 1,
+   "thinks": {
+    "40200010": 1
+   },
+   "dominant_think": "40200010"
+  },
+  "40200030": {
+   "prefix": "c4020",
+   "placements": 3,
+   "thinks": {
+    "40200000": 3
+   },
+   "dominant_think": "40200000"
+  },
+  "40210010": {
+   "prefix": "c4021",
+   "placements": 3,
+   "thinks": {
+    "40210020": 3
+   },
+   "dominant_think": "40210020"
+  },
+  "40210020": {
+   "prefix": "c4021",
+   "placements": 1,
+   "thinks": {
+    "40210010": 1
+   },
+   "dominant_think": "40210010"
+  },
+  "40210030": {
+   "prefix": "c4021",
+   "placements": 1,
+   "thinks": {
+    "40210030": 1
+   },
+   "dominant_think": "40210030"
+  },
+  "40210700": {
+   "prefix": "c4021",
+   "placements": 1,
+   "thinks": {
+    "40210700": 1
+   },
+   "dominant_think": "40210700"
+  },
+  "40400010": {
+   "prefix": "c4040",
+   "placements": 4,
+   "thinks": {
+    "40400000": 4
+   },
+   "dominant_think": "40400000"
+  },
+  "40400020": {
+   "prefix": "c4040",
+   "placements": 6,
+   "thinks": {
+    "40400010": 4,
+    "40400020": 2
+   },
+   "dominant_think": "40400010"
+  },
+  "40401010": {
+   "prefix": "c4040",
+   "placements": 37,
+   "thinks": {
+    "40400010": 37
+   },
+   "dominant_think": "40400010"
+  },
+  "40500010": {
+   "prefix": "c4050",
+   "placements": 9,
+   "thinks": {
+    "40500000": 9
+   },
+   "dominant_think": "40500000"
+  },
+  "40500020": {
+   "prefix": "c4050",
+   "placements": 4,
+   "thinks": {
+    "40500010": 4
+   },
+   "dominant_think": "40500010"
+  },
+  "40500110": {
+   "prefix": "c4050",
+   "placements": 3,
+   "thinks": {
+    "40500000": 3
+   },
+   "dominant_think": "40500000"
+  },
+  "40500120": {
+   "prefix": "c4050",
+   "placements": 8,
+   "thinks": {
+    "40500010": 8
+   },
+   "dominant_think": "40500010"
+  },
+  "40600010": {
+   "prefix": "c4060",
+   "placements": 12,
+   "thinks": {
+    "40600000": 12
+   },
+   "dominant_think": "40600000"
+  },
+  "40700010": {
+   "prefix": "c4070",
+   "placements": 134,
+   "thinks": {
+    "40704000": 4,
+    "40700000": 130
+   },
+   "dominant_think": "40700000"
+  },
+  "40700020": {
+   "prefix": "c4070",
+   "placements": 12,
+   "thinks": {
+    "40700000": 12
+   },
+   "dominant_think": "40700000"
+  },
+  "40700030": {
+   "prefix": "c4070",
+   "placements": 8,
+   "thinks": {
+    "40700000": 8
+   },
+   "dominant_think": "40700000"
+  },
+  "40710010": {
+   "prefix": "c4071",
+   "placements": 8,
+   "thinks": {
+    "40702000": 1,
+    "40700000": 7
+   },
+   "dominant_think": "40700000"
+  },
+  "40800010": {
+   "prefix": "c4080",
+   "placements": 6,
+   "thinks": {
+    "40800000": 6
+   },
+   "dominant_think": "40800000"
+  },
+  "40800030": {
+   "prefix": "c4080",
+   "placements": 4,
+   "thinks": {
+    "40800010": 4
+   },
+   "dominant_think": "40800010"
+  },
+  "40800040": {
+   "prefix": "c4080",
+   "placements": 5,
+   "thinks": {
+    "40800020": 5
+   },
+   "dominant_think": "40800020"
+  },
+  "40900010": {
+   "prefix": "c4090",
+   "placements": 3,
+   "thinks": {
+    "40900000": 3
+   },
+   "dominant_think": "40900000"
+  },
+  "40900030": {
+   "prefix": "c4090",
+   "placements": 2,
+   "thinks": {
+    "40900010": 2
+   },
+   "dominant_think": "40900010"
+  },
+  "40900040": {
+   "prefix": "c4090",
+   "placements": 3,
+   "thinks": {
+    "40900010": 2,
+    "40900800": 1
+   },
+   "dominant_think": "40900010"
+  },
+  "41000010": {
+   "prefix": "c4100",
+   "placements": 64,
+   "thinks": {
+    "41000000": 64
+   },
+   "dominant_think": "41000000"
+  },
+  "41000020": {
+   "prefix": "c4100",
+   "placements": 1,
+   "thinks": {
+    "41000010": 1
+   },
+   "dominant_think": "41000010"
+  },
+  "41000030": {
+   "prefix": "c4100",
+   "placements": 2,
+   "thinks": {
+    "41000020": 2
+   },
+   "dominant_think": "41000020"
+  },
+  "41000040": {
+   "prefix": "c4100",
+   "placements": 2,
+   "thinks": {
+    "41000030": 2
+   },
+   "dominant_think": "41000030"
+  },
+  "41001010": {
+   "prefix": "c4100",
+   "placements": 23,
+   "thinks": {
+    "41001000": 23
+   },
+   "dominant_think": "41001000"
+  },
+  "41001020": {
+   "prefix": "c4100",
+   "placements": 1,
+   "thinks": {
+    "41001010": 1
+   },
+   "dominant_think": "41001010"
+  },
+  "41001040": {
+   "prefix": "c4100",
+   "placements": 3,
+   "thinks": {
+    "41001030": 3
+   },
+   "dominant_think": "41001030"
+  },
+  "41002010": {
+   "prefix": "c4100",
+   "placements": 12,
+   "thinks": {
+    "41002000": 12
+   },
+   "dominant_think": "41002000"
+  },
+  "41002020": {
+   "prefix": "c4100",
+   "placements": 1,
+   "thinks": {
+    "41002010": 1
+   },
+   "dominant_think": "41002010"
+  },
+  "41002040": {
+   "prefix": "c4100",
+   "placements": 2,
+   "thinks": {
+    "41002030": 2
+   },
+   "dominant_think": "41002030"
+  },
+  "41010010": {
+   "prefix": "c4101",
+   "placements": 22,
+   "thinks": {
+    "41010000": 22
+   },
+   "dominant_think": "41010000"
+  },
+  "41010020": {
+   "prefix": "c4101",
+   "placements": 2,
+   "thinks": {
+    "41010020": 2
+   },
+   "dominant_think": "41010020"
+  },
+  "41010030": {
+   "prefix": "c4101",
+   "placements": 2,
+   "thinks": {
+    "41010010": 2
+   },
+   "dominant_think": "41010010"
+  },
+  "41100010": {
+   "prefix": "c4110",
+   "placements": 103,
+   "thinks": {
+    "41100000": 103
+   },
+   "dominant_think": "41100000"
+  },
+  "41100020": {
+   "prefix": "c4110",
+   "placements": 2,
+   "thinks": {
+    "41100010": 2
+   },
+   "dominant_think": "41100010"
+  },
+  "41100030": {
+   "prefix": "c4110",
+   "placements": 4,
+   "thinks": {
+    "41100020": 4
+   },
+   "dominant_think": "41100020"
+  },
+  "41200010": {
+   "prefix": "c4120",
+   "placements": 10,
+   "thinks": {
+    "41200000": 10
+   },
+   "dominant_think": "41200000"
+  },
+  "41200020": {
+   "prefix": "c4120",
+   "placements": 1,
+   "thinks": {
+    "41200010": 1
+   },
+   "dominant_think": "41200010"
+  },
+  "41300020": {
+   "prefix": "c4130",
+   "placements": 1,
+   "thinks": {
+    "41300010": 1
+   },
+   "dominant_think": "41300010"
+  },
+  "41300030": {
+   "prefix": "c4130",
+   "placements": 2,
+   "thinks": {
+    "41300010": 2
+   },
+   "dominant_think": "41300010"
+  },
+  "41301010": {
+   "prefix": "c4130",
+   "placements": 1,
+   "thinks": {
+    "41301010": 1
+   },
+   "dominant_think": "41301010"
+  },
+  "41500010": {
+   "prefix": "c4150",
+   "placements": 28,
+   "thinks": {
+    "41500000": 28
+   },
+   "dominant_think": "41500000"
+  },
+  "41600010": {
+   "prefix": "c4160",
+   "placements": 6,
+   "thinks": {
+    "41600000": 6
+   },
+   "dominant_think": "41600000"
+  },
+  "41601000": {
+   "prefix": "c4160",
+   "placements": 3,
+   "thinks": {
+    "41600000": 3
+   },
+   "dominant_think": "41600000"
+  },
+  "41601010": {
+   "prefix": "c4160",
+   "placements": 8,
+   "thinks": {
+    "41600000": 8
+   },
+   "dominant_think": "41600000"
+  },
+  "41610010": {
+   "prefix": "c4161",
+   "placements": 48,
+   "thinks": {
+    "41610000": 48
+   },
+   "dominant_think": "41610000"
+  },
+  "41610030": {
+   "prefix": "c4161",
+   "placements": 2,
+   "thinks": {
+    "41610810": 2
+   },
+   "dominant_think": "41610810"
+  },
+  "41610210": {
+   "prefix": "c4161",
+   "placements": 11,
+   "thinks": {
+    "41610000": 11
+   },
+   "dominant_think": "41610000"
+  },
+  "41610220": {
+   "prefix": "c4161",
+   "placements": 2,
+   "thinks": {
+    "41610000": 2
+   },
+   "dominant_think": "41610000"
+  },
+  "41640010": {
+   "prefix": "c4164",
+   "placements": 6,
+   "thinks": {
+    "41640000": 6
+   },
+   "dominant_think": "41640000"
+  },
+  "41650010": {
+   "prefix": "c4165",
+   "placements": 4,
+   "thinks": {
+    "41650000": 4
+   },
+   "dominant_think": "41650000"
+  },
+  "41660010": {
+   "prefix": "c4166",
+   "placements": 32,
+   "thinks": {
+    "41660000": 32
+   },
+   "dominant_think": "41660000"
+  },
+  "41700110": {
+   "prefix": "c4170",
+   "placements": 1,
+   "thinks": {
+    "41700800": 1
+   },
+   "dominant_think": "41700800"
+  },
+  "41700120": {
+   "prefix": "c4170",
+   "placements": 40,
+   "thinks": {
+    "41700000": 40
+   },
+   "dominant_think": "41700000"
+  },
+  "41710010": {
+   "prefix": "c4171",
+   "placements": 2,
+   "thinks": {
+    "41710000": 2
+   },
+   "dominant_think": "41710000"
+  },
+  "41800010": {
+   "prefix": "c4180",
+   "placements": 32,
+   "thinks": {
+    "41800000": 32
+   },
+   "dominant_think": "41800000"
+  },
+  "41810010": {
+   "prefix": "c4181",
+   "placements": 40,
+   "thinks": {
+    "41808000": 40
+   },
+   "dominant_think": "41808000"
+  },
+  "41810020": {
+   "prefix": "c4181",
+   "placements": 10,
+   "thinks": {
+    "41808000": 10
+   },
+   "dominant_think": "41808000"
+  },
+  "41810110": {
+   "prefix": "c4181",
+   "placements": 6,
+   "thinks": {
+    "41808000": 6
+   },
+   "dominant_think": "41808000"
+  },
+  "41912010": {
+   "prefix": "c4191",
+   "placements": 98,
+   "thinks": {
+    "41910000": 98
+   },
+   "dominant_think": "41910000"
+  },
+  "41912020": {
+   "prefix": "c4191",
+   "placements": 5,
+   "thinks": {
+    "41910000": 5
+   },
+   "dominant_think": "41910000"
+  },
+  "42000010": {
+   "prefix": "c4200",
+   "placements": 56,
+   "thinks": {
+    "42000001": 10,
+    "42000010": 2,
+    "42000000": 44
+   },
+   "dominant_think": "42000000"
+  },
+  "42000110": {
+   "prefix": "c4200",
+   "placements": 52,
+   "thinks": {
+    "42000000": 52
+   },
+   "dominant_think": "42000000"
+  },
+  "42001010": {
+   "prefix": "c4200",
+   "placements": 3,
+   "thinks": {
+    "42000001": 3
+   },
+   "dominant_think": "42000001"
+  },
+  "42001110": {
+   "prefix": "c4200",
+   "placements": 4,
+   "thinks": {
+    "42000000": 4
+   },
+   "dominant_think": "42000000"
+  },
+  "42010110": {
+   "prefix": "c4201",
+   "placements": 11,
+   "thinks": {
+    "42010000": 11
+   },
+   "dominant_think": "42010000"
+  },
+  "42011110": {
+   "prefix": "c4201",
+   "placements": 2,
+   "thinks": {
+    "42011000": 1,
+    "42010000": 1
+   },
+   "dominant_think": "42011000"
+  },
+  "42300010": {
+   "prefix": "c4230",
+   "placements": 51,
+   "thinks": {
+    "42300000": 51
+   },
+   "dominant_think": "42300000"
+  },
+  "42400010": {
+   "prefix": "c4240",
+   "placements": 1,
+   "thinks": {
+    "42400810": 1
+   },
+   "dominant_think": "42400810"
+  },
+  "42400020": {
+   "prefix": "c4240",
+   "placements": 12,
+   "thinks": {
+    "42400000": 12
+   },
+   "dominant_think": "42400000"
+  },
+  "42400030": {
+   "prefix": "c4240",
+   "placements": 5,
+   "thinks": {
+    "42400010": 5
+   },
+   "dominant_think": "42400010"
+  },
+  "42410010": {
+   "prefix": "c4241",
+   "placements": 1,
+   "thinks": {
+    "42410010": 1
+   },
+   "dominant_think": "42410010"
+  },
+  "42410020": {
+   "prefix": "c4241",
+   "placements": 3,
+   "thinks": {
+    "42410000": 2,
+    "42410020": 1
+   },
+   "dominant_think": "42410000"
+  },
+  "42500010": {
+   "prefix": "c4250",
+   "placements": 6,
+   "thinks": {
+    "42500810": 6
+   },
+   "dominant_think": "42500810"
+  },
+  "42500020": {
+   "prefix": "c4250",
+   "placements": 19,
+   "thinks": {
+    "42500000": 19
+   },
+   "dominant_think": "42500000"
+  },
+  "42500030": {
+   "prefix": "c4250",
+   "placements": 8,
+   "thinks": {
+    "42500020": 8
+   },
+   "dominant_think": "42500020"
+  },
+  "42600110": {
+   "prefix": "c4260",
+   "placements": 1,
+   "thinks": {
+    "42600010": 1
+   },
+   "dominant_think": "42600010"
+  },
+  "42600610": {
+   "prefix": "c4260",
+   "placements": 1,
+   "thinks": {
+    "42600020": 1
+   },
+   "dominant_think": "42600020"
+  },
+  "42601610": {
+   "prefix": "c4260",
+   "placements": 1,
+   "thinks": {
+    "42601020": 1
+   },
+   "dominant_think": "42601020"
+  },
+  "42700020": {
+   "prefix": "c4270",
+   "placements": 1,
+   "thinks": {
+    "42700010": 1
+   },
+   "dominant_think": "42700010"
+  },
+  "42700030": {
+   "prefix": "c4270",
+   "placements": 1,
+   "thinks": {
+    "42700020": 1
+   },
+   "dominant_think": "42700020"
+  },
+  "42700040": {
+   "prefix": "c4270",
+   "placements": 3,
+   "thinks": {
+    "42700000": 3
+   },
+   "dominant_think": "42700000"
+  },
+  "42700700": {
+   "prefix": "c4270",
+   "placements": 1,
+   "thinks": {
+    "42700700": 1
+   },
+   "dominant_think": "42700700"
+  },
+  "42800010": {
+   "prefix": "c4280",
+   "placements": 7,
+   "thinks": {
+    "42800000": 7
+   },
+   "dominant_think": "42800000"
+  },
+  "42800020": {
+   "prefix": "c4280",
+   "placements": 6,
+   "thinks": {
+    "42800810": 6
+   },
+   "dominant_think": "42800810"
+  },
+  "42800210": {
+   "prefix": "c4280",
+   "placements": 5,
+   "thinks": {
+    "42801000": 5
+   },
+   "dominant_think": "42801000"
+  },
+  "42800410": {
+   "prefix": "c4280",
+   "placements": 26,
+   "thinks": {
+    "42800000": 26
+   },
+   "dominant_think": "42800000"
+  },
+  "42800520": {
+   "prefix": "c4280",
+   "placements": 4,
+   "thinks": {
+    "42800810": 4
+   },
+   "dominant_think": "42800810"
+  },
+  "42810010": {
+   "prefix": "c4281",
+   "placements": 2,
+   "thinks": {
+    "42800810": 2
+   },
+   "dominant_think": "42800810"
+  },
+  "42900010": {
+   "prefix": "c4290",
+   "placements": 2,
+   "thinks": {
+    "42900010": 2
+   },
+   "dominant_think": "42900010"
+  },
+  "42900020": {
+   "prefix": "c4290",
+   "placements": 4,
+   "thinks": {
+    "42900020": 4
+   },
+   "dominant_think": "42900020"
+  },
+  "43000010": {
+   "prefix": "c4300",
+   "placements": 39,
+   "thinks": {
+    "43000000": 39
+   },
+   "dominant_think": "43000000"
+  },
+  "43000020": {
+   "prefix": "c4300",
+   "placements": 1,
+   "thinks": {
+    "43000000": 1
+   },
+   "dominant_think": "43000000"
+  },
+  "43000030": {
+   "prefix": "c4300",
+   "placements": 3,
+   "thinks": {
+    "43000020": 3
+   },
+   "dominant_think": "43000020"
+  },
+  "43001010": {
+   "prefix": "c4300",
+   "placements": 7,
+   "thinks": {
+    "43001010": 7
+   },
+   "dominant_think": "43001010"
+  },
+  "43002000": {
+   "prefix": "c4300",
+   "placements": 6,
+   "thinks": {
+    "43002000": 6
+   },
+   "dominant_think": "43002000"
+  },
+  "43002010": {
+   "prefix": "c4300",
+   "placements": 50,
+   "thinks": {
+    "43002000": 50
+   },
+   "dominant_think": "43002000"
+  },
+  "43002020": {
+   "prefix": "c4300",
+   "placements": 2,
+   "thinks": {
+    "43002010": 2
+   },
+   "dominant_think": "43002010"
+  },
+  "43002300": {
+   "prefix": "c4300",
+   "placements": 6,
+   "thinks": {
+    "43002000": 6
+   },
+   "dominant_think": "43002000"
+  },
+  "43002410": {
+   "prefix": "c4300",
+   "placements": 15,
+   "thinks": {
+    "43002000": 15
+   },
+   "dominant_think": "43002000"
+  },
+  "43003010": {
+   "prefix": "c4300",
+   "placements": 27,
+   "thinks": {
+    "43003000": 25,
+    "43003010": 2
+   },
+   "dominant_think": "43003000"
+  },
+  "43004010": {
+   "prefix": "c4300",
+   "placements": 4,
+   "thinks": {
+    "43004000": 4
+   },
+   "dominant_think": "43004000"
+  },
+  "43004020": {
+   "prefix": "c4300",
+   "placements": 1,
+   "thinks": {
+    "43004000": 1
+   },
+   "dominant_think": "43004000"
+  },
+  "43005010": {
+   "prefix": "c4300",
+   "placements": 58,
+   "thinks": {
+    "43005000": 58
+   },
+   "dominant_think": "43005000"
+  },
+  "43006010": {
+   "prefix": "c4300",
+   "placements": 58,
+   "thinks": {
+    "43006000": 58
+   },
+   "dominant_think": "43006000"
+  },
+  "43009400": {
+   "prefix": "c4300",
+   "placements": 1,
+   "thinks": {
+    "0": 1
+   },
+   "dominant_think": "0"
+  },
+  "43110010": {
+   "prefix": "c4311",
+   "placements": 61,
+   "thinks": {
+    "43110000": 35,
+    "43110010": 26
+   },
+   "dominant_think": "43110000"
+  },
+  "43110020": {
+   "prefix": "c4311",
+   "placements": 2,
+   "thinks": {
+    "43110000": 1,
+    "1": 1
+   },
+   "dominant_think": "43110000"
+  },
+  "43110030": {
+   "prefix": "c4311",
+   "placements": 2,
+   "thinks": {
+    "43110000": 2
+   },
+   "dominant_think": "43110000"
+  },
+  "43111110": {
+   "prefix": "c4311",
+   "placements": 18,
+   "thinks": {
+    "43110000": 3,
+    "43111100": 15
+   },
+   "dominant_think": "43111100"
+  },
+  "43111320": {
+   "prefix": "c4311",
+   "placements": 3,
+   "thinks": {
+    "43110200": 3
+   },
+   "dominant_think": "43110200"
+  },
+  "43112010": {
+   "prefix": "c4311",
+   "placements": 2,
+   "thinks": {
+    "43112000": 2
+   },
+   "dominant_think": "43112000"
+  },
+  "43112110": {
+   "prefix": "c4311",
+   "placements": 3,
+   "thinks": {
+    "43112100": 3
+   },
+   "dominant_think": "43112100"
+  },
+  "43112310": {
+   "prefix": "c4311",
+   "placements": 1,
+   "thinks": {
+    "43112000": 1
+   },
+   "dominant_think": "43112000"
+  },
+  "43113010": {
+   "prefix": "c4311",
+   "placements": 8,
+   "thinks": {
+    "43113000": 8
+   },
+   "dominant_think": "43113000"
+  },
+  "43114010": {
+   "prefix": "c4311",
+   "placements": 4,
+   "thinks": {
+    "43114000": 4
+   },
+   "dominant_think": "43114000"
+  },
+  "43130010": {
+   "prefix": "c4313",
+   "placements": 5,
+   "thinks": {
+    "43130000": 5
+   },
+   "dominant_think": "43130000"
+  },
+  "43130020": {
+   "prefix": "c4313",
+   "placements": 1,
+   "thinks": {
+    "43130010": 1
+   },
+   "dominant_think": "43130010"
+  },
+  "43130330": {
+   "prefix": "c4313",
+   "placements": 9,
+   "thinks": {
+    "43130000": 9
+   },
+   "dominant_think": "43130000"
+  },
+  "43131010": {
+   "prefix": "c4313",
+   "placements": 3,
+   "thinks": {
+    "43131000": 3
+   },
+   "dominant_think": "43131000"
+  },
+  "43131030": {
+   "prefix": "c4313",
+   "placements": 3,
+   "thinks": {
+    "43131000": 3
+   },
+   "dominant_think": "43131000"
+  },
+  "43132010": {
+   "prefix": "c4313",
+   "placements": 2,
+   "thinks": {
+    "43132000": 2
+   },
+   "dominant_think": "43132000"
+  },
+  "43132020": {
+   "prefix": "c4313",
+   "placements": 3,
+   "thinks": {
+    "43132010": 2,
+    "43132000": 1
+   },
+   "dominant_think": "43132010"
+  },
+  "43132030": {
+   "prefix": "c4313",
+   "placements": 7,
+   "thinks": {
+    "43132000": 7
+   },
+   "dominant_think": "43132000"
+  },
+  "43133010": {
+   "prefix": "c4313",
+   "placements": 2,
+   "thinks": {
+    "43133000": 2
+   },
+   "dominant_think": "43133000"
+  },
+  "43133020": {
+   "prefix": "c4313",
+   "placements": 1,
+   "thinks": {
+    "43133020": 1
+   },
+   "dominant_think": "43133020"
+  },
+  "43133030": {
+   "prefix": "c4313",
+   "placements": 8,
+   "thinks": {
+    "43133000": 8
+   },
+   "dominant_think": "43133000"
+  },
+  "43134010": {
+   "prefix": "c4313",
+   "placements": 1,
+   "thinks": {
+    "43130000": 1
+   },
+   "dominant_think": "43130000"
+  },
+  "43134030": {
+   "prefix": "c4313",
+   "placements": 4,
+   "thinks": {
+    "43130020": 4
+   },
+   "dominant_think": "43130020"
+  },
+  "43135020": {
+   "prefix": "c4313",
+   "placements": 3,
+   "thinks": {
+    "43131000": 3
+   },
+   "dominant_think": "43131000"
+  },
+  "43136020": {
+   "prefix": "c4313",
+   "placements": 3,
+   "thinks": {
+    "43132000": 3
+   },
+   "dominant_think": "43132000"
+  },
+  "43140010": {
+   "prefix": "c4314",
+   "placements": 4,
+   "thinks": {
+    "43140000": 4
+   },
+   "dominant_think": "43140000"
+  },
+  "43140110": {
+   "prefix": "c4314",
+   "placements": 2,
+   "thinks": {
+    "43140000": 2
+   },
+   "dominant_think": "43140000"
+  },
+  "43141010": {
+   "prefix": "c4314",
+   "placements": 1,
+   "thinks": {
+    "43141000": 1
+   },
+   "dominant_think": "43141000"
+  },
+  "43141110": {
+   "prefix": "c4314",
+   "placements": 3,
+   "thinks": {
+    "43141000": 3
+   },
+   "dominant_think": "43141000"
+  },
+  "43142010": {
+   "prefix": "c4314",
+   "placements": 2,
+   "thinks": {
+    "43142000": 2
+   },
+   "dominant_think": "43142000"
+  },
+  "43150010": {
+   "prefix": "c4315",
+   "placements": 32,
+   "thinks": {
+    "43150000": 32
+   },
+   "dominant_think": "43150000"
+  },
+  "43150310": {
+   "prefix": "c4315",
+   "placements": 1,
+   "thinks": {
+    "43150000": 1
+   },
+   "dominant_think": "43150000"
+  },
+  "43152010": {
+   "prefix": "c4315",
+   "placements": 9,
+   "thinks": {
+    "43152000": 9
+   },
+   "dominant_think": "43152000"
+  },
+  "43153010": {
+   "prefix": "c4315",
+   "placements": 1,
+   "thinks": {
+    "43153000": 1
+   },
+   "dominant_think": "43153000"
+  },
+  "43210010": {
+   "prefix": "c4321",
+   "placements": 7,
+   "thinks": {
+    "43210000": 7
+   },
+   "dominant_think": "43210000"
+  },
+  "43211010": {
+   "prefix": "c4321",
+   "placements": 6,
+   "thinks": {
+    "43211000": 6
+   },
+   "dominant_think": "43211000"
+  },
+  "43212010": {
+   "prefix": "c4321",
+   "placements": 5,
+   "thinks": {
+    "43212000": 5
+   },
+   "dominant_think": "43212000"
+  },
+  "43400610": {
+   "prefix": "c4340",
+   "placements": 3,
+   "thinks": {
+    "43400000": 3
+   },
+   "dominant_think": "43400000"
+  },
+  "43401010": {
+   "prefix": "c4340",
+   "placements": 1,
+   "thinks": {
+    "43401000": 1
+   },
+   "dominant_think": "43401000"
+  },
+  "43401120": {
+   "prefix": "c4340",
+   "placements": 3,
+   "thinks": {
+    "43401110": 3
+   },
+   "dominant_think": "43401110"
+  },
+  "43401610": {
+   "prefix": "c4340",
+   "placements": 3,
+   "thinks": {
+    "43401000": 3
+   },
+   "dominant_think": "43401000"
+  },
+  "43510010": {
+   "prefix": "c4351",
+   "placements": 2,
+   "thinks": {
+    "43510000": 2
+   },
+   "dominant_think": "43510000"
+  },
+  "43510020": {
+   "prefix": "c4351",
+   "placements": 1,
+   "thinks": {
+    "43510010": 1
+   },
+   "dominant_think": "43510010"
+  },
+  "43510030": {
+   "prefix": "c4351",
+   "placements": 1,
+   "thinks": {
+    "43510000": 1
+   },
+   "dominant_think": "43510000"
+  },
+  "43510040": {
+   "prefix": "c4351",
+   "placements": 1,
+   "thinks": {
+    "43510020": 1
+   },
+   "dominant_think": "43510020"
+  },
+  "43511120": {
+   "prefix": "c4351",
+   "placements": 2,
+   "thinks": {
+    "43511000": 2
+   },
+   "dominant_think": "43511000"
+  },
+  "43529000": {
+   "prefix": "c4352",
+   "placements": 2,
+   "thinks": {
+    "1": 2
+   },
+   "dominant_think": "1"
+  },
+  "43530020": {
+   "prefix": "c4353",
+   "placements": 4,
+   "thinks": {
+    "43530010": 3,
+    "43530000": 1
+   },
+   "dominant_think": "43530010"
+  },
+  "43530030": {
+   "prefix": "c4353",
+   "placements": 1,
+   "thinks": {
+    "43530020": 1
+   },
+   "dominant_think": "43530020"
+  },
+  "43530130": {
+   "prefix": "c4353",
+   "placements": 1,
+   "thinks": {
+    "43530030": 1
+   },
+   "dominant_think": "43530030"
+  },
+  "43531020": {
+   "prefix": "c4353",
+   "placements": 1,
+   "thinks": {
+    "43531010": 1
+   },
+   "dominant_think": "43531010"
+  },
+  "43531030": {
+   "prefix": "c4353",
+   "placements": 1,
+   "thinks": {
+    "43531020": 1
+   },
+   "dominant_think": "43531020"
+  },
+  "43531110": {
+   "prefix": "c4353",
+   "placements": 4,
+   "thinks": {
+    "43531000": 1,
+    "43531100": 3
+   },
+   "dominant_think": "43531100"
+  },
+  "43531210": {
+   "prefix": "c4353",
+   "placements": 1,
+   "thinks": {
+    "43531000": 1
+   },
+   "dominant_think": "43531000"
+  },
+  "43531400": {
+   "prefix": "c4353",
+   "placements": 4,
+   "thinks": {
+    "43531100": 4
+   },
+   "dominant_think": "43531100"
+  },
+  "43532030": {
+   "prefix": "c4353",
+   "placements": 1,
+   "thinks": {
+    "43532020": 1
+   },
+   "dominant_think": "43532020"
+  },
+  "43540010": {
+   "prefix": "c4354",
+   "placements": 1,
+   "thinks": {
+    "43540000": 1
+   },
+   "dominant_think": "43540000"
+  },
+  "43541010": {
+   "prefix": "c4354",
+   "placements": 1,
+   "thinks": {
+    "43541010": 1
+   },
+   "dominant_think": "43541010"
+  },
+  "43542010": {
+   "prefix": "c4354",
+   "placements": 1,
+   "thinks": {
+    "43542010": 1
+   },
+   "dominant_think": "43542010"
+  },
+  "43550010": {
+   "prefix": "c4355",
+   "placements": 5,
+   "thinks": {
+    "43550000": 5
+   },
+   "dominant_think": "43550000"
+  },
+  "43550020": {
+   "prefix": "c4355",
+   "placements": 1,
+   "thinks": {
+    "43550010": 1
+   },
+   "dominant_think": "43550010"
+  },
+  "43550030": {
+   "prefix": "c4355",
+   "placements": 6,
+   "thinks": {
+    "43550000": 6
+   },
+   "dominant_think": "43550000"
+  },
+  "43551010": {
+   "prefix": "c4355",
+   "placements": 4,
+   "thinks": {
+    "43551000": 4
+   },
+   "dominant_think": "43551000"
+  },
+  "43551020": {
+   "prefix": "c4355",
+   "placements": 2,
+   "thinks": {
+    "43551000": 2
+   },
+   "dominant_think": "43551000"
+  },
+  "43630010": {
+   "prefix": "c4363",
+   "placements": 4,
+   "thinks": {
+    "43630000": 4
+   },
+   "dominant_think": "43630000"
+  },
+  "43630400": {
+   "prefix": "c4363",
+   "placements": 4,
+   "thinks": {
+    "43630000": 4
+   },
+   "dominant_think": "43630000"
+  },
+  "43710010": {
+   "prefix": "c4371",
+   "placements": 32,
+   "thinks": {
+    "43710000": 31,
+    "43710110": 1
+   },
+   "dominant_think": "43710000"
+  },
+  "43710020": {
+   "prefix": "c4371",
+   "placements": 8,
+   "thinks": {
+    "43710011": 3,
+    "43710000": 5
+   },
+   "dominant_think": "43710000"
+  },
+  "43710030": {
+   "prefix": "c4371",
+   "placements": 1,
+   "thinks": {
+    "43710000": 1
+   },
+   "dominant_think": "43710000"
+  },
+  "43710510": {
+   "prefix": "c4371",
+   "placements": 13,
+   "thinks": {
+    "43710000": 13
+   },
+   "dominant_think": "43710000"
+  },
+  "43712010": {
+   "prefix": "c4371",
+   "placements": 33,
+   "thinks": {
+    "43710000": 32,
+    "43710010": 1
+   },
+   "dominant_think": "43710000"
+  },
+  "43712510": {
+   "prefix": "c4371",
+   "placements": 1,
+   "thinks": {
+    "43710020": 1
+   },
+   "dominant_think": "43710020"
+  },
+  "43714010": {
+   "prefix": "c4371",
+   "placements": 15,
+   "thinks": {
+    "43710500": 15
+   },
+   "dominant_think": "43710500"
+  },
+  "43714020": {
+   "prefix": "c4371",
+   "placements": 2,
+   "thinks": {
+    "43710510": 2
+   },
+   "dominant_think": "43710510"
+  },
+  "43716010": {
+   "prefix": "c4371",
+   "placements": 39,
+   "thinks": {
+    "43711000": 39
+   },
+   "dominant_think": "43711000"
+  },
+  "43716020": {
+   "prefix": "c4371",
+   "placements": 2,
+   "thinks": {
+    "43711000": 2
+   },
+   "dominant_think": "43711000"
+  },
+  "43717010": {
+   "prefix": "c4371",
+   "placements": 5,
+   "thinks": {
+    "43711000": 1,
+    "43711110": 2,
+    "43711100": 2
+   },
+   "dominant_think": "43711110"
+  },
+  "43720010": {
+   "prefix": "c4372",
+   "placements": 2,
+   "thinks": {
+    "43720000": 2
+   },
+   "dominant_think": "43720000"
+  },
+  "43726010": {
+   "prefix": "c4372",
+   "placements": 1,
+   "thinks": {
+    "43721000": 1
+   },
+   "dominant_think": "43721000"
+  },
+  "43730000": {
+   "prefix": "c4373",
+   "placements": 2,
+   "thinks": {
+    "43730000": 2
+   },
+   "dominant_think": "43730000"
+  },
+  "43730020": {
+   "prefix": "c4373",
+   "placements": 3,
+   "thinks": {
+    "43730010": 3
+   },
+   "dominant_think": "43730010"
+  },
+  "43730030": {
+   "prefix": "c4373",
+   "placements": 16,
+   "thinks": {
+    "43730000": 16
+   },
+   "dominant_think": "43730000"
+  },
+  "43730510": {
+   "prefix": "c4373",
+   "placements": 4,
+   "thinks": {
+    "43730000": 4
+   },
+   "dominant_think": "43730000"
+  },
+  "43730520": {
+   "prefix": "c4373",
+   "placements": 2,
+   "thinks": {
+    "43730010": 2
+   },
+   "dominant_think": "43730010"
+  },
+  "43732010": {
+   "prefix": "c4373",
+   "placements": 4,
+   "thinks": {
+    "43730000": 4
+   },
+   "dominant_think": "43730000"
+  },
+  "43732020": {
+   "prefix": "c4373",
+   "placements": 1,
+   "thinks": {
+    "43730010": 1
+   },
+   "dominant_think": "43730010"
+  },
+  "43732510": {
+   "prefix": "c4373",
+   "placements": 1,
+   "thinks": {
+    "43730000": 1
+   },
+   "dominant_think": "43730000"
+  },
+  "43732520": {
+   "prefix": "c4373",
+   "placements": 1,
+   "thinks": {
+    "43730010": 1
+   },
+   "dominant_think": "43730010"
+  },
+  "43734010": {
+   "prefix": "c4373",
+   "placements": 5,
+   "thinks": {
+    "43730500": 5
+   },
+   "dominant_think": "43730500"
+  },
+  "43734030": {
+   "prefix": "c4373",
+   "placements": 12,
+   "thinks": {
+    "43730500": 12
+   },
+   "dominant_think": "43730500"
+  },
+  "43736010": {
+   "prefix": "c4373",
+   "placements": 3,
+   "thinks": {
+    "43731000": 3
+   },
+   "dominant_think": "43731000"
+  },
+  "43736020": {
+   "prefix": "c4373",
+   "placements": 1,
+   "thinks": {
+    "43731020": 1
+   },
+   "dominant_think": "43731020"
+  },
+  "43738010": {
+   "prefix": "c4373",
+   "placements": 4,
+   "thinks": {
+    "43730000": 4
+   },
+   "dominant_think": "43730000"
+  },
+  "43738030": {
+   "prefix": "c4373",
+   "placements": 4,
+   "thinks": {
+    "43730020": 4
+   },
+   "dominant_think": "43730020"
+  },
+  "43738110": {
+   "prefix": "c4373",
+   "placements": 9,
+   "thinks": {
+    "43730000": 9
+   },
+   "dominant_think": "43730000"
+  },
+  "43738130": {
+   "prefix": "c4373",
+   "placements": 3,
+   "thinks": {
+    "43730020": 3
+   },
+   "dominant_think": "43730020"
+  },
+  "43740010": {
+   "prefix": "c4374",
+   "placements": 3,
+   "thinks": {
+    "43740000": 3
+   },
+   "dominant_think": "43740000"
+  },
+  "43740510": {
+   "prefix": "c4374",
+   "placements": 1,
+   "thinks": {
+    "43740000": 1
+   },
+   "dominant_think": "43740000"
+  },
+  "43742010": {
+   "prefix": "c4374",
+   "placements": 3,
+   "thinks": {
+    "43740000": 3
+   },
+   "dominant_think": "43740000"
+  },
+  "43742510": {
+   "prefix": "c4374",
+   "placements": 1,
+   "thinks": {
+    "43740000": 1
+   },
+   "dominant_think": "43740000"
+  },
+  "43746010": {
+   "prefix": "c4374",
+   "placements": 2,
+   "thinks": {
+    "43741000": 2
+   },
+   "dominant_think": "43741000"
+  },
+  "43747010": {
+   "prefix": "c4374",
+   "placements": 4,
+   "thinks": {
+    "43741500": 4
+   },
+   "dominant_think": "43741500"
+  },
+  "43750010": {
+   "prefix": "c4375",
+   "placements": 12,
+   "thinks": {
+    "43750000": 12
+   },
+   "dominant_think": "43750000"
+  },
+  "43750510": {
+   "prefix": "c4375",
+   "placements": 1,
+   "thinks": {
+    "43750000": 1
+   },
+   "dominant_think": "43750000"
+  },
+  "43752010": {
+   "prefix": "c4375",
+   "placements": 14,
+   "thinks": {
+    "43750000": 14
+   },
+   "dominant_think": "43750000"
+  },
+  "43754010": {
+   "prefix": "c4375",
+   "placements": 2,
+   "thinks": {
+    "43750510": 1,
+    "43750500": 1
+   },
+   "dominant_think": "43750510"
+  },
+  "43756010": {
+   "prefix": "c4375",
+   "placements": 11,
+   "thinks": {
+    "43751000": 11
+   },
+   "dominant_think": "43751000"
+  },
+  "43770010": {
+   "prefix": "c4377",
+   "placements": 21,
+   "thinks": {
+    "43770000": 21
+   },
+   "dominant_think": "43770000"
+  },
+  "43770510": {
+   "prefix": "c4377",
+   "placements": 15,
+   "thinks": {
+    "43770000": 15
+   },
+   "dominant_think": "43770000"
+  },
+  "43772010": {
+   "prefix": "c4377",
+   "placements": 18,
+   "thinks": {
+    "43770000": 18
+   },
+   "dominant_think": "43770000"
+  },
+  "43779000": {
+   "prefix": "c4377",
+   "placements": 2,
+   "thinks": {
+    "1": 2
+   },
+   "dominant_think": "1"
+  },
+  "43800110": {
+   "prefix": "c4380",
+   "placements": 50,
+   "thinks": {
+    "43800200": 50
+   },
+   "dominant_think": "43800200"
+  },
+  "43800120": {
+   "prefix": "c4380",
+   "placements": 3,
+   "thinks": {
+    "43800210": 3
+   },
+   "dominant_think": "43800210"
+  },
+  "43810010": {
+   "prefix": "c4381",
+   "placements": 16,
+   "thinks": {
+    "43810000": 16
+   },
+   "dominant_think": "43810000"
+  },
+  "43810110": {
+   "prefix": "c4381",
+   "placements": 52,
+   "thinks": {
+    "43810100": 52
+   },
+   "dominant_think": "43810100"
+  },
+  "43811010": {
+   "prefix": "c4381",
+   "placements": 86,
+   "thinks": {
+    "43810100": 86
+   },
+   "dominant_think": "43810100"
+  },
+  "43821010": {
+   "prefix": "c4382",
+   "placements": 33,
+   "thinks": {
+    "43821000": 33
+   },
+   "dominant_think": "43821000"
+  },
+  "43823110": {
+   "prefix": "c4382",
+   "placements": 14,
+   "thinks": {
+    "43823000": 14
+   },
+   "dominant_think": "43823000"
+  },
+  "43824010": {
+   "prefix": "c4382",
+   "placements": 24,
+   "thinks": {
+    "43823000": 24
+   },
+   "dominant_think": "43823000"
+  },
+  "43830010": {
+   "prefix": "c4383",
+   "placements": 23,
+   "thinks": {
+    "43830900": 23
+   },
+   "dominant_think": "43830900"
+  },
+  "43840020": {
+   "prefix": "c4384",
+   "placements": 21,
+   "thinks": {
+    "43840900": 21
+   },
+   "dominant_think": "43840900"
+  },
+  "43860010": {
+   "prefix": "c4386",
+   "placements": 4,
+   "thinks": {
+    "43860010": 4
+   },
+   "dominant_think": "43860010"
+  },
+  "44400010": {
+   "prefix": "c4440",
+   "placements": 27,
+   "thinks": {
+    "44400000": 27
+   },
+   "dominant_think": "44400000"
+  },
+  "44500000": {
+   "prefix": "c4450",
+   "placements": 1,
+   "thinks": {
+    "44500000": 1
+   },
+   "dominant_think": "44500000"
+  },
+  "44600010": {
+   "prefix": "c4460",
+   "placements": 4,
+   "thinks": {
+    "44600020": 3,
+    "44600010": 1
+   },
+   "dominant_think": "44600020"
+  },
+  "44600020": {
+   "prefix": "c4460",
+   "placements": 3,
+   "thinks": {
+    "44600030": 2,
+    "44600000": 1
+   },
+   "dominant_think": "44600030"
+  },
+  "44601010": {
+   "prefix": "c4460",
+   "placements": 1,
+   "thinks": {
+    "44600030": 1
+   },
+   "dominant_think": "44600030"
+  },
+  "44700010": {
+   "prefix": "c4470",
+   "placements": 1,
+   "thinks": {
+    "44700010": 1
+   },
+   "dominant_think": "44700010"
+  },
+  "44800020": {
+   "prefix": "c4480",
+   "placements": 1,
+   "thinks": {
+    "44800010": 1
+   },
+   "dominant_think": "44800010"
+  },
+  "44800410": {
+   "prefix": "c4480",
+   "placements": 4,
+   "thinks": {
+    "44800400": 4
+   },
+   "dominant_think": "44800400"
+  },
+  "44810020": {
+   "prefix": "c4481",
+   "placements": 10,
+   "thinks": {
+    "44810010": 10
+   },
+   "dominant_think": "44810010"
+  },
+  "44810410": {
+   "prefix": "c4481",
+   "placements": 22,
+   "thinks": {
+    "44810400": 22
+   },
+   "dominant_think": "44810400"
+  },
+  "44811410": {
+   "prefix": "c4481",
+   "placements": 21,
+   "thinks": {
+    "44811400": 21
+   },
+   "dominant_think": "44811400"
+  },
+  "44900010": {
+   "prefix": "c4490",
+   "placements": 4,
+   "thinks": {
+    "44900000": 4
+   },
+   "dominant_think": "44900000"
+  },
+  "44900210": {
+   "prefix": "c4490",
+   "placements": 1,
+   "thinks": {
+    "44900000": 1
+   },
+   "dominant_think": "44900000"
+  },
+  "44910000": {
+   "prefix": "c4491",
+   "placements": 1,
+   "thinks": {
+    "1": 1
+   },
+   "dominant_think": "1"
+  },
+  "45000010": {
+   "prefix": "c4500",
+   "placements": 2,
+   "thinks": {
+    "45000010": 2
+   },
+   "dominant_think": "45000010"
+  },
+  "45000020": {
+   "prefix": "c4500",
+   "placements": 3,
+   "thinks": {
+    "45000000": 3
+   },
+   "dominant_think": "45000000"
+  },
+  "45010010": {
+   "prefix": "c4501",
+   "placements": 1,
+   "thinks": {
+    "45010000": 1
+   },
+   "dominant_think": "45010000"
+  },
+  "45030010": {
+   "prefix": "c4503",
+   "placements": 4,
+   "thinks": {
+    "45030000": 4
+   },
+   "dominant_think": "45030000"
+  },
+  "45050010": {
+   "prefix": "c4505",
+   "placements": 1,
+   "thinks": {
+    "45050020": 1
+   },
+   "dominant_think": "45050020"
+  },
+  "45050020": {
+   "prefix": "c4505",
+   "placements": 1,
+   "thinks": {
+    "45050800": 1
+   },
+   "dominant_think": "45050800"
+  },
+  "45050040": {
+   "prefix": "c4505",
+   "placements": 1,
+   "thinks": {
+    "45050030": 1
+   },
+   "dominant_think": "45050030"
+  },
+  "45050050": {
+   "prefix": "c4505",
+   "placements": 1,
+   "thinks": {
+    "45050040": 1
+   },
+   "dominant_think": "45050040"
+  },
+  "45102010": {
+   "prefix": "c4510",
+   "placements": 1,
+   "thinks": {
+    "45100010": 1
+   },
+   "dominant_think": "45100010"
+  },
+  "45500030": {
+   "prefix": "c4550",
+   "placements": 5,
+   "thinks": {
+    "45500030": 5
+   },
+   "dominant_think": "45500030"
+  },
+  "45506010": {
+   "prefix": "c4550",
+   "placements": 11,
+   "thinks": {
+    "45506000": 11
+   },
+   "dominant_think": "45506000"
+  },
+  "45506020": {
+   "prefix": "c4550",
+   "placements": 3,
+   "thinks": {
+    "45506010": 3
+   },
+   "dominant_think": "45506010"
+  },
+  "45600030": {
+   "prefix": "c4560",
+   "placements": 1,
+   "thinks": {
+    "45600030": 1
+   },
+   "dominant_think": "45600030"
+  },
+  "45601010": {
+   "prefix": "c4560",
+   "placements": 2,
+   "thinks": {
+    "45600000": 1,
+    "45600040": 1
+   },
+   "dominant_think": "45600000"
+  },
+  "45601020": {
+   "prefix": "c4560",
+   "placements": 3,
+   "thinks": {
+    "45600040": 3
+   },
+   "dominant_think": "45600040"
+  },
+  "45700010": {
+   "prefix": "c4570",
+   "placements": 13,
+   "thinks": {
+    "45700000": 13
+   },
+   "dominant_think": "45700000"
+  },
+  "45800010": {
+   "prefix": "c4580",
+   "placements": 1,
+   "thinks": {
+    "45800900": 1
+   },
+   "dominant_think": "45800900"
+  },
+  "45803020": {
+   "prefix": "c4580",
+   "placements": 1,
+   "thinks": {
+    "45800020": 1
+   },
+   "dominant_think": "45800020"
+  },
+  "46000030": {
+   "prefix": "c4600",
+   "placements": 7,
+   "thinks": {
+    "46000010": 7
+   },
+   "dominant_think": "46000010"
+  },
+  "46000110": {
+   "prefix": "c4600",
+   "placements": 3,
+   "thinks": {
+    "46000090": 3
+   },
+   "dominant_think": "46000090"
+  },
+  "46000210": {
+   "prefix": "c4600",
+   "placements": 3,
+   "thinks": {
+    "46000000": 3
+   },
+   "dominant_think": "46000000"
+  },
+  "46000220": {
+   "prefix": "c4600",
+   "placements": 1,
+   "thinks": {
+    "46000020": 1
+   },
+   "dominant_think": "46000020"
+  },
+  "46000230": {
+   "prefix": "c4600",
+   "placements": 1,
+   "thinks": {
+    "46000030": 1
+   },
+   "dominant_think": "46000030"
+  },
+  "46004010": {
+   "prefix": "c4600",
+   "placements": 1,
+   "thinks": {
+    "46004000": 1
+   },
+   "dominant_think": "46004000"
+  },
+  "46004080": {
+   "prefix": "c4600",
+   "placements": 1,
+   "thinks": {
+    "46004810": 1
+   },
+   "dominant_think": "46004810"
+  },
+  "46020030": {
+   "prefix": "c4602",
+   "placements": 2,
+   "thinks": {
+    "46020010": 2
+   },
+   "dominant_think": "46020010"
+  },
+  "46020040": {
+   "prefix": "c4602",
+   "placements": 1,
+   "thinks": {
+    "46020010": 1
+   },
+   "dominant_think": "46020010"
+  },
+  "46020050": {
+   "prefix": "c4602",
+   "placements": 1,
+   "thinks": {
+    "46020020": 1
+   },
+   "dominant_think": "46020020"
+  },
+  "46200010": {
+   "prefix": "c4620",
+   "placements": 1,
+   "thinks": {
+    "46200000": 1
+   },
+   "dominant_think": "46200000"
+  },
+  "46202010": {
+   "prefix": "c4620",
+   "placements": 2,
+   "thinks": {
+    "46201600": 2
+   },
+   "dominant_think": "46201600"
+  },
+  "46300010": {
+   "prefix": "c4630",
+   "placements": 1,
+   "thinks": {
+    "46300020": 1
+   },
+   "dominant_think": "46300020"
+  },
+  "46300210": {
+   "prefix": "c4630",
+   "placements": 1,
+   "thinks": {
+    "46300010": 1
+   },
+   "dominant_think": "46300010"
+  },
+  "46400010": {
+   "prefix": "c4640",
+   "placements": 1,
+   "thinks": {
+    "46400020": 1
+   },
+   "dominant_think": "46400020"
+  },
+  "46400020": {
+   "prefix": "c4640",
+   "placements": 1,
+   "thinks": {
+    "46400010": 1
+   },
+   "dominant_think": "46400010"
+  },
+  "46400700": {
+   "prefix": "c4640",
+   "placements": 1,
+   "thinks": {
+    "46400700": 1
+   },
+   "dominant_think": "46400700"
+  },
+  "46500010": {
+   "prefix": "c4650",
+   "placements": 1,
+   "thinks": {
+    "46500010": 1
+   },
+   "dominant_think": "46500010"
+  },
+  "46500210": {
+   "prefix": "c4650",
+   "placements": 1,
+   "thinks": {
+    "46500210": 1
+   },
+   "dominant_think": "46500210"
+  },
+  "46500230": {
+   "prefix": "c4650",
+   "placements": 1,
+   "thinks": {
+    "46500200": 1
+   },
+   "dominant_think": "46500200"
+  },
+  "46600010": {
+   "prefix": "c4660",
+   "placements": 2,
+   "thinks": {
+    "46600030": 2
+   },
+   "dominant_think": "46600030"
+  },
+  "46600020": {
+   "prefix": "c4660",
+   "placements": 3,
+   "thinks": {
+    "46600010": 3
+   },
+   "dominant_think": "46600010"
+  },
+  "46600030": {
+   "prefix": "c4660",
+   "placements": 1,
+   "thinks": {
+    "46600020": 1
+   },
+   "dominant_think": "46600020"
+  },
+  "46601010": {
+   "prefix": "c4660",
+   "placements": 1,
+   "thinks": {
+    "46601010": 1
+   },
+   "dominant_think": "46601010"
+  },
+  "46700010": {
+   "prefix": "c4670",
+   "placements": 1,
+   "thinks": {
+    "46700010": 1
+   },
+   "dominant_think": "46700010"
+  },
+  "46700020": {
+   "prefix": "c4670",
+   "placements": 1,
+   "thinks": {
+    "46700010": 1
+   },
+   "dominant_think": "46700010"
+  },
+  "46801010": {
+   "prefix": "c4680",
+   "placements": 16,
+   "thinks": {
+    "46800020": 16
+   },
+   "dominant_think": "46800020"
+  },
+  "46801020": {
+   "prefix": "c4680",
+   "placements": 1,
+   "thinks": {
+    "46800010": 1
+   },
+   "dominant_think": "46800010"
+  },
+  "46900010": {
+   "prefix": "c4690",
+   "placements": 1,
+   "thinks": {
+    "46900010": 1
+   },
+   "dominant_think": "46900010"
+  },
+  "46900020": {
+   "prefix": "c4690",
+   "placements": 1,
+   "thinks": {
+    "46900020": 1
+   },
+   "dominant_think": "46900020"
+  },
+  "47509010": {
+   "prefix": "c4750",
+   "placements": 1,
+   "thinks": {
+    "47500000": 1
+   },
+   "dominant_think": "47500000"
+  },
+  "47700020": {
+   "prefix": "c4770",
+   "placements": 1,
+   "thinks": {
+    "47700010": 1
+   },
+   "dominant_think": "47700010"
+  },
+  "47701030": {
+   "prefix": "c4770",
+   "placements": 1,
+   "thinks": {
+    "47701010": 1
+   },
+   "dominant_think": "47701010"
+  },
+  "47701210": {
+   "prefix": "c4770",
+   "placements": 1,
+   "thinks": {
+    "47706010": 1
+   },
+   "dominant_think": "47706010"
+  },
+  "48100010": {
+   "prefix": "c4810",
+   "placements": 1,
+   "thinks": {
+    "48100010": 1
+   },
+   "dominant_think": "48100010"
+  },
+  "48100020": {
+   "prefix": "c4810",
+   "placements": 2,
+   "thinks": {
+    "48100000": 1,
+    "48100020": 1
+   },
+   "dominant_think": "48100000"
+  },
+  "49000010": {
+   "prefix": "c4900",
+   "placements": 1,
+   "thinks": {
+    "49000000": 1
+   },
+   "dominant_think": "49000000"
+  },
+  "49010010": {
+   "prefix": "c4901",
+   "placements": 1,
+   "thinks": {
+    "49000000": 1
+   },
+   "dominant_think": "49000000"
+  },
+  "49100120": {
+   "prefix": "c4910",
+   "placements": 2,
+   "thinks": {
+    "49100020": 2
+   },
+   "dominant_think": "49100020"
+  },
+  "49100190": {
+   "prefix": "c4910",
+   "placements": 1,
+   "thinks": {
+    "49100020": 1
+   },
+   "dominant_think": "49100020"
+  },
+  "49500010": {
+   "prefix": "c4950",
+   "placements": 1,
+   "thinks": {
+    "49500070": 1
+   },
+   "dominant_think": "49500070"
+  },
+  "49600010": {
+   "prefix": "c4960",
+   "placements": 1,
+   "thinks": {
+    "49600000": 1
+   },
+   "dominant_think": "49600000"
+  },
+  "49801010": {
+   "prefix": "c4980",
+   "placements": 1,
+   "thinks": {
+    "49800040": 1
+   },
+   "dominant_think": "49800040"
+  },
+  "49801020": {
+   "prefix": "c4980",
+   "placements": 1,
+   "thinks": {
+    "49800010": 1
+   },
+   "dominant_think": "49800010"
+  },
+  "49801030": {
+   "prefix": "c4980",
+   "placements": 1,
+   "thinks": {
+    "49800020": 1
+   },
+   "dominant_think": "49800020"
+  },
+  "49801110": {
+   "prefix": "c4980",
+   "placements": 1,
+   "thinks": {
+    "49800030": 1
+   },
+   "dominant_think": "49800030"
+  },
+  "50110010": {
+   "prefix": "c5011",
+   "placements": 1,
+   "thinks": {
+    "50110010": 1
+   },
+   "dominant_think": "50110010"
+  },
+  "50110020": {
+   "prefix": "c5011",
+   "placements": 1,
+   "thinks": {
+    "50110020": 1
+   },
+   "dominant_think": "50110020"
+  },
+  "50110030": {
+   "prefix": "c5011",
+   "placements": 4,
+   "thinks": {
+    "50110030": 4
+   },
+   "dominant_think": "50110030"
+  },
+  "50110040": {
+   "prefix": "c5011",
+   "placements": 1,
+   "thinks": {
+    "50110010": 1
+   },
+   "dominant_think": "50110010"
+  },
+  "51108010": {
+   "prefix": "c5110",
+   "placements": 94,
+   "thinks": {
+    "51108000": 94
+   },
+   "dominant_think": "51108000"
+  },
+  "58100920": {
+   "prefix": "c5810",
+   "placements": 1,
+   "thinks": {
+    "58100030": 1
+   },
+   "dominant_think": "58100030"
+  },
+  "60019000": {
+   "prefix": "c6001",
+   "placements": 8,
+   "thinks": {
+    "60011050": 8
+   },
+   "dominant_think": "60011050"
+  },
+  "70000110": {
+   "prefix": "c7000",
+   "placements": 28,
+   "thinks": {
+    "70000000": 28
+   },
+   "dominant_think": "70000000"
+  },
+  "70001110": {
+   "prefix": "c7000",
+   "placements": 4,
+   "thinks": {
+    "70000100": 4
+   },
+   "dominant_think": "70000100"
+  },
+  "70003110": {
+   "prefix": "c7000",
+   "placements": 4,
+   "thinks": {
+    "70002000": 4
+   },
+   "dominant_think": "70002000"
+  },
+  "70004110": {
+   "prefix": "c7000",
+   "placements": 3,
+   "thinks": {
+    "70003000": 3
+   },
+   "dominant_think": "70003000"
+  },
+  "70005110": {
+   "prefix": "c7000",
+   "placements": 15,
+   "thinks": {
+    "70003100": 15
+   },
+   "dominant_think": "70003100"
+  },
+  "71000010": {
+   "prefix": "c7100",
+   "placements": 1,
+   "thinks": {
+    "71000020": 1
+   },
+   "dominant_think": "71000020"
+  },
+  "71000020": {
+   "prefix": "c7100",
+   "placements": 1,
+   "thinks": {
+    "71000030": 1
+   },
+   "dominant_think": "71000030"
+  },
+  "71000110": {
+   "prefix": "c7100",
+   "placements": 5,
+   "thinks": {
+    "71000010": 5
+   },
+   "dominant_think": "71000010"
+  },
+  "75000020": {
+   "prefix": "c7500",
+   "placements": 1,
+   "thinks": {
+    "75000000": 1
+   },
+   "dominant_think": "75000000"
+  },
+  "75000210": {
+   "prefix": "c7500",
+   "placements": 1,
+   "thinks": {
+    "75000000": 1
+   },
+   "dominant_think": "75000000"
+  },
+  "75002020": {
+   "prefix": "c7500",
+   "placements": 1,
+   "thinks": {
+    "75000000": 1
+   },
+   "dominant_think": "75000000"
+  },
+  "75002210": {
+   "prefix": "c7500",
+   "placements": 1,
+   "thinks": {
+    "75000000": 1
+   },
+   "dominant_think": "75000000"
+  },
+  "75003020": {
+   "prefix": "c7500",
+   "placements": 1,
+   "thinks": {
+    "75000000": 1
+   },
+   "dominant_think": "75000000"
+  },
+  "75003210": {
+   "prefix": "c7500",
+   "placements": 1,
+   "thinks": {
+    "75000000": 1
+   },
+   "dominant_think": "75000000"
+  },
+  "75100020": {
+   "prefix": "c7510",
+   "placements": 1,
+   "thinks": {
+    "75100000": 1
+   },
+   "dominant_think": "75100000"
+  },
+  "75110010": {
+   "prefix": "c7511",
+   "placements": 1,
+   "thinks": {
+    "75110000": 1
+   },
+   "dominant_think": "75110000"
+  },
+  "75200020": {
+   "prefix": "c7520",
+   "placements": 1,
+   "thinks": {
+    "75200000": 1
+   },
+   "dominant_think": "75200000"
+  },
+  "75200030": {
+   "prefix": "c7520",
+   "placements": 1,
+   "thinks": {
+    "75200000": 1
+   },
+   "dominant_think": "75200000"
+  },
+  "75200110": {
+   "prefix": "c7520",
+   "placements": 1,
+   "thinks": {
+    "75200000": 1
+   },
+   "dominant_think": "75200000"
+  },
+  "75200120": {
+   "prefix": "c7520",
+   "placements": 1,
+   "thinks": {
+    "75200000": 1
+   },
+   "dominant_think": "75200000"
+  },
+  "75210000": {
+   "prefix": "c7521",
+   "placements": 1,
+   "thinks": {
+    "75210000": 1
+   },
+   "dominant_think": "75210000"
+  },
+  "75210010": {
+   "prefix": "c7521",
+   "placements": 1,
+   "thinks": {
+    "75210000": 1
+   },
+   "dominant_think": "75210000"
+  },
+  "75300010": {
+   "prefix": "c7530",
+   "placements": 1,
+   "thinks": {
+    "75300000": 1
+   },
+   "dominant_think": "75300000"
+  },
+  "75300020": {
+   "prefix": "c7530",
+   "placements": 1,
+   "thinks": {
+    "75300000": 1
+   },
+   "dominant_think": "75300000"
+  },
+  "75300110": {
+   "prefix": "c7530",
+   "placements": 1,
+   "thinks": {
+    "75300000": 1
+   },
+   "dominant_think": "75300000"
+  },
+  "75300120": {
+   "prefix": "c7530",
+   "placements": 1,
+   "thinks": {
+    "75300000": 1
+   },
+   "dominant_think": "75300000"
+  },
+  "75400010": {
+   "prefix": "c7540",
+   "placements": 1,
+   "thinks": {
+    "75400010": 1
+   },
+   "dominant_think": "75400010"
+  },
+  "75400020": {
+   "prefix": "c7540",
+   "placements": 1,
+   "thinks": {
+    "75400000": 1
+   },
+   "dominant_think": "75400000"
+  },
+  "75400100": {
+   "prefix": "c7540",
+   "placements": 1,
+   "thinks": {
+    "75400000": 1
+   },
+   "dominant_think": "75400000"
+  },
+  "75410000": {
+   "prefix": "c7541",
+   "placements": 1,
+   "thinks": {
+    "75410000": 1
+   },
+   "dominant_think": "75410000"
+  },
+  "75600010": {
+   "prefix": "c7560",
+   "placements": 12,
+   "thinks": {
+    "75600000": 12
+   },
+   "dominant_think": "75600000"
+  },
+  "75600020": {
+   "prefix": "c7560",
+   "placements": 1,
+   "thinks": {
+    "75600000": 1
+   },
+   "dominant_think": "75600000"
+  },
+  "75600110": {
+   "prefix": "c7560",
+   "placements": 1,
+   "thinks": {
+    "75600020": 1
+   },
+   "dominant_think": "75600020"
+  },
+  "75600130": {
+   "prefix": "c7560",
+   "placements": 1,
+   "thinks": {
+    "75600010": 1
+   },
+   "dominant_think": "75600010"
+  },
+  "75610010": {
+   "prefix": "c7561",
+   "placements": 1,
+   "thinks": {
+    "75600000": 1
+   },
+   "dominant_think": "75600000"
+  },
+  "75700010": {
+   "prefix": "c7570",
+   "placements": 12,
+   "thinks": {
+    "75700000": 12
+   },
+   "dominant_think": "75700000"
+  },
+  "75700020": {
+   "prefix": "c7570",
+   "placements": 1,
+   "thinks": {
+    "75700000": 1
+   },
+   "dominant_think": "75700000"
+  },
+  "75700030": {
+   "prefix": "c7570",
+   "placements": 2,
+   "thinks": {
+    "75700000": 2
+   },
+   "dominant_think": "75700000"
+  },
+  "75800010": {
+   "prefix": "c7580",
+   "placements": 1,
+   "thinks": {
+    "75800000": 1
+   },
+   "dominant_think": "75800000"
+  },
+  "75802000": {
+   "prefix": "c7580",
+   "placements": 1,
+   "thinks": {
+    "0": 1
+   },
+   "dominant_think": "0"
+  },
+  "75802010": {
+   "prefix": "c7580",
+   "placements": 1,
+   "thinks": {
+    "75800000": 1
+   },
+   "dominant_think": "75800000"
+  },
+  "76000010": {
+   "prefix": "c7600",
+   "placements": 1,
+   "thinks": {
+    "76000000": 1
+   },
+   "dominant_think": "76000000"
+  },
+  "76001010": {
+   "prefix": "c7600",
+   "placements": 1,
+   "thinks": {
+    "76000000": 1
+   },
+   "dominant_think": "76000000"
+  },
+  "76200110": {
+   "prefix": "c7620",
+   "placements": 11,
+   "thinks": {
+    "76200010": 11
+   },
+   "dominant_think": "76200010"
+  },
+  "77000010": {
+   "prefix": "c7700",
+   "placements": 1,
+   "thinks": {
+    "77000000": 1
+   },
+   "dominant_think": "77000000"
+  },
+  "77009010": {
+   "prefix": "c2150",
+   "placements": 1,
+   "thinks": {
+    "0": 1
+   },
+   "dominant_think": "0"
+  },
+  "77100010": {
+   "prefix": "c7710",
+   "placements": 1,
+   "thinks": {
+    "77100000": 1
+   },
+   "dominant_think": "77100000"
+  },
+  "77110010": {
+   "prefix": "c7711",
+   "placements": 1,
+   "thinks": {
+    "77110000": 1
+   },
+   "dominant_think": "77110000"
+  },
+  "77120010": {
+   "prefix": "c7712",
+   "placements": 1,
+   "thinks": {
+    "77120000": 1
+   },
+   "dominant_think": "77120000"
+  },
+  "78000010": {
+   "prefix": "c7800",
+   "placements": 1,
+   "thinks": {
+    "78000000": 1
+   },
+   "dominant_think": "78000000"
+  },
+  "78100010": {
+   "prefix": "c7810",
+   "placements": 21,
+   "thinks": {
+    "78100000": 21
+   },
+   "dominant_think": "78100000"
+  },
+  "78100020": {
+   "prefix": "c7810",
+   "placements": 5,
+   "thinks": {
+    "78100010": 5
+   },
+   "dominant_think": "78100010"
+  },
+  "78200010": {
+   "prefix": "c7820",
+   "placements": 1,
+   "thinks": {
+    "78200000": 1
+   },
+   "dominant_think": "78200000"
+  },
+  "79000010": {
+   "prefix": "c7900",
+   "placements": 1,
+   "thinks": {
+    "79000000": 1
+   },
+   "dominant_think": "79000000"
+  },
+  "79100010": {
+   "prefix": "c7910",
+   "placements": 1,
+   "thinks": {
+    "79100000": 1
+   },
+   "dominant_think": "79100000"
+  },
+  "79200010": {
+   "prefix": "c7920",
+   "placements": 1,
+   "thinks": {
+    "79200000": 1
+   },
+   "dominant_think": "79200000"
+  },
+  "81300000": {
+   "prefix": "c8130",
+   "placements": 1,
+   "thinks": {
+    "1": 1
+   },
+   "dominant_think": "1"
+  },
+  "81310000": {
+   "prefix": "c8131",
+   "placements": 5,
+   "thinks": {
+    "1": 5
+   },
+   "dominant_think": "1"
+  },
+  "81320000": {
+   "prefix": "c8132",
+   "placements": 1,
+   "thinks": {
+    "1": 1
+   },
+   "dominant_think": "1"
+  },
+  "89100000": {
+   "prefix": "c8910",
+   "placements": 1,
+   "thinks": {
+    "1": 1
+   },
+   "dominant_think": "1"
+  },
+  "89110000": {
+   "prefix": "c8911",
+   "placements": 1,
+   "thinks": {
+    "1": 1
+   },
+   "dominant_think": "1"
+  },
+  "137030010": {
+   "prefix": "c3703",
+   "placements": 1,
+   "thinks": {
+    "137030010": 1
+   },
+   "dominant_think": "137030010"
+  },
+  "137030020": {
+   "prefix": "c3703",
+   "placements": 1,
+   "thinks": {
+    "137030020": 1
+   },
+   "dominant_think": "137030020"
+  },
+  "143400010": {
+   "prefix": "c4340",
+   "placements": 1,
+   "thinks": {
+    "143400010": 1
+   },
+   "dominant_think": "143400010"
+  },
+  "143400020": {
+   "prefix": "c4340",
+   "placements": 1,
+   "thinks": {
+    "143400020": 1
+   },
+   "dominant_think": "143400020"
+  },
+  "149610010": {
+   "prefix": "c4961",
+   "placements": 1,
+   "thinks": {
+    "149610010": 1
+   },
+   "dominant_think": "149610010"
+  },
+  "149610020": {
+   "prefix": "c4961",
+   "placements": 1,
+   "thinks": {
+    "149610020": 1
+   },
+   "dominant_think": "149610020"
+  },
+  "2301951999": {
+   "prefix": "c5810",
+   "placements": 1,
+   "thinks": {
+    "4294967295": 1
+   },
+   "dominant_think": "4294967295"
+  }
+ }
+}

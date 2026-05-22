@@ -1,0 +1,2591 @@
+{
+ "_meta": {
+  "generator": "extract_npc_think_from_xml.py",
+  "root": "/tmp/mmvmsb",
+  "n_msb_dirs": 31,
+  "n_parts": 905,
+  "prefix_filter": "(none)",
+  "parse_failures": []
+ },
+ "pairs": {
+  "10000000": {
+   "prefix": "c1000",
+   "placements": 25,
+   "thinks": {
+    "1": 25
+   },
+   "maps": [
+    "m45_51_00_00-msb-dcx",
+    "m46_52_00_00-msb-dcx",
+    "m46_53_00_00-msb-dcx",
+    "m46_54_00_00-msb-dcx",
+    "m46_55_00_00-msb-dcx",
+    "m46_56_00_00-msb-dcx",
+    "m46_57_00_00-msb-dcx",
+    "m46_58_00_00-msb-dcx",
+    "m46_64_00_00-msb-dcx",
+    "m46_65_00_00-msb-dcx",
+    "m46_66_00_00-msb-dcx",
+    "m46_67_00_00-msb-dcx",
+    "m46_68_00_00-msb-dcx",
+    "m46_69_00_00-msb-dcx",
+    "m46_70_00_00-msb-dcx",
+    "m46_71_00_00-msb-dcx",
+    "m46_72_00_00-msb-dcx",
+    "m46_81_00_00-msb-dcx",
+    "m46_82_00_00-msb-dcx",
+    "m46_86_00_00-msb-dcx",
+    "m46_87_00_00-msb-dcx",
+    "m46_88_00_00-msb-dcx",
+    "m46_90_00_00-msb-dcx",
+    "m46_91_00_00-msb-dcx",
+    "m46_95_00_00-msb-dcx"
+   ],
+   "dominant_think": "1"
+  },
+  "12600020": {
+   "prefix": "c1260",
+   "placements": 1,
+   "thinks": {
+    "12600005": 1
+   },
+   "maps": [
+    "m46_67_00_00-msb-dcx"
+   ],
+   "dominant_think": "12600005"
+  },
+  "12601020": {
+   "prefix": "c1260",
+   "placements": 1,
+   "thinks": {
+    "12600015": 1
+   },
+   "maps": [
+    "m46_67_00_00-msb-dcx"
+   ],
+   "dominant_think": "12600015"
+  },
+  "12601025": {
+   "prefix": "c1260",
+   "placements": 1,
+   "thinks": {
+    "12600015": 1
+   },
+   "maps": [
+    "m46_91_00_00-msb-dcx"
+   ],
+   "dominant_think": "12600015"
+  },
+  "13100005": {
+   "prefix": "c1310",
+   "placements": 1,
+   "thinks": {
+    "13100000": 1
+   },
+   "maps": [
+    "m46_91_00_00-msb-dcx"
+   ],
+   "dominant_think": "13100000"
+  },
+  "13100010": {
+   "prefix": "c1310",
+   "placements": 1,
+   "thinks": {
+    "13100000": 1
+   },
+   "maps": [
+    "m45_51_00_00-msb-dcx"
+   ],
+   "dominant_think": "13100000"
+  },
+  "21000020": {
+   "prefix": "c2100",
+   "placements": 1,
+   "thinks": {
+    "21000015": 1
+   },
+   "maps": [
+    "m45_51_00_00-msb-dcx"
+   ],
+   "dominant_think": "21000015"
+  },
+  "21000030": {
+   "prefix": "c2100",
+   "placements": 1,
+   "thinks": {
+    "21000025": 1
+   },
+   "maps": [
+    "m46_81_00_00-msb-dcx"
+   ],
+   "dominant_think": "21000025"
+  },
+  "21101050": {
+   "prefix": "c2110",
+   "placements": 1,
+   "thinks": {
+    "21101050": 1
+   },
+   "maps": [
+    "m49_62_00_00-msb-dcx"
+   ],
+   "dominant_think": "21101050"
+  },
+  "21400230": {
+   "prefix": "c2140",
+   "placements": 2,
+   "thinks": {
+    "21400000": 2
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "21400000"
+  },
+  "21401050": {
+   "prefix": "c2140",
+   "placements": 3,
+   "thinks": {
+    "21401000": 3
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "21401000"
+  },
+  "22740200": {
+   "prefix": "c2274",
+   "placements": 2,
+   "thinks": {
+    "22740000": 2
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "22740000"
+  },
+  "25000030": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "25000010": 1
+   },
+   "maps": [
+    "m46_70_00_00-msb-dcx"
+   ],
+   "dominant_think": "25000010"
+  },
+  "25000040": {
+   "prefix": "c2500",
+   "placements": 6,
+   "thinks": {
+    "25000030": 6
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "25000030"
+  },
+  "25000050": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "25000015": 1
+   },
+   "maps": [
+    "m46_53_00_00-msb-dcx"
+   ],
+   "dominant_think": "25000015"
+  },
+  "25000055": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "25000005": 1
+   },
+   "maps": [
+    "m46_95_00_00-msb-dcx"
+   ],
+   "dominant_think": "25000005"
+  },
+  "25001020": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "25001010": 1
+   },
+   "maps": [
+    "m46_70_00_00-msb-dcx"
+   ],
+   "dominant_think": "25001010"
+  },
+  "25001030": {
+   "prefix": "c2500",
+   "placements": 3,
+   "thinks": {
+    "25001020": 3
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "25001020"
+  },
+  "25001050": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "25001015": 1
+   },
+   "maps": [
+    "m46_53_00_00-msb-dcx"
+   ],
+   "dominant_think": "25001015"
+  },
+  "25001055": {
+   "prefix": "c2500",
+   "placements": 1,
+   "thinks": {
+    "25001005": 1
+   },
+   "maps": [
+    "m46_95_00_00-msb-dcx"
+   ],
+   "dominant_think": "25001005"
+  },
+  "30000010": {
+   "prefix": "c3000",
+   "placements": 16,
+   "thinks": {
+    "30000000": 16
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx",
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "30000000"
+  },
+  "30000110": {
+   "prefix": "c3000",
+   "placements": 12,
+   "thinks": {
+    "30000000": 12
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx",
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "30000000"
+  },
+  "30001010": {
+   "prefix": "c3000",
+   "placements": 14,
+   "thinks": {
+    "30001000": 14
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx",
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "30001000"
+  },
+  "30003210": {
+   "prefix": "c3000",
+   "placements": 13,
+   "thinks": {
+    "30003000": 13
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx",
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "30003000"
+  },
+  "30100010": {
+   "prefix": "c3010",
+   "placements": 3,
+   "thinks": {
+    "30100000": 3
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "30100000"
+  },
+  "30100280": {
+   "prefix": "c3010",
+   "placements": 2,
+   "thinks": {
+    "30100040": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "30100040"
+  },
+  "30101010": {
+   "prefix": "c3010",
+   "placements": 4,
+   "thinks": {
+    "30101000": 4
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "30101000"
+  },
+  "30101260": {
+   "prefix": "c3010",
+   "placements": 1,
+   "thinks": {
+    "30101040": 1
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "30101040"
+  },
+  "30102010": {
+   "prefix": "c3010",
+   "placements": 4,
+   "thinks": {
+    "30102000": 2,
+    "30102020": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "30102000"
+  },
+  "30200010": {
+   "prefix": "c3020",
+   "placements": 12,
+   "thinks": {
+    "30200000": 12
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx",
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "30200000"
+  },
+  "30500020": {
+   "prefix": "c3050",
+   "placements": 1,
+   "thinks": {
+    "30500005": 1
+   },
+   "maps": [
+    "m46_56_00_00-msb-dcx"
+   ],
+   "dominant_think": "30500005"
+  },
+  "30610100": {
+   "prefix": "c3061",
+   "placements": 1,
+   "thinks": {
+    "30610020": 1
+   },
+   "maps": [
+    "m49_62_00_00-msb-dcx"
+   ],
+   "dominant_think": "30610020"
+  },
+  "30611100": {
+   "prefix": "c3061",
+   "placements": 1,
+   "thinks": {
+    "30610020": 1
+   },
+   "maps": [
+    "m49_62_00_00-msb-dcx"
+   ],
+   "dominant_think": "30610020"
+  },
+  "30800030": {
+   "prefix": "c3080",
+   "placements": 5,
+   "thinks": {
+    "30800000": 5
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "30800000"
+  },
+  "30801030": {
+   "prefix": "c3080",
+   "placements": 5,
+   "thinks": {
+    "30800000": 5
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "30800000"
+  },
+  "30807030": {
+   "prefix": "c3080",
+   "placements": 3,
+   "thinks": {
+    "30802000": 3
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "30802000"
+  },
+  "30808030": {
+   "prefix": "c3080",
+   "placements": 4,
+   "thinks": {
+    "30802000": 4
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "30802000"
+  },
+  "31000010": {
+   "prefix": "c3100",
+   "placements": 1,
+   "thinks": {
+    "31000020": 1
+   },
+   "maps": [
+    "m46_56_00_00-msb-dcx"
+   ],
+   "dominant_think": "31000020"
+  },
+  "31000030": {
+   "prefix": "c3100",
+   "placements": 1,
+   "thinks": {
+    "31000035": 1
+   },
+   "maps": [
+    "m46_87_00_00-msb-dcx"
+   ],
+   "dominant_think": "31000035"
+  },
+  "31501010": {
+   "prefix": "c3150",
+   "placements": 1,
+   "thinks": {
+    "31501000": 1
+   },
+   "maps": [
+    "m46_57_00_00-msb-dcx"
+   ],
+   "dominant_think": "31501000"
+  },
+  "31600010": {
+   "prefix": "c3160",
+   "placements": 1,
+   "thinks": {
+    "31600000": 1
+   },
+   "maps": [
+    "m46_57_00_00-msb-dcx"
+   ],
+   "dominant_think": "31600000"
+  },
+  "31702000": {
+   "prefix": "c3170",
+   "placements": 3,
+   "thinks": {
+    "31700000": 3
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "31700000"
+  },
+  "31802000": {
+   "prefix": "c3180",
+   "placements": 3,
+   "thinks": {
+    "31800000": 3
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "31800000"
+  },
+  "31810020": {
+   "prefix": "c3181",
+   "placements": 1,
+   "thinks": {
+    "31810025": 1
+   },
+   "maps": [
+    "m46_82_00_00-msb-dcx"
+   ],
+   "dominant_think": "31810025"
+  },
+  "32500090": {
+   "prefix": "c3250",
+   "placements": 1,
+   "thinks": {
+    "32500015": 1
+   },
+   "maps": [
+    "m46_52_00_00-msb-dcx"
+   ],
+   "dominant_think": "32500015"
+  },
+  "32510020": {
+   "prefix": "c3251",
+   "placements": 1,
+   "thinks": {
+    "32510010": 1
+   },
+   "maps": [
+    "m46_53_00_00-msb-dcx"
+   ],
+   "dominant_think": "32510010"
+  },
+  "32520010": {
+   "prefix": "c3252",
+   "placements": 1,
+   "thinks": {
+    "32520005": 1
+   },
+   "maps": [
+    "m46_52_00_00-msb-dcx"
+   ],
+   "dominant_think": "32520005"
+  },
+  "33001005": {
+   "prefix": "c3300",
+   "placements": 6,
+   "thinks": {
+    "33100000": 6
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "33100000"
+  },
+  "33002005": {
+   "prefix": "c3300",
+   "placements": 5,
+   "thinks": {
+    "33101000": 5
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "33101000"
+  },
+  "33003000": {
+   "prefix": "c3300",
+   "placements": 3,
+   "thinks": {
+    "33000000": 3
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "33000000"
+  },
+  "33300030": {
+   "prefix": "c3330",
+   "placements": 1,
+   "thinks": {
+    "33300010": 1
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "33300010"
+  },
+  "33600000": {
+   "prefix": "c3360",
+   "placements": 1,
+   "thinks": {
+    "33600000": 1
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "33600000"
+  },
+  "33608000": {
+   "prefix": "c3360",
+   "placements": 9,
+   "thinks": {
+    "33600000": 8,
+    "33700000": 1
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "33600000"
+  },
+  "33620000": {
+   "prefix": "c3361",
+   "placements": 5,
+   "thinks": {
+    "33710000": 1,
+    "33610000": 4
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "33610000"
+  },
+  "33711000": {
+   "prefix": "c3370",
+   "placements": 2,
+   "thinks": {
+    "33700000": 1,
+    "33710000": 1
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "33700000"
+  },
+  "33711010": {
+   "prefix": "c3370",
+   "placements": 2,
+   "thinks": {
+    "33700000": 2
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "33700000"
+  },
+  "33712000": {
+   "prefix": "c3371",
+   "placements": 4,
+   "thinks": {
+    "33710000": 3,
+    "33700000": 1
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "33710000"
+  },
+  "34000035": {
+   "prefix": "c3400",
+   "placements": 4,
+   "thinks": {
+    "34000000": 4
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "34000000"
+  },
+  "34000941": {
+   "prefix": "c3400",
+   "placements": 1,
+   "thinks": {
+    "34001015": 1
+   },
+   "maps": [
+    "m45_51_00_00-msb-dcx"
+   ],
+   "dominant_think": "34001015"
+  },
+  "34000942": {
+   "prefix": "c3400",
+   "placements": 1,
+   "thinks": {
+    "34001015": 1
+   },
+   "maps": [
+    "m46_81_00_00-msb-dcx"
+   ],
+   "dominant_think": "34001015"
+  },
+  "34000953": {
+   "prefix": "c3400",
+   "placements": 2,
+   "thinks": {
+    "34000000": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "34000000"
+  },
+  "34000955": {
+   "prefix": "c3400",
+   "placements": 1,
+   "thinks": {
+    "34000005": 1
+   },
+   "maps": [
+    "m46_69_00_00-msb-dcx"
+   ],
+   "dominant_think": "34000005"
+  },
+  "34000960": {
+   "prefix": "c3400",
+   "placements": 1,
+   "thinks": {
+    "34000005": 1
+   },
+   "maps": [
+    "m46_81_00_00-msb-dcx"
+   ],
+   "dominant_think": "34000005"
+  },
+  "34001011": {
+   "prefix": "c3400",
+   "placements": 3,
+   "thinks": {
+    "34001000": 3
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "34001000"
+  },
+  "34001854": {
+   "prefix": "c3400",
+   "placements": 2,
+   "thinks": {
+    "34001000": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "34001000"
+  },
+  "34500060": {
+   "prefix": "c3450",
+   "placements": 15,
+   "thinks": {
+    "34500000": 15
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "34500000"
+  },
+  "34501060": {
+   "prefix": "c3450",
+   "placements": 12,
+   "thinks": {
+    "34501000": 12
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "34501000"
+  },
+  "34510060": {
+   "prefix": "c3451",
+   "placements": 7,
+   "thinks": {
+    "34510000": 7
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "34510000"
+  },
+  "34600020": {
+   "prefix": "c3460",
+   "placements": 1,
+   "thinks": {
+    "34600025": 1
+   },
+   "maps": [
+    "m46_55_00_00-msb-dcx"
+   ],
+   "dominant_think": "34600025"
+  },
+  "34600040": {
+   "prefix": "c3460",
+   "placements": 1,
+   "thinks": {
+    "34600045": 1
+   },
+   "maps": [
+    "m46_86_00_00-msb-dcx"
+   ],
+   "dominant_think": "34600045"
+  },
+  "34600050": {
+   "prefix": "c3460",
+   "placements": 3,
+   "thinks": {
+    "34600000": 3
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "34600000"
+  },
+  "34600055": {
+   "prefix": "c3460",
+   "placements": 1,
+   "thinks": {
+    "34600045": 1
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "34600045"
+  },
+  "34601960": {
+   "prefix": "c3460",
+   "placements": 1,
+   "thinks": {
+    "34600025": 1
+   },
+   "maps": [
+    "m46_69_00_00-msb-dcx"
+   ],
+   "dominant_think": "34600025"
+  },
+  "34601965": {
+   "prefix": "c3460",
+   "placements": 1,
+   "thinks": {
+    "34600045": 1
+   },
+   "maps": [
+    "m46_86_00_00-msb-dcx"
+   ],
+   "dominant_think": "34600045"
+  },
+  "34705100": {
+   "prefix": "c3470",
+   "placements": 3,
+   "thinks": {
+    "34700000": 3
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "34700000"
+  },
+  "34706100": {
+   "prefix": "c3470",
+   "placements": 2,
+   "thinks": {
+    "34701000": 2
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "34701000"
+  },
+  "34707100": {
+   "prefix": "c3470",
+   "placements": 3,
+   "thinks": {
+    "34702000": 3
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "34702000"
+  },
+  "34708100": {
+   "prefix": "c3470",
+   "placements": 3,
+   "thinks": {
+    "34704000": 3
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "34704000"
+  },
+  "34715240": {
+   "prefix": "c3471",
+   "placements": 19,
+   "thinks": {
+    "34705030": 19
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "34705030"
+  },
+  "34715250": {
+   "prefix": "c3471",
+   "placements": 4,
+   "thinks": {
+    "34705000": 4
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "34705000"
+  },
+  "35500060": {
+   "prefix": "c3550",
+   "placements": 4,
+   "thinks": {
+    "35500000": 4
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "35500000"
+  },
+  "35600020": {
+   "prefix": "c3560",
+   "placements": 1,
+   "thinks": {
+    "35600010": 1
+   },
+   "maps": [
+    "m46_70_00_00-msb-dcx"
+   ],
+   "dominant_think": "35600010"
+  },
+  "35600070": {
+   "prefix": "c3560",
+   "placements": 2,
+   "thinks": {
+    "35600000": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "35600000"
+  },
+  "35600075": {
+   "prefix": "c3560",
+   "placements": 1,
+   "thinks": {
+    "35600005": 1
+   },
+   "maps": [
+    "m46_68_00_00-msb-dcx"
+   ],
+   "dominant_think": "35600005"
+  },
+  "35700020": {
+   "prefix": "c3570",
+   "placements": 1,
+   "thinks": {
+    "35700010": 1
+   },
+   "maps": [
+    "m46_70_00_00-msb-dcx"
+   ],
+   "dominant_think": "35700010"
+  },
+  "35700040": {
+   "prefix": "c3570",
+   "placements": 1,
+   "thinks": {
+    "35700005": 1
+   },
+   "maps": [
+    "m46_68_00_00-msb-dcx"
+   ],
+   "dominant_think": "35700005"
+  },
+  "35700070": {
+   "prefix": "c3570",
+   "placements": 2,
+   "thinks": {
+    "35700000": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "35700000"
+  },
+  "36000030": {
+   "prefix": "c3600",
+   "placements": 3,
+   "thinks": {
+    "36000000": 3
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "36000000"
+  },
+  "36001030": {
+   "prefix": "c3600",
+   "placements": 3,
+   "thinks": {
+    "36001000": 3
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "36001000"
+  },
+  "36705000": {
+   "prefix": "c3670",
+   "placements": 6,
+   "thinks": {
+    "36700000": 6
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "36700000"
+  },
+  "37000020": {
+   "prefix": "c3700",
+   "placements": 3,
+   "thinks": {
+    "37000000": 3
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "37000000"
+  },
+  "37000040": {
+   "prefix": "c3701",
+   "placements": 12,
+   "thinks": {
+    "37010000": 12
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "37010000"
+  },
+  "37025000": {
+   "prefix": "c3702",
+   "placements": 32,
+   "thinks": {
+    "37020000": 32
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "37020000"
+  },
+  "37040100": {
+   "prefix": "c3704",
+   "placements": 4,
+   "thinks": {
+    "37040000": 4
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "37040000"
+  },
+  "37040105": {
+   "prefix": "c3704",
+   "placements": 7,
+   "thinks": {
+    "37040000": 7
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "37040000"
+  },
+  "37302000": {
+   "prefix": "c3730",
+   "placements": 1,
+   "thinks": {
+    "37300000": 1
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "37300000"
+  },
+  "38000020": {
+   "prefix": "c3800",
+   "placements": 1,
+   "thinks": {
+    "38000005": 1
+   },
+   "maps": [
+    "m46_65_00_00-msb-dcx"
+   ],
+   "dominant_think": "38000005"
+  },
+  "38000025": {
+   "prefix": "c3800",
+   "placements": 1,
+   "thinks": {
+    "38000005": 1
+   },
+   "maps": [
+    "m46_95_00_00-msb-dcx"
+   ],
+   "dominant_think": "38000005"
+  },
+  "38000200": {
+   "prefix": "c3800",
+   "placements": 2,
+   "thinks": {
+    "38000000": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "38000000"
+  },
+  "38001200": {
+   "prefix": "c3800",
+   "placements": 2,
+   "thinks": {
+    "38001000": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "38001000"
+  },
+  "38104000": {
+   "prefix": "c3810",
+   "placements": 9,
+   "thinks": {
+    "38100000": 9
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "38100000"
+  },
+  "39000060": {
+   "prefix": "c3900",
+   "placements": 10,
+   "thinks": {
+    "39000000": 10
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "39000000"
+  },
+  "39000200": {
+   "prefix": "c3900",
+   "placements": 4,
+   "thinks": {
+    "39000000": 4
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "39000000"
+  },
+  "39010110": {
+   "prefix": "c3901",
+   "placements": 13,
+   "thinks": {
+    "39010000": 13
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "39010000"
+  },
+  "39102000": {
+   "prefix": "c3910",
+   "placements": 1,
+   "thinks": {
+    "39100000": 1
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "39100000"
+  },
+  "39700010": {
+   "prefix": "c3970",
+   "placements": 2,
+   "thinks": {
+    "39700020": 2
+   },
+   "maps": [
+    "m49_62_00_00-msb-dcx"
+   ],
+   "dominant_think": "39700020"
+  },
+  "39700110": {
+   "prefix": "c3970",
+   "placements": 1,
+   "thinks": {
+    "39700020": 1
+   },
+   "maps": [
+    "m49_62_00_00-msb-dcx"
+   ],
+   "dominant_think": "39700020"
+  },
+  "39701140": {
+   "prefix": "c3970",
+   "placements": 4,
+   "thinks": {
+    "39701000": 4
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "39701000"
+  },
+  "39702010": {
+   "prefix": "c3970",
+   "placements": 1,
+   "thinks": {
+    "39702020": 1
+   },
+   "maps": [
+    "m49_62_00_00-msb-dcx"
+   ],
+   "dominant_think": "39702020"
+  },
+  "39702340": {
+   "prefix": "c3970",
+   "placements": 10,
+   "thinks": {
+    "39702000": 10
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "39702000"
+  },
+  "39703040": {
+   "prefix": "c3970",
+   "placements": 17,
+   "thinks": {
+    "39703000": 17
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "39703000"
+  },
+  "39703060": {
+   "prefix": "c3970",
+   "placements": 7,
+   "thinks": {
+    "39703000": 4,
+    "39702000": 3
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "39703000"
+  },
+  "40200300": {
+   "prefix": "c4020",
+   "placements": 2,
+   "thinks": {
+    "40210020": 2
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "40210020"
+  },
+  "40210010": {
+   "prefix": "c4021",
+   "placements": 1,
+   "thinks": {
+    "40210035": 1
+   },
+   "maps": [
+    "m46_71_00_00-msb-dcx"
+   ],
+   "dominant_think": "40210035"
+  },
+  "40210030": {
+   "prefix": "c4021",
+   "placements": 1,
+   "thinks": {
+    "40210035": 1
+   },
+   "maps": [
+    "m46_88_00_00-msb-dcx"
+   ],
+   "dominant_think": "40210035"
+  },
+  "40900400": {
+   "prefix": "c4090",
+   "placements": 8,
+   "thinks": {
+    "40900000": 8
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "40900000"
+  },
+  "40900500": {
+   "prefix": "c4090",
+   "placements": 1,
+   "thinks": {
+    "40900000": 1
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "40900000"
+  },
+  "41000100": {
+   "prefix": "c4100",
+   "placements": 31,
+   "thinks": {
+    "41000000": 31
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "41000000"
+  },
+  "41100100": {
+   "prefix": "c4110",
+   "placements": 3,
+   "thinks": {
+    "41100000": 3
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "41100000"
+  },
+  "41200200": {
+   "prefix": "c4120",
+   "placements": 3,
+   "thinks": {
+    "41200000": 3
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "41200000"
+  },
+  "41300100": {
+   "prefix": "c4130",
+   "placements": 5,
+   "thinks": {
+    "41300000": 5
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "41300000"
+  },
+  "41640100": {
+   "prefix": "c4164",
+   "placements": 3,
+   "thinks": {
+    "41640000": 3
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "41640000"
+  },
+  "41640200": {
+   "prefix": "c4164",
+   "placements": 1,
+   "thinks": {
+    "41640000": 1
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "41640000"
+  },
+  "41660100": {
+   "prefix": "c4166",
+   "placements": 4,
+   "thinks": {
+    "41660000": 4
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "41660000"
+  },
+  "41710020": {
+   "prefix": "c4171",
+   "placements": 1,
+   "thinks": {
+    "41710000": 1
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "41710000"
+  },
+  "42600130": {
+   "prefix": "c4260",
+   "placements": 1,
+   "thinks": {
+    "42600000": 1
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "42600000"
+  },
+  "42600140": {
+   "prefix": "c4260",
+   "placements": 1,
+   "thinks": {
+    "42600000": 1
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "42600000"
+  },
+  "42600150": {
+   "prefix": "c4260",
+   "placements": 2,
+   "thinks": {
+    "42600005": 2
+   },
+   "maps": [
+    "m46_55_00_00-msb-dcx",
+    "m46_70_00_00-msb-dcx"
+   ],
+   "dominant_think": "42600005"
+  },
+  "42600155": {
+   "prefix": "c4260",
+   "placements": 1,
+   "thinks": {
+    "42600005": 1
+   },
+   "maps": [
+    "m46_87_00_00-msb-dcx"
+   ],
+   "dominant_think": "42600005"
+  },
+  "42600160": {
+   "prefix": "c4260",
+   "placements": 1,
+   "thinks": {
+    "42600005": 1
+   },
+   "maps": [
+    "m46_55_00_00-msb-dcx"
+   ],
+   "dominant_think": "42600005"
+  },
+  "42600165": {
+   "prefix": "c4260",
+   "placements": 1,
+   "thinks": {
+    "42600005": 1
+   },
+   "maps": [
+    "m46_87_00_00-msb-dcx"
+   ],
+   "dominant_think": "42600005"
+  },
+  "42601630": {
+   "prefix": "c4260",
+   "placements": 2,
+   "thinks": {
+    "42601020": 2
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "42601020"
+  },
+  "42601640": {
+   "prefix": "c4260",
+   "placements": 1,
+   "thinks": {
+    "42600005": 1
+   },
+   "maps": [
+    "m46_55_00_00-msb-dcx"
+   ],
+   "dominant_think": "42600005"
+  },
+  "42601645": {
+   "prefix": "c4260",
+   "placements": 1,
+   "thinks": {
+    "42600005": 1
+   },
+   "maps": [
+    "m46_87_00_00-msb-dcx"
+   ],
+   "dominant_think": "42600005"
+  },
+  "42700025": {
+   "prefix": "c4270",
+   "placements": 1,
+   "thinks": {
+    "42700005": 1
+   },
+   "maps": [
+    "m46_82_00_00-msb-dcx"
+   ],
+   "dominant_think": "42700005"
+  },
+  "42700041": {
+   "prefix": "c4270",
+   "placements": 2,
+   "thinks": {
+    "42700000": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "42700000"
+  },
+  "42900040": {
+   "prefix": "c4290",
+   "placements": 1,
+   "thinks": {
+    "42900005": 1
+   },
+   "maps": [
+    "m45_51_00_00-msb-dcx"
+   ],
+   "dominant_think": "42900005"
+  },
+  "42900045": {
+   "prefix": "c4290",
+   "placements": 1,
+   "thinks": {
+    "42900005": 1
+   },
+   "maps": [
+    "m46_82_00_00-msb-dcx"
+   ],
+   "dominant_think": "42900005"
+  },
+  "43132020": {
+   "prefix": "c4313",
+   "placements": 2,
+   "thinks": {
+    "43132010": 2
+   },
+   "maps": [
+    "m49_53_00_00-msb-dcx"
+   ],
+   "dominant_think": "43132010"
+  },
+  "43164000": {
+   "prefix": "c4316",
+   "placements": 36,
+   "thinks": {
+    "43160000": 36
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "43160000"
+  },
+  "43210050": {
+   "prefix": "c4321",
+   "placements": 12,
+   "thinks": {
+    "43210000": 12
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "43210000"
+  },
+  "43401950": {
+   "prefix": "c4340",
+   "placements": 1,
+   "thinks": {
+    "43400005": 1
+   },
+   "maps": [
+    "m46_65_00_00-msb-dcx"
+   ],
+   "dominant_think": "43400005"
+  },
+  "43401955": {
+   "prefix": "c4340",
+   "placements": 1,
+   "thinks": {
+    "43400005": 1
+   },
+   "maps": [
+    "m46_86_00_00-msb-dcx"
+   ],
+   "dominant_think": "43400005"
+  },
+  "43530040": {
+   "prefix": "c4353",
+   "placements": 1,
+   "thinks": {
+    "43530010": 1
+   },
+   "maps": [
+    "m49_53_00_00-msb-dcx"
+   ],
+   "dominant_think": "43530010"
+  },
+  "43560100": {
+   "prefix": "c4356",
+   "placements": 8,
+   "thinks": {
+    "43560000": 8
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "43560000"
+  },
+  "43730520": {
+   "prefix": "c4373",
+   "placements": 2,
+   "thinks": {
+    "43730010": 2
+   },
+   "maps": [
+    "m49_53_00_00-msb-dcx"
+   ],
+   "dominant_think": "43730010"
+  },
+  "43800200": {
+   "prefix": "c4380",
+   "placements": 35,
+   "thinks": {
+    "43800000": 35
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "43800000"
+  },
+  "43810000": {
+   "prefix": "c4381",
+   "placements": 29,
+   "thinks": {
+    "43810000": 29
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "43810000"
+  },
+  "43810100": {
+   "prefix": "c4381",
+   "placements": 4,
+   "thinks": {
+    "43810000": 4
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "43810000"
+  },
+  "43850005": {
+   "prefix": "c4385",
+   "placements": 34,
+   "thinks": {
+    "43850005": 34
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "43850005"
+  },
+  "43860010": {
+   "prefix": "c4386",
+   "placements": 1,
+   "thinks": {
+    "43860000": 1
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "43860000"
+  },
+  "43860015": {
+   "prefix": "c4386",
+   "placements": 38,
+   "thinks": {
+    "43860005": 38
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "43860005"
+  },
+  "44203200": {
+   "prefix": "c4420",
+   "placements": 2,
+   "thinks": {
+    "44200000": 2
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "44200000"
+  },
+  "44812000": {
+   "prefix": "c4480",
+   "placements": 1,
+   "thinks": {
+    "44800000": 1
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "44800000"
+  },
+  "44820210": {
+   "prefix": "c4480",
+   "placements": 1,
+   "thinks": {
+    "44820000": 1
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "44820000"
+  },
+  "44900010": {
+   "prefix": "c4490",
+   "placements": 4,
+   "thinks": {
+    "44900000": 4
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx",
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "44900000"
+  },
+  "45000010": {
+   "prefix": "c4500",
+   "placements": 1,
+   "thinks": {
+    "45000010": 1
+   },
+   "maps": [
+    "m46_58_00_00-msb-dcx"
+   ],
+   "dominant_think": "45000010"
+  },
+  "45010020": {
+   "prefix": "c4501",
+   "placements": 1,
+   "thinks": {
+    "45010005": 1
+   },
+   "maps": [
+    "m46_54_00_00-msb-dcx"
+   ],
+   "dominant_think": "45010005"
+  },
+  "45020930": {
+   "prefix": "c4502",
+   "placements": 1,
+   "thinks": {
+    "45020005": 1
+   },
+   "maps": [
+    "m46_58_00_00-msb-dcx"
+   ],
+   "dominant_think": "45020005"
+  },
+  "45030040": {
+   "prefix": "c4503",
+   "placements": 1,
+   "thinks": {
+    "45030005": 1
+   },
+   "maps": [
+    "m46_54_00_00-msb-dcx"
+   ],
+   "dominant_think": "45030005"
+  },
+  "45050080": {
+   "prefix": "c4505",
+   "placements": 1,
+   "thinks": {
+    "45050800": 1
+   },
+   "maps": [
+    "m49_53_00_00-msb-dcx"
+   ],
+   "dominant_think": "45050800"
+  },
+  "45101120": {
+   "prefix": "c4510",
+   "placements": 1,
+   "thinks": {
+    "45100005": 1
+   },
+   "maps": [
+    "m46_54_00_00-msb-dcx"
+   ],
+   "dominant_think": "45100005"
+  },
+  "45800100": {
+   "prefix": "c4580",
+   "placements": 2,
+   "thinks": {
+    "45800000": 2
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "45800000"
+  },
+  "46000030": {
+   "prefix": "c4600",
+   "placements": 4,
+   "thinks": {
+    "46000010": 4
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "46000010"
+  },
+  "46010080": {
+   "prefix": "c4601",
+   "placements": 1,
+   "thinks": {
+    "46010005": 1
+   },
+   "maps": [
+    "m46_57_00_00-msb-dcx"
+   ],
+   "dominant_think": "46010005"
+  },
+  "46300030": {
+   "prefix": "c4630",
+   "placements": 2,
+   "thinks": {
+    "46300030": 2
+   },
+   "maps": [
+    "m52_01_00_00-msb-dcx"
+   ],
+   "dominant_think": "46300030"
+  },
+  "46400960": {
+   "prefix": "c4640",
+   "placements": 1,
+   "thinks": {
+    "46400005": 1
+   },
+   "maps": [
+    "m46_52_00_00-msb-dcx"
+   ],
+   "dominant_think": "46400005"
+  },
+  "46500070": {
+   "prefix": "c4650",
+   "placements": 1,
+   "thinks": {
+    "46500005": 1
+   },
+   "maps": [
+    "m46_54_00_00-msb-dcx"
+   ],
+   "dominant_think": "46500005"
+  },
+  "46500210": {
+   "prefix": "c4650",
+   "placements": 1,
+   "thinks": {
+    "46500210": 1
+   },
+   "maps": [
+    "m46_70_00_00-msb-dcx"
+   ],
+   "dominant_think": "46500210"
+  },
+  "46500360": {
+   "prefix": "c4650",
+   "placements": 1,
+   "thinks": {
+    "46500210": 1
+   },
+   "maps": [
+    "m46_68_00_00-msb-dcx"
+   ],
+   "dominant_think": "46500210"
+  },
+  "46700010": {
+   "prefix": "c4670",
+   "placements": 1,
+   "thinks": {
+    "46700010": 1
+   },
+   "maps": [
+    "m46_64_00_00-msb-dcx"
+   ],
+   "dominant_think": "46700010"
+  },
+  "46700020": {
+   "prefix": "c4670",
+   "placements": 1,
+   "thinks": {
+    "46700010": 1
+   },
+   "maps": [
+    "m46_90_00_00-msb-dcx"
+   ],
+   "dominant_think": "46700010"
+  },
+  "46801050": {
+   "prefix": "c4680",
+   "placements": 1,
+   "thinks": {
+    "46800005": 1
+   },
+   "maps": [
+    "m46_66_00_00-msb-dcx"
+   ],
+   "dominant_think": "46800005"
+  },
+  "46900010": {
+   "prefix": "c4690",
+   "placements": 1,
+   "thinks": {
+    "46900005": 1
+   },
+   "maps": [
+    "m46_69_00_00-msb-dcx"
+   ],
+   "dominant_think": "46900005"
+  },
+  "46900020": {
+   "prefix": "c4690",
+   "placements": 1,
+   "thinks": {
+    "46900025": 1
+   },
+   "maps": [
+    "m46_91_00_00-msb-dcx"
+   ],
+   "dominant_think": "46900025"
+  },
+  "47701040": {
+   "prefix": "c4770",
+   "placements": 1,
+   "thinks": {
+    "47700005": 1
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "47700005"
+  },
+  "47701050": {
+   "prefix": "c4770",
+   "placements": 1,
+   "thinks": {
+    "47706015": 1
+   },
+   "maps": [
+    "m46_56_00_00-msb-dcx"
+   ],
+   "dominant_think": "47706015"
+  },
+  "47701210": {
+   "prefix": "c4770",
+   "placements": 1,
+   "thinks": {
+    "47706015": 1
+   },
+   "maps": [
+    "m46_66_00_00-msb-dcx"
+   ],
+   "dominant_think": "47706015"
+  },
+  "47701240": {
+   "prefix": "c4770",
+   "placements": 1,
+   "thinks": {
+    "47700015": 1
+   },
+   "maps": [
+    "m49_42_00_00-msb-dcx"
+   ],
+   "dominant_think": "47700015"
+  },
+  "48100010": {
+   "prefix": "c4810",
+   "placements": 1,
+   "thinks": {
+    "48100010": 1
+   },
+   "maps": [
+    "m46_67_00_00-msb-dcx"
+   ],
+   "dominant_think": "48100010"
+  },
+  "48110020": {
+   "prefix": "c4811",
+   "placements": 1,
+   "thinks": {
+    "48110005": 1
+   },
+   "maps": [
+    "m46_52_00_00-msb-dcx"
+   ],
+   "dominant_think": "48110005"
+  },
+  "48200030": {
+   "prefix": "c4820",
+   "placements": 1,
+   "thinks": {
+    "48200000": 1
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "48200000"
+  },
+  "49100190": {
+   "prefix": "c4910",
+   "placements": 1,
+   "thinks": {
+    "49100020": 1
+   },
+   "maps": [
+    "m46_58_00_00-msb-dcx"
+   ],
+   "dominant_think": "49100020"
+  },
+  "50110010": {
+   "prefix": "c5011",
+   "placements": 1,
+   "thinks": {
+    "50110015": 1
+   },
+   "maps": [
+    "m46_57_00_00-msb-dcx"
+   ],
+   "dominant_think": "50110015"
+  },
+  "50400180": {
+   "prefix": "c5040",
+   "placements": 1,
+   "thinks": {
+    "50400005": 1
+   },
+   "maps": [
+    "m46_72_00_00-msb-dcx"
+   ],
+   "dominant_think": "50400005"
+  },
+  "50400185": {
+   "prefix": "c5040",
+   "placements": 1,
+   "thinks": {
+    "50400005": 1
+   },
+   "maps": [
+    "m46_91_00_00-msb-dcx"
+   ],
+   "dominant_think": "50400005"
+  },
+  "50700090": {
+   "prefix": "c5070",
+   "placements": 1,
+   "thinks": {
+    "50700005": 1
+   },
+   "maps": [
+    "m46_72_00_00-msb-dcx"
+   ],
+   "dominant_think": "50700005"
+  },
+  "50700095": {
+   "prefix": "c5070",
+   "placements": 1,
+   "thinks": {
+    "50700005": 1
+   },
+   "maps": [
+    "m46_81_00_00-msb-dcx"
+   ],
+   "dominant_think": "50700005"
+  },
+  "50701100": {
+   "prefix": "c5070",
+   "placements": 1,
+   "thinks": {
+    "50701005": 1
+   },
+   "maps": [
+    "m46_72_00_00-msb-dcx"
+   ],
+   "dominant_think": "50701005"
+  },
+  "50805000": {
+   "prefix": "c5080",
+   "placements": 6,
+   "thinks": {
+    "50800000": 6
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "50800000"
+  },
+  "50806000": {
+   "prefix": "c5080",
+   "placements": 2,
+   "thinks": {
+    "50801000": 2
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "50801000"
+  },
+  "50812000": {
+   "prefix": "c5081",
+   "placements": 2,
+   "thinks": {
+    "50810000": 2
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "50810000"
+  },
+  "50813000": {
+   "prefix": "c5081",
+   "placements": 2,
+   "thinks": {
+    "50810000": 2
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "50810000"
+  },
+  "51600120": {
+   "prefix": "c5160",
+   "placements": 1,
+   "thinks": {
+    "51600005": 1
+   },
+   "maps": [
+    "m46_71_00_00-msb-dcx"
+   ],
+   "dominant_think": "51600005"
+  },
+  "51600125": {
+   "prefix": "c5160",
+   "placements": 1,
+   "thinks": {
+    "51600005": 1
+   },
+   "maps": [
+    "m46_88_00_00-msb-dcx"
+   ],
+   "dominant_think": "51600005"
+  },
+  "51600300": {
+   "prefix": "c5160",
+   "placements": 2,
+   "thinks": {
+    "51600000": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "51600000"
+  },
+  "51601300": {
+   "prefix": "c5160",
+   "placements": 4,
+   "thinks": {
+    "51601000": 4
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "51601000"
+  },
+  "51602400": {
+   "prefix": "c5160",
+   "placements": 3,
+   "thinks": {
+    "51602000": 3
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "51602000"
+  },
+  "51603100": {
+   "prefix": "c5160",
+   "placements": 3,
+   "thinks": {
+    "51600000": 3
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "51600000"
+  },
+  "52100090": {
+   "prefix": "c5210",
+   "placements": 1,
+   "thinks": {
+    "52100005": 1
+   },
+   "maps": [
+    "m46_66_00_00-msb-dcx"
+   ],
+   "dominant_think": "52100005"
+  },
+  "52500005": {
+   "prefix": "c5250",
+   "placements": 2,
+   "thinks": {
+    "52500000": 2
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "52500000"
+  },
+  "52500200": {
+   "prefix": "c5250",
+   "placements": 1,
+   "thinks": {
+    "52500005": 1
+   },
+   "maps": [
+    "m46_69_00_00-msb-dcx"
+   ],
+   "dominant_think": "52500005"
+  },
+  "52503010": {
+   "prefix": "c5250",
+   "placements": 2,
+   "thinks": {
+    "52501000": 2
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "52501000"
+  },
+  "52503020": {
+   "prefix": "c5250",
+   "placements": 2,
+   "thinks": {
+    "52500000": 2
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "52500000"
+  },
+  "52503030": {
+   "prefix": "c5250",
+   "placements": 1,
+   "thinks": {
+    "52501050": 1
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "52501050"
+  },
+  "52503035": {
+   "prefix": "c5250",
+   "placements": 1,
+   "thinks": {
+    "52501055": 1
+   },
+   "maps": [
+    "m46_64_00_00-msb-dcx"
+   ],
+   "dominant_think": "52501055"
+  },
+  "52503040": {
+   "prefix": "c5250",
+   "placements": 1,
+   "thinks": {
+    "52501030": 1
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "52501030"
+  },
+  "52503050": {
+   "prefix": "c5250",
+   "placements": 1,
+   "thinks": {
+    "52501040": 1
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "52501040"
+  },
+  "52503055": {
+   "prefix": "c5250",
+   "placements": 1,
+   "thinks": {
+    "52501045": 1
+   },
+   "maps": [
+    "m46_64_00_00-msb-dcx"
+   ],
+   "dominant_think": "52501045"
+  },
+  "53112000": {
+   "prefix": "c5311",
+   "placements": 6,
+   "thinks": {
+    "53110000": 6
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "53110000"
+  },
+  "53120190": {
+   "prefix": "c5312",
+   "placements": 1,
+   "thinks": {
+    "53120005": 1
+   },
+   "maps": [
+    "m46_86_00_00-msb-dcx"
+   ],
+   "dominant_think": "53120005"
+  },
+  "53122000": {
+   "prefix": "c5312",
+   "placements": 5,
+   "thinks": {
+    "53120000": 4,
+    "53120005": 1
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "53120000"
+  },
+  "53201000": {
+   "prefix": "c5320",
+   "placements": 4,
+   "thinks": {
+    "53200000": 4
+   },
+   "maps": [
+    "m49_43_00_00-msb-dcx"
+   ],
+   "dominant_think": "53200000"
+  },
+  "57407050": {
+   "prefix": "c5740",
+   "placements": 3,
+   "thinks": {
+    "57400005": 3
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "57400005"
+  },
+  "58100990": {
+   "prefix": "c5810",
+   "placements": 1,
+   "thinks": {
+    "58100005": 1
+   },
+   "maps": [
+    "m46_72_00_00-msb-dcx"
+   ],
+   "dominant_think": "58100005"
+  },
+  "58200010": {
+   "prefix": "c5820",
+   "placements": 1,
+   "thinks": {
+    "58200010": 1
+   },
+   "maps": [
+    "m52_01_00_00-msb-dcx"
+   ],
+   "dominant_think": "58200010"
+  },
+  "58200100": {
+   "prefix": "c5820",
+   "placements": 1,
+   "thinks": {
+    "58200005": 1
+   },
+   "maps": [
+    "m46_66_00_00-msb-dcx"
+   ],
+   "dominant_think": "58200005"
+  },
+  "58300220": {
+   "prefix": "c5830",
+   "placements": 33,
+   "thinks": {
+    "58300000": 33
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "58300000"
+  },
+  "58400610": {
+   "prefix": "c5840",
+   "placements": 1,
+   "thinks": {
+    "58400005": 1
+   },
+   "maps": [
+    "m46_71_00_00-msb-dcx"
+   ],
+   "dominant_think": "58400005"
+  },
+  "58400615": {
+   "prefix": "c5840",
+   "placements": 1,
+   "thinks": {
+    "58400005": 1
+   },
+   "maps": [
+    "m46_88_00_00-msb-dcx"
+   ],
+   "dominant_think": "58400005"
+  },
+  "58400700": {
+   "prefix": "c5840",
+   "placements": 1,
+   "thinks": {
+    "58401000": 1
+   },
+   "maps": [
+    "m46_71_00_00-msb-dcx"
+   ],
+   "dominant_think": "58401000"
+  },
+  "58400705": {
+   "prefix": "c5840",
+   "placements": 1,
+   "thinks": {
+    "58401000": 1
+   },
+   "maps": [
+    "m46_88_00_00-msb-dcx"
+   ],
+   "dominant_think": "58401000"
+  },
+  "58402000": {
+   "prefix": "c5840",
+   "placements": 2,
+   "thinks": {
+    "58400000": 2
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "58400000"
+  },
+  "58403000": {
+   "prefix": "c5840",
+   "placements": 1,
+   "thinks": {
+    "58401000": 1
+   },
+   "maps": [
+    "m49_41_00_00-msb-dcx"
+   ],
+   "dominant_think": "58401000"
+  },
+  "58600100": {
+   "prefix": "c5860",
+   "placements": 1,
+   "thinks": {
+    "58600005": 1
+   },
+   "maps": [
+    "m46_58_00_00-msb-dcx"
+   ],
+   "dominant_think": "58600005"
+  },
+  "62100005": {
+   "prefix": "c6210",
+   "placements": 1,
+   "thinks": {
+    "62100000": 1
+   },
+   "maps": [
+    "m46_82_00_00-msb-dcx"
+   ],
+   "dominant_think": "62100000"
+  },
+  "62100015": {
+   "prefix": "c6210",
+   "placements": 1,
+   "thinks": {
+    "62100000": 1
+   },
+   "maps": [
+    "m46_69_00_00-msb-dcx"
+   ],
+   "dominant_think": "62100000"
+  },
+  "62100020": {
+   "prefix": "c6210",
+   "placements": 1,
+   "thinks": {
+    "62100010": 1
+   },
+   "maps": [
+    "m46_69_00_00-msb-dcx"
+   ],
+   "dominant_think": "62100010"
+  },
+  "71000010": {
+   "prefix": "c7100",
+   "placements": 1,
+   "thinks": {
+    "71000005": 1
+   },
+   "maps": [
+    "m46_65_00_00-msb-dcx"
+   ],
+   "dominant_think": "71000005"
+  },
+  "71000020": {
+   "prefix": "c7100",
+   "placements": 1,
+   "thinks": {
+    "71000035": 1
+   },
+   "maps": [
+    "m46_95_00_00-msb-dcx"
+   ],
+   "dominant_think": "71000035"
+  },
+  "83000000": {
+   "prefix": "c8300",
+   "placements": 1,
+   "thinks": {
+    "83000000": 1
+   },
+   "maps": [
+    "m49_53_00_00-msb-dcx"
+   ],
+   "dominant_think": "83000000"
+  }
+ }
+}

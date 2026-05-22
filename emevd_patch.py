@@ -1676,6 +1676,195 @@ def _build_arena_hold_trigger_event_body(
     return '\r\n'.join(lines)
 
 
+# ============================================================================
+# proximity_wake (v0.26.x)
+# ============================================================================
+#
+# PASTE THIS into emevd_patch.py, anywhere among the other @register'd
+# patches (e.g. directly after patch_nb_arena_hold_trigger, whose structure
+# this mirrors). It needs `re` (already imported at module top) and the
+# module global `_NB_BOSS_ENTITY_IDS` (already defined for the NB patches).
+#
+# ----------------------------------------------------------------------------
+# Redundant, player-proximity-gated AI activation for NON-night-boss
+# boss/miniboss slots whose vanilla emevd never issues EnableCharacterAI.
+#
+# Background
+# ----------
+# Named boss/miniboss encounters are set up through the 90015XXX common
+# event family (90015000 "named boss encounter", plus 002/008/015/016/030).
+# Every one of those events is a MONITOR — it reads CharacterAIState to
+# drive the healthbar / BGM / death detection. None of them enables AI.
+# For these encounters the boss is expected to be live (AI-on) from the
+# moment it is instanced: vanilla relies on the original chr's NpcParam
+# carrying a live disposition.
+#
+# When the rando swaps the slot, the swapped-in chr can inherit an NpcParam
+# variant with a dormant/ambush disposition. The chr is placed and
+# positioned correctly — the swap writes only ModelIndex / NpcParam /
+# ThinkParam (oops_all_anyone.py ~L1366-1370), never draw groups, entity
+# groups, or the Part transform, so engine POI-instancing is unaffected —
+# but it boots AI-off. Nothing in the arena emevd ever wakes it, because
+# vanilla never needed a wake here. The enemy stands frozen in place until
+# the player forces a state transition by hitting it. (A backstab
+# empirically un-freezes them: the confirmation that this is AI-activation,
+# not position and not locomotion — a backstab changes neither.)
+#
+# Distinct from patch_aicommon_wake_gap, which injects EnableCharacterAI
+# into spawn-anim (ForceAnimationPlayback) and SpecialStandby wake handlers.
+# Those handlers do not exist for this slot class — there is no wake
+# handler at all. This patch supplies one.
+#
+# What it does
+# ------------
+#  - common_func: appends one new $Event(99055500) — a parameterized
+#    one-shot proximity wake: WaitFor(player within R of the boss) ->
+#    EnableCharacterAI.
+#  - per-map: for every $InitializeCommonEvent(0, 90015000, flag, eid, ...)
+#    in a non-NB arena whose file contains no explicit EnableCharacterAI(eid),
+#    injects one $InitializeCommonEvent(0, 99055500, eid, R) right after it.
+#
+# Why proximity-to-the-boss-ENTITY is the correct gate
+# ----------------------------------------------------
+# These slots' Part transforms are placeholders; the engine's POI/template
+# instancing resolves the real position at runtime ("spawns at origin,
+# gets pulled in"). A proximity check against the boss entity re-evaluates
+# live positions every tick: while the boss sits at origin, no player is
+# near it, so the WaitFor cannot trip; once the engine pulls the boss to
+# its arena spot and a player approaches, it fires. It is structurally
+# incapable of waking the boss before it has been placed — no map-load
+# race, and nothing to hook onto the (engine-level, non-emevd) pull-in.
+#
+# Night bosses are excluded for free: their encounters use the 90065XXX
+# family and never call 90015000, so they are never matched. (The nb_stems
+# set is also checked explicitly, as a defensive belt-and-suspenders.)
+#
+# Idempotency
+# -----------
+#  - common_func: skip if '$Event(99055500,' already present.
+#  - per-map: skip a given entity if 'InitializeCommonEvent(0, 99055500,
+#    {eid}' is already present. The patch is safe to re-run on its own
+#    output.
+#
+# Caveats
+# -------
+#  - Scope heuristic is "the arena file contains no EnableCharacterAI({eid})".
+#    If an arena wakes its boss through a parameterized common event, the
+#    literal will not appear and this patch injects anyway — harmless,
+#    because EnableCharacterAI on an already-active chr is a no-op (the
+#    same idempotency patch_aicommon_wake_gap relies on).
+#  - Intro-cutscene bosses: an encounter that intentionally holds its boss
+#    dormant through an intro cutscene would instead have it wake on
+#    proximity. NR's 90015000 encounters are overwhelmingly walk-up-and-
+#    fight with no cutscene, but if a specific entity must stay dormant,
+#    add its entity id to _PROXIMITY_WAKE_EXCLUDE_ENTITIES.
+#  - This activates the boss; it does not fix WHY the swapped NpcParam came
+#    in dormant. It is the scripted equivalent of the backstab that was
+#    confirmed to un-freeze these encounters. If the root cause is wanted
+#    instead, that is an NpcParam-disposition fix (diff the disposition /
+#    think fields of the swapped-in vs vanilla NpcParam rows).
+
+_PROXIMITY_WAKE_EVENT_ID = 99055500
+_PROXIMITY_WAKE_RADIUS = 15          # metres, player-to-boss. Tunable; the
+                                     # nb_arena entry/hold triggers use 20/25
+                                     # as reference points.
+_PROXIMITY_WAKE_EXCLUDE_ENTITIES = set()   # entity ids to never auto-wake
+                                           # (e.g. intro-cutscene bosses)
+
+
+def _build_proximity_wake_event_body(radius=_PROXIMITY_WAKE_RADIUS):
+    """Render the $Event(99055500) common_func body — a one-shot,
+    proximity-gated AI activation parameterized by (chrEntityId, radius)."""
+    lines = [
+        '',
+        f'$Event({_PROXIMITY_WAKE_EVENT_ID}, Default, function(chrEntityId, radius) {{',
+        '    // proximity_wake (v0.26.x)',
+        '    //',
+        '    // Wake a boss/miniboss whose vanilla emevd issues no',
+        '    // EnableCharacterAI, when a player approaches it. Scripted',
+        '    // equivalent of the backstab that empirically un-freezes',
+        '    // these slots. One-shot (Default).',
+        '    //',
+        '    // EndIf guard: if the boss is already in combat (woken by any',
+        '    // other path) do nothing. EnableCharacterAI is itself a no-op',
+        '    // when already active; the guard just skips the redundant WaitFor.',
+        '',
+        '    EndIf(CharacterAIState(chrEntityId, AIStateType.Combat, GreaterOrEqual, 1));',
+        f'    WaitFor(EntityInRadiusOfEntity(20000, chrEntityId, radius, 1));',
+        '    EnableCharacterAI(chrEntityId);',
+        '    SetNetworkUpdateRate(chrEntityId, true, CharacterUpdateFrequency.AlwaysUpdate);',
+        '});',
+        '',
+    ]
+    return '\r\n'.join(lines)
+
+
+@register('proximity_wake')
+def patch_proximity_wake(content, filename):
+    """v0.26.x: redundant, player-proximity-gated AI activation for non-NB
+    boss/miniboss slots that vanilla never wakes (the 90015XXX monitor
+    family does not enable AI). See the section header for the full
+    rationale. Scripted equivalent of the backstab that un-freezes these
+    encounters.
+
+    common_func : appends $Event(99055500) once.
+    arena files : injects one $InitializeCommonEvent(0, 99055500, eid, R)
+                  per 90015000-registered boss that the file does not
+                  already explicitly wake.
+    other files : untouched.
+    """
+    # --- common_func: append the proximity-wake event once ---
+    if filename.startswith('common_func'):
+        if f'$Event({_PROXIMITY_WAKE_EVENT_ID},' in content:
+            return content, 0
+        return content + _build_proximity_wake_event_body(), 1
+
+    # --- per-map: inject one InitializeCommonEvent per 90015000 boss ---
+    stem = filename
+    for suffix in ('.emevd.dcx.js', '.emevd.js', '.dcx.js', '.js'):
+        if stem.endswith(suffix):
+            stem = stem[:-len(suffix)]
+            break
+
+    # Defensive: never touch night-boss arenas. They use the 90065XXX
+    # family so 90015000 would not match anyway, but skip explicitly.
+    nb_stems = {s for s, _, _ in _NB_BOSS_ENTITY_IDS}
+    if stem in nb_stems:
+        return content, 0
+
+    # Each named boss/miniboss is registered by
+    #   $InitializeCommonEvent(0, 90015000, eventFlagId, chrEntityId, ...);
+    # chrEntityId is the 2nd content argument.
+    call_re = re.compile(
+        r'^([ \t]*)(\$InitializeCommonEvent\(0,\s*90015000,\s*\d+,\s*(\d+),[^)]*\);)',
+        re.MULTILINE)
+
+    seen = set()
+    counter = [0]
+
+    def repl(m):
+        indent, call, eid = m.group(1), m.group(2), m.group(3)
+        eid_i = int(eid)
+        if eid_i in seen:
+            return m.group(0)            # one wake per entity per file
+        seen.add(eid_i)
+        if eid_i in _PROXIMITY_WAKE_EXCLUDE_ENTITIES:
+            return m.group(0)
+        # idempotent: already injected for this entity
+        if f'InitializeCommonEvent(0, {_PROXIMITY_WAKE_EVENT_ID}, {eid},' in content:
+            return m.group(0)
+        # scope: arena already wakes this boss explicitly
+        if f'EnableCharacterAI({eid})' in content:
+            return m.group(0)
+        counter[0] += 1
+        new_line = (f'$InitializeCommonEvent(0, {_PROXIMITY_WAKE_EVENT_ID}, '
+                    f'{eid}, {_PROXIMITY_WAKE_RADIUS});')
+        return f'{m.group(0)}\r\n{indent}{new_line}'
+
+    new_content = call_re.sub(repl, content)
+    return new_content, counter[0]
+
+
 @register('nb_arena_hold_trigger')
 def patch_nb_arena_hold_trigger(content, filename):
     """v0.24.111: Player-deliberate "hold-to-trigger" arena starter.

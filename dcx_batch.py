@@ -579,7 +579,7 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
     oops_v3.V3_PRESERVE_NIGHT_BOSS_ARENAS = not test_mode_arenas
     # v0.26.16: safe-NB-arena MSB randomization. Only takes effect
     # when test-mode is OFF (test-mode overlays the EMEVD, which would
-    # void the "vanilla EMEVD" promise). When on, the 13 single-boss
+    # void the "vanilla EMEVD" promise). When on, the 12 single-boss
     # N1/N2 arenas in V3_SAFE_NB_RANDOMIZE_MSBS get their boss Part
     # swapped; EMEVD stays vanilla via the healthbar-step NB exclude.
     oops_v3.V3_RANDOMIZE_SAFE_NB_ARENAS = (

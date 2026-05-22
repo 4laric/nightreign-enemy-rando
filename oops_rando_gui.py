@@ -1548,7 +1548,7 @@ class RandoGUI:
         # Default ON for visual stability.
         self.prefer_canonical_variants_var = tk.BooleanVar(value=True)
         # v0.26.16: randomize the safe single-boss night-boss arenas.
-        # When ON (and test-mode OFF), the 13 single-boss N1/N2 arenas
+        # When ON (and test-mode OFF), the 12 single-boss N1/N2 arenas
         # get their boss Part swapped while their EMEVD stays vanilla.
         # Multi-entity arenas (Godskin Duo etc.) are excluded. Default
         # OFF — opt-in; normal play keeps all night bosses vanilla.
@@ -3402,12 +3402,12 @@ class RandoGUI:
         # v0.26.16: randomize-safe-night-boss-arenas toggle.
         rn_row = ttk.Frame(diag_frame); rn_row.pack(fill='x', pady=(8, 0))
         rn_check = ttk.Checkbutton(rn_row,
-                         text="Randomize safe night-boss arenas (13 single-boss N1/N2, vanilla EMEVD)",
+                         text="Randomize safe night-boss arenas (12 single-boss N1/N2, vanilla EMEVD)",
                          variable=self.randomize_safe_nb_arenas_var,
                          style='TCheckbutton')
         rn_check.pack(side='left')
         Tooltip(rn_check,
-                "When ON, the 13 single-boss N1/N2 arenas get their "
+                "When ON, the 12 single-boss N1/N2 arenas get their "
                 "boss randomized like any other slot — but their EMEVD "
                 "is left vanilla (no patch, no test-mode template). The "
                 "vanilla single-boss intro handles a swapped boss fine.\n\n"
@@ -3419,7 +3419,7 @@ class RandoGUI:
         make_info_icon(rn_row, tooltip_text=(
             "Default: OFF\n\n"
             "OFF — all 25 night-boss arenas ship fully vanilla.\n"
-            "ON  — the 13 safe single-boss arenas get a randomized "
+            "ON  — the 12 safe single-boss arenas get a randomized "
             "boss with vanilla EMEVD; the 6 multi-entity arenas and the "
             "Augur descent stay vanilla.\n\n"
             "Requires Test-mode arenas OFF."

@@ -7072,17 +7072,20 @@ V3_PRESERVE_NIGHT_BOSS_ARENAS = True
 #   m49_25  Crucible Knight + Golden Hippopotamus
 #   m49_28  Night's Cavalry x2 (Glaive + Flail)
 #   m49_29  Demi-Human Queen + Swordmaster
-# Nameless King (m48_20) is KEPT — single headline boss (the Storm
-# King is its phase-1 mount, not a co-equal second boss).
+# Nameless King (m48_20) is also EXCLUDED — although a single headline
+# boss, its phase-1-on-Storm-King / phase-2-dismounted structure (the
+# arena carries both c7900 and the c7910 mount) is a two-entity, two-
+# phase fight whose vanilla init may not survive a boss swap. Pulled
+# out of caution; revisit if a swap there is empirically validated.
 #
-# When V3_RANDOMIZE_SAFE_NB_ARENAS is True these 13 arenas are exempted
+# When V3_RANDOMIZE_SAFE_NB_ARENAS is True these 12 arenas are exempted
 # from all three NB-preservation gates in pick_target_cp, so their boss
 # Part gets swapped. Their EMEVD is NOT touched — the healthbar step
 # preserves NB-arena EMEVD vanilla independently. dcx_batch sets the
 # flag and only enables it when test-mode arenas are OFF (test-mode
 # would overlay the EMEVD and void the vanilla-EMEVD guarantee).
 V3_SAFE_NB_RANDOMIZE_MSBS = frozenset({
-    'm48_20_00_00.msb', 'm48_40_00_00.msb', 'm48_70_00_00.msb',
+    'm48_40_00_00.msb', 'm48_70_00_00.msb',
     'm48_90_00_00.msb', 'm49_10_00_00.msb', 'm49_17_00_00.msb',
     'm49_18_00_00.msb', 'm49_19_00_00.msb', 'm49_20_00_00.msb',
     'm49_21_00_00.msb', 'm49_23_00_00.msb', 'm49_26_00_00.msb',
@@ -11124,7 +11127,7 @@ def pick_target_cp(recipient_cp, tags,
             return non_fragile_baseline_cp
 
     # v0.26.16: safe-NB-arena randomization override. When the
-    # "randomize safe NB arenas" option is on, the 13 single-boss N1/N2
+    # "randomize safe NB arenas" option is on, the 12 single-boss N1/N2
     # arenas in V3_SAFE_NB_RANDOMIZE_MSBS are exempted from ALL THREE NB
     # preservation gates below — their boss Part gets swapped while their
     # EMEVD stays vanilla (healthbar step preserves NB EMEVD separately).

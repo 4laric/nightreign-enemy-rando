@@ -1,5 +1,4 @@
-"""Tests for gates threading into pick_target_cp / pick_target /
-pick_cluster_target_cp.
+"""Tests for gates threading into pick_target_cp / pick_target.
 
 pick_target_cp is the central read site for the gate cluster — it
 reads V3_EXCLUDE_PREFIXES, V3_EXCLUDE_TARGET_PREFIXES,
@@ -38,13 +37,6 @@ class TestPickTargetCpSignature:
         sig = inspect.signature(oops_v3.pick_target)
         assert 'gates' in sig.parameters
         assert sig.parameters['gates'].default is None
-
-    def test_pick_cluster_target_cp_accepts_gates(self):
-        import inspect
-        sig = inspect.signature(oops_v3.pick_cluster_target_cp)
-        assert 'gates' in sig.parameters
-        assert sig.parameters['gates'].default is None
-
 
 # ---------------------------------------------------------------------------
 # Parity: gates=from_module() should match gates=None across real inputs
@@ -4640,6 +4632,120 @@ class TestEntranceAnimationGateV0_24_79:
         assert '886942' in entry.get('_source_note', ''), (
             'c4810 _source_note should reference v0.24.77 seed 886942 '
             'where this was first identified')
+
+
+# v0.26.11: Gate 8 — requires_intro_anim
+# ============================================================================
+class TestIntroAnimRequiredGateV0_26_11:
+    """v0.26.11 adds Gate 8, the mirror image of the no-emerge Gate 7.
+
+    Some scripted slots' EMEVD spawn setup hard-requires the occupant to
+    have an idle/entrance animation. Chrs classified 'no_intro_anim' in
+    V3_ENTRANCE_ANIM_CLASS break at those slots while being resilient
+    everywhere else. Slot affordance: V3_INTRO_ANIM_REQUIRED_SLOTS.
+
+    First slot: the m38_00 Guardian Golem "Cathedra" slot (pi=51).
+    First (and only seeded) no_intro_anim chr: c5070 Death Knight,
+    confirmed broken there in playtest. Emergers/risers and the
+    unclassified-default ('unknown') majority pass through unaffected —
+    the gate is negative, not a positive allowlist.
+    """
+
+    CATHEDRA = ('m38_00_00_00.msb', 51)
+
+    def test_no_intro_anim_class_in_taxonomy(self, engine):
+        """entrance_animations.json _meta declares the new class."""
+        values = engine.V3_ENTRANCE_ANIM_FILE_META.get('values', {})
+        assert 'no_intro_anim' in values, (
+            "_meta.values missing 'no_intro_anim' — taxonomy doc not updated")
+
+    def test_death_knight_classified_no_intro_anim(self, engine):
+        """c5070 Death Knight is the seeded no_intro_anim member."""
+        assert engine.V3_ENTRANCE_ANIM_CLASS.get('c5070') == 'no_intro_anim', (
+            f"c5070 expected no_intro_anim, got "
+            f"{engine.V3_ENTRANCE_ANIM_CLASS.get('c5070')!r}")
+
+    def test_intro_anim_required_slots_loaded(self, engine):
+        """V3_INTRO_ANIM_REQUIRED_SLOTS loads from
+        data/nr_intro_anim_required_slots.json and contains Cathedra."""
+        assert isinstance(engine.V3_INTRO_ANIM_REQUIRED_SLOTS, frozenset)
+        assert self.CATHEDRA in engine.V3_INTRO_ANIM_REQUIRED_SLOTS
+
+    def test_death_knight_rejected_at_cathedra(self, engine, tags):
+        """The confirmed-broken case: Death Knight at the Cathedra slot.
+        Gate 8 should reject with 'requires_intro_anim'."""
+        reason = engine._reject_target_for_slot(
+            target_cp='c5070', src_cp='c4660',
+            src_variant_name='Guardian Golem (Cathedral)',
+            tags=tags, msb_base='m38_00_00_00.msb', pi=51)
+        assert reason == 'requires_intro_anim', (
+            f"Expected requires_intro_anim rejection; got {reason!r}")
+
+    def test_death_knight_passes_at_other_slot_in_same_msb(self, engine, tags):
+        """Gate 8 is (msb, pi)-scoped, not msb-scoped. Death Knight at
+        another pi in the same Cathedral MSB must NOT be rejected by
+        Gate 8 (pi=11 is one of the Oracle Envoy cluster slots)."""
+        reason = engine._reject_target_for_slot(
+            target_cp='c5070', src_cp='c3620',
+            src_variant_name='Oracle Envoy',
+            tags=tags, msb_base='m38_00_00_00.msb', pi=11)
+        assert reason != 'requires_intro_anim', (
+            f"Gate 8 fired at a non-required slot in the same MSB; "
+            f"got {reason!r}")
+
+    def test_death_knight_passes_at_unrelated_slot(self, engine, tags):
+        """Death Knight elsewhere in the corpus is unaffected by Gate 8.
+        (Other gates may reject for other reasons — we only assert that
+        Gate 8 specifically does not fire.)"""
+        reason = engine._reject_target_for_slot(
+            target_cp='c5070', src_cp='c4070',
+            src_variant_name='Wolf',
+            tags=tags, msb_base='m60_43_37_00.msb', pi=2)
+        assert reason != 'requires_intro_anim', (
+            f"Gate 8 fired at an unrelated slot; got {reason!r}")
+
+    def test_emerger_passes_at_cathedra(self, engine, tags):
+        """Emergers/risers play well at Cathedra (per the TODO's
+        confirmed-good observations). c4810 Erdtree Avatar is
+        emerge_from_ground, NOT no_intro_anim — Gate 8 must not fire."""
+        reason = engine._reject_target_for_slot(
+            target_cp='c4810', src_cp='c4660',
+            src_variant_name='Guardian Golem (Cathedral)',
+            tags=tags, msb_base='m38_00_00_00.msb', pi=51)
+        assert reason != 'requires_intro_anim', (
+            f"Gate 8 wrongly rejected an emerge-class chr; got {reason!r}")
+
+    def test_unknown_chr_passes_at_cathedra(self, engine, tags):
+        """The vast majority of the roster is unclassified ('unknown'
+        default). Gate 8 is a negative gate — it must NOT reject
+        unclassified chrs, so the Cathedra slot still randomizes widely."""
+        # c3950 Man-Serpent — not in V3_ENTRANCE_ANIM_CLASS
+        assert engine.V3_ENTRANCE_ANIM_CLASS.get('c3950') is None, (
+            'c3950 should be unclassified — if you classified it, this '
+            'test is now exercising the wrong case.')
+        reason = engine._reject_target_for_slot(
+            target_cp='c3950', src_cp='c4660',
+            src_variant_name='Guardian Golem (Cathedral)',
+            tags=tags, msb_base='m38_00_00_00.msb', pi=51)
+        assert reason != 'requires_intro_anim', (
+            f"Gate 8 fired on an unclassified chr; got {reason!r}")
+
+    def test_file_meta_carries_provenance(self, engine):
+        """The slot file's _meta documents the gate logic + that the
+        slot list stays manual long-term (geometry-dependent)."""
+        fm = engine.V3_INTRO_ANIM_REQUIRED_SLOTS_FILE_META
+        assert fm, 'nr_intro_anim_required_slots.json _meta missing'
+        assert fm.get('engine_field') == 'V3_INTRO_ANIM_REQUIRED_SLOTS'
+        assert 'long_term' in fm.get('interaction_with_other_systems', {})
+
+    def test_cathedra_entry_records_confirmed_failure(self, engine):
+        """The Cathedra slot entry documents c5070 as a confirmed
+        failure so future readers can trace the classification."""
+        entry = engine.V3_INTRO_ANIM_REQUIRED_SLOTS_META.get(self.CATHEDRA)
+        assert entry is not None
+        failures = {f.get('cp') for f in entry.get('confirmed_failures', [])}
+        assert 'c5070' in failures, (
+            'Cathedra entry should list c5070 in confirmed_failures')
 
 
 # v0.24.88-patch9: Gate 7.8 — nav_dependent at stub-nav slot

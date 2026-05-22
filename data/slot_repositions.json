@@ -84,6 +84,15 @@
           "m60_43_36_20.msb pi=31"
         ],
         "reason": "XXL troll sink-into-ground at cave-mouth-adjacent slot. Vanilla c4377 (M) calibration; XXL chrs sink ~3m. +2m Y raise applied uniformly across phase tiles. Cross-phase pattern from v0.24.49 applied preemptively this time."
+      },
+      {
+        "tool": "distribute_stacked_repositions v3 (v0.26.14)",
+        "stacks_redistributed": 0,
+        "cross_collisions_nudged": 0,
+        "mount_rider_pairs_recollapsed": 1,
+        "entries_modified": 1,
+        "safety_buffer": 0.4,
+        "non_repos_collision_threshold_m": 1.5
       }
     ]
   },
@@ -8323,14 +8332,14 @@
           -82.94999694824219
         ],
         "to_pos_center": [
-          -84.798,
+          -84.8,
           233.673,
-          -84.97
+          -80.97
         ],
         "to_pos_floor": [
-          -84.798,
+          -84.8,
           233.673,
-          -84.97
+          -80.97
         ],
         "displacement": 21.47,
         "leaf_extent": 1.74,
@@ -8380,6 +8389,19 @@
               ],
               "collision_distance_xz": 0.0,
               "overridden_by": "distribute_stacked_repositions v2 (v0.24.37)"
+            }
+          ],
+          "mount_rider_recollapse_passes": [
+            {
+              "reason": "mount_rider_pair_recollapse",
+              "description": "rider was split 4.00m from its mount pi=14 (c3180) by the distribution passes. Mount and rider are co-located in vanilla by design; moved the rider onto the mount's resolved position so the engine's RIDER_MOUNT_PAIRS collapse still pairs them.",
+              "pre_recollapse_target": [
+                -84.798,
+                233.673,
+                -84.97
+              ],
+              "mount_pi": "14",
+              "overridden_by": "distribute_stacked_repositions v3 (v0.26.14)"
             }
           ]
         }

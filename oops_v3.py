@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.26.10'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.26.15'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -980,6 +980,24 @@ RIDER_MOUNT_PAIRS = {
                           #   skips them. Listed for completeness.
 }
 
+# v0.26.15: Mount/rider feature (cut 1 - detection foundation).
+# V3_MOUNT_CLASS_POOL: the c-prefixes that can be picked AS a mount once
+# the coordinated swap (cut 2) is wired in - i.e. the mount half of every
+# RIDER_MOUNT_PAIRS entry (c3160 Funeral Steed, c3180 Albinauric Wolf,
+# c4060 Kaiden's Horse, c4363 Lordsworn's Horse). NOTE: deriving this from
+# tier=='mount_component' was rejected - that tier also tags riders (c4050
+# Kaiden) and other encounter components, so it is NOT a clean "is a
+# mount" signal. The RIDER_MOUNT_PAIRS mount-half is exact.
+V3_MOUNT_CLASS_POOL = {mount_cp for _rider_cp, mount_cp in RIDER_MOUNT_PAIRS}
+
+# Pilot-active mount/rider pairs. The cut-2 coordinated swap will apply
+# ONLY to these. Kaiden Sellsword (c4050) + his Horse (c4060) is the
+# canonical pilot. Night's Cavalry (c3150/c3160) and the Lordsworn
+# night-boss instance (c4353/c4363) are deliberately excluded - the user
+# has said leave those vanilla. Detection still REPORTS those pairs
+# (pilot_active=False) so the audit trace is complete.
+V3_MOUNT_RIDER_PILOT_PAIRS = {('c4050', 'c4060')}
+
 
 def _is_part_npc_preserved(po, data):
     """Return True if the Part at offset po has an npc_param in
@@ -990,6 +1008,75 @@ def _is_part_npc_preserved(po, data):
         return False
     npc = struct.unpack_from('<I', data, po + PART_OFF_NPC_PARAM)[0]
     return npc in V3_EXCLUDE_SOURCE_NPC_PARAMS
+
+
+def _detect_mount_rider_slots(data, parts, midx_to_cp,
+                              threshold_sq=2.0 * 2.0):
+    """v0.26.15: read-only detection of mount/rider Part pairs in one MSB.
+
+    A pair = two Parts whose c-prefixes form a RIDER_MOUNT_PAIRS entry and
+    that sit within `threshold_sq` (squared distance) of each other - the
+    same proximity the engine uses elsewhere to recognize a mounted pair.
+    Each rider is matched to its single nearest eligible mount.
+
+    Returns a list of dicts, one per detected pair:
+      {rider_pi, rider_cp, mount_pi, mount_cp, dist, pilot_active}
+    `pilot_active` is True when (rider_cp, mount_cp) is in
+    V3_MOUNT_RIDER_PILOT_PAIRS - the only pairs the cut-2 coordinated
+    swap will touch.
+
+    Detection only: does NOT mutate `data` and does NOT change any swap
+    target. Cut 1 runs this purely to populate the spoiler audit trace.
+    """
+    pids = []
+    for pi, po in enumerate(parts['entry_offsets']):
+        if po + PART_OFF_POSITION + 12 > len(data):
+            continue
+        midx = struct.unpack_from('<i', data, po + PART_OFF_MODEL_INDEX)[0]
+        if midx < 0:
+            continue
+        full_name = midx_to_cp.get(midx, '')
+        cp = full_name.split('_')[0] if full_name else ''
+        if not cp.startswith('c'):
+            continue
+        try:
+            x, y, z = struct.unpack_from('<fff', data, po + PART_OFF_POSITION)
+        except struct.error:
+            continue
+        if x != x or y != y or z != z:  # NaN
+            continue
+        pids.append((pi, cp, (x, y, z)))
+
+    rider_to_mount = dict(RIDER_MOUNT_PAIRS)
+    paired_mount_pis = set()
+    detected = []
+    for pi_a, cp_a, pos_a in pids:
+        expected_mount_cp = rider_to_mount.get(cp_a)
+        if expected_mount_cp is None:
+            continue
+        best = None  # (dsq, pi_b)
+        for pi_b, cp_b, pos_b in pids:
+            if pi_b == pi_a or pi_b in paired_mount_pis:
+                continue
+            if cp_b != expected_mount_cp:
+                continue
+            dsq = sum((pos_a[k] - pos_b[k]) ** 2 for k in range(3))
+            if dsq > threshold_sq:
+                continue
+            if best is None or dsq < best[0]:
+                best = (dsq, pi_b)
+        if best is None:
+            continue
+        paired_mount_pis.add(best[1])
+        detected.append({
+            'rider_pi': pi_a,
+            'rider_cp': cp_a,
+            'mount_pi': best[1],
+            'mount_cp': expected_mount_cp,
+            'dist': round(best[0] ** 0.5, 3),
+            'pilot_active': (cp_a, expected_mount_cp) in V3_MOUNT_RIDER_PILOT_PAIRS,
+        })
+    return detected
 
 
 def _collapse_rider_mount_pairs(data, parts, midx_to_cp):
@@ -2161,74 +2248,26 @@ PROBE_TARGET_VARIANT = None  # e.g. ('c6200', 62000001) for P1 Gael probe
 #     (npc=71000010) is the regular non-spirit appearance for the same chr.
 V3_AVOID_VARIANT_NPC_IDS = {
     71000110,  # c7100 Ancient Hero (Ruins) — spirit/ghost render
-    # v0.23.17: BFER scripted/cinematic variants and arena statues. Triggered
-    # by user playtest report "1hp Beast Clergyman Night 1" — placement at
-    # m48_10 picked c2110 Maliketh variant 21109042, a 9xxx-suffix variant
-    # which in FromSoft NPCParam convention means scripted/cinematic state
-    # (typically the Beast Clergyman → Maliketh phase-1 form, hardcoded at
-    # 1hp because phase transition is supposed to fire on hit-detect cutscene
-    # which doesn't run in randomized NR slots). Same pattern across other
-    # phase-locked BFER bosses (Margit, Malenia, Melina). Plus two arena
-    # statues (Maliketh + Midra) named "雕像" in BFER's variant_name metadata —
-    # not enemies at all, just decorative geometry that the rando was
-    # otherwise eligible to pick as a target.
+    # v0.23.17 + v0.23.20 (orig.) — scripted/cinematic/ghost-recall variant
+    # IDs for multi-phase bosses, hardcoded to load at 1hp / non-combat
+    # state when placed at a slot whose EMEVD doesn't run their phase-
+    # transition cutscene. Originally surfaced via BFER playtests.
     #
-    # Detection rule used to populate this set:
-    #   - npc_param_id where (id % 10000) >= 9000 AND c-prefix in
-    #     {c2010, c2050, c2110, c2120, c2180, c2190, c2200, c5220}
-    #     (phase-locked BFER bosses)
-    #   - OR variant_name contains 雕像 (Chinese for "statue")
-    # See dev/audit_bfer_variants.py for the audit logic. Re-run when BFER
-    # publishes a new variant manifest.
+    # v0.26.12 BFER cleanup: 19 of the original 24 IDs were BFER-only —
+    # absent from vanilla NR's NpcParam, from nr_enemy_roster.json, AND
+    # from mmv_imports.json — so they matched nothing once the BFER
+    # integration was retired, and were removed (13 Margit c2010 9xxx
+    # variants, c2110 Maliketh statue 21101073, c2180 Melina 21809000,
+    # c5051 Midra statue 50510002, 3 Margit c2010 8xxx ghost-recall).
     #
-    # Margit (c2010) — phase-locked Stormveil boss; 9xxx range = friendly NPC
-    # form ("狼哥友好"), main-castle script variant ("狼哥主城"), and
-    # post-cutscene phase-transition states.
-    20109000, 20109010, 20109020, 20109040, 20109064,
-    20109110, 20109120, 20109121, 20109140, 20109210,
-    20109240, 20109310, 20109410,
-    # Maliketh (c2110) — Beast Clergyman / Black Blade phase-locked boss.
-    # 21109042 was the user-confirmed 1hp placement at m48_10 NB arena.
-    # 21101073 is "黑剑竞技场雕像" = Maliketh arena statue (decoration).
-    21101073, 21109000, 21109042,
-    # Malenia (c2120) — phase-locked (Blade of Miquella → Goddess of Rot).
-    21209000,
-    # Melina (c2180) — friendly-NPC scripted variant; 9xxx = non-hostile or
-    # cutscene state. Twice-placed in seed 630750 (m46_60 + m49_19).
-    21809000,
-    # Midra (c5051) statue — "米德拉竞技场雕像" arena statue, decoration.
-    50510002,
-
-    # v0.23.20: BFER ghost-recall variants and cocoon-derived phase variants.
-    # Triggered by user playtest report seed 767092 — "blue Margit" + "1hp
-    # Godfrey" (the latter actually being c2031 Rennala P2 in 1hp pre-
-    # transition state — BFER repurposes c2031 from Hoarah Loux in vanilla
-    # ER to Rennala P2 in the BFER pack).
-    #
-    # Two new patterns added on top of v0.23.17's 9xxx rule:
-    #
-    #   1. 8xxx-suffix Margit variants (c2010): Stormveil "memory of grace"
-    #      recall sequence — when the player sits at certain Stormveil graces
-    #      they can replay the Margit fight as a vision. The vision-Margit
-    #      has a translucent blue ghost VFX baked into the variant. Three
-    #      placements observed in seed 767092 — user reported as "sort of a
-    #      blue Margit". The 7xxx range (e.g., 20107500) is left untouched
-    #      pending more empirical data; possibly a NG+ scaling tier rather
-    #      than a render variant.
-    #
-    #   2. c2031 Rennala P2 cocoon-derived variants: BFER ships 4 c2031
-    #      NPCParams. 20310024 is "满月女王" (Full Moon Queen) — Rennala's
-    #      phase-1 cocoon form, scripted as non-combat by default. 20310124
-    #      arithmetically inherits state from 024 (124 = 100 + 24), and
-    #      empirically loaded in 1hp pre-transition state when placed at a
-    #      random slot in seed 767092 (m60_44_39_20). Both are unsafe at
-    #      random placements. Base 20310000 and scaling-tier 20310100 are
-    #      left available — those are the legitimate combat variants.
-    #
-    # Margit ghost-recall variants (c2010, 8xxx range — Stormveil vision):
-    20108000, 20108500, 20108562,
-    # Rennala P2 cocoon + cocoon-derived variants (c2031, BFER repurpose):
-    20310024, 20310124,
+    # The 5 IDs BELOW survived the cull: they are ALSO shipped by
+    # mmv_imports.json (MMV ports c2110 / c2120 / c2031 from vanilla ER
+    # using the same NpcParam IDs), so they remain live whenever MMV is
+    # in the user's profile. Removing them would let MMV's 1hp scripted
+    # Maliketh / Malenia / Rennala variants reach the placement pool.
+    21109000, 21109042,  # c2110 Maliketh — scripted / Beast Clergyman phase
+    21209000,            # c2120 Malenia — phase-locked (Blade → Goddess of Rot)
+    20310024, 20310124,  # c2031 Rennala P2 — cocoon / cocoon-derived 1hp forms
 
     # v0.23.24: bulk team=26 exclusions from vanilla NR NpcParam.csv audit.
     # Diagnosed via user playtest seed 713344 (engine v0.23.22): a c2500
@@ -2245,9 +2284,9 @@ V3_AVOID_VARIANT_NPC_IDS = {
     # pick_variant_for_tier handles them correctly (returns the original
     # variant pool if all variants are avoid-listed).
     #
-    # team=26 is ADDITIONAL coverage to the existing BFER-specific exclusions
-    # (the v0.23.20 Margit ghost-recall variants don't show up under team=26
-    # in vanilla NR's NpcParam.csv — those live in BFER's separate regulation).
+    # team=26 is ADDITIONAL coverage: it catches non-aggressive scripted
+    # variants that carry the teamType=26 marker in vanilla NR's own
+    # NpcParam, complementing the per-boss scripted/phase-lock IDs above.
     # Merchant code path (apply_merchant_model_swaps) writes only MODEL_INDEX,
     # never NPC_PARAM, so excluding 32000000 / 32100000 etc from variant
     # selection doesn't break merchants.
@@ -2308,15 +2347,19 @@ V3_AVOID_VARIANT_NPC_IDS = {
     # c9001 (system chr range):
     90010000, 90010020,
 
-    # v0.23.26: c4720 BFER Godfrey/Hoarah Loux phase-locked variants.
-    # User playtest seed 356064 reported "1hp Hoarah Loux in an evergaol"
-    # (m49_19_00_00 pi=2, npc_param 47200100). BFER ships c4720 (which is
-    # an unused slot in vanilla NR) as Godfrey/Hoarah Loux from vanilla ER.
-    # Four variants in BFER's manifest:
-    #   47200000  'Godfrey (BFER)'        — base, presumed safe (combat phase 1)
+    # v0.23.26 (orig.) / v0.26.12 (re-attributed): c4720 Godfrey / Hoarah
+    # Loux phase-locked variants. User playtest seed 356064 reported "1hp
+    # Hoarah Loux in an evergaol" (m49_19_00_00 pi=2, npc_param 47200100).
+    # c4720 is an unused slot in vanilla NR; it was first surfaced via the
+    # (now-retired) BFER pack and is currently shipped by mmv_imports.json,
+    # which ports Godfrey/Hoarah Loux from vanilla ER using the same
+    # NpcParam IDs. The three IDs below are verified live in
+    # mmv_imports.json — they stay avoid-listed whenever MMV is loaded.
+    # Variants of c4720:
+    #   47200000  'Godfrey'        — base, presumed safe (combat phase 1)
     #   47200070  '初王' (First King)     — cinematic intro variant
-    #   47200100  'Godfrey (BFER)'        — phase 2 (Hoarah Loux), 1hp without intro
-    #   47200134  'Godfrey (BFER)'        — suffix-100-derived variant, same risk
+    #   47200100  'Godfrey'        — phase 2 (Hoarah Loux), 1hp without intro
+    #   47200134  'Godfrey'        — suffix-100-derived variant, same risk
     # Phase-2 variants of multi-phase bosses are hardcoded to start at low HP
     # because the phase transition is supposed to fire from phase-1 death's
     # hit-detect cutscene. At a randomized slot with no EMEVD intro, those
@@ -2791,37 +2834,6 @@ def load_data():
     # is the better source of truth.
 
 
-    # v0.19.3: derive V3_CLUSTER_LOCK_MAPS from tags + slots. Maps containing
-    # any _cluster_only c-prefix get cluster-aware behavior forced regardless
-    # of GUI setting. See V3_CLUSTER_LOCK_MAPS docstring above.
-    #
-    # v0.20.70: AUTOPOPULATE DISABLED. User report: cluster-aware mode at
-    # m34_10 placed c4164 Bloodbane Stray (S trash, SENSITIVE) at a c4630
-    # Runebear (XXL field_boss) source slot — cluster shape matching
-    # bypassed the per-slot fragility/SENSITIVE filter. The cluster-lock
-    # autopopulate was forcing cluster_aware=True for any map containing
-    # a _cluster_only c-prefix (Miranda Sprout, etc.), even when the GUI
-    # had cluster_aware=False. With most paired-chr breakers now in
-    # V3_EXCLUDE_TARGET_PREFIXES (c3160, c4060, c4363, c4950, c4460,
-    # c5110, c4050, c3180), cluster integrity protection is largely
-    # redundant for the original failure modes the lock was protecting
-    # against. Independent rolls per Part is now the safer default.
-    #
-    # If user enables the cluster_aware GUI checkbox, clustering still
-    # applies globally — this change just removes the silent auto-force.
-    # To re-enable autopopulate, restore the block below.
-    AUTOPOPULATE_CLUSTER_LOCKS = False
-    if AUTOPOPULATE_CLUSTER_LOCKS:
-        cluster_only_cps = {cp for cp, t in tags.items() if t.get('_cluster_only')}
-        if cluster_only_cps:
-            slots_path = _data_path('nr_all_slots.json')
-            if os.path.isfile(slots_path):
-                with open(slots_path, encoding='utf-8') as f:
-                    slots = json.load(f)
-                for s in slots:
-                    if s.get('c_prefix') in cluster_only_cps and s.get('map'):
-                        V3_CLUSTER_LOCK_MAPS.add(s['map'])
-
     # v0.20.18 → v0.26.x: V3_TAG_OVERRIDES apply loop REMOVED. The
     # original 45-entry tier-override dict was flattened in v0.26.x —
     # 33 entries into data/nr_enemy_tags.json directly, 7 entries into
@@ -3240,14 +3252,14 @@ def detect_asset_packs(target_chr_dir):
 
     Returns a dict mapping asset_pack_id → status dict:
         {
-            'bfer_imports_v1': {
+            'mmv_imports_v1': {
                 'enabled': True,
                 'requires_external': True,
-                'expected': 30,
-                'detected': 28,
+                'expected': 41,
+                'detected': 39,
                 'missing': ['c4604', 'c4730'],
-                'description': 'forget909 Boss for Elden Ring',
-                'url': 'https://www.nexusmods.com/eldenringnightreign/mods/422',
+                'description': 'More Map Variations (cross-game boss imports)',
+                'url': 'https://www.nexusmods.com/eldenringnightreign/mods/578',
             },
             ...
         }
@@ -5701,19 +5713,6 @@ V3_SUBSURFACE_Y_THRESHOLD = -10.0
 # handled by per-slot data / chr-tag attributes, no separate set needed).
 # v0.24.86-patch7: removed; no remaining code references.
 
-# v0.19.3: Auto-derived from tags + slots at load time. Maps containing any
-# c-prefix tagged `_cluster_only` (Lordsworn Knight's Horse, Maris Tendril,
-# Oracle Envoy, Miranda Sprout, Kaiden Sellsword's Horse, etc.) get their
-# cluster_aware flag forced to True regardless of the GUI setting. This
-# preserves multi-Part scripted encounters (Tree Sentinel + paired knights,
-# Miranda + Sprouts, etc.) that softlock when their cluster gets independently
-# randomized in cluster-blind mode.
-#
-# Computed in load_data() from `tags` + `nr_all_slots.json`. Maps are
-# slot.msb-name basenames (e.g., 'm48_60_00_00.msb').
-V3_CLUSTER_LOCK_MAPS = set()  # populated by load_data()
-
-
 # v0.23.71: default baseline c-prefix for non-fragile slots when the
 # user enables the "diagnostic mode" (disable_resilient_filter=True).
 # Forces every non-fragile slot to this c-prefix so the world is
@@ -7261,6 +7260,16 @@ V3_NO_EMERGE_SLOTS = frozenset()    # set of (msb, pi)
 V3_NO_EMERGE_SLOTS_META = {}        # (msb, pi) → entry dict
 V3_NO_EMERGE_SLOTS_FILE_META = {}   # _meta block from the JSON
 
+# v0.26.11: intro-anim-required slots. Mirror image of V3_NO_EMERGE_SLOTS —
+# instead of REJECTING a chr class at certain slots, these slots REQUIRE
+# the occupant to have an idle/entrance animation. Chrs classified
+# 'no_intro_anim' in V3_ENTRANCE_ANIM_CLASS break here. First slot:
+# the m38_00 Guardian Golem "Cathedra" slot. See Gate 8 in
+# _reject_target_for_slot and data/nr_intro_anim_required_slots.json.
+V3_INTRO_ANIM_REQUIRED_SLOTS = frozenset()    # set of (msb, pi)
+V3_INTRO_ANIM_REQUIRED_SLOTS_META = {}        # (msb, pi) → entry dict
+V3_INTRO_ANIM_REQUIRED_SLOTS_FILE_META = {}   # _meta block from the JSON
+
 
 def _load_entrance_animations():
     """Load data/entrance_animations.json.
@@ -7336,6 +7345,51 @@ def _load_no_emerge_slots():
     return frozenset(slot_set), slot_meta, file_meta
 
 
+def _load_intro_anim_required_slots():
+    """Load data/nr_intro_anim_required_slots.json.
+
+    Returns: (slot_set, slot_meta, file_meta).
+      slot_set  — frozenset of (msb_filename, pi_int) tuples
+      slot_meta — dict mapping (msb, pi) → full entry
+      file_meta — _meta block from the JSON file
+    Returns empty values on missing/malformed file (graceful degradation —
+    the engine still works, just no intro-anim gate fires).
+
+    Mirrors _load_no_emerge_slots (same schema: a `slots` list of
+    {msb, part_index, ...} entries). Kept as a dedicated loader rather
+    than a shared helper to match the per-data-file loader convention
+    already established for the entrance-anim system.
+    """
+    path = _data_path('nr_intro_anim_required_slots.json')
+    if not os.path.isfile(path):
+        return frozenset(), {}, {}
+    try:
+        with open(path, encoding='utf-8') as f:
+            raw = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return frozenset(), {}, {}
+    file_meta = raw.get('_meta', {})
+    slots = raw.get('slots', [])
+    if not isinstance(slots, list):
+        return frozenset(), {}, file_meta
+    slot_set = set()
+    slot_meta = {}
+    for entry in slots:
+        if not isinstance(entry, dict):
+            continue
+        msb = entry.get('msb')
+        pi = entry.get('part_index')
+        if not msb or pi is None:
+            continue
+        try:
+            pi_int = int(pi)
+        except (ValueError, TypeError):
+            continue
+        slot_set.add((msb, pi_int))
+        slot_meta[(msb, pi_int)] = entry
+    return frozenset(slot_set), slot_meta, file_meta
+
+
 (V3_ENTRANCE_ANIM_CLASS,
  V3_ENTRANCE_ANIM_META,
  V3_ENTRANCE_ANIM_FILE_META) = _load_entrance_animations()
@@ -7343,6 +7397,10 @@ def _load_no_emerge_slots():
 (V3_NO_EMERGE_SLOTS,
  V3_NO_EMERGE_SLOTS_META,
  V3_NO_EMERGE_SLOTS_FILE_META) = _load_no_emerge_slots()
+
+(V3_INTRO_ANIM_REQUIRED_SLOTS,
+ V3_INTRO_ANIM_REQUIRED_SLOTS_META,
+ V3_INTRO_ANIM_REQUIRED_SLOTS_FILE_META) = _load_intro_anim_required_slots()
 
 
 # v0.24.51: script-spawn boss arena slots.
@@ -10331,6 +10389,23 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
             if anim == 'emerge_from_ground':
                 return 'no_emerge_terrain'
 
+    # Gate 8: requires_intro_anim (v0.26.11). Mirror image of Gate 7.
+    # Some slots' EMEVD spawn setup hard-requires the occupant to have an
+    # idle/entrance animation; chrs classified 'no_intro_anim' break there
+    # while being resilient everywhere else. First slot: the m38_00
+    # Guardian Golem "Cathedra" slot (pi=51), where Death Knight (c5070)
+    # is the confirmed failure and emergers/risers play well. Data-driven
+    # via V3_INTRO_ANIM_REQUIRED_SLOTS (slot list) + V3_ENTRANCE_ANIM_CLASS
+    # (per-chr taxonomy). Negative gate — only the explicitly-classified
+    # no_intro_anim chrs are rejected; 'unknown'-default chrs pass, so the
+    # slot still randomizes widely. Composes with the slot's existing
+    # V3_PROBLEM_SLOTS / EXTRA_ALLOWS gates (different root cause).
+    if msb_base is not None and pi is not None:
+        if (msb_base, pi) in V3_INTRO_ANIM_REQUIRED_SLOTS:
+            anim = V3_ENTRANCE_ANIM_CLASS.get(target_cp)
+            if anim == 'no_intro_anim':
+                return 'requires_intro_anim'
+
     return None
 
 
@@ -10585,14 +10660,6 @@ def _enumerate_unique_candidate_slots(input_dir):
                 midx_to_cp_full[gi] = info.get('name', '')
             parts_section = next(s for s in sections
                                   if s['name'] == 'PARTS_PARAM_ST')
-            # Cluster info if available — best effort
-            try:
-                ptc = compute_part_clusters(data, parts_section,
-                                             threshold=2.0,
-                                             map_name=fname,
-                                             midx_to_cp=midx_to_cp_full)
-            except Exception:
-                ptc = {}
             # v0.23.68: when this MSB is a hub with pinned slots, restrict
             # the per-Part walk to those pinned (msb, pi) entries; non-pinned
             # Parts won't be shuffled downstream so reserving targets for
@@ -10624,7 +10691,7 @@ def _enumerate_unique_candidate_slots(input_dir):
                         'source_npc': npc,
                         'source_variant_name': None,
                         'position': pos,
-                        'cluster_id': ptc.get(pi),
+                        'cluster_id': None,  # v0.26.13: cluster system removed
                     }
                     slots.append(slot_info)
                 except Exception:
@@ -11436,358 +11503,6 @@ def pick_target_cp(recipient_cp, tags,
     return result
 
 
-def compute_part_clusters(data, parts_section, threshold=2.0,
-                          map_name=None, midx_to_cp=None):
-    """Group MSB Parts by spatial proximity using union-find.
-
-    Returns a dict: part_index → cluster_id (only for parts in clusters of size ≥ 2).
-    Parts not in any cluster are absent from the dict.
-    Operates in PARTS_PARAM_ST entry-index space (matches v3's swap-plan loop).
-
-    For maps in V3_SHARED_ARENA_MAPS, uses **spatial clustering at a wider
-    threshold** (V3_SHARED_ARENA_THRESHOLD) **followed by c-prefix
-    subdivision** within each spatial cluster. This handles two distinct
-    sub-cases of the shared-arena pattern uniformly:
-
-    1. Evergaol-arena maps (m46_50, m46_60): all template alternates packed
-       at one position. Spatial-cluster at 20u groups them all into one
-       cluster; c-prefix split then separates each template (e.g. 3
-       Banished Knights swap together, 2 Nox Monks swap together, etc.).
-
-    2. Field-encampment maps (m32_10): multiple distinct encampment
-       locations spread across the overworld, each with its own template
-       alternate set. Spatial-cluster at 20u keeps separate encampments in
-       separate clusters; c-prefix split then preserves each encampment's
-       internal template structure.
-
-    The 20u threshold was empirically calibrated: m32_10 has encampment
-    locations roughly 60-100u apart (so they stay separate clusters), and
-    template alternates within an encampment are within ~5-10u of each
-    other (so they merge into the encampment cluster). For non-shared
-    maps the default 2u threshold is preserved.
-    """
-    # Shared-arena override: spatial-cluster at wider radius, then split each
-    # spatial cluster by source c-prefix.
-    if map_name and midx_to_cp is not None:
-        bn = os.path.splitext(os.path.basename(map_name))[0]
-        if bn in V3_SHARED_ARENA_MAPS:
-            return _compute_clusters_spatial_then_cprefix(
-                data, parts_section, midx_to_cp,
-                spatial_threshold=V3_SHARED_ARENA_THRESHOLD)
-
-    # Default: spatial proximity union-find.
-    # Extract positions for all real-enemy Parts (NPCParam set)
-    candidates = []  # list of (pi, x, y, z)
-    for pi, po in enumerate(parts_section['entry_offsets']):
-        npc = struct.unpack_from('<I', data, po + PART_OFF_NPC_PARAM)[0]
-        if npc == 0 or npc == 0xFFFFFFFF: continue
-        if po + 0x400 + 12 > len(data): continue
-        x, y, z = struct.unpack_from('<fff', data, po + 0x400)
-        candidates.append((pi, x, y, z))
-
-    n = len(candidates)
-    if n < 2: return {}
-
-    # Union-find
-    parent = list(range(n))
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-    def union(a, b):
-        ra, rb = find(a), find(b)
-        if ra != rb: parent[ra] = rb
-
-    t2 = threshold * threshold
-    for i in range(n):
-        _, xi, yi, zi = candidates[i]
-        for j in range(i+1, n):
-            _, xj, yj, zj = candidates[j]
-            d2 = (xi-xj)**2 + (yi-yj)**2 + (zi-zj)**2
-            if d2 < t2: union(i, j)
-
-    # Collect groups (size >= 2)
-    groups = {}
-    for k in range(n):
-        groups.setdefault(find(k), []).append(k)
-
-    # Build pi → cluster_id mapping
-    part_to_cluster = {}
-    cluster_id = 0
-    for root, members in groups.items():
-        if len(members) < 2: continue
-        for k in members:
-            pi = candidates[k][0]
-            part_to_cluster[pi] = cluster_id
-        cluster_id += 1
-    return part_to_cluster
-
-
-def _compute_clusters_spatial_then_cprefix(data, parts_section, midx_to_cp,
-                                           spatial_threshold):
-    """Helper for shared-arena maps. Spatial-cluster at given threshold, then
-    subdivide each spatial cluster by source c-prefix.
-
-    Returns part_to_cluster dict (only includes Parts in clusters of size ≥ 2
-    AFTER c-prefix subdivision).
-    """
-    # Step 1: spatial union-find at wide threshold
-    candidates = []
-    for pi, po in enumerate(parts_section['entry_offsets']):
-        npc = struct.unpack_from('<I', data, po + PART_OFF_NPC_PARAM)[0]
-        if npc == 0 or npc == 0xFFFFFFFF: continue
-        if po + 0x400 + 12 > len(data): continue
-        midx = struct.unpack_from('<i', data, po + PART_OFF_MODEL_INDEX)[0]
-        cp = midx_to_cp.get(midx, '?')
-        x, y, z = struct.unpack_from('<fff', data, po + 0x400)
-        candidates.append((pi, x, y, z, cp))
-
-    n = len(candidates)
-    if n < 2: return {}
-
-    parent = list(range(n))
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-    def union(a, b):
-        ra, rb = find(a), find(b)
-        if ra != rb: parent[ra] = rb
-
-    t2 = spatial_threshold * spatial_threshold
-    for i in range(n):
-        _, xi, yi, zi, _ = candidates[i]
-        for j in range(i+1, n):
-            _, xj, yj, zj, _ = candidates[j]
-            d2 = (xi-xj)**2 + (yi-yj)**2 + (zi-zj)**2
-            if d2 < t2: union(i, j)
-
-    # Step 2: within each spatial cluster, group by c-prefix
-    spatial_groups = {}
-    for k in range(n):
-        spatial_groups.setdefault(find(k), []).append(k)
-
-    part_to_cluster = {}
-    next_cid = 0
-    for root, members in spatial_groups.items():
-        cp_groups = {}
-        for k in members:
-            cp = candidates[k][4]
-            cp_groups.setdefault(cp, []).append(k)
-        # Each c-prefix sub-group with ≥ 2 members becomes a cluster
-        for cp, sub_members in cp_groups.items():
-            if len(sub_members) < 2: continue
-            for k in sub_members:
-                pi = candidates[k][0]
-                part_to_cluster[pi] = next_cid
-            next_cid += 1
-    return part_to_cluster
-
-
-def pick_cluster_target_cp(cluster_part_indices, parts_section, data, midx_to_cp,
-                            tags,
-                            prefix_variants, prefix_count, rng,
-                            target_count=None, slot_msb_name=None,
-                            disable_resilient_filter=False,
-                            non_fragile_baseline_cp=None,
-                            diagnostic_test_targets=None,
-                            chaos_mode=False,
-                            gates=None,
-                            run_ctx=None):
-    """Pick ONE swap target c-prefix for a whole cluster.
-
-    Strategy: use the most-common c-prefix in the cluster as the "dominant"
-    member for compat lookup, mark cluster as boss-tier if ANY member is. This
-    keeps same-prefix clusters (Tendril pairs, mounted-knight pairs) coherent
-    after the swap, and gives mixed clusters something compat with the
-    dominant member at minimum.
-
-    v0.23.72-late: bank_to_prefixes / loose_to_prefixes / mode dropped from
-    signature (see pick_target_cp docstring).
-
-    v0.24.21: `gates` parameter — used for the V3_EXCLUDE_PREFIXES
-    member-filter at line ~9336, and threaded into pick_target_cp and
-    is_boss_tier_prefix calls. See engine/state.py.
-
-    Returns target c-prefix or None if no compat target found.
-    """
-    from collections import Counter
-
-    # Resolve the one mutable gate this function reads directly. Same
-    # pattern as pick_target_cp: gates=None reads module global; explicit
-    # GateState reads the snapshot.
-    _exclude = (V3_EXCLUDE_PREFIXES if gates is None
-                else gates.exclude_prefixes)
-
-    member_cps = []
-    cluster_is_boss = False
-    cluster_max_y = float('-inf')
-    for pi in cluster_part_indices:
-        po = parts_section['entry_offsets'][pi]
-        midx = struct.unpack_from('<i', data, po + PART_OFF_MODEL_INDEX)[0]
-        cp = midx_to_cp.get(midx, '?')
-        if cp in _exclude: continue
-        if cp not in prefix_variants: continue
-        member_cps.append(cp)
-        npc = struct.unpack_from('<I', data, po + PART_OFF_NPC_PARAM)[0]
-        rv = next((v for v in prefix_variants[cp] if v['npc_param_id'] == npc), None)
-        if rv:
-            if is_boss_tier_variant(rv): cluster_is_boss = True
-        else:
-            if is_boss_tier_prefix(cp, tags, prefix_variants, gates=gates):
-                cluster_is_boss = True
-        # Track max y across cluster members for aerial-target-skip.
-        # Conservative: if ANY member is high-y, treat the whole cluster as high-y
-        # (so all members get a target that handles elevation, since they all
-        # swap to the same target c-prefix).
-        if po + 0x400 + 12 <= len(data):
-            _, y, _ = struct.unpack_from('<fff', data, po + 0x400)
-            if y > cluster_max_y:
-                cluster_max_y = y
-
-    if not member_cps: return None
-
-    dominant_cp = Counter(member_cps).most_common(1)[0][0]
-    # v0.19.2: cluster path passes slot_msb_name only — fragile-slot detection
-    # at the cluster level uses T2 (whole-map) and not T1/T3 since the cluster
-    # collapses to one target across multiple Parts. If the cluster's MSB is in
-    # V3_FRAGILE_MAPS, the whole cluster gets restricted to resilient bipeds.
-    # Pick a representative pi (first member) for tie-breaking on T3 manual
-    # entries — usually the cluster as a whole isn't in T3, but if any member
-    # is, the manual entry trips the check.
-    rep_pi = next(iter(cluster_part_indices), None)
-    return pick_target_cp(
-        dominant_cp, tags,
-        prefix_variants, prefix_count, cluster_is_boss, rng,
-        target_count=target_count,
-        slot_y=cluster_max_y if cluster_max_y > float('-inf') else None,
-        slot_msb_name=slot_msb_name, slot_pi=rep_pi,
-        slot_variant_name=None,  # cluster picks dominant — no single variant name
-        disable_resilient_filter=disable_resilient_filter,
-        non_fragile_baseline_cp=non_fragile_baseline_cp,
-        diagnostic_test_targets=diagnostic_test_targets,
-        chaos_mode=chaos_mode,
-        gates=gates,
-        run_ctx=run_ctx,
-    )
-
-
-# ============================================================================
-# v5: Cluster-shape preservation
-# ============================================================================
-# v4.2 cluster preservation locks all members to ONE c-prefix → all members
-# become the same enemy. Loses rider+mount semantic, loses cluster variety.
-#
-# v5: scan all vanilla MSBs once to build a global catalog of cluster SHAPES.
-# At swap time, replace each cluster with a different cluster from the catalog
-# whose shape matches: same member count, same multiset of (size, locomotion).
-# Members get paired up so each source member maps to a target member of the
-# same shape (XL-loco3 → XL-loco3, M-loco0 → M-loco0).
-
-def build_vanilla_cluster_catalog(vanilla_dir, tags, prefix_variants,
-                                   threshold=2.0):
-    """Scan all vanilla MSBs, return list of cluster-shape entries.
-
-    Each entry is a dict:
-      'members': [(cp, npc_param_id, think_param_id, size, loco), ...]
-      'sig':     tuple(sorted (size, loco) pairs) — matchable shape
-      'is_boss': True if any member is boss-tier
-    """
-    catalog = []
-    for fname in sorted(os.listdir(vanilla_dir)):
-        if not fname.endswith('.msb'): continue
-        try:
-            with open(os.path.join(vanilla_dir, fname), 'rb') as f: data = f.read()
-            sections = parse_msb_sections(data)
-            if len(sections) != 6: continue
-        except Exception: continue
-
-        parts = next(s for s in sections if s['name'] == 'PARTS_PARAM_ST')
-        models = sections[0]
-        midx_to_cp = {gi: parse_model_entry(data, eo)['name']
-                      for gi, eo in enumerate(models['entry_offsets'])}
-
-        part_to_cluster = compute_part_clusters(data, parts, threshold,
-                                                map_name=fname, midx_to_cp=midx_to_cp)
-        cluster_to_parts = {}
-        for pi, cid in part_to_cluster.items():
-            cluster_to_parts.setdefault(cid, []).append(pi)
-
-        for cid, member_indices in cluster_to_parts.items():
-            members = []
-            has_boss = False
-            skip = False
-            for pi in member_indices:
-                po = parts['entry_offsets'][pi]
-                npc = struct.unpack_from('<I', data, po + PART_OFF_NPC_PARAM)[0]
-                think = struct.unpack_from('<I', data, po + PART_OFF_THINK_PARAM)[0]
-                midx = struct.unpack_from('<i', data, po + PART_OFF_MODEL_INDEX)[0]
-                cp = midx_to_cp.get(midx, '?')
-                # v0.23.10.2: previously this only filtered V3_EXCLUDE_PREFIXES
-                # (hard source+target block). It missed V3_EXCLUDE_TARGET_PREFIXES
-                # and V3_GHOST_EXCLUDE_TARGET_PREFIXES — clusters whose members
-                # were target-blocked could still enter the catalog and then
-                # become target replacements via pick_replacement_cluster.
-                # Latent on cluster-flat seeds, real on cluster-aware seeds.
-                if (cp in V3_EXCLUDE_PREFIXES
-                    or cp in V3_EXCLUDE_TARGET_PREFIXES
-                    or cp in V3_GHOST_EXCLUDE_TARGET_PREFIXES
-                    or cp not in tags or cp not in prefix_variants):
-                    skip = True; break
-                t = tags[cp]
-                size = t.get('size_class', 'M')
-                loco = t.get('locomotion', 0)
-                members.append((cp, npc, think, size, loco))
-                rv = next((v for v in prefix_variants[cp] if v['npc_param_id'] == npc), None)
-                if rv and is_boss_tier_variant(rv): has_boss = True
-                elif is_boss_tier_prefix(cp, tags, prefix_variants): has_boss = True
-            if skip or not members: continue
-
-            sig = tuple(sorted((m[3], m[4]) for m in members))
-            catalog.append({'members': members, 'sig': sig, 'is_boss': has_boss})
-    return catalog
-
-
-def pick_replacement_cluster(source_members, source_is_boss, catalog, rng):
-    """Pick a target cluster from catalog whose shape matches the source.
-
-    source_members: list of (cp, size, loco) for each source member
-    Returns the matched catalog entry or None.
-    """
-    source_sig = tuple(sorted((s, l) for _, s, l in source_members))
-    source_cps = sorted(cp for cp, _, _ in source_members)
-
-    candidates = [
-        e for e in catalog
-        if e['sig'] == source_sig
-        and e['is_boss'] == source_is_boss
-        and sorted(m[0] for m in e['members']) != source_cps  # not identity
-    ]
-    if not candidates: return None
-    return rng.choice(candidates)
-
-
-def pair_cluster_members(source_member_data, target_entry):
-    """Match source Parts to target members by (size, loco) signature.
-
-    source_member_data: list of (part_idx, size, loco)
-    target_entry: dict from catalog
-    Returns: list of (part_idx, target_cp, target_npc, target_think) per source member.
-    """
-    from collections import defaultdict
-    target_pool = defaultdict(list)
-    for cp, npc, think, size, loco in target_entry['members']:
-        target_pool[(size, loco)].append((cp, npc, think))
-
-    pairs = []
-    for pi, size, loco in source_member_data:
-        if not target_pool[(size, loco)]: return None  # shape mismatch
-        cp, npc, think = target_pool[(size, loco)].pop()
-        pairs.append((pi, cp, npc, think))
-    return pairs
-
 
 def _variant_name(cp, npc_param_id, prefix_variants):
     """Look up the human-readable variant name for a (c_prefix, npc_param_id) pair."""
@@ -11871,17 +11586,16 @@ def _emit_msb_part_inventory_trace(data, parts_section, midx_to_cp, msb_base):
 
 
 def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_count,
-                    cluster_threshold=2.0, randomize_clusters=True,
-                    cluster_catalog=None, spoiler_entries=None,
+                    spoiler_entries=None,
                     oops_all_target_cp=None,
                     target_count=None,
-                    cluster_aware=False,
                     merchant_model_swap=False,
                     terrain_test_targets=None,
                     disable_resilient_filter=False,
                     non_fragile_baseline_cp=None,
                     diagnostic_test_targets=None,
                     chaos_mode=False,
+                    mount_rider_swap=False,
                     oops_all_nb_target_cp=None,
                     oops_all_nb_marker_scope=None,
                     oops_all_nb_pinned_slot=None,
@@ -11893,42 +11607,6 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
 
     v0.23.72-late: bank_to_prefixes / loose_to_prefixes / mode dropped from
     signature (see compatible_pool docstring).
-
-    randomize_clusters:
-      False — leave Parts in clusters vanilla, only randomize solo Parts.
-              Was the default through v0.23.70. Avoids breaking multi-
-              Part boss encounters (Crystalian Alliance, Oracle Envoys,
-              Albinaurics, etc) which have shared-healthbar event
-              scripts we can't see from MSB. Note: this was empirically
-              dropping spawn-pool m46 rotation bosses (Day-2 field
-              bosses, castle rooftop / basement rotations) silently
-              because their pi=0 c1000 player marker forms a "fake
-              cluster" with the boss at world origin. v0.23.71 made
-              this opt-in only.
-      True (default since v0.23.71) — coordinated swaps for clusters.
-              All cluster members get the same target c-prefix (single-
-              c-prefix lock) or shape-matched per cluster_catalog. The
-              c1000+boss "fake cluster" works correctly because c1000
-              is in V3_EXCLUDE_PREFIXES (stays vanilla); only the boss
-              gets the cluster's chosen target.
-
-    cluster_aware:
-      False (default since v0.23.71) — no cluster computation.
-              All Parts roll independently regardless of spatial
-              proximity. The V3_SHARED_ARENA_MAPS protection (m46_50,
-              m46_60, m32_10 — the wider-radius spatial-cluster +
-              c-prefix-split) still applies to those specific maps via
-              compute_part_clusters' shared-arena branch, which fires
-              regardless of cluster_aware. So the only thing this
-              default loses is general clustering for non-shared-arena
-              maps; user playtest evidence (v0.23.66–.71 sessions) was
-              that this clustering caused more silent boss-vanilla
-              regressions than it prevented.
-      True — compute clusters via spatial / c-prefix grouping and
-              respect them per `randomize_clusters`. Multi-Part
-              encounters (Maris's Tendril field, Banished Knight
-              encampments, etc.) get coordinated swaps. Re-enable via
-              CLI `--cluster-aware` flag.
 
     pinned_only_in_hub:
       False (default) — process every Part normally.
@@ -11997,133 +11675,28 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
             'pairs': rider_mount_collapses,
         })
 
-    # === Cluster preservation: compute clusters and pre-pick cluster targets ===
-    # For shared-arena maps (m46_50, m46_60), groups by source c-prefix instead
-    # of spatial proximity — see V3_SHARED_ARENA_MAPS docstring.
-    # When cluster_aware=False, skip clustering entirely — all Parts will roll
-    # independently in the swap loop.
-    #
-    # v0.19.3: V3_CLUSTER_LOCK_MAPS override. When the input MSB contains any
-    # c-prefix tagged _cluster_only (Lordsworn Knight's Horse, Maris Tendril,
-    # Miranda Sprout, Kaiden's Horse, Oracle Envoy), force cluster-aware
-    # behavior locally regardless of the GUI setting. Preserves multi-Part
-    # scripted encounters (Tree Sentinel + paired knights, Miranda + Sprouts)
-    # that softlock when independently randomized.
-    msb_basename = os.path.basename(input_path)
-    # v0.19.6: terrain test mode bypasses cluster preservation. Every Part
-    # rolls independently based on its terrain status, so a cluster's
-    # members might split between Rat (on_mesh) and Jelly (off_mesh) — that's
-    # the design, since the test isolates per-slot terrain accuracy.
-    if terrain_test_targets:
-        effective_cluster_aware = False
-    else:
-        effective_cluster_aware = cluster_aware or (msb_basename in V3_CLUSTER_LOCK_MAPS)
-    if effective_cluster_aware:
-        part_to_cluster = compute_part_clusters(data, parts, cluster_threshold,
-                                                map_name=msb_basename,
-                                                midx_to_cp=midx_to_cp)
-    else:
-        part_to_cluster = {}
-    cluster_to_parts = {}
-    for pi, cid in part_to_cluster.items():
-        cluster_to_parts.setdefault(cid, []).append(pi)
-    n_clusters = len(cluster_to_parts)
+    # v0.26.15: mount/rider pair detection (cut 1 - audit only). When the
+    # experimental mount_rider_swap toggle is on, detect mount/rider Part
+    # pairs and log them to the spoiler trace so they can be playtest-
+    # audited before the cut-2 coordinated swap is wired in. This does
+    # NOT change any swap target.
+    if mount_rider_swap:
+        _mr_detected = _detect_mount_rider_slots(data, parts, midx_to_cp)
+        if _mr_detected:
+            _V3_TRACE_BUFFER.append({
+                'event': 'MOUNT_RIDER_DETECT',
+                'msb': os.path.basename(input_path),
+                'n_pairs': len(_mr_detected),
+                'n_pilot_active': sum(1 for d in _mr_detected
+                                      if d['pilot_active']),
+                'pairs': _mr_detected,
+            })
 
-    cluster_target_cp = {}
-    cluster_target_variant = {}
-    cluster_member_swaps = {}  # cluster_id → {part_idx: (target_cp, npc, think)} for catalog-mode
-    if randomize_clusters:
-        for cid, members in cluster_to_parts.items():
-            # Determine cluster's overall tier
-            cluster_is_boss = False
-            source_member_data = []  # (part_idx, size, loco) for catalog matching
-            source_members_for_match = []  # (cp, size, loco)
-            for pi in members:
-                po = parts['entry_offsets'][pi]
-                npc = struct.unpack_from('<I', data, po + PART_OFF_NPC_PARAM)[0]
-                midx = struct.unpack_from('<i', data, po + PART_OFF_MODEL_INDEX)[0]
-                cp = midx_to_cp.get(midx, '?')
-                if cp not in prefix_variants or cp not in tags:
-                    continue
-                # Target-only entries (script_spawn, er_heritage_v1, etc.)
-                # stay vanilla at their (rare/zero) MSB placements. They
-                # can be picked AS new occupants of slots, but are never
-                # randomized OUT of their own source slots.
-                if tags[cp].get('_source') in V3_TARGET_ONLY_SOURCES:
-                    continue
-                t = tags[cp]
-                size = t.get('size_class', 'M')
-                loco = t.get('locomotion', 0)
-                source_member_data.append((pi, size, loco))
-                source_members_for_match.append((cp, size, loco))
-                rv = next((v for v in prefix_variants[cp] if v['npc_param_id'] == npc), None)
-                if rv:
-                    if is_boss_tier_variant(rv): cluster_is_boss = True
-                elif is_boss_tier_prefix(cp, tags, prefix_variants):
-                    cluster_is_boss = True
 
-            # === Oops! All mode: every cluster member is the chosen c-prefix ===
-            if oops_all_target_cp:
-                cluster_target_cp[cid] = oops_all_target_cp
-                _v = pick_variant_for_tier(
-                    oops_all_target_cp, cluster_is_boss, prefix_variants, rng,
-                    tags=tags)
-                # v0.23.04.1: empty-name variants now filter to None.
-                # Clear cluster_target_cp so this cluster falls back to vanilla.
-                if _v is None:
-                    cluster_target_cp[cid] = None
-                else:
-                    cluster_target_variant[cid] = _v
-                continue
-
-            # === Try catalog-based shape-matched cluster replacement (v5) ===
-            target_entry = None
-            if cluster_catalog and source_member_data:
-                target_entry = pick_replacement_cluster(
-                    source_members_for_match, cluster_is_boss, cluster_catalog, rng)
-            if target_entry is not None:
-                pairs = pair_cluster_members(source_member_data, target_entry)
-                if pairs is not None:
-                    cluster_member_swaps[cid] = {pi: (cp, npc, think)
-                                                  for pi, cp, npc, think in pairs}
-                    continue  # successfully matched via catalog
-
-            # === Fallback: v4.2 single-c-prefix lock per cluster ===
-            target_cp = pick_cluster_target_cp(
-                members, parts, data, midx_to_cp,
-                tags,
-                prefix_variants, prefix_count, rng,
-                target_count=target_count,
-                slot_msb_name=os.path.basename(input_path),
-                disable_resilient_filter=disable_resilient_filter,
-                non_fragile_baseline_cp=non_fragile_baseline_cp,
-                diagnostic_test_targets=diagnostic_test_targets,
-                chaos_mode=chaos_mode,
-                gates=gates,
-                run_ctx=run_ctx,
-            )
-            cluster_target_cp[cid] = target_cp
-            if target_cp is not None:
-                # Cluster pick counts as N placements (one per member)
-                if target_count is not None:
-                    target_count[target_cp] = target_count.get(target_cp, 0) + len(members)
-                # v0.23.07: cluster-path unique-cap accounting. pick_target_cp
-                # already bumped the counter once during the actual pick;
-                # add (len(members) - 1) more so the total reflects all
-                # member placements. Without this, a cluster of 4 c4170
-                # placements would only count as 1 toward c4170's cap=2.
-                if target_cp in V3_UNIQUE_TARGET_CAPS and len(members) > 1:
-                    _placed_counts[target_cp] = (
-                        _placed_counts.get(target_cp, 0) + len(members) - 1)
-                _v = pick_variant_for_tier(
-                    target_cp, cluster_is_boss, prefix_variants, rng,
-                    tags=tags)
-                # v0.23.04.1: same None-fallback as oops_all path above.
-                if _v is None:
-                    cluster_target_cp[cid] = None
-                else:
-                    cluster_target_variant[cid] = _v
-    # else: clusters left vanilla — no cluster targets, swap loop will skip them
+    # v0.26.13: cluster system removed. Every Part rolls independently.
+    # n_clusters retained as a vestigial 0 in the return tuple to avoid a
+    # return-arity change across callers / pipeline metadata / tests.
+    n_clusters = 0
 
     # v0.20.15: shared-position placeholder pre-pass.
     # Some MSBs author script-spawn placeholder blocks where many Parts share
@@ -12139,8 +11712,6 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
     # triplets that happen to share a spawn point.
     placeholder_pos_counts = Counter()
     for _spi, _spo in enumerate(parts['entry_offsets']):
-        if part_to_cluster.get(_spi) is not None:
-            continue
         if _spo + 0x400 + 12 > len(data):
             continue
         try:
@@ -12553,185 +12124,157 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
             recipient_is_boss = True
         _slot_require_boss_reward = (_promote_mode == 'boss_reward')
 
-        # === If clustered: respect randomize_clusters flag ===
-        # v0.23.71: With cluster_aware=False default, this branch is
-        # vestigial for production runs (cid is always None). Kept for
-        # users who explicitly enable cluster_aware=True from CLI. The
-        # v0.23.70 pinned-slot cid=None bypass is removed: pinned slots
-        # are now bypassed at the filter sites above, before reaching
-        # this branch, so clustering can't trap them.
-        cid = part_to_cluster.get(pi)
-        if cid is not None:
-            if not randomize_clusters:
-                # Leave clustered Parts vanilla — avoids breaking multi-Part
-                # boss encounters (Crystalian, Oracle Envoys, Albinaurics, etc)
-                continue
-            # First check: do we have a catalog-matched member-by-member pair?
-            if cid in cluster_member_swaps and pi in cluster_member_swaps[cid]:
-                target_cp, target_npc, target_think = cluster_member_swaps[cid][pi]
-                swap_plan.append((pi, target_cp, target_npc, target_think))
-                continue
-            # Fallback to v4.2 single-c-prefix lock
-            target_cp = cluster_target_cp.get(cid)
-            if target_cp is None:
+        # Non-clustered: independent roll
+        if (oops_all_nb_pinned_slot is not None
+                and oops_all_nb_target_cp
+                and (msb_base, pi) == oops_all_nb_pinned_slot):
+            # v0.24.25: surgical single-slot pin. When oops_all_nb_
+            # pinned_slot=(msb, pi) is set AND this is that slot, force
+            # the target. Every other slot in this run rolls normally.
+            # Use case: test a specific MMV / cross-engine boss at one
+            # known-stable arena slot, without confounding the result
+            # with the same chr appearing at other slots that might
+            # CTD. Bypasses tier/compat/exclude gates entirely — the
+            # whole point is to force-test a specific placement.
+            #
+            # Pairs naturally with oops_all_nb_target_cp; ignores
+            # oops_all_nb_marker_scope (the pin IS the marker).
+            target_cp = oops_all_nb_target_cp
+            target_variant = pick_variant_for_tier(
+                target_cp, recipient_is_boss, prefix_variants, rng,
+                tags=tags)
+            if target_variant is None:
                 n_skipped_compat += 1
-                _log_unaccounted('cluster_pick_failed',
+                _log_unaccounted('variant_for_tier_none',
                                  os.path.basename(input_path), pi, cur_cp, npc,
                                  data, po, prefix_variants)
                 continue
-            target_variant = cluster_target_variant[cid]
-        else:
-            # Non-clustered: independent roll
-            if (oops_all_nb_pinned_slot is not None
-                    and oops_all_nb_target_cp
-                    and (msb_base, pi) == oops_all_nb_pinned_slot):
-                # v0.24.25: surgical single-slot pin. When oops_all_nb_
-                # pinned_slot=(msb, pi) is set AND this is that slot, force
-                # the target. Every other slot in this run rolls normally.
-                # Use case: test a specific MMV / cross-engine boss at one
-                # known-stable arena slot, without confounding the result
-                # with the same chr appearing at other slots that might
-                # CTD. Bypasses tier/compat/exclude gates entirely — the
-                # whole point is to force-test a specific placement.
-                #
-                # Pairs naturally with oops_all_nb_target_cp; ignores
-                # oops_all_nb_marker_scope (the pin IS the marker).
-                target_cp = oops_all_nb_target_cp
-                target_variant = pick_variant_for_tier(
-                    target_cp, recipient_is_boss, prefix_variants, rng,
-                    tags=tags)
-                if target_variant is None:
-                    n_skipped_compat += 1
-                    _log_unaccounted('variant_for_tier_none',
-                                     os.path.basename(input_path), pi, cur_cp, npc,
-                                     data, po, prefix_variants)
-                    continue
-            elif terrain_test_targets:
-                # v0.19.6: terrain test mode — pick c-prefix purely from
-                # navmesh classification, bypass all fragile/problem/resilient
-                # heuristics. Used to validate that terrain status alone is
-                # sufficient for broken-slot detection.
-                # v0.23.51: msb_base hoisted to loop top.
-                terrain_status = lookup_slot_terrain(msb_base, pi)
-                # v0.19.9: V3_PROBLEM_SLOTS manual blocklist also forces Jelly.
-                # User can pin specific (msb, pi) entries (e.g., known-broken
-                # encampment positions) without needing a whole-map flag.
-                if (msb_base, pi) in V3_PROBLEM_SLOTS:
-                    target_cp = terrain_test_targets['off_mesh']
-                elif terrain_status == 'no_match':
-                    # Sentinel — keep vanilla
-                    continue
-                elif terrain_status in ('off_mesh', 'proximity_off_mesh', 'force_off_mesh'):
-                    target_cp = terrain_test_targets['off_mesh']
-                else:
-                    # on_mesh OR unknown (slot not in cache) → on_mesh target
-                    target_cp = terrain_test_targets['on_mesh']
-                target_variant = pick_variant_for_tier(
-                    target_cp, recipient_is_boss, prefix_variants, rng,
-                    tags=tags)
-                if target_variant is None:
-                    n_skipped_compat += 1
-                    _log_unaccounted('variant_for_tier_none',
-                                     os.path.basename(input_path), pi, cur_cp, npc,
-                                     data, po, prefix_variants)
-                    continue
-            elif oops_all_target_cp:
-                # Force every slot to the chosen c-prefix; bypass compat check.
-                target_cp = oops_all_target_cp
-                target_variant = pick_variant_for_tier(
-                    target_cp, recipient_is_boss, prefix_variants, rng,
-                    tags=tags)
-                if target_variant is None:
-                    n_skipped_compat += 1
-                    _log_unaccounted('variant_for_tier_none',
-                                     os.path.basename(input_path), pi, cur_cp, npc,
-                                     data, po, prefix_variants)
-                    continue
-            elif (oops_all_nb_pinned_slot is None  # v0.24.25: pinned mode is exclusive
-                  and (_effective_nb_target_cp := (oops_all_nb_target_cp
-                                                if oops_all_nb_target_cp is not None
-                                                else OOPS_ALL_NB_TARGET_CP))
-                  and (_effective_scope := (oops_all_nb_marker_scope
-                                            if oops_all_nb_marker_scope is not None
-                                            else OOPS_ALL_NB_MARKER_SCOPE))
-                  and (
-                      # v0.24.28: starting_encampment scope. When set,
-                      # match is strictly MSB-membership. Does NOT also
-                      # fire on V3_BOSS_TIER_PINNED_SLOTS or variant
-                      # markers — the whole point of this scope is to
-                      # test ONLY the starting encampment, surgically.
-                      (_effective_scope == 'starting_encampment'
-                       and msb_base in V3_STARTING_ENCAMPMENT_MSBS)
-                      or
-                      # Other scopes (strict/broad/extended): the
-                      # existing fall-through chain — BOSS_TIER_PINNED
-                      # slot match OR variant-marker match for the
-                      # scope's marker set.
-                      (_effective_scope != 'starting_encampment'
-                       and (
-                           (msb_base, pi) in V3_BOSS_TIER_PINNED_SLOTS
-                           or (
-                               recipient_variant is not None
-                               and any(
-                                   _m in recipient_variant.get('variant_name', '')
-                                   for _m in (
-                                       V3_NIGHT_BOSS_STRICT_NAME_MARKERS
-                                       if _effective_scope == 'strict'
-                                       else V3_NIGHT_BOSS_EXTENDED_NAME_MARKERS
-                                       if _effective_scope == 'extended'
-                                       else V3_NIGHT_BOSS_NAME_MARKERS
-                                   )
+        elif terrain_test_targets:
+            # v0.19.6: terrain test mode — pick c-prefix purely from
+            # navmesh classification, bypass all fragile/problem/resilient
+            # heuristics. Used to validate that terrain status alone is
+            # sufficient for broken-slot detection.
+            # v0.23.51: msb_base hoisted to loop top.
+            terrain_status = lookup_slot_terrain(msb_base, pi)
+            # v0.19.9: V3_PROBLEM_SLOTS manual blocklist also forces Jelly.
+            # User can pin specific (msb, pi) entries (e.g., known-broken
+            # encampment positions) without needing a whole-map flag.
+            if (msb_base, pi) in V3_PROBLEM_SLOTS:
+                target_cp = terrain_test_targets['off_mesh']
+            elif terrain_status == 'no_match':
+                # Sentinel — keep vanilla
+                continue
+            elif terrain_status in ('off_mesh', 'proximity_off_mesh', 'force_off_mesh'):
+                target_cp = terrain_test_targets['off_mesh']
+            else:
+                # on_mesh OR unknown (slot not in cache) → on_mesh target
+                target_cp = terrain_test_targets['on_mesh']
+            target_variant = pick_variant_for_tier(
+                target_cp, recipient_is_boss, prefix_variants, rng,
+                tags=tags)
+            if target_variant is None:
+                n_skipped_compat += 1
+                _log_unaccounted('variant_for_tier_none',
+                                 os.path.basename(input_path), pi, cur_cp, npc,
+                                 data, po, prefix_variants)
+                continue
+        elif oops_all_target_cp:
+            # Force every slot to the chosen c-prefix; bypass compat check.
+            target_cp = oops_all_target_cp
+            target_variant = pick_variant_for_tier(
+                target_cp, recipient_is_boss, prefix_variants, rng,
+                tags=tags)
+            if target_variant is None:
+                n_skipped_compat += 1
+                _log_unaccounted('variant_for_tier_none',
+                                 os.path.basename(input_path), pi, cur_cp, npc,
+                                 data, po, prefix_variants)
+                continue
+        elif (oops_all_nb_pinned_slot is None  # v0.24.25: pinned mode is exclusive
+              and (_effective_nb_target_cp := (oops_all_nb_target_cp
+                                            if oops_all_nb_target_cp is not None
+                                            else OOPS_ALL_NB_TARGET_CP))
+              and (_effective_scope := (oops_all_nb_marker_scope
+                                        if oops_all_nb_marker_scope is not None
+                                        else OOPS_ALL_NB_MARKER_SCOPE))
+              and (
+                  # v0.24.28: starting_encampment scope. When set,
+                  # match is strictly MSB-membership. Does NOT also
+                  # fire on V3_BOSS_TIER_PINNED_SLOTS or variant
+                  # markers — the whole point of this scope is to
+                  # test ONLY the starting encampment, surgically.
+                  (_effective_scope == 'starting_encampment'
+                   and msb_base in V3_STARTING_ENCAMPMENT_MSBS)
+                  or
+                  # Other scopes (strict/broad/extended): the
+                  # existing fall-through chain — BOSS_TIER_PINNED
+                  # slot match OR variant-marker match for the
+                  # scope's marker set.
+                  (_effective_scope != 'starting_encampment'
+                   and (
+                       (msb_base, pi) in V3_BOSS_TIER_PINNED_SLOTS
+                       or (
+                           recipient_variant is not None
+                           and any(
+                               _m in recipient_variant.get('variant_name', '')
+                               for _m in (
+                                   V3_NIGHT_BOSS_STRICT_NAME_MARKERS
+                                   if _effective_scope == 'strict'
+                                   else V3_NIGHT_BOSS_EXTENDED_NAME_MARKERS
+                                   if _effective_scope == 'extended'
+                                   else V3_NIGHT_BOSS_NAME_MARKERS
                                )
                            )
-                       ))
-                  )):
-                # v0.23.31: Force every Night Boss slot to OOPS_ALL_NB_TARGET_CP.
-                # v0.23.38: marker scope is now tri-valued
-                # (strict/broad/extended). Extended adds Castle interior,
-                # Encampment, Evergaol, Mountaintop Ruins, Duo Night Boss
-                # markers — useful for CTD probes that need to hit Day-2
-                # Castle slots and POI bosses.
-                # v0.23.39: kwargs override module-global fallback. GUI
-                # passes config-driven values via the kwarg path; CLI /
-                # legacy callers without these kwargs fall back to the
-                # OOPS_ALL_NB_TARGET_CP / OOPS_ALL_NB_MARKER_SCOPE module
-                # globals (preserves old direct-edit-the-source workflow).
-                # Non-matching slots fall through to the normal pick_target path.
-                target_cp = _effective_nb_target_cp
-                target_variant = pick_variant_for_tier(
-                    target_cp, True, prefix_variants, rng, tags=tags)
-                if target_variant is None:
-                    n_skipped_compat += 1
-                    _log_unaccounted('variant_for_tier_none',
-                                     os.path.basename(input_path), pi, cur_cp, npc,
-                                     data, po, prefix_variants)
-                    continue
-            else:
-                target_cp, target_variant = pick_target(
-                    cur_cp, tags,
-                    prefix_variants, prefix_count, recipient_is_boss, rng,
-                    target_count=target_count, slot_y=slot_y,
-                    slot_msb_name=os.path.basename(input_path),
-                    slot_pi=pi,
-                    slot_variant_name=(recipient_variant.get('variant_name', '')
-                                       if recipient_variant else ''),
-                    slot_pos=slot_pos,  # v0.20.16: edge-sentinel detection
-                    slot_require_boss_reward=_slot_require_boss_reward,  # v0.20.22
-                    disable_resilient_filter=disable_resilient_filter,  # v0.20.35
-                    non_fragile_baseline_cp=non_fragile_baseline_cp,  # v0.20.38
-                    diagnostic_test_targets=diagnostic_test_targets,  # v0.20.42
-                    chaos_mode=chaos_mode,  # v0.23.11
-                    gates=gates,  # v0.24.21
-                    run_ctx=run_ctx,  # v0.24.21 (Phase 5)
-                )
-                if target_cp is None:
-                    n_skipped_compat += 1
-                    _log_unaccounted('no_target_found',
-                                     os.path.basename(input_path), pi, cur_cp, npc,
-                                     data, po, prefix_variants)
-                    continue
-                if target_count is not None:
-                    target_count[target_cp] = target_count.get(target_cp, 0) + 1
+                       )
+                   ))
+              )):
+            # v0.23.31: Force every Night Boss slot to OOPS_ALL_NB_TARGET_CP.
+            # v0.23.38: marker scope is now tri-valued
+            # (strict/broad/extended). Extended adds Castle interior,
+            # Encampment, Evergaol, Mountaintop Ruins, Duo Night Boss
+            # markers — useful for CTD probes that need to hit Day-2
+            # Castle slots and POI bosses.
+            # v0.23.39: kwargs override module-global fallback. GUI
+            # passes config-driven values via the kwarg path; CLI /
+            # legacy callers without these kwargs fall back to the
+            # OOPS_ALL_NB_TARGET_CP / OOPS_ALL_NB_MARKER_SCOPE module
+            # globals (preserves old direct-edit-the-source workflow).
+            # Non-matching slots fall through to the normal pick_target path.
+            target_cp = _effective_nb_target_cp
+            target_variant = pick_variant_for_tier(
+                target_cp, True, prefix_variants, rng, tags=tags)
+            if target_variant is None:
+                n_skipped_compat += 1
+                _log_unaccounted('variant_for_tier_none',
+                                 os.path.basename(input_path), pi, cur_cp, npc,
+                                 data, po, prefix_variants)
+                continue
+        else:
+            target_cp, target_variant = pick_target(
+                cur_cp, tags,
+                prefix_variants, prefix_count, recipient_is_boss, rng,
+                target_count=target_count, slot_y=slot_y,
+                slot_msb_name=os.path.basename(input_path),
+                slot_pi=pi,
+                slot_variant_name=(recipient_variant.get('variant_name', '')
+                                   if recipient_variant else ''),
+                slot_pos=slot_pos,  # v0.20.16: edge-sentinel detection
+                slot_require_boss_reward=_slot_require_boss_reward,  # v0.20.22
+                disable_resilient_filter=disable_resilient_filter,  # v0.20.35
+                non_fragile_baseline_cp=non_fragile_baseline_cp,  # v0.20.38
+                diagnostic_test_targets=diagnostic_test_targets,  # v0.20.42
+                chaos_mode=chaos_mode,  # v0.23.11
+                gates=gates,  # v0.24.21
+                run_ctx=run_ctx,  # v0.24.21 (Phase 5)
+            )
+            if target_cp is None:
+                n_skipped_compat += 1
+                _log_unaccounted('no_target_found',
+                                 os.path.basename(input_path), pi, cur_cp, npc,
+                                 data, po, prefix_variants)
+                continue
+            if target_count is not None:
+                target_count[target_cp] = target_count.get(target_cp, 0) + 1
 
         swap_plan.append((pi, target_cp,
                           target_variant['npc_param_id'],
@@ -13298,9 +12841,7 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
         _shift_applied = None
         _shift_skipped_reason = None
         if _shift_entry:
-            if pi in part_to_cluster and part_to_cluster.get(pi) is not None:
-                _shift_skipped_reason = 'in_cluster'
-            elif po + 0x400 + 12 > len(out):
+            if po + 0x400 + 12 > len(out):
                 _shift_skipped_reason = 'no_position_field'
             else:
                 _ox, _oy, _oz = struct.unpack_from('<fff', out, po + 0x400)
@@ -13341,7 +12882,6 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
                 import math
                 if not (math.isnan(x) or math.isnan(y) or math.isnan(z)):
                     position = [round(x, 2), round(y, 2), round(z, 2)]
-            cid = part_to_cluster.get(pi)
             new_variant = next((v for v in prefix_variants.get(target_cp, [])
                                 if v.get('npc_param_id') == target_npc), None)
             is_boss = is_boss_tier_variant(new_variant) if new_variant else \
@@ -13359,7 +12899,7 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
                 'part_index':  pi,
                 'entity_id':   entity_id,
                 'position':    position,
-                'cluster_id':  cid,
+                'cluster_id':  None,  # v0.26.13: cluster system removed
                 'is_boss':     is_boss,
                 'catalog_tier':  from_catalog_tier,
                 'catalog_scope': from_catalog_scope,
@@ -13829,9 +13369,7 @@ def apply_merchant_model_swaps(data, rng, spoiler_entries=None,
 
 
 def cmd_shuffle_v3(input_dir, output_dir, seed,
-                    randomize_clusters=True, cluster_shape=False,
                     oops_all_target_cp=None,
-                    cluster_aware=False,
                     merchant_model_swap=False,
                     terrain_test_targets=None,
                     excluded_prefixes=None,
@@ -13842,6 +13380,7 @@ def cmd_shuffle_v3(input_dir, output_dir, seed,
                     diagnostic_test_targets=None,
                     force_include_targets=None,
                     chaos_mode=False,
+                    mount_rider_swap=False,
                     oops_all_nb_target_cp=None,
                     oops_all_nb_marker_scope=None,
                     oops_all_nb_pinned_slot=None,
@@ -13924,7 +13463,7 @@ def cmd_shuffle_v3(input_dir, output_dir, seed,
         print("*** (asymmetric flow — NB chrs leak DOWN, field bosses can't leak UP). ***")
     # v0.24.30: hoist load_data() so V3_MP_SAFE_BLOCKLIST (and the other
     # lazily-populated module globals — V3_EXCLUDE_TARGET_PREFIXES extensions,
-    # V3_CLUSTER_LOCK_MAPS, V3_ARENA_ONLY_TARGETS auto-extensions,
+    # V3_ARENA_ONLY_TARGETS auto-extensions,
     # V3_STARTING_ENCAMPMENT_MSBS) are filled BEFORE apply_run_overrides
     # composes its union. The blocklist is set() at module-load and only
     # populated at the end of load_data() (this lazy init was introduced
@@ -13957,10 +13496,7 @@ def cmd_shuffle_v3(input_dir, output_dir, seed,
             force_include_targets=force_include_targets) as effective_gates:
         return _cmd_shuffle_v3_impl(
             input_dir, output_dir, seed,
-            randomize_clusters=randomize_clusters,
-            cluster_shape=cluster_shape,
             oops_all_target_cp=oops_all_target_cp,
-            cluster_aware=cluster_aware,
             merchant_model_swap=merchant_model_swap,
             terrain_test_targets=terrain_test_targets,
             multiplayer_safe=multiplayer_safe,
@@ -13968,6 +13504,7 @@ def cmd_shuffle_v3(input_dir, output_dir, seed,
             non_fragile_baseline_cp=non_fragile_baseline_cp,
             diagnostic_test_targets=diagnostic_test_targets,
             chaos_mode=chaos_mode,
+            mount_rider_swap=mount_rider_swap,
             oops_all_nb_target_cp=oops_all_nb_target_cp,
             oops_all_nb_marker_scope=oops_all_nb_marker_scope,
             oops_all_nb_pinned_slot=oops_all_nb_pinned_slot,
@@ -13978,9 +13515,7 @@ def cmd_shuffle_v3(input_dir, output_dir, seed,
 
 
 def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
-                          randomize_clusters=True, cluster_shape=False,
                           oops_all_target_cp=None,
-                          cluster_aware=False,
                           merchant_model_swap=False,
                           terrain_test_targets=None,
                           multiplayer_safe=False,
@@ -13988,6 +13523,7 @@ def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
                           non_fragile_baseline_cp=None,
                           diagnostic_test_targets=None,
                           chaos_mode=False,
+                          mount_rider_swap=False,
                           oops_all_nb_target_cp=None,
                           oops_all_nb_marker_scope=None,
                           oops_all_nb_pinned_slot=None,
@@ -14053,9 +13589,6 @@ def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
                       f'scope={_eff_nb_scope})')
     else:
         mode_label = 'Standard'
-    cluster_label = (
-        'IGNORED (every Part rolls independently)' if not cluster_aware
-        else ('randomized' if randomize_clusters else 'vanilla'))
     # v0.19.22: print engine version up front so log scrubs reveal stale
     # installs immediately. If the GUI says v0.19.22 but this line says
     # v0.19.21, there's a stale .pyc / wrong-folder loading issue.
@@ -14105,24 +13638,9 @@ def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
         },
     })
 
-    print(f"v3 vanilla-aware shuffle  seed={seed}  mode={mode_label}  "
-          f"clusters={cluster_label}"
-          f"{'  shape-matched' if cluster_shape and randomize_clusters and cluster_aware else ''}")
+    print(f"v3 vanilla-aware shuffle  seed={seed}  mode={mode_label}")
     print(f"Per-prefix data: {len(prefix_variants)} c-prefixes with usable variants")
 
-    # Build cluster catalog if shape-matching is requested AND clusters
-    # are being computed at all (cluster_aware=True).
-    cluster_catalog = None
-    if randomize_clusters and cluster_shape and cluster_aware:
-        print("Building vanilla cluster catalog (one-time scan)...")
-        cluster_catalog = build_vanilla_cluster_catalog(input_dir, tags, prefix_variants)
-        # Group by signature to show variety
-        from collections import Counter
-        sig_counts = Counter(e['sig'] for e in cluster_catalog)
-        print(f"  Cataloged {len(cluster_catalog)} clusters across "
-              f"{len(sig_counts)} unique shapes")
-        top = sig_counts.most_common(5)
-        print(f"  Top shapes: {top}")
 
     # v0.23.07: Unique-target reservation pre-pass. Walks all input MSBs,
     # picks one or two quality slots per V3_UNIQUE_TARGET_CAPS entry. Must
@@ -14227,18 +13745,16 @@ def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
             continue
 
         res = shuffle_msb_v3(ip, op, rng, tags, prefix_variants, prefix_count,
-                              randomize_clusters=randomize_clusters,
-                              cluster_catalog=cluster_catalog,
                               spoiler_entries=spoiler_entries,
                               oops_all_target_cp=oops_all_target_cp,
                               target_count=target_count,
-                              cluster_aware=cluster_aware,
                               merchant_model_swap=merchant_model_swap,
                               terrain_test_targets=terrain_test_targets,
                               disable_resilient_filter=disable_resilient_filter,
                               non_fragile_baseline_cp=non_fragile_baseline_cp,
                               diagnostic_test_targets=diagnostic_test_targets,
                               chaos_mode=chaos_mode,
+                              mount_rider_swap=mount_rider_swap,
                               oops_all_nb_target_cp=oops_all_nb_target_cp,
                               oops_all_nb_marker_scope=oops_all_nb_marker_scope,
                               oops_all_nb_pinned_slot=oops_all_nb_pinned_slot,
@@ -14310,11 +13826,6 @@ def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
                 break
 
     print(f"\nProcessed {total_files} files, {total_swaps} swaps, {total_added} new model entries")
-    if randomize_clusters:
-        mode_label = 'shape-matched' if cluster_catalog else 'single-c-prefix-locked'
-        print(f"Clusters: {total_clusters} multi-Part spawn groups swapped ({mode_label})")
-    else:
-        print(f"Clusters: {total_clusters} multi-Part spawn groups left vanilla (avoids event-script breakage)")
     print(f"Skipped (no compat targets found): {total_skipped_compat}")
     print(f"Hub passthrough: {total_passthrough}, Parse failures: {n_parse_fail}")
 
@@ -14890,14 +14401,8 @@ if __name__ == '__main__':
         sys.exit(1)
     in_dir, out_dir = sys.argv[2], sys.argv[3]
     seed = 42
-    # v0.23.72-late: defaults flipped. Cluster-awareness was doing more harm
-    # than good (silently dropping spawn-pool m46 rotation bosses,
-    # cathedral remembrances, etc.) for marginal protection of edge-case
-    # multi-Part encounters. Power users can re-enable via --cluster-aware.
-    randomize_clusters = True
-    cluster_shape = False
-    cluster_aware = False
     merchant_model_swap = False
+    mount_rider_swap = False
     snapshot_path = None
     i = 4
     while i < len(sys.argv):
@@ -14909,22 +14414,10 @@ if __name__ == '__main__':
             print(f"warning: --mode is deprecated and ignored (universal pool since v0.20.0); "
                   f"flag value '{sys.argv[i+1]}' has no effect", file=sys.stderr)
             i += 2
-        elif sys.argv[i] == '--no-randomize-clusters':
-            # v0.23.71: invert (default is now True)
-            randomize_clusters = False; i += 1
-        elif sys.argv[i] == '--randomize-clusters':
-            # legacy alias; default is True so this is a no-op now
-            randomize_clusters = True; i += 1
-        elif sys.argv[i] == '--cluster-shape':
-            cluster_shape = True; randomize_clusters = True; i += 1
-        elif sys.argv[i] == '--cluster-aware':
-            # v0.23.71: opt-in (default is now False)
-            cluster_aware = True; i += 1
-        elif sys.argv[i] == '--no-clusters':
-            # legacy alias; default is False so this is a no-op now
-            cluster_aware = False; i += 1
         elif sys.argv[i] == '--merchant-models':
             merchant_model_swap = True; i += 1
+        elif sys.argv[i] == '--mount-rider-swap':
+            mount_rider_swap = True; i += 1
         elif sys.argv[i] == '--snapshot':
             snapshot_path = sys.argv[i+1]; i += 2
         else: print(f"Unknown arg: {sys.argv[i]}"); sys.exit(1)
@@ -14940,9 +14433,9 @@ if __name__ == '__main__':
         if snap_kwargs:
             print(f"  engine_kwargs from snapshot: {list(snap_kwargs.keys())}")
     try:
-        cmd_shuffle_v3(in_dir, out_dir, seed, randomize_clusters, cluster_shape,
-                        cluster_aware=cluster_aware,
+        cmd_shuffle_v3(in_dir, out_dir, seed,
                         merchant_model_swap=merchant_model_swap,
+                        mount_rider_swap=mount_rider_swap,
                         **snap_kwargs)
     finally:
         if snapshot_path:

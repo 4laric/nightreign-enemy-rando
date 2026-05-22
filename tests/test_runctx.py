@@ -132,7 +132,7 @@ class TestRunCtxSignatures:
     """Each function in the threading chain should accept run_ctx=None."""
 
     @pytest.mark.parametrize('fn_name', [
-        'pick_target_cp', 'pick_target', 'pick_cluster_target_cp',
+        'pick_target_cp', 'pick_target',
         'shuffle_msb_v3', '_cmd_shuffle_v3_impl',
         '_compute_unique_reservations',
     ])

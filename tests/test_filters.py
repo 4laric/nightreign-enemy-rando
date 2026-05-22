@@ -53,11 +53,15 @@ class TestFilterAvoidNpc:
         # Guard clause at top of function — no filtering happens on empty.
         assert oops_v3._filter_avoid_npc([]) == []
 
-    def test_live_avoid_list_filters_known_margit_variant(self, engine):
+    def test_live_avoid_list_filters_known_scripted_variant(self, engine):
         # Sanity: against the real V3_AVOID_VARIANT_NPC_IDS, a known
-        # avoid-listed variant (Margit 20109000) gets filtered.
+        # avoid-listed scripted variant gets filtered. 21109042 is the
+        # c2110 Maliketh / Beast Clergyman phase variant — avoid-listed
+        # because it loads at 1hp without its phase-transition cutscene.
+        # (The v0.23.17 Margit IDs were BFER-only and removed in the
+        # v0.26.12 BFER cleanup; this MMV-shipped ID is the durable case.)
         vs = [
-            {'npc_param_id': 20109000, 'variant_name': 'Margit (cinematic)'},
+            {'npc_param_id': 21109042, 'variant_name': 'Maliketh (cinematic)'},
             {'npc_param_id': 99999999, 'variant_name': 'unrelated'},
         ]
         out = oops_v3._filter_avoid_npc(vs)

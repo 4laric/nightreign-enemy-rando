@@ -1,3 +1,283 @@
+## v0.26.15
+
+Mount/rider pair tracking — cut 1 (detection foundation). Adds an
+experimental dev-section toggle that detects mount/rider Part pairs and
+logs them for playtest audit. No swap behaviour changes yet.
+
+### Why staged
+
+The mount/rider coordinated swap is the highest-fun feature remaining,
+but it is CTD-sensitive and has a known hard blocker:
+
+- All mount and rider c-prefixes (c3150/c3160/c3170/c3180/c4050/c4060/
+  c4363) currently sit in V3_EXCLUDE_SOURCE_PREFIXES — their vanilla
+  slots are deliberately NOT randomized, because doing so caused the
+  v0.20.27 "mount-slot CTD class".
+- The disabled v0.23.04 collapse pass (`_collapse_rider_mount_pairs`)
+  was shelved at v0.24.101 because zeroing the combat mount's npc_param
+  doesn't remove the *visual* mount welded to the rider Part's spawn
+  cluster (seed 537123: Godskin Apostle visibly on the Cavalry horse).
+
+Whether to fight or embrace that pre-attached visual mount is a design
+call that needs playtest input. So the feature is staged: cut 1 is a
+safe, fully-tested foundation; cut 2 is the actual coordinated swap.
+
+### Cut 1 — what shipped
+
+- New experimental toggle in the GUI diagnostic section, "Mount/rider
+  pair detection". Default OFF. Threaded through cmd_shuffle_v3 →
+  _cmd_shuffle_v3_impl → shuffle_msb_v3 (mirrors chaos_mode); also a
+  `--mount-rider-swap` CLI flag.
+- `V3_MOUNT_CLASS_POOL` — the c-prefixes pickable as a mount, derived
+  as the mount half of every RIDER_MOUNT_PAIRS entry: c3160 Funeral
+  Steed, c3180 Albinauric Wolf, c4060 Kaiden's Horse, c4363 Lordsworn's
+  Horse. Deriving it from tier=='mount_component' was rejected — that
+  tier also tags riders such as c4050 Kaiden, so it is not a clean
+  "is a mount" signal.
+- `V3_MOUNT_RIDER_PILOT_PAIRS = {('c4050','c4060')}` — Kaiden is the
+  pilot; cut 2's swap will touch only this pair. Night's Cavalry and
+  the Lordsworn night-boss instance are deliberately excluded.
+- `_detect_mount_rider_slots()` — a read-only pre-pass that finds
+  mount/rider Part pairs (c-prefixes in RIDER_MOUNT_PAIRS, within 2m of
+  each other) and tags each with `pilot_active`. When the toggle is on,
+  shuffle_msb_v3 runs it and appends a MOUNT_RIDER_DETECT event to the
+  spoiler trace. It does not mutate MSB data or change any swap target.
+
+Net effect with the toggle ON: identical randomization output to OFF,
+plus a MOUNT_RIDER_DETECT audit entry per MSB that has a pair. This
+lets the detection be playtest-validated before cut 2 wires the swap.
+
+### Cut 2 — deferred
+
+The coordinated swap: at a detected mount slot restrict the target to
+V3_MOUNT_CLASS_POOL; at the paired rider slot restrict to an M
+humanoid; conditionally lift the source-exclusion for the Kaiden pair
+only. Needs playtest input on the visual-mount behaviour first.
+
+### Notes
+
+- Full test suite: 28 failures, identical to the clean-HEAD baseline —
+  zero regressions; +10 new tests (tests/test_mount_rider_detect.py).
+
+## v0.26.14
+
+Slot-reposition mount/rider pair fix. `distribute_stacked_repositions.py`
+gains a Pass 3 that re-collapses mount/rider pairs the distribution
+passes had split apart; `data/slot_repositions.json` regenerated with
+the one affected pair repaired.
+
+### The bug
+
+`distribute_stacked_repositions.py` de-stacks co-located reposition
+targets (its motivating case was a humanoid spawn-stack freeze, seed
+469032). It resolves every Part to its own offset with no mount/rider
+awareness, so a mount and its rider — co-located in vanilla by design —
+get split apart. The rider then renders standing beside the mount
+instead of on it, and the engine's RIDER_MOUNT_PAIRS proximity collapse
+(2.0m) no longer pairs them.
+
+Confirmed case: `m60_42_38_10.msb`, c3170 Albinauric Archer (pi=10) +
+c3180 Wolf (pi=14). Both sat at the identical vanilla position
+`[-63.33, 233.79, -82.95]`; the distribution passes moved them to
+targets ~4.0m apart.
+
+### Fix
+
+New Pass 3 in `distribute_stacked_repositions.py`:
+`find_mount_rider_splits` scans every MSB's proposals for two entries
+whose `src` c-prefixes form a RIDER_MOUNT_PAIRS entry and whose vanilla
+`from_pos` are co-located (within 2.0m, the engine's pairing threshold)
+but whose resolved `to_pos_center` ended up 2.0m or more apart. For each
+such split, the rider is moved onto the mount's resolved position — the
+mount drives ground placement, the rider sits on it. Pass 3 runs last,
+so it also corrects pairs Pass 1 just distributed, and is idempotent (a
+re-collapsed pair is skipped on a subsequent run).
+
+`data/slot_repositions.json` was regenerated through the v3 tool — one
+entry changed: the c3170 rider in m60_42_38_10 recollapsed onto its
+c3180 mount. Pass 1 (in-list stacks) and Pass 2 (cross-collisions) found
+nothing to change.
+
+### Scope / limitation
+
+Pass 3 handles the case where BOTH pair members have reposition
+entries. A pair where only one member was repositioned — moving it away
+from a stationary partner — is a separate vector, not addressed here;
+noted in `docs/TODO.md`.
+
+### Notes
+
+- `RIDER_MOUNT_PAIRS` is mirrored locally in the dev tool to keep it
+  import-light (no 14k-line engine import);
+  `tests/test_distribute_stacked_repositions.py` asserts the mirror
+  stays in sync with `oops_v3.RIDER_MOUNT_PAIRS`.
+- Full test suite: 28 failures, identical to the clean-HEAD baseline —
+  zero regressions; +6 new tests for Pass 3.
+
+## v0.26.13
+
+Cluster-awareness removal. No runtime behaviour change — the cluster
+swap path was already dead code in every real run. Pure engine surface
+reduction ahead of the planned mount/rider pair-tracking feature.
+
+### Context
+
+"Cluster awareness" let multi-Part encounters get coordinated swaps
+(all members locked to one target c-prefix, or catalog shape-matched).
+Four independent layers had already retired it:
+
+- `cluster_aware` defaulted False.
+- The GUI checkbox was removed from the UI at v0.19.27 — no way for a
+  normal user to enable it.
+- The force-on path (`V3_CLUSTER_LOCK_MAPS` autopopulate) was disabled
+  at v0.20.70 (`AUTOPOPULATE_CLUSTER_LOCKS = False`) — the lock set was
+  never populated.
+- `_collapse_rider_mount_pairs`, the dedicated mount/rider mechanism,
+  was itself disabled at v0.24.101.
+
+So `effective_cluster_aware` was always False and `compute_part_clusters`
+plus the entire cluster swap path never executed. The v0.20.70 note
+already recorded that cluster-integrity protection became "largely
+redundant" once paired-chr breakers moved into
+`V3_EXCLUDE_TARGET_PREFIXES`. There is no mount/rider capability gap —
+mount/rider pairs are handled by target-exclusion, independent of
+clustering.
+
+### Removed
+
+- Six cluster-only functions (~353 lines): `compute_part_clusters`,
+  `_compute_clusters_spatial_then_cprefix`, `pick_cluster_target_cp`,
+  `build_vanilla_cluster_catalog`, `pick_replacement_cluster`,
+  `pair_cluster_members`.
+- The cluster setup block in `shuffle_msb_v3` (the
+  `effective_cluster_aware` computation, `cluster_to_parts`,
+  `cluster_target_cp` / `cluster_target_variant`, `cluster_member_swaps`,
+  the `randomize_clusters` pre-pick loop) and the swap-loop cluster
+  branch (the per-Part `if cid is not None:` path). Every Part now rolls
+  independently — which is what already happened at runtime.
+- `cluster_aware`, `cluster_threshold`, `randomize_clusters`,
+  `cluster_shape`, `cluster_catalog` parameters from `shuffle_msb_v3`,
+  `cmd_shuffle_v3`, and `_cmd_shuffle_v3_impl`.
+- `V3_CLUSTER_LOCK_MAPS` and the dead `AUTOPOPULATE_CLUSTER_LOCKS` block.
+- CLI flags `--randomize-clusters`, `--no-randomize-clusters`,
+  `--cluster-shape`, `--cluster-aware`, `--no-clusters`.
+- GUI `cluster_aware_var` and its config / engine-kwarg plumbing; the
+  stale "cluster-shape preserving" text in the About-tab banner.
+- `pick_cluster_target_cp` references in `test_runctx.py` and
+  `test_pick_target.py` (one dead test method).
+
+### Kept (deliberately — out of scope for this piece)
+
+- `RIDER_MOUNT_PAIRS` (data dict) and `_collapse_rider_mount_pairs`
+  (already-inert prototype). These belong to the mount/rider feature,
+  not the general cluster system. `RIDER_MOUNT_PAIRS` is also needed by
+  the pending slot-reposition-split fix (see `docs/TODO.md`).
+- `n_clusters` is retained as a vestigial `0` in the `shuffle_msb_v3`
+  return tuple, `V3_PIPELINE_METADATA`, and the spoiler `cluster_id`
+  field — kept literal-`0`/`None` to avoid a return-arity / schema
+  change across callers and tests for zero functional benefit.
+- The `_cluster_only` tag on 7 chrs in `nr_enemy_tags.json` — no code
+  reads it post-removal, but it remains as accurate metadata
+  documenting a real standalone-placement fragility class (also
+  referenced by `nr_missing_chr_files.json`).
+
+### Verification
+
+`ast.parse` clean on all modified files; engine imports. Full test
+suite: 28 failures, byte-identical to the clean-HEAD baseline — all 28
+pre-exist this work and are unrelated. Zero regressions.
+
+## v0.26.12
+
+BFER dead-code cleanup. No runtime behaviour change for vanilla NR or
+MMV users; removes inert code, dead data, and a misleading GUI link.
+
+### Context
+
+The BFER (Boss for Elden Ring) integration was abandoned (see
+`docs/OPEN_ISSUES.md`). The heavy removal — the `V3_BFER_*` gate
+constants, the boss-tier gate, the OOPS_ALL_NB intercept — already
+happened at v0.24.22 (Phase 7). The `bfer_imports.json` /
+`bfer_imports_v2.json` manifests no longer exist. This pass clears the
+residue.
+
+### Removed
+
+- `dev/audit_bfer_variants.py` and `dev/BFER_AUDIT.md` — the audit
+  script (read a manifest that no longer exists) and its doc.
+- GUI About-tab "Helpful links" entry for BFER — it advertised BFER as
+  a pack that "adds 30+ bosses as placement targets," but with no
+  manifest and no gates BFER contributes nothing to the pool. The link
+  was misleading users into installing a no-op dependency.
+- `V3_AVOID_VARIANT_NPC_IDS`: 19 of the original v0.23.17/v0.23.20
+  scripted-variant IDs that were BFER-only — verified absent from
+  vanilla NR's `NpcParam`, from `nr_enemy_roster.json`, and from
+  `mmv_imports.json`, so they matched nothing once BFER was retired
+  (13 Margit c2010 9xxx, c2110 Maliketh statue, c2180 Melina, c5051
+  Midra statue, 3 Margit c2010 8xxx ghost-recall).
+- `tests/test_helpful_links.py::test_install_links_bfer` and the BFER
+  entry in `EXPECTED_LINKS`.
+- Dead `bfer_imports*` rows from `data/README.md`'s asset-pack table.
+
+### Kept (verified live — would have been a regression to remove)
+
+- **8 avoid-IDs that are also shipped by `mmv_imports.json`**: c2110
+  Maliketh (21109000/21109042), c2120 Malenia (21209000), c2031
+  Rennala P2 (20310024/20310124), c4720 Godfrey/Hoarah Loux
+  (47200070/47200100/47200134). MMV ports those bosses from vanilla ER
+  using the same NpcParam IDs, so the entries still suppress 1hp
+  scripted variants whenever MMV is loaded. Their comments were
+  re-attributed from BFER to MMV.
+
+### Comment / doc fixes
+
+- `detect_asset_packs` docstring example switched from the stale
+  `bfer_imports_v1` to a real pack. `audit_team26_variants.py` docstring
+  dropped its "companion to audit_bfer_variants.py" references.
+  `INSTALL.md` optional-packs mention de-BFER'd. Engine-side BFER
+  removal-history comments (v0.24.22 markers, `engine/state.py` Phase 7
+  note) left in place — they document why those paths are gone and
+  guard against re-introduction.
+
+## v0.26.11
+
+Cathedra slot gate — keep no-intro-anim chrs out of the Guardian Golem
+"Cathedral" slot.
+
+### Gate 8: requires_intro_anim
+
+The m38_00 Guardian Golem "Cathedra" slot (pi=51) breaks chrs that are
+otherwise resilient everywhere else in the corpus — Death Knight (c5070)
+is the confirmed case. Working hypothesis: the slot's EMEVD spawn setup
+hard-requires the occupant to have an idle/entrance animation; chrs that
+emerge or rise into the fight (Sanguine Noble, Magma Wyrm, Giant
+Fingercreeper, dragons) play well there, chrs without an idle/entrance
+anim fail. The anibnd-level root-cause confirmation is a documented
+follow-up (see docs/TODO.md, dev/anibnd_tools/) — but the fix is sound
+regardless: Death Knight is empirically confirmed-broken at that slot.
+
+The gate is the mirror image of the v0.24.79 no-emerge system. Where
+V3_NO_EMERGE_SLOTS rejects a chr class (emerge_from_ground) at slots that
+can't host it, V3_INTRO_ANIM_REQUIRED_SLOTS rejects chrs that lack what
+the slot requires.
+
+- entrance_animations.json: new entrance-anim class `no_intro_anim`.
+  First member c5070 Death Knight. Default-`unknown` chrs are unaffected.
+- data/nr_intro_anim_required_slots.json: new slot-affordance file →
+  V3_INTRO_ANIM_REQUIRED_SLOTS. One slot: m38_00 pi=51 (Cathedra).
+- oops_v3.py: `_load_intro_anim_required_slots()` loader + Gate 8 in
+  `_reject_target_for_slot` (so both the picker and the reservation
+  scorer inherit it). Gate fires only for explicitly-classified
+  `no_intro_anim` chrs at slots in the set — a negative gate, not a
+  positive allowlist, so the slot still randomizes widely.
+- Composes with the slot's existing V3_PROBLEM_SLOTS / EXTRA_ALLOWS
+  gates (which address a different root cause — cathedral-interior
+  geometry / body size, the v0.20.69 c4620 Astel freeze).
+- tests/test_pick_target.py: TestIntroAnimRequiredGateV0_26_11, 10 tests.
+
+Scoped to one slot by design — not an architectural pass. The slot list
+and the `no_intro_anim` membership both grow by playtest evidence.
+
 ## v0.26.10
 
 Optional getSoul rune-drop tooling. No runtime/engine change.

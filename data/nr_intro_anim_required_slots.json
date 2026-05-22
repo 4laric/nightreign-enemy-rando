@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "schema_version": 1,
+    "since_version": "v0.26.11",
+    "purpose": "Slots whose EMEVD/spawn setup hard-requires the occupant to have an idle/entrance animation. Placing a chr with no idle/entrance anim here breaks the encounter (the spawn setup has no animation state to settle the chr into). The mirror image of nr_no_emerge_slots.json: that file lists slots that REJECT a chr class (emerge_from_ground); this file lists slots that REQUIRE one (anything that is NOT no_intro_anim).",
+    "engine_field": "V3_INTRO_ANIM_REQUIRED_SLOTS",
+    "gate_logic": "If (msb, pi) is in this set AND target_cp has V3_ENTRANCE_ANIM_CLASS == 'no_intro_anim', reject the placement. Every other class (emerge_from_ground, fly_in, scripted_intro, pre_placed, walk_in, and the 'unknown' default) passes through. The gate is a negative one: it excludes only the explicitly-classified no-intro chrs, not a positive allowlist \u2014 the slot still randomizes widely.",
+    "interaction_with_other_systems": {
+      "V3_PROBLEM_SLOTS": "Independent and composes. The Cathedra slot (m38_00 pi=51) is ALSO in V3_PROBLEM_SLOTS (fragile, SAFE_CONFIRMED-only base filter, loosened by V3_PROBLEM_SLOT_EXTRA_ALLOWS for big dragons). That gate addresses a different root cause (cathedral-interior geometry / body size \u2014 the v0.20.69 c4620 Astel freeze). This gate addresses the idle/entrance-anim requirement. Both can fire; they are not redundant.",
+      "V3_PROBLEM_SLOT_EXTRA_BANS": "Overlapping but preferred over it for this failure class. A per-slot EXTRA_BANS entry for c5070 would also work, but keying on the V3_ENTRANCE_ANIM_CLASS taxonomy means new no-intro chrs are caught by classifying the chr once, rather than re-listing it per affected slot. Single source of truth, mirrors the V3_NO_EMERGE_SLOTS design.",
+      "long_term": "Stays manual. Like V3_NO_EMERGE_SLOTS this is geometry/EMEVD-dependent, not derivable from chr data. The per-chr side (V3_ENTRANCE_ANIM_CLASS no_intro_anim members) could eventually be populated from a chrbnd/anibnd parser, but the slot list here should not be."
+    },
+    "growth_pattern": "Add slots empirically as no-intro-anim CTD/freeze reports surface at new locations. Conservative manual entry \u2014 one confirmed slot to start (Cathedra).",
+    "last_updated_version": "v0.26.11"
+  },
+  "slots": [
+    {
+      "msb": "m38_00_00_00.msb",
+      "part_index": 51,
+      "name": "Cathedra (Guardian Golem, Cathedral interior upper floor)",
+      "description": "Cathedral interior upper-floor Guardian Golem slot (vanilla source c4660 Guardian Golem (Cathedral), npc_param 46600030, position [-13.19, 7.97, 23.83]). The slot's scripted spawn setup hard-requires an idle/entrance animation. Emergers / risers play well here; chrs with no idle/entrance anim break.",
+      "confirmed_failures": [
+        {
+          "cp": "c5070",
+          "name": "Death Knight",
+          "version": "v0.26.11",
+          "symptom": "Breaks at this slot while resilient everywhere else in the corpus.",
+          "see": "docs/TODO.md (2026-05-21 Cathedra entry)"
+        }
+      ],
+      "confirmed_good": [
+        "Sanguine Noble",
+        "Magma Wyrm",
+        "Giant Fingercreeper",
+        "dragons",
+        "anything that emerges/rises into the fight"
+      ]
+    }
+  ]
+}

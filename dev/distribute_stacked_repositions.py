@@ -36,6 +36,16 @@ spacing, vanilla layout is preserved exactly. When the leaf is too
 small, layout is uniformly scaled down. Only degenerate origin entries
 get synthesized offsets.
 
+PASS 3 — mount/rider pair re-collapse (v0.26.14):
+A mount and its rider are co-located in vanilla by design (the rider
+sits on the mount). Passes 1 and 2 resolve every Part independently and
+so split such pairs apart, leaving the rider standing beside the mount.
+Pass 3 detects any mount/rider pair (both members in slot_repositions,
+c-prefixes in RIDER_MOUNT_PAIRS, vanilla from_pos co-located) whose
+resolved targets ended up apart, and moves the rider back onto the
+mount's resolved position. It runs last so it also corrects pairs that
+Pass 1 just distributed, and is idempotent.
+
 OUTPUT:
 For each modified entry:
   - `to_pos_center` / `to_pos_floor` updated
@@ -69,7 +79,7 @@ from collections import defaultdict
 
 SAFETY_BUFFER = 0.4   # meters of leaf-edge buffer (humanoid radius ~0.35)
 ORIGIN_EPSILON = 0.01  # tolerance for treating from_pos as origin sentinel
-SCRIPT_VERSION = 'distribute_stacked_repositions v2 (v0.24.37)'
+SCRIPT_VERSION = 'distribute_stacked_repositions v3 (v0.26.14)'
 
 # v0.24.37: non-repositioned-slot collision threshold. Two Parts within this
 # XZ distance count as "colliding"; a reposition target that lands here is
@@ -80,6 +90,31 @@ NON_REPOS_COLLISION_THRESHOLD_M = 1.5
 # non-repositioned slot collision. Just over the collision threshold so the
 # new position clears the other Part with breathing room.
 COLLISION_AVOIDANCE_NUDGE_M = 2.0
+
+# v0.26.14: mount/rider pair preservation. A mount and its rider are
+# co-located in vanilla BY DESIGN — the rider sits on the mount. The
+# distribution passes above resolve every Part to its own offset, which
+# splits such pairs: the rider ends up standing beside the mount instead
+# of on it, and the engine's RIDER_MOUNT_PAIRS proximity collapse no
+# longer recognizes them (confirmed: m60_42_38_10 c3170 Albinauric Archer
+# + c3180 Wolf, split ~4m). Pass 3 re-collapses any split pair by moving
+# the rider onto the mount's resolved position.
+#
+# Mirror of oops_v3.RIDER_MOUNT_PAIRS — each tuple is (rider_cp, mount_cp).
+# Kept as a local copy so this dev tool stays import-light (no 14k-line
+# engine import); tests/test_distribute_stacked_repositions.py asserts this
+# list stays in sync with the engine's set.
+RIDER_MOUNT_PAIRS = [
+    ('c3170', 'c3180'),  # Albinauric Archer + Wolf
+    ('c4050', 'c4060'),  # Kaiden Sellsword + Horse
+    ('c4353', 'c4363'),  # Leyndell Knight + Lordsworn's Horse
+    ('c3150', 'c3160'),  # Night's Cavalry + Funeral Steed
+]
+
+# Two co-located entries are treated as a mounted pair only when their
+# vanilla from_pos are within this distance — matches the engine's
+# RIDER_MOUNT_PAIRS proximity-collapse threshold.
+MOUNT_RIDER_PAIR_THRESHOLD_M = 2.0
 
 
 def _is_origin(pos, eps=ORIGIN_EPSILON):
@@ -344,6 +379,75 @@ def nudge_target_away_from(entry, other_pos, nudge_m=COLLISION_AVOIDANCE_NUDGE_M
     return (round(nx, 3), round(tp[1], 3), round(nz, 3))
 
 
+def _dist3(a, b):
+    """3D Euclidean distance between two [x, y, z] points."""
+    return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2
+                     + (a[2] - b[2]) ** 2)
+
+
+def _mount_rider_pair_of(cp1, cp2):
+    """If c-prefixes cp1/cp2 form a RIDER_MOUNT_PAIRS entry, return the
+    (rider_cp, mount_cp) tuple; otherwise None. cp1 == cp2 never pairs."""
+    pair = {cp1, cp2}
+    for rider, mount in RIDER_MOUNT_PAIRS:
+        if pair == {rider, mount}:
+            return (rider, mount)
+    return None
+
+
+def find_mount_rider_splits(rd, threshold=MOUNT_RIDER_PAIR_THRESHOLD_M):
+    """v0.26.14: find mount/rider pairs whose two reposition entries were
+    split apart by the distribution passes.
+
+    A pair = two proposal entries in the same MSB whose `src` c-prefixes
+    form a RIDER_MOUNT_PAIRS entry and whose vanilla `from_pos` are
+    co-located (within `threshold` — the same proximity the engine uses
+    to recognize a mounted pair). A *split* = their resolved
+    `to_pos_center` ended up `threshold` or more apart, so the engine's
+    RIDER_MOUNT_PAIRS collapse will no longer pair them.
+
+    Returns a list of dicts: {msb, rider_pi, rider_e, mount_pi, mount_e,
+    d_xz}. The repair is to move the rider onto the mount's to_pos.
+
+    Note: this detects pairs where BOTH members have reposition entries.
+    A pair where only one member was repositioned (moving it away from a
+    stationary partner) is a separate case, not handled here — see
+    docs/TODO.md.
+    """
+    splits = []
+    for msb, pis_dict in rd.get('proposals', {}).items():
+        items = list(pis_dict.items())
+        for a in range(len(items)):
+            for b in range(a + 1, len(items)):
+                pi_a, e_a = items[a]
+                pi_b, e_b = items[b]
+                pair = _mount_rider_pair_of(e_a.get('src'), e_b.get('src'))
+                if pair is None:
+                    continue
+                fa, fb = e_a.get('from_pos'), e_b.get('from_pos')
+                ta, tb = e_a.get('to_pos_center'), e_b.get('to_pos_center')
+                if not (fa and fb and ta and tb):
+                    continue
+                # Genuine mounted pair only: co-located in vanilla.
+                if _dist3(fa, fb) >= threshold:
+                    continue
+                # Already together post-distribution — nothing to repair.
+                if _dist3(ta, tb) < threshold:
+                    continue
+                rider_cp, mount_cp = pair
+                if e_a.get('src') == mount_cp:
+                    mount_pi, mount_e, rider_pi, rider_e = pi_a, e_a, pi_b, e_b
+                else:
+                    mount_pi, mount_e, rider_pi, rider_e = pi_b, e_b, pi_a, e_a
+                splits.append({
+                    'msb': msb,
+                    'rider_pi': rider_pi, 'rider_e': rider_e,
+                    'mount_pi': mount_pi, 'mount_e': mount_e,
+                    'd_xz': _xz_distance(ta, tb),
+                })
+    return splits
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--input',  default='data/slot_repositions.json')
@@ -502,6 +606,63 @@ def main():
     else:
         print('PASS 2: skipped (no part-positions data).')
 
+    # --- Pass 3: mount/rider pair re-collapse (v0.26.14) --------------------
+    # Passes 1 and 2 resolve each Part independently, which splits co-located
+    # mount/rider pairs. Re-collapse any such split by moving the rider onto
+    # the mount's resolved position. Runs last so it also corrects pairs that
+    # Pass 1 just distributed; idempotent (a re-collapsed pair has identical
+    # to_pos and is skipped on a subsequent run).
+    print()
+    print('=' * 70)
+    splits = find_mount_rider_splits(rd)
+    print(f'PASS 3: split mount/rider pairs: {len(splits)}')
+    pass3_modifications = 0
+    if splits:
+        print()
+        for s in splits:
+            mount_e = s['mount_e']
+            rider_e = s['rider_e']
+            mount_tc = mount_e['to_pos_center']
+            mount_tf = mount_e.get('to_pos_floor', mount_tc)
+            pre_target = list(rider_e['to_pos_center'])
+            print(f'  {s["msb"]} rider pi={s["rider_pi"]} '
+                  f'({rider_e.get("src")}): split {s["d_xz"]:.2f}m from mount '
+                  f'pi={s["mount_pi"]} ({mount_e.get("src")}) — '
+                  f'recollapse onto mount at {mount_tc}')
+            if not args.dry_run:
+                rider_e['to_pos_center'] = [round(mount_tc[0], 3),
+                                            round(mount_tc[1], 3),
+                                            round(mount_tc[2], 3)]
+                rider_e['to_pos_floor'] = [round(mount_tf[0], 3),
+                                           round(mount_tf[1], 3),
+                                           round(mount_tf[2], 3)]
+                recollapse_block = {
+                    'reason': 'mount_rider_pair_recollapse',
+                    'description': (
+                        f'rider was split {s["d_xz"]:.2f}m from its mount '
+                        f'pi={s["mount_pi"]} ({mount_e.get("src")}) by the '
+                        f'distribution passes. Mount and rider are co-located '
+                        f'in vanilla by design; moved the rider onto the '
+                        f"mount's resolved position so the engine's "
+                        f'RIDER_MOUNT_PAIRS collapse still pairs them.'
+                    ),
+                    'pre_recollapse_target': pre_target,
+                    'mount_pi': s['mount_pi'],
+                    'overridden_by': SCRIPT_VERSION,
+                }
+                existing = rider_e.get('manual_override') or {}
+                if existing:
+                    # Pass 1 / Pass 2 already overrode this entry; nest.
+                    existing.setdefault('mount_rider_recollapse_passes', [])\
+                        .append(recollapse_block)
+                else:
+                    rider_e['manual_override'] = recollapse_block
+                pass3_modifications += 1
+                changes_per_msb[s['msb']] += 1
+                total_entries_modified += 1
+    else:
+        print('PASS 3: no split mount/rider pairs found.')
+
     if args.dry_run:
         print(f'\nDRY RUN: would modify {total_entries_modified} entries total '
               f'across {len(changes_per_msb)} MSBs')
@@ -517,6 +678,7 @@ def main():
         'tool': SCRIPT_VERSION,
         'stacks_redistributed': len(stacks),
         'cross_collisions_nudged': pass2_modifications,
+        'mount_rider_pairs_recollapsed': pass3_modifications,
         'entries_modified': total_entries_modified,
         'safety_buffer': SAFETY_BUFFER,
         'non_repos_collision_threshold_m': NON_REPOS_COLLISION_THRESHOLD_M,

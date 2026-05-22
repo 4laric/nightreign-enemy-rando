@@ -33,9 +33,6 @@ that still have JSONs at root keep working transparently.
 
 | File | Purpose | Default state |
 |------|---------|---------------|
-| `bfer_imports.json` | Boss for Elden Ring v1 — 30+ ER/SOTE bosses ported to NR. | `_meta.enabled` based on user install |
-| `bfer_imports_v2.json` | BFER v2 additions (Greyoll, Troll variant, size_class overrides). | Same |
-| `er_heritage_imports.json` | DEPRECATED in v0.23.12. Early authoring experiment, replaced by BFER. `_meta.enabled=false` by default. | OFF |
 | `heritage_pack.json` | 47 SOTE-flavored creatures (Bears, Imps, Messmer Soldiers). | OFF by default |
 | `mmv_imports.json` | More Map Variations (MMV) cross-game boss imports — Malenia, Maliketh, Slave Knight Gael, etc. | OFF by default; flip via GUI checkbox |
 

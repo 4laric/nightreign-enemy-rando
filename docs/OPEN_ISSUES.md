@@ -129,15 +129,16 @@ exclusion is over-aggressive. Low priority; safe in the worst case.
 
 ## Historical landmarks (resolved or parked — kept for context)
 
-- **BFER integration — abandoned.** `bfer_imports.json` /
-  `bfer_imports_v2.json` have `_meta.enabled=false`; no BFER c-prefixes
-  are in the target pool, and the integration is not being resumed. The
-  multi-month BFER support arc (manifests, tier tags, boss-tier gate,
-  prefix-fallback hardening) survives in code, inert, but should be
-  treated as dead — empirically, regulation merge alone was
-  insufficient, EMEVD-scaffolding helped only partially, and at least
-  one variant CTD'd. The cross-game-content niche is served by MMV
-  instead.
+- **BFER integration — abandoned, code removed.** No BFER c-prefixes
+  are in the target pool and the integration is not being resumed.
+  Empirically, regulation merge alone was insufficient, EMEVD-
+  scaffolding helped only partially, and at least one variant CTD'd.
+  The cross-game-content niche is served by MMV instead. The support
+  arc was removed in stages: the `V3_BFER_*` gate constants / boss-tier
+  gate / OOPS_ALL_NB intercept at v0.24.22 (Phase 7), the manifests
+  before that, and the last residue (audit script, GUI link, dead
+  avoid-IDs, stale doc rows) at v0.26.12. Engine-side history comments
+  documenting the removal are intentionally retained.
 - **MMV cross-game imports — integrated** (v0.23.35). `mmv_imports.json`
   ships cross-game boss imports tier-classified into the runtime caliber
   sets, active when MMV is in the user's me3 profile. Built against MMV

@@ -190,3 +190,78 @@ class TestFindStacks:
         assert len(stacks) == 0
         stacks = ds.find_stacks(rd, min_stack=2)
         assert len(stacks) == 1
+
+
+class TestMountRiderPairRecollapse:
+    """v0.26.14 Pass 3 — re-collapse mount/rider pairs that the
+    distribution passes split apart."""
+
+    def test_rider_mount_pairs_in_sync_with_engine(self):
+        """The local RIDER_MOUNT_PAIRS mirror must match the engine's
+        oops_v3.RIDER_MOUNT_PAIRS exactly (same pairs, same rider/mount
+        order — Pass 3 relies on tuple[0]=rider, tuple[1]=mount)."""
+        sys.path.insert(0, str(HERE))
+        import oops_v3
+        assert set(ds.RIDER_MOUNT_PAIRS) == set(oops_v3.RIDER_MOUNT_PAIRS), (
+            'dev/distribute_stacked_repositions.py RIDER_MOUNT_PAIRS has '
+            'drifted from oops_v3.RIDER_MOUNT_PAIRS — keep them in sync')
+
+    def test_mount_rider_pair_of(self):
+        # a real pair, either argument order
+        assert ds._mount_rider_pair_of('c3170', 'c3180') == ('c3170', 'c3180')
+        assert ds._mount_rider_pair_of('c3180', 'c3170') == ('c3170', 'c3180')
+        # rider-type + mount-type that aren't a registered pair
+        assert ds._mount_rider_pair_of('c3170', 'c4060') is None
+        # unrelated c-prefixes
+        assert ds._mount_rider_pair_of('c0000', 'c1000') is None
+        # the same c-prefix twice is never a pair
+        assert ds._mount_rider_pair_of('c4050', 'c4050') is None
+
+    def test_detects_split_pair(self):
+        # rider + mount, co-located in vanilla, resolved ~4m apart —
+        # the m60_42_38_10 c3170/c3180 case.
+        rd = {'proposals': {'m00.msb': {
+            '10': {'src': 'c3170', 'from_pos': [-63.3, 233.8, -82.9],
+                   'to_pos_center': [-84.8, 233.7, -85.0],
+                   'to_pos_floor': [-84.8, 233.7, -85.0]},
+            '14': {'src': 'c3180', 'from_pos': [-63.3, 233.8, -82.9],
+                   'to_pos_center': [-84.8, 233.7, -81.0],
+                   'to_pos_floor': [-84.8, 233.7, -81.0]},
+        }}}
+        splits = ds.find_mount_rider_splits(rd)
+        assert len(splits) == 1
+        s = splits[0]
+        # c3170 is the rider, c3180 the mount (per RIDER_MOUNT_PAIRS order)
+        assert s['rider_pi'] == '10' and s['mount_pi'] == '14'
+        assert s['d_xz'] > 2.0
+
+    def test_ignores_already_colocated_pair(self):
+        # rider + mount whose resolved targets are still together (< 2m)
+        rd = {'proposals': {'m00.msb': {
+            '10': {'src': 'c3170', 'from_pos': [10, 2, 10.0],
+                   'to_pos_center': [5, 5, 5.0]},
+            '14': {'src': 'c3180', 'from_pos': [10, 2, 10.5],
+                   'to_pos_center': [5, 5, 5.3]},
+        }}}
+        assert ds.find_mount_rider_splits(rd) == []
+
+    def test_ignores_far_apart_vanilla_positions(self):
+        # c3170 + c3180 but NOT co-located in vanilla — two unrelated
+        # chrs of rider/mount type, not an actual mounted pair.
+        rd = {'proposals': {'m00.msb': {
+            '10': {'src': 'c3170', 'from_pos': [0, 2, 0.0],
+                   'to_pos_center': [5, 5, 5.0]},
+            '14': {'src': 'c3180', 'from_pos': [50, 2, 50.0],
+                   'to_pos_center': [5, 5, 99.0]},
+        }}}
+        assert ds.find_mount_rider_splits(rd) == []
+
+    def test_ignores_non_pair_cprefixes(self):
+        # two co-located, split entries that are not a mount/rider pair
+        rd = {'proposals': {'m00.msb': {
+            '1': {'src': 'c0000', 'from_pos': [0, 2, 0.0],
+                  'to_pos_center': [5, 5, 5.0]},
+            '2': {'src': 'c1000', 'from_pos': [0, 2, 0.0],
+                  'to_pos_center': [5, 5, 99.0]},
+        }}}
+        assert ds.find_mount_rider_splits(rd) == []

@@ -1558,13 +1558,6 @@ class RandoGUI:
         # declared so _force_include_add (also orphaned) doesn't fail
         # if it's ever called from a debug path.
         self.force_include_picker_var = tk.StringVar(value="")
-        # cluster_aware: when True, multi-Part encounters get coordinated
-        # swaps. When False (default as of v0.19.1), every Part rolls
-        # independently — more variety per map, and Tendril/encampment-style
-        # multi-member spawns mix and match. Maris arena and other shared-
-        # healthbar fights are protected separately via V3_EXCLUDE_SOURCE_PREFIXES,
-        # so flipping this default doesn't risk them.
-        self.cluster_aware_var = tk.BooleanVar(value=False)
         # merchant_model_swap: when True, swap visual models of merchants
         # (Nomadic, Small Jar) to humanoid alternatives. Merchant function
         # is preserved (still has shop/dialogue) — only the visual changes.
@@ -1578,6 +1571,12 @@ class RandoGUI:
         # var kept since generate_run reads it and the engine path is
         # still live. Default OFF — without a UI, chaos_mode stays OFF.
         self.chaos_mode_var = tk.BooleanVar(value=False)
+        # v0.26.15: mount/rider feature, cut 1 (detection foundation).
+        # Experimental dev-section toggle. When ON, the engine detects
+        # mount/rider Part pairs and logs them to the spoiler audit trace
+        # — it does NOT yet change any swap target (the coordinated swap
+        # is cut 2). Default OFF.
+        self.mount_rider_swap_var = tk.BooleanVar(value=False)
 
         self.excluded = set(DEFAULT_EXCLUDED)
         self.hub_maps = set(DEFAULT_HUB_MAPS)
@@ -2415,7 +2414,7 @@ class RandoGUI:
         ttk.Label(header, text="4laric's Nightreign Enemy Randomizer",
                   style='Header.TLabel').pack(anchor='w')
         ttk.Label(header,
-                  text="Vanilla-aware enemy shuffle  ·  cluster-shape preserving  ·  EMEVD-aware",
+                  text="Vanilla-aware enemy shuffle  ·  EMEVD-aware",
                   style='Subheader.TLabel').pack(anchor='w', pady=(2, 0))
 
         # Subtle separator under header
@@ -3359,6 +3358,33 @@ class RandoGUI:
             "without it, the overlay step skips and logs a warning."
         ))
 
+        # v0.26.15: mount/rider pair detection (cut 1 — experimental).
+        mr_row = ttk.Frame(diag_frame); mr_row.pack(fill='x', pady=(8, 0))
+        mr_check = ttk.Checkbutton(mr_row,
+                         text="Mount/rider pair detection (experimental — audit only, no swap yet)",
+                         variable=self.mount_rider_swap_var,
+                         style='TCheckbutton')
+        mr_check.pack(side='left')
+        Tooltip(mr_check,
+                "Experimental — cut 1 of the mount/rider feature.\n\n"
+                "When ON, the engine detects mount/rider Part pairs "
+                "(Kaiden + Horse, Night's Cavalry + Steed, etc.) and logs "
+                "each one to the spoiler audit trace. It does NOT change "
+                "any swap target yet — the coordinated swap is a later "
+                "cut. Safe to leave on; produces audit data only.")
+        make_info_icon(mr_row, tooltip_text=(
+            "Default: OFF\n\n"
+            "Cut 1 of the mount/rider pair-tracking feature. When ON, "
+            "every MSB is scanned for mount/rider Part pairs and the "
+            "results are written to the spoiler trace (MOUNT_RIDER_DETECT "
+            "events) so the detection can be playtest-audited.\n\n"
+            "This cut does NOT randomize mount or rider slots — those "
+            "stay vanilla via the existing source-exclusion. The "
+            "coordinated swap (mount slot gets a random mount, rider slot "
+            "a random humanoid) is cut 2, pending playtest input on the "
+            "pre-attached visual-mount behaviour."
+        ))
+
         # v0.23.23: Heritage essay converted from always-visible body text
         # to a collapsible "Read more" expander. The full text is preserved
         # — it's substantive and worth reading once — but it no longer
@@ -3645,9 +3671,9 @@ class RandoGUI:
                    style='Dim.TLabel').pack(side='left', padx=(4, 0))
 
         # === Asset Pack Status (v0.23.14) ===
-        # Detects which optional asset-pack mods (BFER etc.) the user has
-        # installed in their me3 profile chr/ folder. Surfaces missing
-        # dependencies BEFORE rando placement, so users learn why a
+        # Detects which optional asset-pack mods (Heritage Pack, MMV) the
+        # user has installed in their me3 profile chr/ folder. Surfaces
+        # missing dependencies BEFORE rando placement, so users learn why a
         # generated rando might CTD on cell-load instead of after the fact.
         status_frame = ttk.LabelFrame(f, text="Asset packs", padding=10)
         status_frame.pack(fill='x', pady=(0, 12))
@@ -5926,11 +5952,6 @@ class RandoGUI:
              'https://www.nexusmods.com/eldenringnightreign/mods/578',
              'Optional — alternate map layouts. Enable on the '
              'Heritage tab to fold MMV-imported chrs into the swap pool.'),
-            ('Boss for Elden Ring (BFER)',
-             'https://www.nexusmods.com/eldenringnightreign/mods/422',
-             'Optional — adds 30+ Elden Ring / SOTE bosses '
-             '(Malenia, Maliketh, Slave Knight Gael, etc.) as '
-             'placement targets.'),
             ('WitchyBND',
              'https://github.com/ividyon/WitchyBND',
              'Optional — FromSoftware file format unpacker. Useful '
@@ -6989,18 +7010,12 @@ class RandoGUI:
             'force_include_targets': frozenset(self.force_include_targets) or None,
             # v0.20.67: validation mode dict, or None if mode != Validation.
             'terrain_test_targets': terrain_test_targets,
-            'cluster_aware': bool(self.cluster_aware_var.get()),
             'merchant_model_swap': bool(self.merchant_model_swap_var.get()),
             # v0.23.19: Cinematic Chaos — asymmetric NB-tier gating.
             # See chaos_mode_var declaration in __init__ for full semantics.
             'chaos_mode': bool(self.chaos_mode_var.get()),
-            # v0.23.71: cluster handling defaults removed. Engine owns the
-            # canonical defaults (randomize_clusters=True, cluster_shape=False
-            # — see shuffle_msb_v3 signature). Previously the GUI had these
-            # hardcoded, which meant the GUI and CLI could drift if someone
-            # changed the engine default without remembering to update both.
-            # If a user wants non-default cluster behavior, expose it as a
-            # checkbox in the GUI (and the engine kwarg path stays open).
+            # v0.26.15: mount/rider detection (cut 1 — audit only).
+            'mount_rider_swap': bool(self.mount_rider_swap_var.get()),
         }
 
         # v0.20.89: clear any lingering cancel flag from a prior cancelled
@@ -7123,15 +7138,11 @@ class RandoGUI:
                     f"surgical CTD-isolation mode for cross-game imports. ***\n")
 
             # Common kwargs for both DCX and direct paths.
-            # v0.23.71: randomize_clusters / cluster_shape removed. Engine
-            # owns the canonical defaults (see shuffle_msb_v3 signature).
-            # Was previously fetched from config which the GUI hardcoded.
             engine_kwargs = dict(
                 seed=config['seed'],
                 oops_all_target_cp=config['oops_all_target_cp'],
                 oops_all_nb_target_cp=config.get('oops_all_nb_target_cp'),
                 oops_all_nb_marker_scope=config.get('oops_all_nb_marker_scope'),
-                cluster_aware=config['cluster_aware'],
                 merchant_model_swap=config['merchant_model_swap'],
                 excluded_prefixes=set(config['excluded']),
                 hub_maps=set(config['hub_maps']),
@@ -7142,6 +7153,7 @@ class RandoGUI:
                 terrain_test_targets=config.get('terrain_test_targets'),
                 force_include_targets=config.get('force_include_targets'),
                 chaos_mode=bool(config.get('chaos_mode')),
+                mount_rider_swap=bool(config.get('mount_rider_swap')),
             )
 
             # Temporarily redirect the backend's prints to our log queue

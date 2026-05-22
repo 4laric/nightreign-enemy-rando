@@ -141,7 +141,7 @@ opt-in/experimental path.
 
 - **Game crashes on startup** — almost always a chr without its asset
   pack on your me3 profile. Check the chr/ Inventory tab in the GUI
-  to see which optional packs (BFER, Heritage Pack) you have vs are
+  to see which optional packs (Heritage Pack, MMV) you have vs are
   missing, and either install them or exclude their c-prefixes.
 - **A specific encounter is broken** — open `_spoilers.md`, find the
   c-prefix at that map+entity, exclude it via the GUI's "Excluded

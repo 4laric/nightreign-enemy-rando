@@ -2,7 +2,7 @@
 test_helpful_links.py — v0.26.x external link surfacing.
 
 The rando references several external tools/mods in tooltips and help
-text (UXM, MMV, BFER, me3, etc.). Without clickable affordances or
+text (UXM, MMV, me3, etc.). Without clickable affordances or
 direct URLs, users have to search for the right repo / Nexus page —
 friction that's especially painful for first-time setup.
 
@@ -64,8 +64,6 @@ EXPECTED_LINKS = {
         'https://github.com/Nordgaren/UXM-Selective-Unpack',
     'More Map Variations (MMV)':
         'https://www.nexusmods.com/eldenringnightreign/mods/578',
-    'Boss for Elden Ring (BFER)':
-        'https://www.nexusmods.com/eldenringnightreign/mods/422',
     'WitchyBND':
         'https://github.com/ividyon/WitchyBND',
     'DarkScript3':
@@ -234,10 +232,6 @@ class TestInstallMdCoverage:
     def test_install_links_mmv(self, install_source):
         """MMV was already linked — regression guard."""
         assert 'eldenringnightreign/mods/578' in install_source
-
-    def test_install_links_bfer(self, install_source):
-        """BFER was already linked — regression guard."""
-        assert 'eldenringnightreign/mods/422' in install_source
 
     def test_install_links_me3(self, install_source):
         """me3 is required — regression guard on its link."""

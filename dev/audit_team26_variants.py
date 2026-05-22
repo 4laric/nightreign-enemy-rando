@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Audit vanilla NR NpcParam.csv for team=26 variants not in V3_AVOID_VARIANT_NPC_IDS.
 
-Companion to audit_bfer_variants.py. While that one looks at BFER's
-variants_per_prefix manifest for cinematic/phase-lock variants from the
-heritage modding side, THIS one looks at vanilla NR's own NpcParam.csv
-for the same class of bug — non-aggressive scripted variants that
-should never be placed at random combat slots.
+Scans vanilla NR's own NpcParam.csv for non-aggressive scripted variants
+that should never be placed at random combat slots — grace-replay
+variants, decorations, friendly NPCs, and other non-combat scripted
+forms.
 
 Detection heuristic: teamType == 26 in the NpcParam row.
 
@@ -44,9 +43,8 @@ from collections import defaultdict
 
 
 def load_avoid_set(repo_root):
-    """Parse V3_AVOID_VARIANT_NPC_IDS from oops_v3.py — same approach as
-    audit_bfer_variants.py. Avoids importing the module (heavy
-    side-effects)."""
+    """Parse V3_AVOID_VARIANT_NPC_IDS from oops_v3.py via a source scan.
+    Avoids importing the module (heavy side-effects)."""
     path = os.path.join(repo_root, 'oops_v3.py')
     with open(path, encoding='utf-8') as f:
         src = f.read()

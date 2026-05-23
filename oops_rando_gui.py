@@ -473,7 +473,13 @@ def validate_path_kind(path, kind):
                 return ('warn', f"Doesn't exist yet (parent OK; will be "
                                 f"created on Run): {path}")
             return ('error', f"Parent directory missing: {parent}")
-        return ('error', f"Directory does not exist: {path}")
+        if kind == 'me3_launcher_exe':
+            # File kind, not a directory — the early isdir gate doesn't
+            # apply. Fall through to its own branch below, which treats
+            # a missing file as 'warn' (the binary is auto-discovered).
+            pass
+        else:
+            return ('error', f"Directory does not exist: {path}")
 
     if kind == 'nr_install':
         # Conventional UXM layout: <install>/Game/map/mapstudio/m*.msb.dcx
@@ -535,11 +541,15 @@ def validate_path_kind(path, kind):
         return ('ok', f"Directory exists: {path}")
 
     if kind == 'me3_launcher_exe':
-        # File (not dir) kind. The me3 binary may be auto-discovered
-        # at launch time even when this field is blank, so empty is
-        # a soft 'unknown' rather than 'error'.
+        # File (not dir) kind. The me3 binary is auto-discovered at
+        # launch time (find_me3_binary scans the standard install
+        # locations) even when this field is blank or wrong, so this
+        # row never reports 'error' — the worst case is 'warn'. The
+        # field is purely an override for non-standard installs.
         if not os.path.isfile(path):
-            return ('error', f"File does not exist: {path}")
+            return ('warn', f"File not found: {path}. me3 is still "
+                            f"auto-discovered at launch — only set this "
+                            f"if it's installed somewhere non-standard.")
         basename = os.path.basename(path).lower()
         # Recognised binary names. The me3 project ships as `me3` /
         # `me3.exe`; the older Mod Engine 2 ships as
@@ -1510,8 +1520,15 @@ class RandoGUI:
             value=saved_settings.get('chr_source_dir', ''))
         self.chr_target_dir_var = tk.StringVar(
             value=saved_settings.get('chr_target_dir', ''))
-        self.chr_spoiler_path_var = tk.StringVar(value='')
         self.chr_overwrite_var = tk.BooleanVar(value=False)
+        # v0.27.0: roster-import flow — separate MMV-mod and Elden-Ring
+        # source folders. The importer routes each roster chr MMV-first,
+        # ER-fallback. ER folder seeds from the existing chr_source_dir /
+        # er_install if previously set, so upgrading users don't re-pick.
+        self.roster_mmv_dir_var = tk.StringVar(
+            value=saved_settings.get('roster_mmv_dir', ''))
+        self.roster_er_dir_var = tk.StringVar(
+            value=saved_settings.get('roster_er_dir', ''))
 
         # v0.24.9: now that ALL path vars exist, propagate any persisted
         # parent paths to their derived children. Without this, on a
@@ -2745,6 +2762,28 @@ class RandoGUI:
         f2 = ttk.LabelFrame(parent, text="Folders", padding=8)
         f2.pack(fill='x', padx=8, pady=4)
 
+        # v0.27.0: auto-collapsing Folders box. When every path row is
+        # non-red (ok / warn / unknown — i.e. nothing actually broken),
+        # the rows collapse behind a one-line summary header so the
+        # front page stays compact; the box re-expands itself the
+        # moment any row goes red. A manual click on the header always
+        # overrides the auto-state until the next red transition.
+        # All rows live in _folders_body so a single pack_forget hides
+        # the lot. _folders_header is the always-visible clickable line.
+        self._folders_header = ttk.Label(
+            f2, cursor='hand2', style='Dim.TLabel',
+            font=(_pick_ui_font(), 9))
+        self._folders_header.pack(fill='x')
+        self._folders_body = ttk.Frame(f2)
+        self._folders_body.pack(fill='x')
+        # State: None = follow auto rule; True/False = user-pinned.
+        self._folders_user_pinned = None
+        self._folders_collapsed = False
+        self._folders_header.bind(
+            '<Button-1>', self._toggle_folders_collapse)
+        # Rows pack into the body frame, not f2 directly.
+        _folders_parent = self._folders_body
+
         # v0.24.9: TWO TOP-LEVEL PARENT PATHS. Pick these once and the
         # rando derives every other path below (vanilla map/event/chr/msg
         # from <game>, and the matching mod sides from <me3>) so the
@@ -2781,7 +2820,7 @@ class RandoGUI:
              "if me3 is installed in a non-standard location.",
              'me3_launcher_exe', 'me3_launcher'),
         ]:
-            row = ttk.Frame(f2); row.pack(fill='x', pady=2)
+            row = ttk.Frame(_folders_parent); row.pack(fill='x', pady=2)
             ttk.Label(row, text=label, width=18).pack(side='left')
             # v0.26.x: live status indicator (Tier 1 UX #3). Updates on
             # every value change via _refresh_path_indicators.
@@ -2828,7 +2867,7 @@ class RandoGUI:
                 # auto-detected flag (so the badge disappears).
                 var.trace_add('write',
                     lambda *_, k=autodetect_key: self._mark_manual_edit(k))
-        cap = ttk.Frame(f2); cap.pack(fill='x', pady=(2, 4))
+        cap = ttk.Frame(_folders_parent); cap.pack(fill='x', pady=(2, 4))
         ttk.Label(cap, text="    ", width=14).pack(side='left')
         ttk.Label(cap,
             text="(everything else — Vanilla/Mod map, event, chr, msg — derives from these. "
@@ -3521,114 +3560,72 @@ class RandoGUI:
         # subdirs. The tool auto-resolves chr/ and script/ as subdirectories.
         # Lets users pick the obvious "unpacked-ER root" and "me3-mod root"
         # without having to know about the chr-subfolder convention.
+        # === Paths (v0.27.0 roster-import flow) ===
+        # Two source folders + one target. The importer walks the
+        # roster (heritage chrs + MMV pack tags), and for each chr
+        # looks in the MMV folder first, then the Elden Ring folder.
         path_frame = ttk.LabelFrame(f, text="Paths", padding=10)
         path_frame.pack(fill='x', pady=(0, 12))
 
-        # Source: ER game root
-        src_row = ttk.Frame(path_frame); src_row.pack(fill='x', pady=(0, 6))
-        ttk.Label(src_row, text="Unpacked Elden Ring folder:",
-                  width=38, anchor='w', style='Dim.TLabel').pack(side='left')
-        ttk.Entry(src_row, textvariable=self.chr_source_dir_var,
-                  width=50).pack(side='left', padx=(6, 6), fill='x', expand=True)
-        ttk.Button(src_row, text="...",
-                   command=lambda: self._pick_dir(self.chr_source_dir_var,
-                                                   save_key='chr_source_dir'),
-                   style='TButton', width=4).pack(side='left')
+        def _path_row(parent, label, var, tip, save_key=None):
+            row = ttk.Frame(parent); row.pack(fill='x', pady=(0, 6))
+            ttk.Label(row, text=label, width=24, anchor='w',
+                      style='Dim.TLabel').pack(side='left')
+            ent = ttk.Entry(row, textvariable=var, width=48)
+            ent.pack(side='left', padx=(6, 6), fill='x', expand=True)
+            ttk.Button(row, text="...", width=4,
+                       command=lambda: self._pick_dir(var, save_key)
+                       ).pack(side='left')
+            Tooltip(ent, tip)
+            # v0.27.0: persist on manual typing too, not just picker use.
+            if save_key:
+                var.trace_add(
+                    'write',
+                    lambda *_a, v=var, k=save_key: self._save_settings(
+                        **{k: v.get().strip()}))
+            return row
 
-        # Target: me3 mod folder
-        tgt_row = ttk.Frame(path_frame); tgt_row.pack(fill='x', pady=(0, 6))
-        ttk.Label(tgt_row, text="me3 mod folder:",
-                  width=38, anchor='w', style='Dim.TLabel').pack(side='left')
-        ttk.Entry(tgt_row, textvariable=self.chr_target_dir_var,
-                  width=50).pack(side='left', padx=(6, 6), fill='x', expand=True)
-        ttk.Button(tgt_row, text="...",
-                   command=lambda: self._pick_dir(self.chr_target_dir_var,
-                                                   save_key='chr_target_dir'),
-                   style='TButton', width=4).pack(side='left')
+        _path_row(path_frame, "MMV mod folder:", self.roster_mmv_dir_var,
+                  "Root of your installed More Map Variations mod "
+                  "(the folder with chr/, script/, sfx/, material/ "
+                  "subdirs). Searched first for every roster chr. "
+                  "Leave blank if you don't use MMV.",
+                  save_key='roster_mmv_dir')
+        _path_row(path_frame, "Elden Ring folder:", self.roster_er_dir_var,
+                  "Root of your UXM-unpacked Elden Ring install. "
+                  "Used as the fallback source for any roster chr "
+                  "the MMV folder doesn't provide.",
+                  save_key='roster_er_dir')
+        _path_row(path_frame, "me3 mod folder (target):",
+                  self.chr_target_dir_var,
+                  "Root of your me3 mod profile — where chr/, "
+                  "script/, sfx/, material/ files are copied to. "
+                  "Subfolders are created if missing.",
+                  save_key='chr_target_dir')
 
-        # Resolved-subdirs status line — updates dynamically as paths change.
-        # Shows what we'll actually scan/copy, so the user can see if our
-        # auto-detection matched their layout.
-        self._resolved_paths_label = ttk.Label(path_frame, text='',
-                                                style='Dim.TLabel',
-                                                font=(self.mono_font, 9),
-                                                wraplength=720, justify='left')
-        self._resolved_paths_label.pack(anchor='w', pady=(4, 0))
-
-        # Wire trace callbacks so the resolved-subdirs label updates live
-        try:
-            self.chr_source_dir_var.trace_add(
-                'write', lambda *_: self._update_resolved_paths_label())
-            self.chr_target_dir_var.trace_add(
-                'write', lambda *_: self._update_resolved_paths_label())
-        except Exception:
-            pass
-
-        # Spoiler: optional
-        spoil_row = ttk.Frame(path_frame); spoil_row.pack(fill='x', pady=(8, 6))
-        ttk.Label(spoil_row, text="Spoiler JSON (for spoiler-driven import):",
-                  width=38, anchor='w', style='Dim.TLabel').pack(side='left')
-        ttk.Entry(spoil_row, textvariable=self.chr_spoiler_path_var,
-                  width=50).pack(side='left', padx=(6, 6), fill='x', expand=True)
-        ttk.Button(spoil_row, text="...",
-                   command=self._pick_chr_spoiler,
-                   style='TButton', width=4).pack(side='left')
-        ttk.Button(spoil_row, text="Auto",
-                   command=self._auto_find_spoiler,
-                   style='TButton', width=6).pack(side='left', padx=(4, 0))
-
-        # Paths help
-        paths_info_row = ttk.Frame(path_frame); paths_info_row.pack(fill='x', pady=(4, 0))
-        make_info_icon(paths_info_row, tooltip_text=(
-            "Unpacked Elden Ring folder: the root of your UXM-unpacked ER "
-            "install — the folder containing 'chr', 'script', 'msg' etc. "
-            "as subfolders. Not 'chr' itself.\n\n"
-            "me3 mod folder: the root of your me3 mod (the one you point "
-            "me3 at in its config) — same convention, 'chr' / 'script' / "
-            "etc. are its subfolders. NOT vanilla NR's install dir.\n\n"
-            "The tool finds 'chr' and 'script' subdirectories automatically. "
-            "If those subfolders don't exist in your me3 mod yet, they'll "
-            "be created on import.\n\n"
-            "Spoiler: only needed for the spoiler-driven Diagnose/Import "
-            "buttons below. The 'Import all available' button doesn't use it."
-        ), side='left', padx=(0, 0))
-        ttk.Label(paths_info_row, text="Path help",
-                   style='Dim.TLabel').pack(side='left', padx=(4, 0))
-
-        # Initial render of the resolved-paths label
-        self._update_resolved_paths_label()
+        ttk.Label(path_frame,
+            text=("Both source folders are game-root folders — the "
+                  "ones containing chr/ as a subfolder, not chr/ "
+                  "itself. Either may be left blank; at least one "
+                  "is required."),
+            style='Dim.TLabel', wraplength=720, justify='left'
+            ).pack(anchor='w', pady=(4, 0))
 
         # === Actions ===
-        # v0.23.16: actions block hoisted UP, ABOVE the Asset packs status
-        # panel. Previous layout buried Diagnose / Dry-run / Import below
-        # the asset-pack list, where users couldn't find them at a glance.
-        # Diagnose is also restyled to Accent (it's the primary diagnostic
-        # action — runs against a spoiler and tells the user exactly which
-        # c-prefixes are missing on disk; this is what surfaced the v0.23.15
-        # model-variant phantom CTD class). Buttons widened to 14ch and
-        # padded so the row reads as a CTA rather than a footer.
+        # v0.27.0: trimmed to two — Diagnose (plan only, no copy) and
+        # Import (plan + execute). The old spoiler-scoped and per-pack
+        # bulk buttons were removed; the roster import subsumes them.
         actions = ttk.LabelFrame(f, text="Actions", padding=12)
         actions.pack(fill='x', pady=(0, 12))
 
         btn_row = ttk.Frame(actions); btn_row.pack(fill='x')
         ttk.Button(btn_row, text="Diagnose",
-                   command=self._chr_diagnose,
-                   style='Accent.TButton', width=14
+                   command=lambda: self._roster_import(dry_run=True),
+                   style='Accent.TButton', width=16
                    ).pack(side='left', padx=(0, 8), ipady=2)
-        ttk.Button(btn_row, text="Dry-run import",
-                   command=lambda: self._chr_import(dry_run=True),
-                   style='TButton', width=14
-                   ).pack(side='left', padx=(0, 8), ipady=2)
-        ttk.Button(btn_row, text="Import",
-                   command=lambda: self._chr_import(dry_run=False),
-                   style='Accent.TButton', width=14
-                   ).pack(side='left', padx=(0, 8), ipady=2)
-        # v0.23.72-late: copy compatibility report to clipboard. Useful for
-        # sharing setup state with a friend you're packaging a build for, or
-        # for pasting into Discord when asking for help.
-        ttk.Button(btn_row, text="Copy report",
-                   command=self._copy_compat_report,
-                   style='TButton', width=14
+        ttk.Button(btn_row, text="Import roster",
+                   command=lambda: self._roster_import(dry_run=False),
+                   style='Accent.TButton', width=16
                    ).pack(side='left', padx=(0, 8), ipady=2)
 
         overwrite_check = ttk.Checkbutton(btn_row,
@@ -3637,80 +3634,22 @@ class RandoGUI:
                          style='TCheckbutton')
         overwrite_check.pack(side='left', padx=(16, 0))
         Tooltip(overwrite_check,
-                "When OFF (default), import skips chr files that already "
-                "exist in the target — useful when you've manually "
-                "customized some chrs and want to keep your changes.\n\n"
-                "When ON, every file gets overwritten with the ER source. "
-                "Use this if a previous import left stale / broken files "
-                "you want to refresh.")
+                "When OFF (default), files already in the target are "
+                "skipped — re-running the import is cheap and safe. "
+                "Turn ON only to refresh stale/broken files from "
+                "source.")
 
-        # v0.23.72-late: second row — bulk "copy everything we can use" flow.
-        # The first row's Import is spoiler-scoped (just what this run needs);
-        # this row is pack-scoped (everything any enabled pack might ever
-        # want, in one operation). Run once after a new ER install to fill
-        # the target chr/ folder, never need to think about it again.
-        btn_row2 = ttk.Frame(actions); btn_row2.pack(fill='x', pady=(8, 0))
-        ttk.Label(btn_row2, text="Bulk import (all packs):",
-                   style='Dim.TLabel',
-                   font=(self.ui_font, 9, 'bold')
-                   ).pack(side='left', padx=(0, 8))
-        ttk.Button(btn_row2, text="Preview",
-                   command=lambda: self._chr_bulk_import(dry_run=True),
-                   style='TButton', width=14
-                   ).pack(side='left', padx=(0, 8), ipady=2)
-        ttk.Button(btn_row2, text="Import all available",
-                   command=lambda: self._chr_bulk_import(dry_run=False),
-                   style='Accent.TButton', width=18
-                   ).pack(side='left', padx=(0, 8), ipady=2)
-        make_info_icon(btn_row2, tooltip_text=(
-            "Preview: list what WOULD be copied from your unpacked Elden Ring "
-            "into your me3 mod folder across every enabled asset pack, no "
-            "actual copy.\n\n"
-            "Import all available: copy every chr file AND AI script that:\n"
-            "  • Belongs to an enabled asset pack (Heritage Pack, MMV, etc.)\n"
-            "  • Is present in your unpacked Elden Ring folder\n"
-            "  • Is NOT already in your me3 mod folder\n\n"
-            "Run this once after pointing at a fresh ER unpack. "
-            "Spoiler-driven Import (above) still works for spot fixes."
-        ), side='left', padx=(0, 0))
-
-        actions_info_row = ttk.Frame(actions); actions_info_row.pack(fill='x', pady=(8, 0))
-        make_info_icon(actions_info_row, tooltip_text=(
-            "Diagnose: list c-prefixes the spoiler needs that aren't in target. "
-            "No copy.\n\n"
-            "Dry-run: show what would be copied. Source must be set.\n\n"
-            "Import: actually copy. Idempotent — re-running skips files already "
-            "present unless Overwrite is on."
-        ), side='left', padx=(0, 0))
-        ttk.Label(actions_info_row, text="What do these do?",
-                   style='Dim.TLabel').pack(side='left', padx=(4, 0))
-
-        # === Asset Pack Status (v0.23.14) ===
-        # Detects which optional asset-pack mods (Heritage Pack, MMV) the
-        # user has installed in their me3 profile chr/ folder. Surfaces
-        # missing dependencies BEFORE rando placement, so users learn why a
-        # generated rando might CTD on cell-load instead of after the fact.
-        status_frame = ttk.LabelFrame(f, text="Asset packs", padding=10)
-        status_frame.pack(fill='x', pady=(0, 12))
-
-        ttk.Label(status_frame,
-            text=("Optional mod dependencies detected in your me3 mod folder. "
-                  "Refresh after editing paths or installing/removing mods."),
-            style='Dim.TLabel').pack(anchor='w', pady=(0, 6))
-
-        self.asset_pack_status_inner = ttk.Frame(status_frame)
-        self.asset_pack_status_inner.pack(fill='x')
-
-        refresh_row = ttk.Frame(status_frame); refresh_row.pack(fill='x', pady=(8, 0))
-        ttk.Button(refresh_row, text="Refresh",
-                   command=self._refresh_asset_pack_status,
-                   style='TButton').pack(side='left')
-        self.asset_pack_status_label = ttk.Label(refresh_row, text='',
-                                                  style='Dim.TLabel')
-        self.asset_pack_status_label.pack(side='left', padx=(8, 0))
-
-        # Initial render — empty state until target is set
-        self._refresh_asset_pack_status()
+        make_info_icon(actions, tooltip_text=(
+            "Diagnose: build the import plan and report it — how many "
+            "chrs are wanted, how many each source provides, what is "
+            "missing — without copying anything.\n\n"
+            "Import roster: run the plan. Copies chr + AI-script files "
+            "per chr (MMV folder first, Elden Ring folder as "
+            "fallback), then bulk-syncs the sfx/ and material/ dirs. "
+            "Idempotent — safe to re-run; only missing files copy.\n\n"
+            "Run once after pointing at your folders; you should not "
+            "need to think about chr assets again."),
+            side='left', padx=(8, 0))
 
         # === Output log ===
         # log_frame is created up top as the bottom PanedWindow pane.
@@ -3764,21 +3703,9 @@ class RandoGUI:
         # Standard case: root is the game-root, subname is a subdir of it.
         return os.path.join(root, subname)
 
-    def _resolve_source_chr_dir(self):
-        return self._resolve_asset_subdir(
-            self.chr_source_dir_var.get().strip(), 'chr')
-
-    def _resolve_source_script_dir(self):
-        return self._resolve_asset_subdir(
-            self.chr_source_dir_var.get().strip(), 'script')
-
     def _resolve_target_chr_dir(self):
         return self._resolve_asset_subdir(
             self.chr_target_dir_var.get().strip(), 'chr')
-
-    def _resolve_target_script_dir(self):
-        return self._resolve_asset_subdir(
-            self.chr_target_dir_var.get().strip(), 'script')
 
     # v0.24.66: SFX and material sibling-dir resolvers. The source and
     # target paths are derived from the chr_source/target paths,
@@ -3786,55 +3713,6 @@ class RandoGUI:
     # game-root for sibling lookups. This means a user pointing at
     # a chr/ folder gets <root>/sfx, <root>/material, <root>/script
     # all resolved automatically.
-
-    def _resolve_source_sfx_dir(self):
-        return self._resolve_asset_subdir(
-            self.chr_source_dir_var.get().strip(), 'sfx')
-
-    def _resolve_target_sfx_dir(self):
-        return self._resolve_asset_subdir(
-            self.chr_target_dir_var.get().strip(), 'sfx')
-
-    def _resolve_source_material_dir(self):
-        return self._resolve_asset_subdir(
-            self.chr_source_dir_var.get().strip(), 'material')
-
-    def _resolve_target_material_dir(self):
-        return self._resolve_asset_subdir(
-            self.chr_target_dir_var.get().strip(), 'material')
-
-    def _update_resolved_paths_label(self):
-        """Refresh the dim-text status line under the path inputs that shows
-        what subdirectories the tool will actually scan/copy. Helps users
-        verify that auto-resolution matched their layout."""
-        if not hasattr(self, '_resolved_paths_label'):
-            return
-
-        src_chr = self._resolve_source_chr_dir()
-        src_script = self._resolve_source_script_dir()
-        tgt_chr = self._resolve_target_chr_dir()
-        tgt_script = self._resolve_target_script_dir()
-
-        def _status(p):
-            if not p: return '(unset)'
-            return os.path.basename(p.rstrip('/\\')) + (
-                ' ✓' if os.path.isdir(p) else ' (does not exist yet)')
-
-        if not src_chr and not tgt_chr:
-            self._resolved_paths_label.config(text='')
-            return
-
-        lines = []
-        if src_chr or src_script:
-            lines.append(
-                f"Source detected:  chr/={_status(src_chr)}    "
-                f"script/={_status(src_script)}")
-        if tgt_chr or tgt_script:
-            lines.append(
-                f"Target detected:  chr/={_status(tgt_chr)}    "
-                f"script/={_status(tgt_script)}")
-        self._resolved_paths_label.config(text='\n'.join(lines))
-
 
     def _pick_dir(self, var, save_key=None):
         """Generic directory picker. If save_key given, persist to settings."""
@@ -3844,44 +3722,12 @@ class RandoGUI:
             var.set(d)
             if save_key:
                 self._save_settings(**{save_key: d})
-            # v0.23.14: refresh asset pack status when target chr dir changes
+            # v0.27.0: when the target chr dir changes, refresh the
+            # Generate-tab compatibility banner. (The old asset-pack
+            # status panel was removed with the import-tab rework.)
             if save_key == 'chr_target_dir' and hasattr(
-                self, 'asset_pack_status_inner'):
-                self._refresh_asset_pack_status()
-                # v0.23.72-late: also refresh the Generate-tab compatibility
-                # banner; the chr/ target change feeds into both surfaces.
-                if hasattr(self, '_compat_banner_frame'):
-                    self._refresh_compat_banner()
-
-    def _pick_chr_spoiler(self):
-        out_dir = self.output_dir_var.get() or HERE
-        p = filedialog.askopenfilename(
-            initialdir=out_dir,
-            title="Pick spoiler JSON",
-            filetypes=[("Spoiler JSON", "*spoilers*.json"),
-                       ("JSON", "*.json"),
-                       ("All", "*.*")])
-        if p: self.chr_spoiler_path_var.set(p)
-
-    def _auto_find_spoiler(self):
-        """Look in output_dir for _spoilers.json (newest match wins)."""
-        out_dir = self.output_dir_var.get()
-        if not out_dir or not os.path.isdir(out_dir):
-            self._chr_log_write("Auto-find: output dir not set or doesn't exist.\n")
-            return
-        candidates = []
-        for f in os.listdir(out_dir):
-            if f.endswith('_spoilers.json') or f == '_spoilers.json' \
-               or '_spoilers' in f and f.endswith('.json'):
-                full = os.path.join(out_dir, f)
-                candidates.append((os.path.getmtime(full), full))
-        if not candidates:
-            self._chr_log_write(f"Auto-find: no _spoilers.json in {out_dir}\n")
-            return
-        candidates.sort(reverse=True)
-        newest = candidates[0][1]
-        self.chr_spoiler_path_var.set(newest)
-        self._chr_log_write(f"Auto-find: {os.path.basename(newest)}\n")
+                self, '_compat_banner_frame'):
+                self._refresh_compat_banner()
 
     def _chr_log_write(self, msg):
         self.chr_log.configure(state='normal')
@@ -3894,487 +3740,36 @@ class RandoGUI:
         self.chr_log.configure(state='normal')
         self.chr_log.delete('1.0', 'end')
         self.chr_log.configure(state='disabled')
-
-    def _chr_diagnose(self):
-        """Run diagnose: list missing c-prefixes between target and spoiler."""
-        try:
-            from heritage_chr_import import (list_chr_prefixes,
-                                              required_prefixes_from_spoiler)
-        except ImportError:
-            sys.path.insert(0, os.path.join(HERE, 'dev'))
-            from heritage_chr_import import (list_chr_prefixes,
-                                              required_prefixes_from_spoiler)
-
-        self._chr_log_clear()
-        # v0.23.72-late: paths are game-roots; resolve chr subdir for the
-        # operations below. Source for diagnose only needs chr (no script
-        # check at this stage — spoiler is chr-prefix scoped).
-        target = self._resolve_target_chr_dir()
-        spoiler = self.chr_spoiler_path_var.get().strip()
-        if not target:
-            self._chr_log_write("ERR: me3 mod folder not set.\n")
-            return
-        if not os.path.isdir(target):
-            self._chr_log_write(
-                f"ERR: chr/ subdirectory not found at: {target}\n"
-                f"  Either point 'me3 mod folder' at the correct location, "
-                f"or the chr/ subdir hasn't been created yet (it will be "
-                f"during import).\n")
-            return
-        if not spoiler:
-            self._chr_log_write("ERR: Spoiler JSON not set. "
-                                "Use the Auto button or pick one.\n")
-            return
-        if not os.path.isfile(spoiler):
-            self._chr_log_write(f"ERR: Spoiler not found: {spoiler}\n")
-            return
-
-        try:
-            required = required_prefixes_from_spoiler(spoiler)
-            target_have = list_chr_prefixes(target)
-            missing = sorted(required - target_have)
-            self._chr_log_write(
-                f"Spoiler requires {len(required)} distinct target c-prefix(es)\n"
-                f"Target chr/ ({target}) has {len(target_have)} c-prefix(es) on disk\n"
-                f"Missing from target: {len(missing)}\n\n")
-            if missing:
-                # v0.24.57: Multi-source presence check. A chr is effectively
-                # available at runtime if it's in EITHER the configured copy-
-                # source OR the Nightreign install's stock chr/ folder (me3
-                # falls through to stock files for anything not in the mod
-                # profile). Track each separately for clear reporting.
-                nr_install = self.game_install_var.get().strip()
-                nr_chr = self._resolve_asset_subdir(nr_install, 'chr') if nr_install else None
-                src = self._resolve_source_chr_dir()
-
-                nr_have = (set(list_chr_prefixes(nr_chr))
-                           if nr_chr and os.path.isdir(nr_chr) else set())
-                src_have = (set(list_chr_prefixes(src))
-                            if src and os.path.isdir(src) else set())
-
-                in_nr_only = [p for p in missing if p in nr_have and p not in src_have]
-                in_both = [p for p in missing if p in nr_have and p in src_have]
-                in_src_only = [p for p in missing if p in src_have and p not in nr_have]
-                not_anywhere = [p for p in missing
-                                if p not in nr_have and p not in src_have]
-
-                self._chr_log_write("Missing c-prefixes (categorized):\n")
-                if nr_chr and os.path.isdir(nr_chr):
-                    runtime_ok = sorted(in_nr_only + in_both)
-                    self._chr_log_write(
-                        f"\n  Present in Nightreign install ({nr_chr}): "
-                        f"{len(runtime_ok)} of {len(missing)} — "
-                        f"runtime-available via me3 fallthrough, no import needed:\n")
-                    for cp in runtime_ok:
-                        marker = ' (also in source)' if cp in in_both else ''
-                        self._chr_log_write(f"    {cp}{marker}\n")
-                elif nr_install:
-                    self._chr_log_write(
-                        f"\n  (Nightreign install at {nr_install} has no chr/ "
-                        f"subdir — fallthrough check skipped)\n")
-                else:
-                    self._chr_log_write(
-                        f"\n  (Nightreign install path not set — can't check "
-                        f"fallthrough availability)\n")
-
-                if src and os.path.isdir(src):
-                    importable_only = sorted(in_src_only)
-                    self._chr_log_write(
-                        f"\n  Available from source ({src}) only — "
-                        f"{len(importable_only)} need import:\n")
-                    for cp in importable_only:
-                        self._chr_log_write(f"    {cp}\n")
-                else:
-                    self._chr_log_write("\n  (No source path configured)\n")
-
-                if not_anywhere:
-                    self._chr_log_write(
-                        f"\n  Not in NR install OR source ({len(not_anywhere)}) — "
-                        f"may need different game (DS1/DS2/DS3) or MMV mod assets:\n")
-                    for cp in sorted(not_anywhere):
-                        self._chr_log_write(f"    {cp}\n")
-
-                # Summary
-                truly_missing = len(not_anywhere)
-                if truly_missing == 0:
-                    self._chr_log_write(
-                        "\n✓ All required chrs are available at runtime "
-                        "(via mod profile, NR install fallthrough, or source).\n")
-                else:
-                    self._chr_log_write(
-                        f"\n⚠ {truly_missing} c-prefix(es) cannot be sourced. "
-                        f"These will CTD at runtime if placed in MSBs. "
-                        f"Either install MMV / the source game, or "
-                        f"add to V3_EXCLUDE_TARGET_PREFIXES.\n")
-            else:
-                self._chr_log_write("✓ Target has every c-prefix the spoiler needs.\n")
-        except Exception as e:
-            self._chr_log_write(f"ERR: {type(e).__name__}: {e}\n")
-
-    def _chr_import(self, dry_run=False):
-        """Run import: copy missing chr files from source to target.
-        Threaded so the UI doesn't freeze on large copies.
-
-        v0.23.72-late: this is the spoiler-driven (chr-only) flow. For
-        a full pack-driven copy including AI scripts, see _chr_bulk_import.
-
-        v0.24.58: extended to also copy AI scripts (script/ siblings of
-        the chr/ source) for the same c-prefixes. Heritage chrs without
-        their AI scripts exhibit the phase-transition loop bug (e.g.
-        c5210). Skipping scripts was a misalignment with _chr_bulk_import.
-        """
-        target = self._resolve_target_chr_dir()
-        source = self._resolve_source_chr_dir()
-        # v0.24.58: also resolve script dirs. Both are best-effort —
-        # if either doesn't exist, we log and skip the script-copy phase
-        # but still complete the chr copy.
-        source_script = self._resolve_source_script_dir()
-        target_script = self._resolve_target_script_dir()
-        # v0.24.66: SFX and material dirs (cross-game chr resources).
-        # These are best-effort: if source dirs don't exist, we skip
-        # those phases. The chr-import will still succeed for chr +
-        # script + aicommon, just without the visual-resource layer
-        # — which means cross-game chrs may still freeze/be-invisible
-        # at runtime.
-        source_sfx = self._resolve_source_sfx_dir()
-        target_sfx = self._resolve_target_sfx_dir()
-        source_material = self._resolve_source_material_dir()
-        target_material = self._resolve_target_material_dir()
-        spoiler = self.chr_spoiler_path_var.get().strip()
+    # v0.27.0: roster-import flow (Diagnose / Import roster).
+    # Replaces the old spoiler-scoped + per-pack bulk import buttons.
+    def _roster_import(self, dry_run=False):
+        """One-time roster-driven chr import. dry_run=True is the
+        Diagnose button (plan + report, no copy); dry_run=False is
+        Import roster (plan + execute). Routes each roster chr from
+        the MMV folder first, the Elden Ring folder as fallback."""
+        mmv_dir = self.roster_mmv_dir_var.get().strip()
+        er_dir = self.roster_er_dir_var.get().strip()
+        target = self.chr_target_dir_var.get().strip()
         overwrite = self.chr_overwrite_var.get()
 
         self._chr_log_clear()
-        if not source or not os.path.isdir(source):
+        if not mmv_dir and not er_dir:
             self._chr_log_write(
-                "ERR: 'Unpacked Elden Ring folder' is not set, or its chr/ "
-                "subdirectory doesn't exist.\n")
+                "ERR: set at least one source folder — the MMV mod "
+                "folder, the Elden Ring folder, or both.\n")
             return
         if not target:
-            self._chr_log_write("ERR: 'me3 mod folder' is not set.\n")
-            return
-        if not spoiler or not os.path.isfile(spoiler):
-            self._chr_log_write("ERR: Spoiler JSON not set or doesn't exist. "
-                                "Use Auto button or pick one.\n")
-            return
-
-        def _worker():
-            try:
-                from heritage_chr_import import (list_chr_prefixes,
-                                                  list_files_for_prefix,
-                                                  list_script_files_for_prefix,
-                                                  script_basename_for_compare,
-                                                  copy_bundled_aicommon,
-                                                  copy_bulk_dir_files,
-                                                  required_prefixes_from_spoiler)
-            except ImportError:
-                sys.path.insert(0, os.path.join(HERE, 'dev'))
-                from heritage_chr_import import (list_chr_prefixes,
-                                                  list_files_for_prefix,
-                                                  list_script_files_for_prefix,
-                                                  script_basename_for_compare,
-                                                  copy_bundled_aicommon,
-                                                  copy_bulk_dir_files,
-                                                  required_prefixes_from_spoiler)
-            import shutil
-
-            try:
-                required = required_prefixes_from_spoiler(spoiler)
-                target_have = list_chr_prefixes(target)
-                missing = sorted(required - target_have)
-                if not missing:
-                    self._chr_log_write("Nothing to copy — target already has everything.\n")
-                    return
-
-                source_have = list_chr_prefixes(source)
-                in_source = [p for p in missing if p in source_have]
-                not_in_source = [p for p in missing if p not in source_have]
-
-                self._chr_log_write(
-                    f"Missing: {len(missing)}; in source: {len(in_source)}; "
-                    f"not in source: {len(not_in_source)}\n")
-                if not_in_source:
-                    self._chr_log_write(
-                        f"⚠ {len(not_in_source)} prefix(es) NOT in source — "
-                        "may need a different game install:\n")
-                    for cp in not_in_source:
-                        self._chr_log_write(f"    {cp}\n")
-                    self._chr_log_write("\n")
-
-                if not in_source:
-                    self._chr_log_write("No copyable prefixes. Aborting.\n")
-                    return
-
-                if not dry_run:
-                    os.makedirs(target, exist_ok=True)
-
-                action = "WOULD COPY" if dry_run else ("COPYING" + ("" if not overwrite else " (overwrite ON)"))
-                self._chr_log_write(f"=== {action}: {len(in_source)} c-prefix(es) ===\n\n")
-
-                copied = 0
-                skipped = 0
-                total_bytes = 0
-                for cp in in_source:
-                    files = list_files_for_prefix(source, cp)
-                    if not files:
-                        self._chr_log_write(f"  {cp}: no matching files\n")
-                        continue
-                    self._chr_log_write(f"  {cp} ({len(files)} files):\n")
-                    for fname in files:
-                        src = os.path.join(source, fname)
-                        dst = os.path.join(target, fname)
-                        sz = os.path.getsize(src)
-                        total_bytes += sz
-                        if os.path.exists(dst) and not overwrite:
-                            self._chr_log_write(
-                                f"    skip exists: {fname} ({sz/(1024*1024):.1f} MB)\n")
-                            skipped += 1
-                            continue
-                        if dry_run:
-                            self._chr_log_write(
-                                f"    would copy: {fname} ({sz/(1024*1024):.1f} MB)\n")
-                        else:
-                            shutil.copy2(src, dst)
-                            self._chr_log_write(
-                                f"    copied: {fname} ({sz/(1024*1024):.1f} MB)\n")
-                        copied += 1
-
-                tag = "WOULD copy" if dry_run else "Copied"
-                self._chr_log_write(
-                    f"\n=== Done (chr). {tag} {copied} file(s); "
-                    f"skipped {skipped} (already present). "
-                    f"Total: {total_bytes/(1024*1024):.1f} MB ===\n")
-
-                # v0.24.58: AI script copy phase. For each chr-prefix we
-                # just imported (in_source), find matching scripts in
-                # source script/ folder and copy any not present in
-                # target script/ folder. Heritage chrs without AI scripts
-                # exhibit the phase-transition loop bug (c5210 is the
-                # canonical example).
-                if not source_script or not os.path.isdir(source_script):
-                    self._chr_log_write(
-                        "\n⚠ Source script/ dir not found; AI scripts NOT "
-                        "imported. Point chr-source path at the game root "
-                        "(folder containing both chr/ and script/), or run "
-                        "'Import all available' for a fuller copy.\n")
-                elif not target_script:
-                    self._chr_log_write(
-                        "\n⚠ Target script/ dir cannot be resolved; AI "
-                        "scripts NOT imported.\n")
-                else:
-                    if not dry_run:
-                        os.makedirs(target_script, exist_ok=True)
-                    # Pre-index target scripts (normalized basenames) so
-                    # we don't re-copy something already present in
-                    # a different .dcx-wrapping form.
-                    target_script_basenames = set()
-                    if os.path.isdir(target_script):
-                        for tfn in os.listdir(target_script):
-                            target_script_basenames.add(
-                                script_basename_for_compare(tfn))
-
-                    self._chr_log_write(
-                        f"\n=== {action} AI scripts for {len(in_source)} "
-                        f"c-prefix(es) (source: {source_script}) ===\n\n")
-                    s_copied = 0
-                    s_skipped = 0
-                    s_bytes = 0
-                    s_chrs_with_scripts = 0
-                    s_chrs_no_scripts = 0
-                    for cp in in_source:
-                        sfiles = list_script_files_for_prefix(source_script, cp)
-                        if not sfiles:
-                            s_chrs_no_scripts += 1
-                            continue
-                        s_chrs_with_scripts += 1
-                        self._chr_log_write(f"  {cp} ({len(sfiles)} script files):\n")
-                        for sfn in sfiles:
-                            src = os.path.join(source_script, sfn)
-                            dst = os.path.join(target_script, sfn)
-                            try:
-                                sz = os.path.getsize(src)
-                            except OSError:
-                                continue
-                            s_bytes += sz
-                            base = script_basename_for_compare(sfn)
-                            if base in target_script_basenames and not overwrite:
-                                self._chr_log_write(
-                                    f"    skip exists: {sfn} ({sz/1024:.1f} KB)\n")
-                                s_skipped += 1
-                                continue
-                            if dry_run:
-                                self._chr_log_write(
-                                    f"    would copy: {sfn} ({sz/1024:.1f} KB)\n")
-                            else:
-                                shutil.copy2(src, dst)
-                                self._chr_log_write(
-                                    f"    copied: {sfn} ({sz/1024:.1f} KB)\n")
-                            s_copied += 1
-                    self._chr_log_write(
-                        f"\n=== Done (scripts). {tag} {s_copied} file(s); "
-                        f"skipped {s_skipped} (already present). "
-                        f"{s_chrs_with_scripts}/{len(in_source)} c-prefix(es) had "
-                        f"scripts in source. Total: {s_bytes/1024:.1f} KB ===\n")
-
-                    # v0.24.64: bundled aicommon. MMV's aicommon files
-                    # are supersets of NR's — bundling them with the
-                    # rando project means cross-game / DLC chrs (c8300
-                    # Dragonslayer Armor, c8500 Manus, etc.) get the
-                    # goal-table constants they need, regardless of
-                    # whether the player has SoTE installed. Otherwise
-                    # RegisterTableGoal sees nil constants → freeze.
-                    # Target dir is already the per-chr script dir, so
-                    # we drop them there next to the _battle.luabnd files.
-                    if target_script:
-                        bundle_dir = os.path.join(HERE, 'bundled_aicommon')
-                        if os.path.isdir(bundle_dir):
-                            self._chr_log_write(
-                                f"\n=== {action} bundled aicommon files "
-                                f"(source: {bundle_dir}) ===\n")
-                            res = copy_bundled_aicommon(
-                                bundle_dir, target_script,
-                                overwrite=overwrite, dry_run=dry_run)
-                            for fname in res['copied']:
-                                self._chr_log_write(
-                                    f"    {'would copy' if dry_run else 'copied'}: "
-                                    f"{fname}\n")
-                            for fname in res['skipped']:
-                                self._chr_log_write(
-                                    f"    skip exists: {fname}\n")
-                            self._chr_log_write(
-                                f"  {tag} {len(res['copied'])}, skipped "
-                                f"{len(res['skipped'])} aicommon file(s). "
-                                f"{res['bytes']/1024:.1f} KB.\n")
-                        else:
-                            self._chr_log_write(
-                                f"\n⚠ bundled_aicommon/ not present in "
-                                f"project — DLC/cross-game chrs may freeze "
-                                f"if user lacks aicommon_dlc01.luabnd.dcx.\n")
-
-                # v0.24.66: SFX and material auto-copy. Cross-game chrs
-                # (MMV imports especially) need their per-chr SFX bundles
-                # and shared material files deployed alongside chr/
-                # script/ aicommon. Without these, chrs spawn invisible
-                # or freeze on first attack animation that references a
-                # missing SFX ID. User playtest confirmed: copying MMV's
-                # entire sfx/ and material/ dirs unlocks the full MMV
-                # roster (Romina proof case, v0.24.65 lift).
-                #
-                # SFX: copy every .ffxbnd.dcx in source sfx/ to target
-                # sfx/. Filtered by extension because the source dir
-                # might also contain dev/build artifacts (.fxr, .xml,
-                # etc.) we don't need. Per-chr matching not used because
-                # the source dir also contains shared bundles
-                # (sfxbnd_commoneffects, sfxbnd_dlc01_*) needed by some
-                # imports — easier to bulk-copy everything filterable.
-                #
-                # Material: copy every file in source material/ to
-                # target material/. No ext filter because material file
-                # naming is inconsistent (.matbinbnd.dcx, .matbin,
-                # .mtdbnd.dcx variants). User did bulk copy and it
-                # worked; we match that.
-                if source_sfx and os.path.isdir(source_sfx) and target_sfx:
-                    self._chr_log_write(
-                        f"\n=== {action} SFX files (source: {source_sfx}) ===\n")
-                    res = copy_bulk_dir_files(
-                        source_sfx, target_sfx,
-                        ext_filter=('.ffxbnd.dcx', '.ffxbnd'),
-                        overwrite=overwrite, dry_run=dry_run)
-                    # Don't enumerate every file — SFX dirs can have
-                    # hundreds. Show summary only.
-                    self._chr_log_write(
-                        f"  {tag} {len(res['copied'])}, skipped "
-                        f"{len(res['skipped'])} SFX file(s). "
-                        f"{res['bytes']/(1024*1024):.1f} MB.\n")
-                    if res['errors']:
-                        self._chr_log_write(
-                            f"  ⚠ {len(res['errors'])} error(s); first 3:\n")
-                        for err in res['errors'][:3]:
-                            self._chr_log_write(f"    {err}\n")
-                elif source_sfx:
-                    self._chr_log_write(
-                        f"\n⚠ Source sfx/ dir not found at {source_sfx} — "
-                        f"cross-game chrs may freeze without their SFX bundles.\n")
-                else:
-                    self._chr_log_write(
-                        "\n⚠ Source sfx/ dir not resolvable — cross-game "
-                        "chrs may freeze without their SFX bundles. Point "
-                        "chr-source path at the unpacked game root.\n")
-
-                if source_material and os.path.isdir(source_material) and target_material:
-                    self._chr_log_write(
-                        f"\n=== {action} material files (source: "
-                        f"{source_material}) ===\n")
-                    res = copy_bulk_dir_files(
-                        source_material, target_material,
-                        ext_filter=None,  # all files
-                        overwrite=overwrite, dry_run=dry_run)
-                    self._chr_log_write(
-                        f"  {tag} {len(res['copied'])}, skipped "
-                        f"{len(res['skipped'])} material file(s). "
-                        f"{res['bytes']/(1024*1024):.1f} MB.\n")
-                    if res['errors']:
-                        self._chr_log_write(
-                            f"  ⚠ {len(res['errors'])} error(s); first 3:\n")
-                        for err in res['errors'][:3]:
-                            self._chr_log_write(f"    {err}\n")
-                elif source_material:
-                    self._chr_log_write(
-                        f"\n⚠ Source material/ dir not found at "
-                        f"{source_material} — cross-game chrs may have "
-                        f"missing textures.\n")
-                else:
-                    self._chr_log_write(
-                        "\n⚠ Source material/ dir not resolvable — "
-                        "cross-game chrs may have missing textures.\n")
-
-                if not_in_source and not dry_run:
-                    self._chr_log_write(
-                        f"\n{len(not_in_source)} prefix(es) still missing — "
-                        "try a different source game install.\n")
-            except Exception as e:
-                self._chr_log_write(f"ERR: {type(e).__name__}: {e}\n")
-                self._chr_log_write(traceback.format_exc())
-
-        threading.Thread(target=_worker, daemon=True).start()
-
-    def _chr_bulk_import(self, dry_run=False):
-        """v0.23.72-late: pack-driven bulk import. Surveys every enabled asset
-        pack JSON, intersects with what's in the source (the user's unpacked
-        ER game folder), and copies what's missing into the me3 mod folder.
-
-        Different from _chr_import (spoiler-scoped) — this one is config-
-        agnostic and one-shot. After running once, the user's me3 mod
-        contains everything any enabled pack might ever ask for; they don't
-        need to think about inventory again until they add a new pack.
-
-        Also imports AI scripts (script/ subdirectory). See plan_bulk_chr_import
-        in oops_v3 for the rationale.
-        """
-        # v0.23.72-late: resolve game-root paths to chr/ subdirs for the
-        # engine call. Script subdirs are computed separately and passed
-        # through explicitly so the engine doesn't have to guess.
-        source_chr = self._resolve_source_chr_dir()
-        target_chr = self._resolve_target_chr_dir()
-        source_script = self._resolve_source_script_dir()
-        target_script = self._resolve_target_script_dir()
-        # v0.24.66: SFX and material auto-deploy (cross-game chr support).
-        source_sfx = self._resolve_source_sfx_dir()
-        target_sfx = self._resolve_target_sfx_dir()
-        source_material = self._resolve_source_material_dir()
-        target_material = self._resolve_target_material_dir()
-        overwrite = self.chr_overwrite_var.get()
-
-        self._chr_log_clear()
-        if not source_chr or not os.path.isdir(source_chr):
             self._chr_log_write(
-                "ERR: 'Unpacked Elden Ring folder' is not set, or its chr/ "
-                "subdirectory doesn't exist.\n"
-                "  Point at the root of your UXM-unpacked ER install — the "
-                "folder containing chr/, script/, msg/, etc. as subfolders.\n")
+                "ERR: set the me3 mod folder (target).\n")
             return
-        if not target_chr:
-            self._chr_log_write("ERR: 'me3 mod folder' is not set.\n")
-            return
+        for label, d in (("MMV", mmv_dir), ("Elden Ring", er_dir)):
+            if d and not os.path.isdir(d):
+                self._chr_log_write(
+                    f"ERR: {label} folder does not exist: {d}\n")
+                return
+
+        # target chr/ is a subdir of the me3 mod folder
+        target_chr = os.path.join(target, 'chr')
 
         def _worker():
             try:
@@ -4385,239 +3780,87 @@ class RandoGUI:
                     import oops_v3 as ov3
 
                 self._chr_log_write(
-                    f"=== Bulk import {'(PREVIEW)' if dry_run else ''} ===\n"
-                    f"  Source chr/:    {source_chr}\n"
-                    f"  Target chr/:    {target_chr}\n"
-                    f"  Mode:           {'dry-run, no files will be copied' if dry_run else 'real copy'}\n"
-                    f"  Overwrite existing: {'YES' if overwrite else 'no (skip)'}\n\n")
+                    f"=== Roster import "
+                    f"{'(DIAGNOSE — no files copied)' if dry_run else ''} ===\n"
+                    f"  MMV folder:    {mmv_dir or '(not set)'}\n"
+                    f"  Elden Ring:    {er_dir or '(not set)'}\n"
+                    f"  Target (me3):  {target}\n"
+                    f"  Overwrite:     {'YES' if overwrite else 'no (skip existing)'}\n\n")
 
-                # Pass explicit script subdirs — don't rely on engine sibling
-                # heuristic, since we resolved them from the user's game-root
-                # paths above.
-                plan = ov3.plan_bulk_chr_import(
-                    source_chr, target_chr,
-                    source_script_dir=source_script or None,
-                    target_script_dir=target_script or None)
-                tot = plan['totals']
-                sdirs = plan.get('script_dirs', {})
-
-                # v0.23.72-late: surface script-dir resolution. The bulk
-                # importer needs both chr/ and script/ subdirectories — chr/
-                # holds visual + behavior, script/ holds AI brains. The
-                # earlier path resolution should have made both available;
-                # this log block confirms what the engine actually saw.
+                plan = ov3.plan_roster_import(
+                    mmv_dir or None, er_dir or None, target_chr)
+                t = plan['totals']
                 self._chr_log_write(
-                    f"  Source script/: {sdirs.get('source') or '(not detected)'}\n"
-                    f"  Target script/: {sdirs.get('target') or '(not detected)'}\n")
-                if not sdirs.get('source_exists'):
-                    self._chr_log_write(
-                        f"  ⚠ Source script/ folder doesn't exist — AI scripts won't "
-                        f"be imported. Heritage chrs will still load visually but may "
-                        f"exhibit the phase-transition loop bug (e.g. c5210). Confirm "
-                        f"your unpacked-ER path is the game ROOT (containing chr/ + "
-                        f"script/ subfolders), not chr/ itself.\n")
-                self._chr_log_write("\n")
+                    f"Plan:\n"
+                    f"  Roster chrs wanted (heritage + MMV):  {t['wanted']}\n"
+                    f"  Already in target (nothing to do):    {t['already_present']}\n"
+                    f"  Will copy:                            {t['copyable']}\n"
+                    f"     from MMV folder:                   {t['from_mmv']}\n"
+                    f"     from Elden Ring folder:            {t['from_er']}\n"
+                    f"  Wanted but in neither source:         {t['unavailable']}\n"
+                    f"  AI-script files to copy:              {t['script_files']}\n"
+                    f"  Estimated chr+script size:            "
+                    f"{t['bytes']/(1024*1024):.1f} MB\n\n")
 
-                self._chr_log_write(
-                    f"Plan summary:\n"
-                    f"  Total chr-prefixes wanted by enabled packs: {tot['wanted_unique_prefixes']}\n"
-                    f"  Already in target (no action needed):       {tot['already_present']}\n"
-                    f"  Available in source — will copy:            {tot['copyable_now']}\n"
-                    f"  Wanted but not in source (try another DLC): {tot['unavailable']}\n"
-                    f"  Estimated size:                             "
-                    f"{tot['estimated_bytes']/(1024*1024):.1f} MB\n"
-                    f"  Script files (AI brains) to copy:           {tot.get('script_files_copyable', 0)}\n\n")
-
-                # Per-pack breakdown
-                self._chr_log_write("Per pack:\n")
-                for pid, info in plan['per_pack_breakdown'].items():
-                    pct = (info['have'] / info['wanted'] * 100) if info['wanted'] else 0
+                if plan['unavailable']:
                     self._chr_log_write(
-                        f"  {info['name']}\n"
-                        f"    {info['have']}/{info['wanted']} present ({pct:.0f}%); "
-                        f"{info['copyable']} copyable now\n")
-                self._chr_log_write("\n")
-
-                # Unavailable detail — useful for users without all DLC
-                if plan['wanted_but_not_in_source']:
-                    self._chr_log_write(
-                        f"=== {len(plan['wanted_but_not_in_source'])} prefix(es) "
-                        f"wanted but NOT in source ===\n"
-                        f"  (These are likely from a different source game — "
-                        f"DS3/BB/SoTE/etc. The rando will skip placements that "
-                        f"need them, falling back to vanilla.)\n")
-                    # Group by origin for readability
-                    from collections import defaultdict
-                    by_origin = defaultdict(list)
-                    for cp, pack_name, origin in plan['wanted_but_not_in_source']:
-                        by_origin[origin].append((cp, pack_name))
-                    for origin in sorted(by_origin):
-                        entries = by_origin[origin]
-                        self._chr_log_write(f"  Origin '{origin}': {len(entries)} prefix(es)\n")
-                        for cp, pname in entries[:8]:
-                            self._chr_log_write(f"    {cp}  (wanted by: {pname})\n")
-                        if len(entries) > 8:
-                            self._chr_log_write(f"    ... +{len(entries) - 8} more\n")
+                        f"=== {len(plan['unavailable'])} chr(s) in neither "
+                        f"source folder ===\n"
+                        f"  (Missing a DLC, or that game is not "
+                        f"UXM-unpacked. The rando skips placements that "
+                        f"need these — they fall back to vanilla.)\n")
+                    for cp, wanted_by in plan['unavailable'][:30]:
+                        self._chr_log_write(f"    {cp}  ({wanted_by})\n")
+                    if len(plan['unavailable']) > 30:
+                        self._chr_log_write(
+                            f"    ... +{len(plan['unavailable']) - 30} more\n")
                     self._chr_log_write("\n")
 
-                if tot['copyable_now'] == 0:
-                    self._chr_log_write(
-                        "Nothing to copy from this source. "
-                        "Either target already has everything available, "
-                        "or source doesn't contain any of the wanted chrs.\n")
-                    return
-
-                # Detail of what will be copied
-                self._chr_log_write(
-                    f"=== {'Would copy' if dry_run else 'Copying'} "
-                    f"{tot['copyable_now']} chr-prefix(es) ===\n")
-                for entry in plan['in_source_missing_in_target'][:30]:
-                    cp = entry[0]
-                    chr_files = entry[1]
-                    script_files = entry[2] if len(entry) >= 4 else []
-                    sz = entry[-1]  # bytes is last
-                    parts = []
-                    if chr_files:
-                        parts.append(f"{len(chr_files)} chr")
-                    if script_files:
-                        parts.append(f"{len(script_files)} script")
-                    descr = ' + '.join(parts) if parts else '(empty?)'
-                    self._chr_log_write(
-                        f"  {cp}: {descr} file(s), "
-                        f"{sz/(1024*1024):.2f} MB\n")
-                if len(plan['in_source_missing_in_target']) > 30:
-                    remaining = len(plan['in_source_missing_in_target']) - 30
-                    rem_bytes = sum(e[-1]
-                                     for e in plan['in_source_missing_in_target'][30:])
-                    self._chr_log_write(
-                        f"  ... +{remaining} more "
-                        f"({rem_bytes/(1024*1024):.1f} MB)\n")
-                self._chr_log_write("\n")
-
                 if dry_run:
+                    if t['copyable']:
+                        self._chr_log_write("Chrs that would be copied:\n")
+                        for e in plan['entries']:
+                            self._chr_log_write(
+                                f"    {e['cp']}  [{e['origin'].upper()}]  "
+                                f"{len(e['chr_files'])} chr + "
+                                f"{len(e['script_files'])} script file(s)\n")
                     self._chr_log_write(
-                        "=== Preview complete — nothing copied. ===\n"
-                        "  Click 'Import all available' to do this for real.\n")
+                        "\nDiagnose only — nothing was copied. Click "
+                        "'Import roster' to apply.\n")
                     return
 
-                # Real copy — execute with progress callback
-                copied_count = [0]  # nonlocal accumulator
-                last_report = [0]
-                total_files_estimated = sum(
-                    len(e[1]) + (len(e[2]) if len(e) >= 4 else 0)
-                    for e in plan['in_source_missing_in_target'])
-
-                def _progress(cp, fname, seen, total, status):
-                    if status.startswith('copied'):
-                        copied_count[0] += 1
-                        # Report every 10 files OR every 50MB to keep log readable
-                        if (copied_count[0] - last_report[0] >= 10 or
-                            seen - (last_report[0] * 5_000_000) > 50_000_000):
-                            self._chr_log_write(
-                                f"  ... {copied_count[0]}/{total_files_estimated} "
-                                f"files copied "
-                                f"({seen/(1024*1024):.0f}/{total/(1024*1024):.0f} MB)\n")
-                            last_report[0] = copied_count[0]
-                    elif status.startswith('error'):
-                        self._chr_log_write(f"  ERROR {fname}: {status}\n")
-                    # skip-exists is silent unless few entries
-
-                self._chr_log_write("Starting copy...\n")
-                result = ov3.execute_bulk_chr_import(
-                    source_chr, target_chr, plan,
-                    overwrite=overwrite,
-                    progress_cb=_progress,
-                    source_script_dir=source_script or None,
-                    target_script_dir=target_script or None)
-
+                # Real copy.
+                self._chr_log_write("Copying...\n")
+                res = ov3.execute_roster_import(
+                    plan, mmv_dir or None, er_dir or None,
+                    overwrite=overwrite)
                 self._chr_log_write(
                     f"\n=== Done ===\n"
-                    f"  Files copied:        {result['files_copied']}\n"
-                    f"    chr files:         {result.get('chr_files_copied', 0)}\n"
-                    f"    script files:      {result.get('script_files_copied', 0)} (AI brains)\n"
-                    f"  Files skipped:       {result['files_skipped']} (already present)\n"
-                    f"  Bytes copied:        {result['bytes_copied']/(1024*1024):.1f} MB\n"
-                    f"  Errors:              {len(result['errors'])}\n")
-
-                # v0.24.64: bundled aicommon — same rationale as
-                # _chr_import. Cross-game / DLC chrs need MMV-superset
-                # aicommon files for their goal-table constants to
-                # resolve. Without these, c8300 freezes etc.
-                if target_script:
-                    bundle_dir = os.path.join(HERE, 'bundled_aicommon')
-                    if os.path.isdir(bundle_dir):
-                        try:
-                            from heritage_chr_import import copy_bundled_aicommon
-                        except ImportError:
-                            sys.path.insert(0, os.path.join(HERE, 'dev'))
-                            from heritage_chr_import import copy_bundled_aicommon
-                        res = copy_bundled_aicommon(
-                            bundle_dir, target_script,
-                            overwrite=overwrite, dry_run=False)
-                        self._chr_log_write(
-                            f"  Bundled aicommon:    {len(res['copied'])} copied, "
-                            f"{len(res['skipped'])} skipped "
-                            f"({res['bytes']/1024:.1f} KB)\n")
-                    else:
-                        self._chr_log_write(
-                            f"  ⚠ bundled_aicommon/ missing — DLC/cross-game "
-                            f"chrs may freeze if user lacks aicommon_dlc01.\n")
-
-                # v0.24.66: SFX + material bulk auto-deploy (cross-game
-                # chr resources). Same rationale as in _chr_import.
-                try:
-                    from heritage_chr_import import copy_bulk_dir_files
-                except ImportError:
-                    sys.path.insert(0, os.path.join(HERE, 'dev'))
-                    from heritage_chr_import import copy_bulk_dir_files
-                if source_sfx and os.path.isdir(source_sfx) and target_sfx:
-                    sfx_res = copy_bulk_dir_files(
-                        source_sfx, target_sfx,
-                        ext_filter=('.ffxbnd.dcx', '.ffxbnd'),
-                        overwrite=overwrite, dry_run=False)
+                    f"  chr files copied:       {res['chr_files_copied']}\n"
+                    f"  AI-script files copied: {res['script_files_copied']}\n"
+                    f"  sfx files copied:       {res['sfx_files_copied']}\n"
+                    f"  material files copied:  {res['material_files_copied']}\n"
+                    f"  skipped (already had):  {res['files_skipped']}\n"
+                    f"  total bytes copied:     "
+                    f"{res['bytes_copied']/(1024*1024):.1f} MB\n")
+                if res['errors']:
                     self._chr_log_write(
-                        f"  SFX bundles:         {len(sfx_res['copied'])} copied, "
-                        f"{len(sfx_res['skipped'])} skipped "
-                        f"({sfx_res['bytes']/(1024*1024):.1f} MB)\n")
-                    if sfx_res['errors']:
+                        f"\n  {len(res['errors'])} error(s):\n")
+                    for msg in res['errors'][:20]:
+                        self._chr_log_write(f"    {msg}\n")
+                    if len(res['errors']) > 20:
                         self._chr_log_write(
-                            f"  ⚠ {len(sfx_res['errors'])} SFX error(s)\n")
+                            f"    ... +{len(res['errors']) - 20} more\n")
                 else:
-                    self._chr_log_write(
-                        "  ⚠ Source sfx/ dir unavailable — cross-game "
-                        "chrs may freeze.\n")
-                if source_material and os.path.isdir(source_material) and target_material:
-                    mat_res = copy_bulk_dir_files(
-                        source_material, target_material,
-                        ext_filter=None,  # all files
-                        overwrite=overwrite, dry_run=False)
-                    self._chr_log_write(
-                        f"  Material files:      {len(mat_res['copied'])} copied, "
-                        f"{len(mat_res['skipped'])} skipped "
-                        f"({mat_res['bytes']/(1024*1024):.1f} MB)\n")
-                    if mat_res['errors']:
-                        self._chr_log_write(
-                            f"  ⚠ {len(mat_res['errors'])} material error(s)\n")
-                else:
-                    self._chr_log_write(
-                        "  ⚠ Source material/ dir unavailable — cross-game "
-                        "chrs may have missing textures.\n")
-                if result['errors']:
-                    self._chr_log_write("\nError details:\n")
-                    for err in result['errors'][:10]:
-                        self._chr_log_write(f"  {err}\n")
-                    if len(result['errors']) > 10:
-                        self._chr_log_write(f"  ... +{len(result['errors']) - 10} more\n")
-
-                # Refresh status panels — the target now has more chrs
-                self._refresh_asset_pack_status()
-                if hasattr(self, '_compat_banner_frame'):
-                    self._refresh_compat_banner()
+                    self._chr_log_write("\n  No errors.\n")
             except Exception as e:
-                self._chr_log_write(f"ERR: {type(e).__name__}: {e}\n")
-                self._chr_log_write(traceback.format_exc())
+                import traceback
+                self._chr_log_write(
+                    f"\nUNEXPECTED ERROR: {type(e).__name__}: {e}\n"
+                    f"{traceback.format_exc()}\n")
 
         threading.Thread(target=_worker, daemon=True).start()
+
 
     # ------------------------------------------------------------------
     # v0.26.x: Setup Status panel (#1 in Tier 1 UX tracker)
@@ -4843,6 +4086,69 @@ class RandoGUI:
             indicator.set(state, detail)
         # The Setup Status panel mirrors a subset of these; refresh it too.
         self._refresh_setup_status()
+        # v0.27.0: drive the Folders box auto-collapse off the freshly
+        # computed indicator states.
+        self._refresh_folders_collapse()
+
+    # ------------------------------------------------------------------
+    # v0.27.0: auto-collapsing Folders box
+    # ------------------------------------------------------------------
+
+    def _folders_has_error(self):
+        """True if any path row in the Folders box is red ('error')."""
+        if not hasattr(self, '_path_indicators'):
+            return False
+        return any(ind.state == 'error'
+                   for ind, _var, _kind in self._path_indicators)
+
+    def _refresh_folders_collapse(self):
+        """Collapse the Folders body when no row is red; expand it when
+        one is. A manual header click pins the state (_folders_user_pinned)
+        until the next red transition, which always force-expands and
+        clears the pin so a real problem is never hidden."""
+        if not hasattr(self, '_folders_header'):
+            return
+        has_error = self._folders_has_error()
+        if has_error:
+            # A red row always wins: force-expand, drop any user pin so
+            # the auto rule resumes once the error clears.
+            self._folders_user_pinned = None
+            want_collapsed = False
+        elif self._folders_user_pinned is not None:
+            want_collapsed = self._folders_user_pinned
+        else:
+            want_collapsed = True  # all clear -> tidy away
+        self._apply_folders_collapse(want_collapsed)
+
+    def _apply_folders_collapse(self, collapsed):
+        """Show/hide the body frame and repaint the header summary."""
+        if collapsed and not self._folders_collapsed:
+            self._folders_body.pack_forget()
+        elif not collapsed and self._folders_collapsed:
+            self._folders_body.pack(fill='x')
+        self._folders_collapsed = collapsed
+        arrow = '\u25b6' if collapsed else '\u25bc'
+        if collapsed:
+            warn = 0
+            if hasattr(self, '_path_indicators'):
+                warn = sum(1 for ind, _v, _k in self._path_indicators
+                           if ind.state == 'warn')
+            tail = ('all paths OK' if warn == 0
+                    else f'{warn} warning{"s" if warn != 1 else ""}, '
+                         f'none blocking')
+            self._folders_header.configure(
+                text=f'{arrow}  Folders \u2014 {tail} (click to edit)')
+        else:
+            self._folders_header.configure(
+                text=f'{arrow}  Folders (click to collapse)')
+
+    def _toggle_folders_collapse(self, *_args):
+        """Header click: pin the opposite of the current state. Ignored
+        in spirit when a red row is present — _refresh_folders_collapse
+        will immediately re-expand on the next refresh — but we still
+        record the pin so it takes once the error clears."""
+        self._folders_user_pinned = not self._folders_collapsed
+        self._refresh_folders_collapse()
 
     # ------------------------------------------------------------------
     # v0.26.x: Re-detect button + "(auto-detected)" badge (#5 in Tier 1)
@@ -5498,116 +4804,6 @@ class RandoGUI:
             except Exception:
                 pass
 
-
-    def _refresh_asset_pack_status(self):
-        """v0.23.14: query the engine for asset-pack detection results and
-        render them in the chr/ Inventory tab status panel. Called on tab
-        load, on Refresh button click, and (eventually) on Target path
-        changes."""
-        # Clear existing rows
-        for widget in self.asset_pack_status_inner.winfo_children():
-            widget.destroy()
-
-        target = self._resolve_target_chr_dir() if hasattr(
-            self, 'chr_target_dir_var') else ''
-
-        if not target:
-            ttk.Label(self.asset_pack_status_inner,
-                text="(set the 'me3 mod folder' path above to scan for installed asset packs)",
-                style='Dim.TLabel').pack(anchor='w')
-            self.asset_pack_status_label.config(text='')
-            return
-
-        if not os.path.isdir(target):
-            ttk.Label(self.asset_pack_status_inner,
-                text=(f"chr/ subdir not found at: {target}\n"
-                      f"(this is normal for a fresh me3 mod — it'll be "
-                      f"created on import.)"),
-                foreground=THEME['warn'],
-                background=THEME['surface'],
-                justify='left').pack(anchor='w')
-            self.asset_pack_status_label.config(text='')
-            return
-
-        try:
-            # Avoid re-importing oops_v3 if already loaded
-            import sys
-            if 'oops_v3' in sys.modules:
-                ov3 = sys.modules['oops_v3']
-            else:
-                sys.path.insert(0, HERE)
-                import oops_v3 as ov3
-            results = ov3.detect_asset_packs(target)
-        except Exception as e:
-            ttk.Label(self.asset_pack_status_inner,
-                text=f"Detection failed: {type(e).__name__}: {e}",
-                foreground=THEME['error'],
-                background=THEME['surface']).pack(anchor='w')
-            return
-
-        # Filter: only show enabled packs that need external chr files. The
-        # vp_v1 + disabled packs are noise for users who are trying to figure
-        # out which mods they need installed.
-        relevant = {pid: info for pid, info in results.items()
-                    if info.get('enabled') and info.get('requires_external')}
-
-        if not relevant:
-            ttk.Label(self.asset_pack_status_inner,
-                text="No external asset packs are required by current rando "
-                     "config. (vp_v1 only — chrs ship with vanilla NR.)",
-                style='Dim.TLabel').pack(anchor='w')
-            self.asset_pack_status_label.config(text='')
-            return
-
-        any_missing = False
-        for pack_id, info in relevant.items():
-            row = ttk.Frame(self.asset_pack_status_inner)
-            row.pack(fill='x', pady=2)
-
-            det = info.get('detected', 0)
-            exp = info.get('expected', 0)
-            if det == 0:
-                icon, color = '✗', THEME['error']
-                any_missing = True
-            elif det < exp:
-                icon, color = '⚠', THEME['warn']
-                any_missing = True
-            else:
-                icon, color = '✓', THEME['success']
-
-            ttk.Label(row, text=icon, foreground=color,
-                       background=THEME['surface'],
-                       font=(self.ui_font, 11, 'bold')).pack(side='left', padx=(0, 6))
-            ttk.Label(row,
-                       text=f"{info['description']}: {det}/{exp} chr-prefixes",
-                       background=THEME['surface']).pack(side='left')
-            url = info.get('url')
-            if url and det < exp:
-                # Compact URL display: just hostname/path tail. The full URL
-                # is in the tooltip-equivalent (label text on hover would
-                # need ttk extension; for now just show the short form).
-                ttk.Label(row, text=f"  ({url})",
-                           foreground=THEME['accent'],
-                           background=THEME['surface'],
-                           font=(self.ui_font, 9)).pack(side='left', padx=(8, 0))
-
-            if det < exp and info.get('missing'):
-                missing_preview = info['missing'][:5]
-                more = (f" (+{len(info['missing']) - 5} more)"
-                        if len(info['missing']) > 5 else '')
-                ttk.Label(self.asset_pack_status_inner,
-                    text=f"      missing: {', '.join(missing_preview)}{more}",
-                    style='Dim.TLabel',
-                    font=(self.mono_font, 9)).pack(anchor='w')
-
-        # Summary
-        if any_missing:
-            self.asset_pack_status_label.config(
-                text="Some asset packs are missing — see chr/ Inventory tab "
-                     "or Diagnose button for details.")
-        else:
-            self.asset_pack_status_label.config(
-                text="All required asset packs are present.")
 
     # ------------------------------------------------------------------
     # v0.26.x: Tier 3 UX #11 — Spoiler viewer tab

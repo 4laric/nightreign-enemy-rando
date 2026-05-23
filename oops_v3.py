@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.26.15'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.0'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -3847,6 +3847,337 @@ def execute_bulk_chr_import(source_chr_dir, target_chr_dir, plan,
         'script_files_copied': script_files_copied,
         'errors': errors,
     }
+def plan_roster_import(mmv_dir, er_dir, target_chr_dir,
+                       target_script_dir=None):
+    """v0.27.0: one-time roster-driven chr import planner.
+
+    Builds the set of c-prefixes the rando may need on disk and works out,
+    for each, where its asset files come from. This is the planner behind
+    the GUI's "Import roster" flow (Diagnose + Import).
+
+    The import set = the union of:
+      * roster heritage chrs -- every c_prefix in nr_enemy_roster.json's
+        all_variants flagged `_heritage_imported` (ER/cross-game enemies
+        the base roster knows about but NR doesn't ship assets for); and
+      * MMV pack chrs -- every c_prefix keyed in mmv_imports.json's `tags`
+        (cross-game boss ports; disjoint from the roster prefixes).
+    Vanilla nr_placed chrs are NOT in the set -- their files already ship
+    with NR, so copying them is a no-op.
+
+    Source routing, per c-prefix: look in `mmv_dir` first, fall back to
+    `er_dir`. MMV-first is deliberate -- a chr that is an MMV port must
+    get MMV's build of the asset (MMV re-authors some shared prefixes);
+    ER is only the source for genuine ER-heritage chrs MMV doesn't ship.
+    A chr found in neither dir is reported as unavailable (the user is
+    missing a DLC or hasn't UXM-unpacked that game).
+
+    `mmv_dir` and `er_dir` are GAME-ROOT folders (containing chr/, script/,
+    sfx/, material/ as subdirs), not the chr/ subdir itself -- matching the
+    GUI's existing "folder" convention.
+
+    SFX / material are NOT planned here -- they are shared bundles that
+    cannot be matched per-chr (sfxbnd_commoneffects etc.). The executor
+    bulk-syncs those dirs separately. See execute_roster_import.
+
+    Returns a dict:
+        {
+          'entries': [
+             {'cp', 'origin' ('mmv'|'er'),
+              'src_chr_dir', 'src_script_dir',
+              'chr_files': [...], 'script_files': [...],
+              'bytes': N}, ...],          # only chrs with something to copy
+          'already_present': [cp, ...],   # chr + scripts already in target
+          'unavailable': [(cp, wanted_by), ...],   # in neither source dir
+          'target_dirs': {'chr', 'script'},
+          'totals': {'wanted', 'already_present', 'copyable',
+                     'unavailable', 'bytes', 'script_files',
+                     'from_mmv', 'from_er'},
+        }
+    """
+    import os, re, json
+    from collections import defaultdict
+
+    chr_re = re.compile(
+        r'^(c\d{4})(_[a-zA-Z0-9]+)?\.(chrbnd|anibnd|behbnd|texbnd)\.dcx$')
+    script_re = re.compile(r'^(\d{4})\d{2}_(battle|logic)\.luabnd(\.dcx)?$')
+
+    def _sub(root, name):
+        """Resolve <root>/<name>, also accepting <root>/Game/<name>."""
+        if not root:
+            return ''
+        root = root.strip()
+        for cand in (os.path.join(root, name),
+                     os.path.join(root, 'Game', name)):
+            if os.path.isdir(cand):
+                return cand
+        return ''
+
+    mmv_chr = _sub(mmv_dir, 'chr')
+    er_chr = _sub(er_dir, 'chr')
+    mmv_script = _sub(mmv_dir, 'script')
+    er_script = _sub(er_dir, 'script')
+
+    tgt_chr = (target_chr_dir or '').strip()
+    if target_script_dir:
+        tgt_script = target_script_dir.strip()
+    elif tgt_chr:
+        tgt_script = os.path.join(
+            os.path.dirname(os.path.abspath(tgt_chr)), 'script')
+    else:
+        tgt_script = ''
+
+    def _index_chr(d):
+        """{c_prefix: [filenames]} for one chr dir."""
+        idx = defaultdict(list)
+        if d and os.path.isdir(d):
+            for fn in os.listdir(d):
+                m = chr_re.match(fn)
+                if m:
+                    idx[m.group(1)].append(fn)
+        return idx
+
+    def _index_scripts(d):
+        """{4-digit prefix: [filenames]} for one script dir."""
+        idx = defaultdict(list)
+        if d and os.path.isdir(d):
+            for fn in os.listdir(d):
+                m = script_re.match(fn)
+                if m:
+                    idx[m.group(1)].append(fn)
+        return idx
+
+    mmv_chr_idx = _index_chr(mmv_chr)
+    er_chr_idx = _index_chr(er_chr)
+    mmv_script_idx = _index_scripts(mmv_script)
+    er_script_idx = _index_scripts(er_script)
+    tgt_chr_idx = _index_chr(tgt_chr)
+    tgt_script_idx = _index_scripts(tgt_script)
+
+    # --- assemble the wanted set: roster heritage + MMV pack tags ---
+    wanted = {}  # cp -> human label of what wants it
+    try:
+        roster = json.load(open(_data_path('nr_enemy_roster.json'),
+                                 encoding='utf-8'))
+        for v in roster.get('all_variants', []):
+            cp = v.get('c_prefix')
+            if cp and v.get('_heritage_imported'):
+                wanted.setdefault(cp, 'roster heritage chr')
+    except Exception:
+        pass
+    try:
+        mmv = json.load(open(_data_path('mmv_imports.json'),
+                              encoding='utf-8'))
+        for cp in (mmv.get('tags') or {}):
+            wanted.setdefault(cp, 'MMV pack')
+    except Exception:
+        pass
+
+    def _scripts_to_copy(cp, src_script_idx):
+        """Source script files for cp not already in target (basename
+        compare, ignoring the .dcx wrapper)."""
+        sp = cp[1:5] if len(cp) >= 5 else None
+        if not sp:
+            return []
+        src = src_script_idx.get(sp, [])
+        if not src:
+            return []
+        tgt_bases = set()
+        for tfn in tgt_script_idx.get(sp, []):
+            tgt_bases.add(tfn[:-4] if tfn.endswith('.dcx') else tfn)
+        return sorted(fn for fn in src
+                      if (fn[:-4] if fn.endswith('.dcx') else fn)
+                      not in tgt_bases)
+
+    entries = []
+    already_present = []
+    unavailable = []
+    tot_bytes = 0
+    tot_scripts = 0
+    from_mmv = from_er = 0
+
+    for cp in sorted(wanted):
+        # MMV-first source routing.
+        if cp in mmv_chr_idx:
+            origin, src_chr, src_script_dir, src_script_idx = (
+                'mmv', mmv_chr, mmv_script, mmv_script_idx)
+        elif cp in er_chr_idx:
+            origin, src_chr, src_script_dir, src_script_idx = (
+                'er', er_chr, er_script, er_script_idx)
+        else:
+            unavailable.append((cp, wanted[cp]))
+            continue
+
+        src_idx = mmv_chr_idx if origin == 'mmv' else er_chr_idx
+        chr_files = ([] if cp in tgt_chr_idx
+                     else sorted(src_idx.get(cp, [])))
+        script_files = _scripts_to_copy(cp, src_script_idx)
+
+        if not chr_files and not script_files:
+            already_present.append(cp)
+            continue
+
+        b = 0
+        for fn in chr_files:
+            try:
+                b += os.path.getsize(os.path.join(src_chr, fn))
+            except OSError:
+                pass
+        for fn in script_files:
+            try:
+                b += os.path.getsize(os.path.join(src_script_dir, fn))
+            except OSError:
+                pass
+        entries.append({
+            'cp': cp, 'origin': origin,
+            'src_chr_dir': src_chr, 'src_script_dir': src_script_dir,
+            'chr_files': chr_files, 'script_files': script_files,
+            'bytes': b,
+        })
+        tot_bytes += b
+        tot_scripts += len(script_files)
+        if origin == 'mmv':
+            from_mmv += 1
+        else:
+            from_er += 1
+
+    return {
+        'entries': entries,
+        'already_present': already_present,
+        'unavailable': unavailable,
+        'target_dirs': {'chr': tgt_chr, 'script': tgt_script},
+        'totals': {
+            'wanted': len(wanted),
+            'already_present': len(already_present),
+            'copyable': len(entries),
+            'unavailable': len(unavailable),
+            'bytes': tot_bytes,
+            'script_files': tot_scripts,
+            'from_mmv': from_mmv,
+            'from_er': from_er,
+        },
+    }
+
+
+def execute_roster_import(plan, mmv_dir, er_dir,
+                          overwrite=False, progress_cb=None):
+    """v0.27.0: execute a plan from plan_roster_import.
+
+    Copies chr + script files (each entry carries its own resolved source
+    dir, so MMV-origin and ER-origin chrs are handled in one pass), then
+    bulk-syncs the sfx/ and material/ directories.
+
+    SFX / material sync follows the same MMV-first, ER-fallback rule as
+    the chr routing: if the MMV dir has an sfx/ (or material/) subdir it
+    is used; otherwise the ER dir's is. These are bulk dir-to-dir copies
+    -- the bundles are shared and not per-chr matchable. Idempotent
+    skip-existing keeps re-runs cheap.
+
+    `progress_cb`, if given, is called progress_cb(cp, fname, seen, total,
+    status) per file, mirroring execute_bulk_chr_import.
+
+    Returns a dict:
+        {'chr_files_copied', 'script_files_copied', 'files_skipped',
+         'bytes_copied', 'sfx_files_copied', 'material_files_copied',
+         'errors': [...]}
+    """
+    import os, shutil
+
+    tgt = plan.get('target_dirs', {})
+    tgt_chr = (tgt.get('chr') or '').strip()
+    tgt_script = (tgt.get('script') or '').strip()
+    if not tgt_chr:
+        raise ValueError("plan has no target chr dir")
+    os.makedirs(tgt_chr, exist_ok=True)
+    if tgt_script:
+        os.makedirs(tgt_script, exist_ok=True)
+
+    res = {'chr_files_copied': 0, 'script_files_copied': 0,
+           'files_skipped': 0, 'bytes_copied': 0,
+           'sfx_files_copied': 0, 'material_files_copied': 0,
+           'errors': []}
+
+    total = sum(e['bytes'] for e in plan.get('entries', []))
+    seen = 0
+
+    def _copy(src_dir, dst_dir, fname, cp, kind):
+        nonlocal seen
+        src = os.path.join(src_dir, fname)
+        dst = os.path.join(dst_dir, fname)
+        try:
+            sz = os.path.getsize(src)
+        except OSError as e:
+            res['errors'].append(f"{kind} {fname}: stat failed: {e}")
+            return
+        seen += sz
+        if os.path.exists(dst) and not overwrite:
+            res['files_skipped'] += 1
+            if progress_cb:
+                progress_cb(cp, fname, seen, total, f'skip-exists ({kind})')
+            return
+        try:
+            shutil.copy2(src, dst)
+            res['bytes_copied'] += sz
+            if kind == 'chr':
+                res['chr_files_copied'] += 1
+            else:
+                res['script_files_copied'] += 1
+            if progress_cb:
+                progress_cb(cp, fname, seen, total, f'copied ({kind})')
+        except Exception as e:
+            res['errors'].append(f"{kind} {fname}: {type(e).__name__}: {e}")
+            if progress_cb:
+                progress_cb(cp, fname, seen, total, f'error: {e}')
+
+    for e in plan.get('entries', []):
+        cp = e['cp']
+        for fn in e['chr_files']:
+            _copy(e['src_chr_dir'], tgt_chr, fn, cp, 'chr')
+        if e['script_files'] and e['src_script_dir'] and tgt_script:
+            for fn in e['script_files']:
+                _copy(e['src_script_dir'], tgt_script, fn, cp, 'script')
+        elif e['script_files']:
+            res['errors'].append(
+                f"{cp}: {len(e['script_files'])} script files NOT copied "
+                f"-- no script source/target dir resolved")
+
+    # --- SFX + material bulk sync (MMV-first, ER-fallback) ---
+    def _pick_subdir(name):
+        for root in (mmv_dir, er_dir):
+            if not root:
+                continue
+            for cand in (os.path.join(root.strip(), name),
+                         os.path.join(root.strip(), 'Game', name)):
+                if os.path.isdir(cand):
+                    return cand
+        return ''
+
+    tgt_parent = os.path.dirname(os.path.abspath(tgt_chr))
+    for name, key in (('sfx', 'sfx_files_copied'),
+                      ('material', 'material_files_copied')):
+        src_dir = _pick_subdir(name)
+        if not src_dir:
+            continue
+        dst_dir = os.path.join(tgt_parent, name)
+        os.makedirs(dst_dir, exist_ok=True)
+        for fn in sorted(os.listdir(src_dir)):
+            sp = os.path.join(src_dir, fn)
+            if not os.path.isfile(sp):
+                continue
+            dp = os.path.join(dst_dir, fn)
+            if os.path.exists(dp) and not overwrite:
+                res['files_skipped'] += 1
+                continue
+            try:
+                sz = os.path.getsize(sp)
+                shutil.copy2(sp, dp)
+                res[key] += 1
+                res['bytes_copied'] += sz
+            except Exception as ex:
+                res['errors'].append(
+                    f"{name}/{fn}: {type(ex).__name__}: {ex}")
+    return res
+
+
 
 
 def render_compatibility_report_text(report):

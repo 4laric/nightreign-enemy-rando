@@ -539,9 +539,8 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     mod_msg_bundle=None,
                     fallback_nameid=None,
                     chr_to_nameid_path=None,
-                    test_mode_arenas=False,
                     randomize_safe_nb_arenas=False,
-                    randomize_all_nb_arenas=False):
+                    randomize_all_nb_arenas=True):
     """Full pipeline: decompress → shuffle → recompress.
 
     Cluster modes (multi-Part encounters within 2m of each other):
@@ -572,24 +571,20 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
     oops_v3.V3_PIPELINE_METADATA['spawn_pool_source_dir'] = spawn_pool_source_dir
     oops_v3.V3_PIPELINE_METADATA['pipeline'] = 'dcx_batch.rando_pipeline'
 
-    # v0.26.16: night-boss-arena preservation gate. With test-mode arenas
-    # OFF (normal play), hold all 25 NB arenas fully vanilla — no Part
-    # swaps. With test-mode ON, lift the gate (the test-mode template
-    # overlay handles those arenas). The healthbar step below applies the
-    # matching exclusion. See V3_NIGHT_BOSS_ARENA_MSBS in oops_v3.py.
-    oops_v3.V3_PRESERVE_NIGHT_BOSS_ARENAS = not test_mode_arenas
-    # v0.26.16: safe-NB-arena MSB randomization. Only takes effect
-    # when test-mode is OFF (test-mode overlays the EMEVD, which would
-    # void the "vanilla EMEVD" promise). When on, the 12 single-boss
-    # N1/N2 arenas in V3_SAFE_NB_RANDOMIZE_MSBS get their boss Part
+    # v0.26.16: night-boss-arena preservation gate. All 25 NB arenas
+    # ship byte-vanilla on the EMEVD side; the healthbar step below
+    # applies the matching exclusion. See V3_NIGHT_BOSS_ARENA_MSBS in
+    # oops_v3.py.
+    oops_v3.V3_PRESERVE_NIGHT_BOSS_ARENAS = True
+    # v0.26.16: safe-NB-arena MSB randomization. When on, the 12 single-
+    # boss N1/N2 arenas in V3_SAFE_NB_RANDOMIZE_MSBS get their boss Part
     # swapped; EMEVD stays vanilla via the healthbar-step NB exclude.
-    oops_v3.V3_RANDOMIZE_SAFE_NB_ARENAS = (
-        randomize_safe_nb_arenas and not test_mode_arenas)
-    # v0.26.16: EXPERIMENTAL all-NB-arena MSB randomization. Same
-    # test-mode gate. Randomizes all 25 NB arenas incl. the multi-
-    # entity ones — expect breakage there. ORs with the safe flag.
-    oops_v3.V3_RANDOMIZE_ALL_NB_ARENAS = (
-        randomize_all_nb_arenas and not test_mode_arenas)
+    oops_v3.V3_RANDOMIZE_SAFE_NB_ARENAS = randomize_safe_nb_arenas
+    # v0.26.x: all-NB-arena MSB randomization. Randomizes all 25 NB
+    # arenas incl. the multi-entity ones; the boss-init breakage there
+    # is resolved via the regulation.bin modification. Supersedes the
+    # safe-NB flag -- all 25 includes the safe 12.
+    oops_v3.V3_RANDOMIZE_ALL_NB_ARENAS = randomize_all_nb_arenas
 
     work_dir = tempfile.mkdtemp(prefix='oops_rando_')
     try:
@@ -977,19 +972,17 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     _hb_t0 = time.time()
                     raw_emevd = os.path.join(work_dir, 'raw_emevd')
                     patched_emevd = os.path.join(work_dir, 'patched_emevd')
-                    # v0.26.16: with test-mode arenas OFF, the 25 night-
-                    # boss arenas ship byte-vanilla — exclude them from
-                    # healthbar patching so they are never written to the
-                    # mod event/ dir (me3 then serves the vanilla emevd).
-                    # Mirrors the MSB-side V3_PRESERVE_NIGHT_BOSS_ARENAS gate.
-                    hb_exclude = set()
-                    if not test_mode_arenas:
-                        hb_exclude = {m.replace('.msb', '.emevd')
-                                      for m in oops_v3.V3_NIGHT_BOSS_ARENA_MSBS}
-                        if hb_exclude:
-                            print(f"  Night-boss arenas: preserving "
-                                  f"{len(hb_exclude)} vanilla (test-mode OFF) "
-                                  f"— excluded from healthbar patching")
+                    # v0.26.16: the 25 night-boss arenas ship byte-
+                    # vanilla — exclude them from healthbar patching so
+                    # they are never written to the mod event/ dir (me3
+                    # then serves the vanilla emevd). Mirrors the MSB-side
+                    # V3_PRESERVE_NIGHT_BOSS_ARENAS gate.
+                    hb_exclude = {m.replace('.msb', '.emevd')
+                                  for m in oops_v3.V3_NIGHT_BOSS_ARENA_MSBS}
+                    if hb_exclude:
+                        print(f"  Night-boss arenas: preserving "
+                              f"{len(hb_exclude)} vanilla "
+                              f"— excluded from healthbar patching")
                     # Decompress vanilla .emevd.dcx -> raw .emevd
                     # v0.24.61: overlay_dir lets us substitute pre-patched
                     # files (typically project's patched_emevd/) for the
@@ -1355,94 +1348,6 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
             except Exception as _e:
                 print(f"  WARN: could not inject healthbar metadata into spoilers: {_e}")
 
-        # ─────────────────────────────────────────────────────────────
-        # v0.25.8: Test-mode arena overlay.
-        #
-        # When test_mode_arenas=True, overlay our 20 pre-built MMV-style
-        # minimal EMEVDs on top of whatever the healthbar step produced.
-        # The point is to drastically shrink playtest cycles: with all
-        # 20 N1/N2 arenas running the same minimal "boss spawns, you
-        # kill it, night advances" template, validating an engine change
-        # against all of them takes ~1 hour instead of the 18 needed to
-        # test each unique vanilla arena.
-        #
-        # Source: dev/test_mode_arenas/*.emevd (already-compiled binary
-        # form, EVD\0 magic). Generated by generate_test_mode_arenas.py
-        # using MMV's proven minimal 12-event pattern.
-        #
-        # Output: <emevd_out_dir>/<arena>.emevd.dcx (compressed). These
-        # overwrite the healthbar-patched versions for the same arenas
-        # (intentional — test mode is a hard override, not an additive
-        # layer).
-        #
-        # Augur m47_70 is skipped — its descent uses 17 single-arena
-        # events that don't fit the MMV template. Test-mode runs that
-        # roll Augur as the Nightlord will still get vanilla Augur N1.
-        #
-        # Requires emevd_out_dir to be set. If it isn't, log and skip —
-        # test mode is meaningless without an output destination.
-        if test_mode_arenas:
-            if not emevd_out_dir:
-                print(f"\n" + "=" * 70)
-                print(f"=== Test-mode arenas: SKIPPED — REQUESTED BUT NO emevd_out_dir ===")
-                print(f"=" * 70)
-                print(f"  test_mode_arenas=True was passed but emevd_out_dir is None.")
-                print(f"  The 20 minimal arena .emevd.dcx files have nowhere to land.")
-                print(f"  Set the EMEVD output directory on the Healthbar tab and re-run.")
-                print(f"  THIS BUILD WILL NOT HAVE TEST-MODE ARENAS ACTIVE IN-GAME.")
-                print(f"=" * 70)
-            else:
-                test_mode_dir = os.path.join(HERE, 'dev', 'test_mode_arenas')
-                if not os.path.isdir(test_mode_dir):
-                    print(f"\n=== Test-mode arenas: SKIPPED ===")
-                    print(f"  {test_mode_dir} not found. "
-                          f"Run: python3 dev/generate_test_mode_arenas.py")
-                else:
-                    test_mode_files = sorted(f for f in os.listdir(test_mode_dir)
-                                              if f.endswith('.emevd'))
-                    if not test_mode_files:
-                        print(f"\n=== Test-mode arenas: SKIPPED ===")
-                        print(f"  No .emevd files in {test_mode_dir}.")
-                    else:
-                        print(f"\n=== Test-mode arena overlay: "
-                              f"{len(test_mode_files)} arenas ===")
-                        _tm_t0 = time.time()
-                        # emevd_compress_dir compresses all .emevd files
-                        # in its source dir to .emevd.dcx in dest. The
-                        # files overwrite anything in emevd_out_dir with
-                        # the same name (intentional — test-mode is the
-                        # hard override).
-                        tm_failed = emevd_compress_dir(test_mode_dir,
-                                                        emevd_out_dir, oodle)
-                        _tm_dt = time.time() - _tm_t0
-                        n_ok = len(test_mode_files) - len(tm_failed)
-                        print(f"  Test-mode overlay: {n_ok} arenas overwritten "
-                              f"in {emevd_out_dir} ({_tm_dt:.1f}s)")
-                        # Stamp pipeline metadata for spoiler reporting
-                        oops_v3.V3_PIPELINE_METADATA['test_mode_arenas'] = {
-                            'enabled': True,
-                            'count': n_ok,
-                            'failed_count': len(tm_failed),
-                            'arenas': [f.replace('.emevd', '')
-                                        for f in test_mode_files
-                                        if (f, '') not in tm_failed
-                                        and all(f != fname
-                                                 for fname, _err in tm_failed)],
-                        }
-                        # Inject into spoiler JSON
-                        try:
-                            import json as _json
-                            sp_path = os.path.join(out_dcx_dir, '_spoilers.json')
-                            if os.path.exists(sp_path):
-                                with open(sp_path, encoding='utf-8') as _f:
-                                    sp = _json.load(_f)
-                                sp.setdefault('_meta', {})['test_mode_arenas'] = (
-                                    oops_v3.V3_PIPELINE_METADATA['test_mode_arenas'])
-                                with open(sp_path, 'w', encoding='utf-8') as _f:
-                                    _json.dump(sp, _f, indent=2, sort_keys=True)
-                        except Exception as _e:
-                            print(f"  WARN: could not inject test_mode_arenas "
-                                  f"metadata into spoilers: {_e}")
 
         if keep_intermediates:
             target = os.path.join(out_dcx_dir, '_intermediate')
@@ -1472,15 +1377,9 @@ def main():
     pr.add_argument('--mode', choices=['loose','strict'], default='loose')
     pr.add_argument('--keep-intermediates', action='store_true',
                     help='Keep the intermediate decompressed/shuffled folders for debugging')
-    pr.add_argument('--test-mode-arenas', action='store_true',
-                    help='Overlay MMV-style minimal EMEVDs onto N1/N2 arenas. '
-                         'Drastically shrinks playtest cycles by making all 20 '
-                         'simple-template arenas behave identically. Requires '
-                         '--emevd-out-dir. Built from dev/test_mode_arenas/.')
     pr.add_argument('--emevd-out-dir',
                     help='Output directory for patched .emevd.dcx files '
-                         '(typically <me3 profile>/<package>/event/). '
-                         'Required for --test-mode-arenas.')
+                         '(typically <me3 profile>/<package>/event/).')
 
     pi = sub.add_parser('info', help='Print header info for one .dcx file')
     pi.add_argument('input_path')
@@ -1494,7 +1393,6 @@ def main():
     elif args.cmd == 'rando':
         rando_pipeline(args.input_dcx_dir, args.output_dcx_dir,
                         args.seed, args.mode, args.keep_intermediates,
-                        test_mode_arenas=args.test_mode_arenas,
                         emevd_out_dir=args.emevd_out_dir)
     elif args.cmd == 'info':
         # Reuse dcx.py's info command

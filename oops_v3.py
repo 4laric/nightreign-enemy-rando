@@ -6936,9 +6936,10 @@ V3_ARENA_CHR_ROLES, V3_ARENA_CHR_ROLES_META = _load_arena_chr_roles()
 # truth; no hardcoded list to drift.
 #
 # V3_PRESERVE_NIGHT_BOSS_ARENAS is the live gate. Default True (preserve
-# — the safe normal-play behavior). dcx_batch.rando_pipeline sets it to
-# `not test_mode_arenas` before the shuffle: test-mode ON lifts the gate
-# (the test-mode template overlay handles those arenas instead).
+# the NB-arena EMEVDs byte-vanilla). dcx_batch.rando_pipeline sets it
+# True before the shuffle; the healthbar step applies the matching
+# EMEVD-side exclusion. NB-arena MSB *Parts* still randomize when the
+# V3_RANDOMIZE_*_NB_ARENAS flags are set -- this gate is EMEVD-only.
 def _load_night_boss_arena_msbs():
     """Return frozenset of '<stem>.msb' for the 25 NB arenas."""
     path = _data_path('nb_wave_bypass_flags.json')
@@ -6960,9 +6961,9 @@ V3_PRESERVE_NIGHT_BOSS_ARENAS = True
 # v0.26.16: safe single-boss N1/N2 arenas — eligible for MSB
 # randomization under VANILLA emevd.
 #
-# Derived from the v0.25.9 N1/N2 expedition-arena set
-# (dev/generate_test_mode_arenas.py:N1_N2_ARENAS, 19 arenas) minus the
-# 6 multi-entity arenas whose vanilla emevd runs a synchronized multi-
+# Derived from the v0.25.9 N1/N2 expedition-arena set (19 arenas)
+# minus the 6 multi-entity arenas whose vanilla emevd runs a
+# synchronized multi-
 # healthbar / multi-boss init that breaks when the primary boss chr is
 # swapped (the m48_80 Godskin Duo failure class):
 #   m48_50  Draconic Tree Sentinel + 2x Royal Cavalryman
@@ -6992,15 +6993,23 @@ V3_SAFE_NB_RANDOMIZE_MSBS = frozenset({
 })
 V3_RANDOMIZE_SAFE_NB_ARENAS = False
 
-# v0.26.16: EXPERIMENTAL — randomize ALL 25 night-boss arenas, including
-# the 6 multi-entity arenas (Godskin Duo etc.) whose vanilla emevd runs
-# a synchronized multi-healthbar boss-init that is KNOWN to break under
-# a boss swap. When True, _force_rando_nb in pick_target_cp fires for
-# any arena in V3_NIGHT_BOSS_ARENA_MSBS (all 25), not just the safe
-# set. Expect CTDs / failed boss-init on the multi-entity arenas — a
-# diagnostic switch, not a play setting. ORs with the safe flag; emevd
-# stays vanilla either way.
-V3_RANDOMIZE_ALL_NB_ARENAS = False
+# v0.26.16: randomize ALL 25 night-boss arenas, including the 6
+# multi-entity arenas (Godskin Duo etc.) and Nameless King. When
+# True, _force_rando_nb in pick_target_cp fires for any arena in
+# V3_NIGHT_BOSS_ARENA_MSBS (all 25), exempting them from the NB
+# preservation gates so their boss Parts get swapped. EMEVD stays
+# vanilla either way (the healthbar step preserves NB-arena EMEVD
+# separately).
+#
+# v0.26.x: DEFAULT TRUE -- randomize-all-NB is now normal play.
+# The multi-entity boss-init breakage (the Godskin Duo failure
+# class) is RESOLVED: the synchronized multi-healthbar / multi-boss
+# spawn manifest lives in regulation.bin, not the arena MSBs, and
+# the regulation.bin modification handles it. The investigation
+# that kept this flag experimental is closed -- all-NB randomization
+# is normal play. Supersedes the safe-NB flag -- all 25 includes the
+# safe 12.
+V3_RANDOMIZE_ALL_NB_ARENAS = True
 
 
 

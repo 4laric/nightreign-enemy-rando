@@ -120,6 +120,17 @@ Cathedral source-slot exclusion from NB-tier targets.
 
 ## Multi-entity arena test_mode spawn (m48_50, m48_60, m48_80, m48_20, m49_25, m49_28)
 
+> **v0.26.x note:** the test-mode-arenas *runtime* feature (the GUI
+> checkbox, the `dcx_batch` overlay step, the `dev/test_mode_arenas/`
+> pre-built artifacts) was removed. All-NB-arena randomization is the
+> default now and the multi-entity boss-init problem was resolved via
+> the regulation.bin modification, so the fast-iteration shortcut no
+> longer earned the artifact weight. The `dev/` generator scripts are
+> intentionally kept. This section is retained as the reference
+> writeup of the multi-entity arena problem in case test-mode is ever
+> revived — the analysis and the MSB-modification reopen recipe below
+> are still accurate.
+
 The test_mode arena generator (`dev/generate_test_mode_arenas_v8.py`)
 emits per-arena EMEVD overlays that hijack the boss-spawn lifecycle so
 you can drop into N1 / N2 immediately, kill the boss, and proceed to

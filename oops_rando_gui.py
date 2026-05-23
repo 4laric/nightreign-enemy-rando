@@ -375,8 +375,8 @@ class StatusIndicator:
 
 # v0.26.x: Tier 2 UX #8 — collapsible section for hiding advanced
 # / diagnostic controls behind a click. The Heritage tab uses one for
-# its engine-validation toggles (disable_resilient_filter, test-mode
-# arenas, diagnostic batch) so first-time users don't see ~5 unfamiliar
+# its engine-validation toggles (disable_resilient_filter,
+# diagnostic batch) so first-time users don't see several unfamiliar
 # diagnostic checkboxes on top of the normal options.
 class CollapsibleSection:
     """A clickable header with a toggleable body. Click the header
@@ -1093,16 +1093,17 @@ class RandoGUI:
     # ------------------------------------------------------------------
     # v0.26.x: Recommended expedition guidance
     # ------------------------------------------------------------------
-    # v0.26.6: DISABLED. The recommendation existed because, pre-test-
-    # mode-default, most Night Boss arenas could CTD/hang/stick on
-    # rando swaps and only Tricephalos (Gladius) was validated. Now that
-    # test-mode arenas are ON by default, all 19 N1/N2 arenas run the
-    # same minimal boss-spawn template — the Nightlord-specific EMEVD
-    # gaps the banner warned about no longer apply to the default flow.
-    # Keeping the strings + flag plumbing in case the guidance needs to
-    # come back for a non-test-mode build; flipping ACTIVE back to True
-    # restores the banner, post-run-summary row, and help-overlay
-    # section, and re-greens test_recommended_expedition.py.
+    # v0.26.6: DISABLED. The recommendation existed because most
+    # Night Boss arenas could CTD/hang/stick on rando swaps and only
+    # Tricephalos (Gladius) was validated. v0.26.x: the Night Boss
+    # arena issues are resolved -- all NB arenas randomize by default
+    # (the multi-entity boss-init break was fixed via the
+    # regulation.bin modification) -- so the Nightlord-specific
+    # warning the banner carried no longer applies. Keeping the
+    # strings + flag plumbing in case the guidance is ever needed
+    # again; flipping ACTIVE back to True restores the banner,
+    # post-run-summary row, and help-overlay section, and re-greens
+    # test_recommended_expedition.py.
     RECOMMENDED_EXPEDITION_ACTIVE = False
     RECOMMENDED_EXPEDITION_NIGHTLORD = 'Tricephalos (Gladius)'
     RECOMMENDED_EXPEDITION_SHORT = (
@@ -1530,16 +1531,6 @@ class RandoGUI:
         # can grow SENSITIVE empirically and eventually retire RESILIENT.
         # Default OFF; only useful for diagnostic playtests.
         self.disable_resilient_filter_var = tk.BooleanVar(value=False)
-        # v0.25.8: Test-mode arena overlay. When ON, the 19 N1/N2 arenas
-        # built by dev/generate_test_mode_arenas.py are layered onto the
-        # output, replacing their vanilla EMEVDs with MMV-style minimal
-        # templates. All 19 arenas behave the same way: boss spawns,
-        # player kills it, night advances. Drops playtest cycles from
-        # ~18 hours to ~1. v0.26.16: default OFF — normal play is the
-        # default now; the night-boss arenas ship vanilla (no rando, no
-        # healthbar patch) when this is off. Turn ON only for engine-
-        # change validation sweeps.
-        self.test_mode_arenas_var = tk.BooleanVar(value=False)
         # v0.26.16: prefer canonical variants. When ON, the picker filters
         # each c-prefix to the variants vanilla NR actually placed
         # (sample_maps non-empty), skipping untested ghost variants that
@@ -1547,15 +1538,20 @@ class RandoGUI:
         # Soft filter — chrs with only ghost variants stay pickable.
         # Default ON for visual stability.
         self.prefer_canonical_variants_var = tk.BooleanVar(value=True)
-        # v0.26.16: randomize the safe single-boss night-boss arenas.
-        # When ON (and test-mode OFF), the 12 single-boss N1/N2 arenas
-        # get their boss Part swapped while their EMEVD stays vanilla.
-        # Multi-entity arenas (Godskin Duo etc.) are excluded. Default
-        # OFF — opt-in; normal play keeps all night bosses vanilla.
+        # v0.26.16 / v0.26.x: randomize the safe single-boss night-boss
+        # arenas. Subsumed by randomize_all_nb_arenas (all 25 includes
+        # the safe 12) and its checkbox was removed alongside the all-NB
+        # one. Var kept declared so generate_run's config dict and
+        # dcx_batch.rando_pipeline(randomize_safe_nb_arenas=...) still
+        # have a defined input. Fixed False -- the all-NB flag covers it.
         self.randomize_safe_nb_arenas_var = tk.BooleanVar(value=False)
-        # v0.26.16: EXPERIMENTAL — randomize all 25 NB arenas including
-        # the multi-entity ones whose vanilla EMEVD breaks under a swap.
-        self.randomize_all_nb_arenas_var = tk.BooleanVar(value=False)
+        # v0.26.16 / v0.26.x: randomize ALL 25 night-boss arenas incl.
+        # the multi-entity ones. DEFAULT TRUE -- the multi-entity boss-
+        # init investigation is closed (resolved by the regulation.bin
+        # modification), so all-NB randomization is normal play now.
+        # Checkbox removed in v0.26.x (no longer a diagnostic opt-in);
+        # var kept declared since generate_run + dcx_batch read it.
+        self.randomize_all_nb_arenas_var = tk.BooleanVar(value=True)
         # v0.20.42: diagnostic batch — when non-empty, fragile slots are
         # restricted to ONLY this comma-separated list of c-prefixes. Used
         # to attribute CTDs to a small batch of candidates instead of
@@ -3118,9 +3114,9 @@ class RandoGUI:
 
     def _build_heritage_safety_subtab(self, parent):
         """The original Heritage tab content — multiplayer-safe toggle + explainer."""
-        # v0.25.8: wrap in a scrollable canvas. With the addition of the
-        # test-mode-arenas checkbox below the Diagnostic section, the
-        # heritage tab content exceeds typical laptop window heights —
+        # v0.25.8: wrap in a scrollable canvas. With the stack of
+        # diagnostic checkboxes below the Diagnostic section, the
+        # heritage tab content exceeds typical laptop window heights
         # the new checkbox lands off-screen with no way to reach it.
         # Same Canvas + Scrollbar pattern as _build_main_tab; see that
         # method's block comment for mousewheel-binding rationale.
@@ -3342,40 +3338,7 @@ class RandoGUI:
             "of the listed c-prefixes."
         ))
 
-        # v0.25.8: Test-mode arena overlay.
-        tm_row = ttk.Frame(diag_frame); tm_row.pack(fill='x', pady=(8, 0))
-        tm_check = ttk.Checkbutton(tm_row,
-                         text="Test-mode arenas: overlay MMV-style minimal EMEVDs on 19 N1/N2 arenas",
-                         variable=self.test_mode_arenas_var,
-                         style='TCheckbutton')
-        tm_check.pack(side='left')
-        Tooltip(tm_check,
-                "Replaces 19 N1/N2 arenas with minimal EMEVDs at "
-                "output time. Every arena becomes 'boss spawns, you "
-                "kill it, night advances' — no cinematic, no wake "
-                "choreography. Cuts engine-change validation cycles "
-                "from ~18 hours to ~1.\n\n"
-                "Augur (m47_70) is skipped — its descent doesn't fit "
-                "the template. Test-mode runs that roll Augur as the "
-                "Nightlord still get vanilla Augur N1.")
-        make_info_icon(tm_row, tooltip_text=(
-            "Default: OFF\n\n"
-            "When ON, 19 N1/N2 arenas get replaced with MMV-style "
-            "minimal EMEVDs at output time. All arenas behave identically: "
-            "boss spawns, you kill it, night advances. No cinematic, no "
-            "wake choreography, no map-variation conditionals.\n\n"
-            "Cuts playtest cycle for engine-change validation from ~18 "
-            "hours to ~1. The substitution mechanism is MMV's proven "
-            "12-event template — battle-tested across the Maple Mountain "
-            "Variety mod's 30+ custom arenas.\n\n"
-            "Augur (m47_70) is skipped — its descent uses 17 single-arena "
-            "events that don't fit the template. Test-mode runs that roll "
-            "Augur as the Nightlord will still get vanilla Augur N1.\n\n"
-            "Requires an EMEVD output dir to be set (see Healthbar tab) — "
-            "without it, the overlay step skips and logs a warning."
-        ))
-
-        # v0.26.16: prefer-canonical-variants toggle, beside test-mode.
+        # v0.26.16: prefer-canonical-variants toggle.
         cv_row = ttk.Frame(diag_frame); cv_row.pack(fill='x', pady=(8, 0))
         cv_check = ttk.Checkbutton(cv_row,
                          text="Prefer canonical variants: skip untested ghost NPCParam variants",
@@ -3402,60 +3365,13 @@ class RandoGUI:
             "risk with ghosts."
         ))
 
-        # v0.26.16: randomize-safe-night-boss-arenas toggle.
-        rn_row = ttk.Frame(diag_frame); rn_row.pack(fill='x', pady=(8, 0))
-        rn_check = ttk.Checkbutton(rn_row,
-                         text="Randomize safe night-boss arenas (12 single-boss N1/N2, vanilla EMEVD)",
-                         variable=self.randomize_safe_nb_arenas_var,
-                         style='TCheckbutton')
-        rn_check.pack(side='left')
-        Tooltip(rn_check,
-                "When ON, the 12 single-boss N1/N2 arenas get their "
-                "boss randomized like any other slot — but their EMEVD "
-                "is left vanilla (no patch, no test-mode template). The "
-                "vanilla single-boss intro handles a swapped boss fine.\n\n"
-                "The 6 multi-entity arenas (Godskin Duo, the Cavalryman "
-                "duos, etc.) are NOT randomized — their synchronized "
-                "multi-healthbar init breaks under a boss swap.\n\n"
-                "Has no effect when Test-mode arenas is ON (test-mode "
-                "overlays the EMEVD, which this option needs left vanilla).")
-        make_info_icon(rn_row, tooltip_text=(
-            "Default: OFF\n\n"
-            "OFF — all 25 night-boss arenas ship fully vanilla.\n"
-            "ON  — the 12 safe single-boss arenas get a randomized "
-            "boss with vanilla EMEVD; the 6 multi-entity arenas and the "
-            "Augur descent stay vanilla.\n\n"
-            "Requires Test-mode arenas OFF."
-        ))
+        # v0.26.x: the "Randomize safe night-boss arenas" and
+        # "Randomize ALL night-boss arenas" checkboxes were removed
+        # here. All-NB randomization is now the default (see
+        # randomize_all_nb_arenas_var above) -- the multi-entity
+        # boss-init investigation closed once regulation.bin was
+        # modified, so it is no longer a diagnostic opt-in.
 
-        # v0.26.16: EXPERIMENTAL randomize-ALL-night-boss-arenas toggle.
-        ra_row = ttk.Frame(diag_frame); ra_row.pack(fill='x', pady=(8, 0))
-        ra_check = ttk.Checkbutton(ra_row,
-                         text="Randomize ALL night-boss arenas (experimental — incl. multi-entity)",
-                         variable=self.randomize_all_nb_arenas_var,
-                         style='TCheckbutton')
-        ra_check.pack(side='left')
-        Tooltip(ra_check,
-                "EXPERIMENTAL. When ON, all 25 night-boss arenas get "
-                "their boss randomized, including the 6 multi-entity "
-                "arenas (Godskin Duo, the Cavalryman duos, Crucible "
-                "Knight + Hippo, etc.) and Nameless King.\n\n"
-                "Their vanilla EMEVD runs a synchronized multi-healthbar "
-                "boss-init that is KNOWN to break under a boss swap — "
-                "expect CTDs or bosses that never spawn at those arenas. "
-                "A diagnostic switch for testing, not a play setting.\n\n"
-                "Supersedes 'Randomize safe night-boss arenas' (all 25 "
-                "includes the safe 12). No effect when Test-mode arenas "
-                "is ON.")
-        make_info_icon(ra_row, tooltip_text=(
-            "Default: OFF\n\n"
-            "ON  — every night-boss arena MSB is randomized; EMEVD "
-            "stays vanilla. The 6 multi-entity arenas will likely "
-            "break.\n"
-            "OFF — night-boss randomization follows the 'safe' toggle "
-            "above (or stays fully vanilla).\n\n"
-            "Requires Test-mode arenas OFF."
-        ))
 
         # v0.26.15: mount/rider pair detection (cut 1 — experimental).
         mr_row = ttk.Frame(diag_frame); mr_row.pack(fill='x', pady=(8, 0))
@@ -7058,34 +6974,6 @@ class RandoGUI:
                 return
             spawn_pool_source_dir = ''  # disable for this run
 
-        # v0.25.8: pre-flight check for test-mode arenas. The overlay step
-        # requires emevd_out_dir to be set (it writes the 20 minimal arena
-        # .emevd.dcx files there). If the checkbox is on but the EMEVD
-        # output dir on the Healthbar tab is blank, the step silently skips
-        # at runtime — which is exactly the failure mode that ate seed
-        # 452909's playtest. Catch it here instead.
-        if bool(self.test_mode_arenas_var.get()):
-            output_emevd = self.output_emevd_dir_var.get().strip()
-            if not output_emevd:
-                if not messagebox.askyesno(
-                    "Test-mode arenas needs an EMEVD output directory",
-                    "You've enabled 'Test-mode arenas' but no EMEVD output "
-                    "directory is set on the Healthbar tab.\n\n"
-                    "Without that path, the test-mode overlay step has "
-                    "nowhere to write the 20 minimal arena .emevd.dcx "
-                    "files. The build will complete but test-mode arenas "
-                    "will NOT load in-game — you'll get a normal rando run.\n\n"
-                    "Typical EMEVD output dir:\n"
-                    "  <me3 profile>/<package>/event/\n\n"
-                    "Cancel this run and set the EMEVD output dir? "
-                    "(Pick 'No' to run anyway — test mode will skip.)"):
-                    return
-                # User chose to run anyway — clear the var locally so the
-                # config payload reflects the actual state, and the spoiler
-                # doesn't lie about what happened.
-                self._log("Test-mode arenas: requested but EMEVD output "
-                          "dir is blank — overlay will skip.\n", 'dim')
-
         # Persist folder picks for next launch
         self._save_settings(
             input_dir=in_dir,
@@ -7164,7 +7052,6 @@ class RandoGUI:
             'oops_all_nb_marker_scope': oops_all_nb_marker_scope,
             'multiplayer_safe': bool(self.multiplayer_safe_var.get()),
             'disable_resilient_filter': bool(self.disable_resilient_filter_var.get()),
-            'test_mode_arenas': bool(self.test_mode_arenas_var.get()),
             'prefer_canonical_variants': bool(self.prefer_canonical_variants_var.get()),
             'randomize_safe_nb_arenas': bool(self.randomize_safe_nb_arenas_var.get()),
             'randomize_all_nb_arenas': bool(self.randomize_all_nb_arenas_var.get()),
@@ -7420,7 +7307,6 @@ class RandoGUI:
                         mod_msg_bundle=mod_msg or None,
                         fallback_nameid=fallback_nameid,
                         chr_to_nameid_path=chr_nameid if os.path.exists(chr_nameid) else None,
-                        test_mode_arenas=bool(config.get('test_mode_arenas')),
                         randomize_safe_nb_arenas=bool(config.get('randomize_safe_nb_arenas')),
                         randomize_all_nb_arenas=bool(config.get('randomize_all_nb_arenas')),
                         **engine_kwargs)

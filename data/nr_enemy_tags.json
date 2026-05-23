@@ -281,6 +281,7 @@
     "variants": 13
   },
   "c2270": {
+    "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 22700,
@@ -303,8 +304,7 @@
     "team": 7,
     "tier": "grunt",
     "variants": 3,
-    "weight_median": 100.0,
-    "_confidence": "high"
+    "weight_median": 100.0
   },
   "c2271": {
     "_source": "nr_placed",
@@ -330,6 +330,7 @@
     "weight_median": 100.0
   },
   "c2272": {
+    "_confidence": "high",
     "_heritage_imported": true,
     "_source": "manual_retier_v0.24.100",
     "anim_bank": 22720,
@@ -352,23 +353,25 @@
     "team": 7,
     "tier": "grunt",
     "variants": 2,
-    "weight_median": 100.0,
-    "_confidence": "high"
+    "weight_median": 100.0
   },
   "c2273": {
     "_backfill_justification": "family: Crab small variants are aquatic/S",
     "_confidence": "high",
+    "_locomotion_backfill_v0_27_0": "anim_class=aquatic: empirically-clean anim_class->locomotion inference",
     "_pre_correction": {
       "name": "Crab Variant"
     },
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
+    "_tags_backfilled_v0_27_0": true,
     "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 28,
     "hp_median": 28,
+    "locomotion": 0,
     "name": "Crab (Maggots)",
     "size_class": "S",
     "tier": "grunt",
@@ -377,22 +380,26 @@
   "c2274": {
     "_backfill_justification": "family: Giant Sleep Crab matches c2270/c2272 Giant Crab pattern",
     "_confidence": "high",
+    "_locomotion_backfill_v0_27_0": "anim_class=aquatic: empirically-clean anim_class->locomotion inference",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
+    "_tags_backfilled_v0_27_0": true,
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 357,
     "hp_median": 357,
+    "locomotion": 0,
     "name": "Giant Sleep Crab",
     "size_class": "XL",
     "tier": "miniboss",
-    "variants": 4,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "variants": 4
   },
   "c2275": {
     "_backfill_justification": "family: Crab variant",
     "_confidence": "high",
+    "_locomotion_backfill_v0_24_91": "Crab (Clean) — small aquatic, matches c2271 base",
     "_pre_correction": {
       "name": "Crab Variant"
     },
@@ -404,16 +411,16 @@
     "has_boss_reward": false,
     "hp_max": 260,
     "hp_median": 28,
+    "locomotion": 0,
     "name": "Crab (Clean)",
     "size_class": "S",
     "tier": "grunt",
-    "variants": 4,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Crab (Clean) — small aquatic, matches c2271 base"
+    "variants": 4
   },
   "c2276": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 22700,
     "anim_bank_count": 1,
     "anim_class": "aquatic",
@@ -434,12 +441,12 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 5,
-    "weight_median": 100.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 100.0
   },
   "c2277": {
     "_backfill_justification": "family: Crab (Golden Tufts) variant",
     "_confidence": "high",
+    "_locomotion_backfill_v0_24_91": "Crab (Golden Tufts) — small aquatic, matches c2271 base",
     "_pre_correction": {
       "name": "Crab Variant"
     },
@@ -451,12 +458,11 @@
     "has_boss_reward": false,
     "hp_max": 28,
     "hp_median": 28,
+    "locomotion": 0,
     "name": "Crab (Golden Tufts)",
     "size_class": "S",
     "tier": "grunt",
-    "variants": 1,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Crab (Golden Tufts) — small aquatic, matches c2271 base"
+    "variants": 1
   },
   "c2500": {
     "_source": "nr_placed",
@@ -759,6 +765,7 @@
     "weight_median": 130.0
   },
   "c3170": {
+    "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 31700,
@@ -781,8 +788,7 @@
     "team": 6,
     "tier": "grunt",
     "variants": 10,
-    "weight_median": 130.0,
-    "_confidence": "high"
+    "weight_median": 130.0
   },
   "c3180": {
     "_source": "nr_placed",
@@ -812,6 +818,7 @@
   "c3181": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 31810,
     "anim_bank_count": 1,
     "anim_class": "quadruped",
@@ -832,8 +839,7 @@
     "team": 33,
     "tier": "miniboss",
     "variants": 6,
-    "weight_median": 130.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "weight_median": 130.0
   },
   "c3200": {
     "_merchant": true,
@@ -851,13 +857,16 @@
   "c3201": {
     "_backfill_justification": "sibling: c3200 Nomadic Merchant humanoid/M",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_27_0": "anim_class=humanoid: empirically-clean anim_class->locomotion inference",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
+    "_tags_backfilled_v0_27_0": true,
     "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 169,
     "hp_median": 169,
+    "locomotion": 0,
     "name": "Frenzied Nomad (Marsh Group Boss)",
     "size_class": "M",
     "tier": "trash",
@@ -925,6 +934,7 @@
     "weight_median": 100.0
   },
   "c3252": {
+    "_name_corrected_v0_26_x": "Was 'Loretta Tree Sentinel (Unscaled)'; all 4 NpcParam variants are named Royal Carian Knight. Original name appears to be an ER-origin assumption that did not match the chr NR actually ships under c3252.",
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 32520,
@@ -947,8 +957,7 @@
     "team": 33,
     "tier": "field_boss",
     "variants": 4,
-    "weight_median": 100.0,
-    "_name_corrected_v0_26_x": "Was 'Loretta Tree Sentinel (Unscaled)'; all 4 NpcParam variants are named Royal Carian Knight. Original name appears to be an ER-origin assumption that did not match the chr NR actually ships under c3252."
+    "weight_median": 100.0
   },
   "c3300": {
     "_source": "nr_placed",
@@ -1028,6 +1037,7 @@
   "c3350": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 33500,
     "anim_bank_count": 3,
     "anim_class": "humanoid",
@@ -1048,12 +1058,12 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 23,
-    "weight_median": 130.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 130.0
   },
   "c3360": {
     "_backfill_justification": "known: ER Ancestral Follower = antlered deer-like, quadruped L",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Ancestral Follower — quadruped, matches c3350 base",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
     "anim_class": "quadruped",
@@ -1061,12 +1071,11 @@
     "has_boss_reward": false,
     "hp_max": 316,
     "hp_median": 316,
+    "locomotion": 0,
     "name": "Ancestral Follower",
     "size_class": "L",
     "tier": "grunt",
-    "variants": 34,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Ancestral Follower — quadruped, matches c3350 base"
+    "variants": 34
   },
   "c3361": {
     "_source": "nr_placed",
@@ -1109,6 +1118,7 @@
     "variants": 5
   },
   "c3371": {
+    "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 33700,
@@ -1131,8 +1141,7 @@
     "team": 6,
     "tier": "grunt",
     "variants": 4,
-    "weight_median": 260.0,
-    "_confidence": "high"
+    "weight_median": 260.0
   },
   "c3400": {
     "_source": "nr_placed",
@@ -1460,6 +1469,7 @@
   },
   "c3620": {
     "_cluster_only": true,
+    "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_class": "humanoid",
@@ -1469,8 +1479,7 @@
     "size_class": "L",
     "team": 6,
     "tier": "grunt",
-    "variants": 3,
-    "_confidence": "high"
+    "variants": 3
   },
   "c3630": {
     "_confidence": "auto",
@@ -1484,6 +1493,7 @@
     "variants": 1
   },
   "c3650": {
+    "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 36500,
@@ -1506,8 +1516,7 @@
     "team": 6,
     "tier": "grunt",
     "variants": 10,
-    "weight_median": 50.0,
-    "_confidence": "high"
+    "weight_median": 50.0
   },
   "c3660": {
     "_source": "nr_placed",
@@ -1687,6 +1696,7 @@
     "weight_median": 130.0
   },
   "c3702": {
+    "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 37020,
@@ -1709,8 +1719,7 @@
     "team": 6,
     "tier": "grunt",
     "variants": 13,
-    "weight_median": 130.0,
-    "_confidence": "high"
+    "weight_median": 130.0
   },
   "c3703": {
     "_source": "nr_placed",
@@ -2326,6 +2335,7 @@
     "weight_median": 100.0
   },
   "c4110": {
+    "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41100,
@@ -2348,8 +2358,7 @@
     "team": 6,
     "tier": "grunt",
     "variants": 6,
-    "weight_median": 60.0,
-    "_confidence": "high"
+    "weight_median": 60.0
   },
   "c4120": {
     "_source": "nr_placed",
@@ -2404,18 +2413,21 @@
   "c4140": {
     "_backfill_justification": "known: Spiritcaller Snail = stationary misc, boss form M-sized",
     "_confidence": "high",
+    "_locomotion_backfill_v0_27_0": "anim_class=misc: empirically-clean anim_class->locomotion inference",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
+    "_tags_backfilled_v0_27_0": true,
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_class": "misc",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "hp_max": 1070,
     "hp_median": 190,
+    "locomotion": 0,
     "name": "Spiritcaller Snail (Great Church Boss)",
     "size_class": "M",
     "tier": "miniboss",
-    "variants": 11,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "variants": 11
   },
   "c4150": {
     "_source": "nr_placed",
@@ -2495,6 +2507,7 @@
   "c4162": {
     "_backfill_justification": "family: Large Braided Dog = dog, c416x = quadruped/S",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Large Braided Dog — matches c4160 Large Stray loco=0",
     "_pre_correction": {
       "name": "c4162"
     },
@@ -2506,16 +2519,16 @@
     "has_boss_reward": false,
     "hp_max": 197,
     "hp_median": 197,
+    "locomotion": 0,
     "name": "Large Braided Dog",
     "size_class": "S",
     "tier": "trash",
-    "variants": 1,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Large Braided Dog — matches c4160 Large Stray loco=0"
+    "variants": 1
   },
   "c4163": {
     "_backfill_justification": "family: Braided Dog = dog",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Braided Dog — matches c4161 Stray loco=0",
     "_pre_correction": {
       "name": "c4163"
     },
@@ -2527,12 +2540,11 @@
     "has_boss_reward": false,
     "hp_max": 162,
     "hp_median": 162,
+    "locomotion": 0,
     "name": "Braided Dog",
     "size_class": "S",
     "tier": "trash",
-    "variants": 1,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Braided Dog — matches c4161 Stray loco=0"
+    "variants": 1
   },
   "c4164": {
     "_source": "nr_placed",
@@ -2612,6 +2624,7 @@
   "c4167": {
     "_backfill_justification": "family: Mushroom Dog = dog",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Mushroom Dog — matches dog family loco=0",
     "_pre_correction": {
       "name": "c4167"
     },
@@ -2623,12 +2636,11 @@
     "has_boss_reward": false,
     "hp_max": 162,
     "hp_median": 162,
+    "locomotion": 0,
     "name": "Mushroom Dog",
     "size_class": "S",
     "tier": "trash",
-    "variants": 3,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Mushroom Dog — matches dog family loco=0"
+    "variants": 3
   },
   "c4170": {
     "_source": "nr_placed",
@@ -2721,6 +2733,7 @@
   "c4190": {
     "_backfill_justification": "family: Scarab, sibling c4191 misc/S",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Large Scarab — matches c4191 base",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
     "anim_class": "misc",
@@ -2728,12 +2741,11 @@
     "has_boss_reward": false,
     "hp_max": 213,
     "hp_median": 213,
+    "locomotion": 0,
     "name": "Large Scarab",
     "size_class": "S",
     "tier": "grunt",
-    "variants": 14,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Large Scarab — matches c4191 base"
+    "variants": 14
   },
   "c4191": {
     "_non_combat": true,
@@ -2751,6 +2763,7 @@
   "c4192": {
     "_backfill_justification": "family: Scarab variant",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Large Scarab variant — matches c4191 base",
     "_pre_correction": {
       "name": "c4192"
     },
@@ -2762,12 +2775,11 @@
     "has_boss_reward": false,
     "hp_max": 271,
     "hp_median": 271,
+    "locomotion": 0,
     "name": "Large Scarab (variant)",
     "size_class": "S",
     "tier": "grunt",
-    "variants": 10,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Large Scarab variant — matches c4191 base"
+    "variants": 10
   },
   "c4200": {
     "_source": "nr_placed",
@@ -2847,6 +2859,7 @@
   "c4220": {
     "_heritage_imported": true,
     "_source": "heritage",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 42200,
     "anim_bank_count": 1,
     "anim_class": "aquatic",
@@ -2867,8 +2880,7 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 2,
-    "weight_median": 4000.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 4000.0
   },
   "c4230": {
     "_source": "nr_placed",
@@ -2923,6 +2935,7 @@
   "c4241": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 42410,
     "anim_bank_count": 1,
     "anim_class": "giga_boss",
@@ -2943,8 +2956,7 @@
     "team": 7,
     "tier": "miniboss",
     "variants": 5,
-    "weight_median": 970.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "weight_median": 970.0
   },
   "c4250": {
     "_source": "nr_placed",
@@ -2999,6 +3011,7 @@
   "c4270": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 42700,
     "anim_bank_count": 1,
     "anim_class": "quadruped_large",
@@ -3019,8 +3032,7 @@
     "team": 7,
     "tier": "miniboss",
     "variants": 9,
-    "weight_median": 300.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 300.0
   },
   "c4280": {
     "_source": "nr_placed",
@@ -3048,6 +3060,7 @@
     "weight_median": 90.0
   },
   "c4281": {
+    "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 42800,
@@ -3070,8 +3083,7 @@
     "team": 6,
     "tier": "grunt",
     "variants": 2,
-    "weight_median": 90.0,
-    "_confidence": "high"
+    "weight_median": 90.0
   },
   "c4290": {
     "_source": "nr_placed",
@@ -3151,6 +3163,7 @@
   "c4312": {
     "_backfill_justification": "family: Soldier — c4311/c4313/c4314/c4315 all humanoid/M",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Raya Lucaria Soldier — matches Soldier family",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
     "anim_class": "humanoid",
@@ -3158,12 +3171,11 @@
     "has_boss_reward": false,
     "hp_max": 192,
     "hp_median": 192,
+    "locomotion": 0,
     "name": "Raya Lucaria Soldier",
     "size_class": "M",
     "tier": "trash",
-    "variants": 30,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Raya Lucaria Soldier — matches Soldier family"
+    "variants": 30
   },
   "c4313": {
     "_source": "nr_placed",
@@ -3243,6 +3255,7 @@
   "c4316": {
     "_backfill_justification": "family: Haligtree Soldier matches c431x",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Haligtree Soldier — matches Soldier family",
     "_pre_correction": {
       "name": "c4316"
     },
@@ -3254,12 +3267,11 @@
     "has_boss_reward": false,
     "hp_max": 192,
     "hp_median": 192,
+    "locomotion": 0,
     "name": "Haligtree Soldier",
     "size_class": "M",
     "tier": "trash",
-    "variants": 20,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Haligtree Soldier — matches Soldier family"
+    "variants": 20
   },
   "c4321": {
     "_source": "nr_placed",
@@ -3390,6 +3402,7 @@
   "c4353": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='night_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 43500,
     "anim_bank_count": 1,
     "anim_class": "humanoid",
@@ -3410,8 +3423,7 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 29,
-    "weight_median": 150.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='night_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 150.0
   },
   "c4354": {
     "_source": "nr_placed",
@@ -3466,6 +3478,7 @@
   "c4356": {
     "_backfill_justification": "family: Knight — c4351-c4354 all humanoid/M",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Haligtree Knight — matches Knight family",
     "_pre_correction": {
       "name": "c4356"
     },
@@ -3477,12 +3490,11 @@
     "has_boss_reward": false,
     "hp_max": 576,
     "hp_median": 576,
+    "locomotion": 0,
     "name": "Haligtree Knight",
     "size_class": "M",
     "tier": "grunt",
-    "variants": 6,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Haligtree Knight — matches Knight family"
+    "variants": 6
   },
   "c4358": {
     "_backfill_justification": "family: Castle Knight Variant matches Knight family",
@@ -3506,24 +3518,24 @@
   "c4361": {
     "_backfill_justification": "family: Godrick Knight's Horse, sibling c4363 quadruped_large/L",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Godrick Knight's Horse — matches c4060 horse loco=3",
     "_pre_correction": {
       "name": "c4361"
     },
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
+    "_tier_correction_v0_25_0_patch1": "Was tier='grunt' (legacy auto-tag from post_dlc_dump pass-a). Other Knight's Horse variants (c4060, c4363) correctly carry tier='mount_component'; c4361 was the outlier and leaked into seed 939029 (m60_43_37_00 pi=52) and seed 42 (m34_20_00_00 pi=24) as a riderless horse placement. Hardcoded ban also added to V3_EXCLUDE_TARGET_PREFIXES in oops_v3.py for defense in depth.",
     "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 448,
     "hp_median": 448,
+    "locomotion": 3,
     "name": "Godrick Knight's Horse",
     "size_class": "L",
     "tier": "mount_component",
-    "variants": 3,
-    "locomotion": 3,
-    "_locomotion_backfill_v0_24_91": "Godrick Knight's Horse — matches c4060 horse loco=3",
-    "_tier_correction_v0_25_0_patch1": "Was tier='grunt' (legacy auto-tag from post_dlc_dump pass-a). Other Knight's Horse variants (c4060, c4363) correctly carry tier='mount_component'; c4361 was the outlier and leaked into seed 939029 (m60_43_37_00 pi=52) and seed 42 (m34_20_00_00 pi=24) as a riderless horse placement. Hardcoded ban also added to V3_EXCLUDE_TARGET_PREFIXES in oops_v3.py for defense in depth."
+    "variants": 3
   },
   "c4362": {
     "_confidence": "auto",
@@ -3710,6 +3722,7 @@
   "c4376": {
     "_backfill_justification": "family: Haligtree Foot Soldier matches c437x foot soldiers",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Haligtree Foot Soldier — matches Foot Soldier family",
     "_pre_correction": {
       "name": "c4376"
     },
@@ -3721,14 +3734,14 @@
     "has_boss_reward": false,
     "hp_max": 147,
     "hp_median": 147,
+    "locomotion": 0,
     "name": "Haligtree Foot Soldier",
     "size_class": "M",
     "tier": "trash",
-    "variants": 28,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Haligtree Foot Soldier — matches Foot Soldier family"
+    "variants": 28
   },
   "c4377": {
+    "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43700,
@@ -3751,8 +3764,7 @@
     "team": 6,
     "tier": "grunt",
     "variants": 17,
-    "weight_median": 100.0,
-    "_confidence": "high"
+    "weight_median": 100.0
   },
   "c4380": {
     "_source": "nr_placed",
@@ -3932,6 +3944,7 @@
   "c4420": {
     "_heritage_imported": true,
     "_source": "heritage",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 44200,
     "anim_bank_count": 1,
     "anim_class": "aquatic",
@@ -3952,27 +3965,26 @@
     "team": 7,
     "tier": "miniboss",
     "variants": 9,
-    "weight_median": 100.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 100.0
   },
   "c4430": {
+    "_backfill_v0_24_91": "Alaric-confirmed actual enemy (rock-pile ambusher). Tier=trash kept from existing tag. hp=174 from existing tag. Size/anim/loco inferred: M for moderate rock-pile, misc anim for non-standard locomotion, loco=0 default.",
     "_confidence": "auto",
     "_pre_correction": {
       "name": "c4430"
     },
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
+    "anim_class": "misc",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 174,
     "hp_median": 174,
-    "name": "Abnormal Stone Cluster",
-    "tier": "trash",
-    "variants": 6,
-    "size_class": "M",
-    "anim_class": "misc",
     "locomotion": 0,
-    "_backfill_v0_24_91": "Alaric-confirmed actual enemy (rock-pile ambusher). Tier=trash kept from existing tag. hp=174 from existing tag. Size/anim/loco inferred: M for moderate rock-pile, misc anim for non-standard locomotion, loco=0 default."
+    "name": "Abnormal Stone Cluster",
+    "size_class": "M",
+    "tier": "trash",
+    "variants": 6
   },
   "c4440": {
     "_source": "nr_placed",
@@ -4002,6 +4014,7 @@
   "c4441": {
     "_backfill_justification": "family: Land Squirt Boss = bigger version of c4440 aquatic/M",
     "_confidence": "high",
+    "_locomotion_backfill_v0_24_91": "Land Squirt (Boss) — matches c4440 base",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
     "anim_class": "aquatic",
@@ -4009,16 +4022,16 @@
     "has_boss_reward": false,
     "hp_max": 1429,
     "hp_median": 1429,
+    "locomotion": 0,
     "name": "Land Squirt (Boss)",
     "size_class": "L",
     "tier": "miniboss",
-    "variants": 1,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Land Squirt (Boss) — matches c4440 base"
+    "variants": 1
   },
   "c4442": {
     "_backfill_justification": "family: Land Squirt Variant = small/M variant of c4440",
     "_confidence": "high",
+    "_locomotion_backfill_v0_24_91": "Land Squirt variant — matches c4440 base",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
     "anim_class": "aquatic",
@@ -4026,12 +4039,11 @@
     "has_boss_reward": false,
     "hp_max": 1429,
     "hp_median": 1429,
+    "locomotion": 0,
     "name": "Land Squirt Variant",
     "size_class": "M",
     "tier": "grunt",
-    "variants": 2,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Land Squirt variant — matches c4440 base"
+    "variants": 2
   },
   "c4450": {
     "_backfill_justification": "known: Walking Mausoleum = huge slow crawler, large_boss_ground",
@@ -4111,6 +4123,7 @@
   "c4480": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_class": "large_boss_ground",
     "expects_boss_arena": true,
     "has_reward": true,
@@ -4119,8 +4132,7 @@
     "size_class": "XL",
     "team": 6,
     "tier": "miniboss",
-    "variants": 10,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "variants": 10
   },
   "c4481": {
     "_cluster_only": true,
@@ -4138,17 +4150,20 @@
   "c4482": {
     "_backfill_justification": "family: Giant Fading Miranda matches c4480 large_boss_ground/XL",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_27_0": "miranda_family: c4480/c4481/c4483 all locomotion=0",
     "_pre_correction": {
       "name": "c4482"
     },
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
+    "_tags_backfilled_v0_27_0": true,
     "anim_class": "large_boss_ground",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1939,
     "hp_median": 1939,
+    "locomotion": 0,
     "name": "Giant Fading Miranda Sprout",
     "size_class": "XL",
     "tier": "grunt",
@@ -4157,6 +4172,7 @@
   "c4483": {
     "_backfill_justification": "family: Fading Miranda Sprout matches c4481 misc/M",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Fading Miranda Sprout — matches c4481 base",
     "_pre_correction": {
       "name": "c4483"
     },
@@ -4168,12 +4184,11 @@
     "has_boss_reward": false,
     "hp_max": 120,
     "hp_median": 120,
+    "locomotion": 0,
     "name": "Fading Miranda Sprout",
     "size_class": "M",
     "tier": "trash",
-    "variants": 2,
-    "locomotion": 0,
-    "_locomotion_backfill_v0_24_91": "Fading Miranda Sprout — matches c4481 base"
+    "variants": 2
   },
   "c4490": {
     "_source": "nr_placed",
@@ -4227,6 +4242,7 @@
   "c4500": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 45000,
     "anim_bank_count": 1,
     "anim_class": "flying_dragon",
@@ -4247,12 +4263,12 @@
     "team": 33,
     "tier": "miniboss",
     "variants": 4,
-    "weight_median": 300.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "weight_median": 300.0
   },
   "c4501": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 45010,
     "anim_bank_count": 1,
     "anim_class": "flying_dragon",
@@ -4273,26 +4289,29 @@
     "team": 33,
     "tier": "miniboss",
     "variants": 2,
-    "weight_median": 300.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "weight_median": 300.0
   },
   "c4502": {
     "_confidence": "high",
+    "_locomotion_backfill_v0_27_0": "anim_class=flying_dragon: empirically-clean anim_class->locomotion inference",
     "_source": "post_dlc_dump",
+    "_tags_backfilled_v0_27_0": true,
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_class": "flying_dragon",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1518,
     "hp_median": 1310,
+    "locomotion": 5,
     "name": "Decaying Ekzykes-class Dragon",
     "size_class": "GIGA",
     "tier": "miniboss",
-    "variants": 3,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "variants": 3
   },
   "c4503": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 45030,
     "anim_bank_count": 1,
     "anim_class": "flying_dragon",
@@ -4313,22 +4332,24 @@
     "team": 33,
     "tier": "night_boss",
     "variants": 3,
-    "weight_median": 300.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 300.0
   },
   "c4504": {
     "_confidence": "high",
+    "_locomotion_backfill_v0_27_0": "anim_class=flying_dragon: empirically-clean anim_class->locomotion inference",
     "_pre_correction": {
       "name": "Greyoll-class Dragon",
       "tier": "nightlord"
     },
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
+    "_tags_backfilled_v0_27_0": true,
     "anim_class": "flying_dragon",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "hp_max": 12440,
     "hp_median": 12440,
+    "locomotion": 5,
     "name": "Elder Dragon Greyoll",
     "size_class": "XXL",
     "tier": "night_boss",
@@ -4337,6 +4358,7 @@
   "c4505": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 45000,
     "anim_bank_count": 1,
     "anim_class": "flying_dragon",
@@ -4357,8 +4379,7 @@
     "team": 49,
     "tier": "miniboss",
     "variants": 7,
-    "weight_median": 300.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "weight_median": 300.0
   },
   "c4510": {
     "_source": "nr_placed",
@@ -4413,6 +4434,7 @@
   "c4560": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 45600,
     "anim_bank_count": 1,
     "anim_class": "quadruped_large",
@@ -4433,8 +4455,7 @@
     "team": 49,
     "tier": "miniboss",
     "variants": 9,
-    "weight_median": 1298.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 1298.0
   },
   "c4561": {
     "_heritage_imported": true,
@@ -4514,6 +4535,7 @@
   "c4600": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from night_boss to miniboss (user direction: trolls play as filler miniboss-tier, not marquee NB). Originally field_boss in JSON; promoted to night_boss by old V3_TAG_OVERRIDES before flatten; now correctly classified as miniboss. cap=6 retained as filler-tier ceiling.",
     "anim_bank": 46000,
     "anim_bank_count": 1,
     "anim_class": "humanoid",
@@ -4534,30 +4556,30 @@
     "team": 33,
     "tier": "miniboss",
     "variants": 19,
-    "weight_median": 100.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from night_boss to miniboss (user direction: trolls play as filler miniboss-tier, not marquee NB). Originally field_boss in JSON; promoted to night_boss by old V3_TAG_OVERRIDES before flatten; now correctly classified as miniboss. cap=6 retained as filler-tier ceiling."
+    "weight_median": 100.0
   },
   "c4601": {
     "_backfill_justification": "CONFIRMED by user; sibling c4600/c4602/c4603 all humanoid/XXL",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Troll Knight — matches c4600 Troll loco=5",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='grunt'); see git history of oops_v3.py for original rationale comment",
     "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1901,
     "hp_median": 1901,
+    "locomotion": 5,
     "name": "Troll Knight",
     "size_class": "XXL",
     "tier": "miniboss",
-    "variants": 5,
-    "locomotion": 5,
-    "_locomotion_backfill_v0_24_91": "Troll Knight — matches c4600 Troll loco=5",
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='grunt'); see git history of oops_v3.py for original rationale comment"
+    "variants": 5
   },
   "c4602": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from night_boss to miniboss (user direction: trolls play as filler miniboss-tier, not marquee NB). Originally field_boss in JSON; promoted to night_boss by old V3_TAG_OVERRIDES before flatten; now correctly classified as miniboss. cap=6 retained as filler-tier ceiling.",
     "anim_bank": 46000,
     "anim_bank_count": 1,
     "anim_class": "humanoid",
@@ -4578,12 +4600,12 @@
     "team": 53,
     "tier": "miniboss",
     "variants": 8,
-    "weight_median": 100.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from night_boss to miniboss (user direction: trolls play as filler miniboss-tier, not marquee NB). Originally field_boss in JSON; promoted to night_boss by old V3_TAG_OVERRIDES before flatten; now correctly classified as miniboss. cap=6 retained as filler-tier ceiling."
+    "weight_median": 100.0
   },
   "c4603": {
     "_heritage_imported": true,
     "_source": "heritage",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from night_boss to miniboss (user direction: trolls play as filler miniboss-tier, not marquee NB). Originally field_boss in JSON; promoted to night_boss by old V3_TAG_OVERRIDES before flatten; now correctly classified as miniboss. cap=6 retained as filler-tier ceiling.",
     "anim_bank": 46030,
     "anim_bank_count": 1,
     "anim_class": "humanoid",
@@ -4604,12 +4626,12 @@
     "team": 9,
     "tier": "miniboss",
     "variants": 2,
-    "weight_median": 100.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from night_boss to miniboss (user direction: trolls play as filler miniboss-tier, not marquee NB). Originally field_boss in JSON; promoted to night_boss by old V3_TAG_OVERRIDES before flatten; now correctly classified as miniboss. cap=6 retained as filler-tier ceiling."
+    "weight_median": 100.0
   },
   "c4620": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 46200,
     "anim_bank_count": 1,
     "anim_class": "giga_boss",
@@ -4630,12 +4652,12 @@
     "team": 33,
     "tier": "night_boss",
     "variants": 10,
-    "weight_median": 150.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 150.0
   },
   "c4630": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 46300,
     "anim_bank_count": 1,
     "anim_class": "quadruped_large",
@@ -4656,8 +4678,7 @@
     "team": 9,
     "tier": "miniboss",
     "variants": 9,
-    "weight_median": 150.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "weight_median": 150.0
   },
   "c4640": {
     "_source": "nr_placed",
@@ -4727,6 +4748,7 @@
   "c4660": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 46600,
     "anim_bank_count": 1,
     "anim_class": "giga_boss",
@@ -4747,8 +4769,7 @@
     "team": 7,
     "tier": "miniboss",
     "variants": 20,
-    "weight_median": 150000.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "weight_median": 150000.0
   },
   "c4670": {
     "_backfill_justification": "known: ER Ancestor Spirit = giant deer-spirit, field_boss XL",
@@ -4758,7 +4779,9 @@
     },
     "_source": "nr_placed",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "_tags_backfilled_v0_24_72": true,
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": true,
@@ -4767,9 +4790,7 @@
     "name": "Ancestor Spirit",
     "size_class": "XL",
     "tier": "night_boss",
-    "variants": 10,
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "variants": 10
   },
   "c4680": {
     "_source": "nr_placed",
@@ -4804,6 +4825,7 @@
     },
     "_source": "nr_placed",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "_tags_backfilled_v0_24_72": true,
     "anim_class": "humanoid",
     "expects_boss_arena": false,
@@ -4813,8 +4835,7 @@
     "name": "Grafted Scion",
     "size_class": "L",
     "tier": "miniboss",
-    "variants": 3,
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "variants": 3
   },
   "c4750": {
     "_source": "nr_placed",
@@ -4869,6 +4890,7 @@
   "c4800": {
     "_heritage_imported": true,
     "_source": "heritage",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 48000,
     "anim_bank_count": 1,
     "anim_class": "humanoid",
@@ -4889,8 +4911,7 @@
     "team": 33,
     "tier": "night_boss",
     "variants": 2,
-    "weight_median": 300.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 300.0
   },
   "c4801": {
     "_backfill_justification": "sibling: c4800 Mohg humanoid/XL; Lord of Blood Spear = Mohg variant",
@@ -4910,6 +4931,7 @@
   "c4810": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 48100,
     "anim_bank_count": 1,
     "anim_class": "quadruped_large",
@@ -4930,36 +4952,35 @@
     "team": 33,
     "tier": "miniboss",
     "variants": 6,
-    "weight_median": 480.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "weight_median": 480.0
   },
   "c4811": {
     "_backfill_justification": "sibling: c4810 Erdtree Avatar quadruped_large/XL",
     "_confidence": "auto",
+    "_locomotion_backfill_v0_24_91": "Erdtree Avatar Variant — matches c4810 base loco=5",
     "_pre_correction": {
       "name": "c4811"
     },
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
+    "_tier_demoted": {
+      "from": "night_boss",
+      "rationale": "Auto-tagged night_boss by post_dlc_dump but stats are field_boss-class: same hp_max as c4810 base (field_boss), 1 variant, no boss_reward. Playtest confirms underwhelming as a night-tier encounter. Demoted to align with base variant c4810.",
+      "to": "field_boss",
+      "version": "v0.24.86-patch4"
+    },
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 2321,
     "hp_median": 2321,
+    "locomotion": 5,
     "name": "Erdtree Avatar Variant",
     "size_class": "XL",
     "tier": "miniboss",
-    "variants": 1,
-    "_tier_demoted": {
-      "from": "night_boss",
-      "to": "field_boss",
-      "version": "v0.24.86-patch4",
-      "rationale": "Auto-tagged night_boss by post_dlc_dump but stats are field_boss-class: same hp_max as c4810 base (field_boss), 1 variant, no boss_reward. Playtest confirms underwhelming as a night-tier encounter. Demoted to align with base variant c4810."
-    },
-    "locomotion": 5,
-    "_locomotion_backfill_v0_24_91": "Erdtree Avatar Variant — matches c4810 base loco=5",
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "variants": 1
   },
   "c4820": {
     "_heritage_imported": true,
@@ -5348,6 +5369,7 @@
     "weight_median": 130.0
   },
   "c5090": {
+    "_confidence": "high",
     "_heritage_imported": true,
     "_source": "manual_retier_v0.24.100",
     "anim_bank": 50900,
@@ -5370,8 +5392,7 @@
     "team": 6,
     "tier": "grunt",
     "variants": 10,
-    "weight_median": 130.0,
-    "_confidence": "high"
+    "weight_median": 130.0
   },
   "c5110": {
     "_cluster_only": true,
@@ -5389,6 +5410,7 @@
   "c5160": {
     "_heritage_imported": true,
     "_source": "heritage",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 51600,
     "anim_bank_count": 1,
     "anim_class": "humanoid",
@@ -5409,10 +5431,10 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 16,
-    "weight_median": 130.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 130.0
   },
   "c5190": {
+    "_confidence": "high",
     "_heritage_imported": true,
     "_source": "manual_retier_v0.24.100",
     "anim_bank": 51900,
@@ -5435,11 +5457,11 @@
     "team": 6,
     "tier": "grunt",
     "variants": 10,
-    "weight_median": 70.0,
-    "_confidence": "high"
+    "weight_median": 70.0
   },
   "c5192": {
     "_heritage_imported": true,
+    "_retier_v0_24_101": "miniboss → grunt (user request, post-sim review)",
     "_source": "heritage",
     "anim_bank": 51920,
     "anim_bank_count": 1,
@@ -5461,8 +5483,7 @@
     "team": 6,
     "tier": "grunt",
     "variants": 3,
-    "weight_median": 120.0,
-    "_retier_v0_24_101": "miniboss → grunt (user request, post-sim review)"
+    "weight_median": 120.0
   },
   "c5193": {
     "_heritage_imported": true,
@@ -5503,6 +5524,7 @@
   "c5210": {
     "_heritage_imported": true,
     "_source": "heritage",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 52100,
     "anim_bank_count": 1,
     "anim_class": "large_boss_ground",
@@ -5523,8 +5545,7 @@
     "team": 7,
     "tier": "night_boss",
     "variants": 2,
-    "weight_median": 130.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 130.0
   },
   "c52101": {
     "_confidence": "high",
@@ -5955,6 +5976,7 @@
   "c5820": {
     "_heritage_imported": true,
     "_source": "heritage",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 58200,
     "anim_bank_count": 1,
     "anim_class": "quadruped_large",
@@ -5975,10 +5997,10 @@
     "team": 7,
     "tier": "miniboss",
     "variants": 2,
-    "weight_median": 150.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "weight_median": 150.0
   },
   "c5830": {
+    "_confidence": "high",
     "_heritage_imported": true,
     "_source": "manual_retier_v0.24.100",
     "anim_bank": 58300,
@@ -6001,12 +6023,12 @@
     "team": 48,
     "tier": "grunt",
     "variants": 14,
-    "weight_median": 130.0,
-    "_confidence": "high"
+    "weight_median": 130.0
   },
   "c5860": {
     "_heritage_imported": true,
     "_source": "heritage",
+    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 58600,
     "anim_bank_count": 1,
     "anim_class": "flying_dragon",
@@ -6027,8 +6049,7 @@
     "team": 9,
     "tier": "night_boss",
     "variants": 2,
-    "weight_median": 300.0,
-    "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment"
+    "weight_median": 300.0
   },
   "c5870": {
     "_heritage_imported": true,
@@ -6356,6 +6377,7 @@
   "c7100": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
+    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 71000,
     "anim_bank_count": 1,
     "anim_class": "humanoid",
@@ -6376,8 +6398,7 @@
     "team": 33,
     "tier": "miniboss",
     "variants": 7,
-    "weight_median": 50.0,
-    "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)"
+    "weight_median": 50.0
   },
   "c7500": {
     "_source": "nr_placed",
@@ -6784,6 +6805,7 @@
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 77000,
     "anim_bank_count": 1,
     "anim_class": "giga_boss",
@@ -6804,8 +6826,7 @@
     "team": 7,
     "tier": "night_boss",
     "variants": 3,
-    "weight_median": 30000.0,
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "weight_median": 30000.0
   },
   "c7710": {
     "_pre_correction": {
@@ -6816,6 +6837,7 @@
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 77100,
     "anim_bank_count": 1,
     "anim_class": "giga_boss",
@@ -6836,8 +6858,7 @@
     "team": 33,
     "tier": "night_boss",
     "variants": 3,
-    "weight_median": 30000.0,
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "weight_median": 30000.0
   },
   "c7711": {
     "_pre_correction": {
@@ -6845,9 +6866,11 @@
       "name": "c7711",
       "tier": "nightlord"
     },
+    "_retier_v0_24_101": "anim_class quadruped_large → quadruped, size_class XXL → L (user request, post-sim — was placing at 1.1-1.4/seed)",
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 77110,
     "anim_bank_count": 1,
     "anim_class": "quadruped",
@@ -6868,9 +6891,7 @@
     "team": 33,
     "tier": "grunt",
     "variants": 3,
-    "weight_median": 30000.0,
-    "_retier_v0_24_101": "anim_class quadruped_large → quadruped, size_class XXL → L (user request, post-sim — was placing at 1.1-1.4/seed)",
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "weight_median": 30000.0
   },
   "c7712": {
     "_pre_correction": {
@@ -6878,9 +6899,11 @@
       "name": "c7712",
       "tier": "nightlord"
     },
+    "_retier_v0_24_101": "anim_class quadruped_large → quadruped, size_class XXL → L (user request, post-sim — was placing at 1.1-1.4/seed)",
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 77120,
     "anim_bank_count": 1,
     "anim_class": "quadruped",
@@ -6901,9 +6924,7 @@
     "team": 33,
     "tier": "grunt",
     "variants": 3,
-    "weight_median": 30000.0,
-    "_retier_v0_24_101": "anim_class quadruped_large → quadruped, size_class XXL → L (user request, post-sim — was placing at 1.1-1.4/seed)",
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "weight_median": 30000.0
   },
   "c7720": {
     "_confidence": "high",
@@ -6927,6 +6948,7 @@
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 78000,
     "anim_bank_count": 1,
     "anim_class": "quadruped_large",
@@ -6947,8 +6969,7 @@
     "team": 7,
     "tier": "night_boss",
     "variants": 3,
-    "weight_median": 30000.0,
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "weight_median": 30000.0
   },
   "c7810": {
     "_pre_correction": {
@@ -6959,6 +6980,7 @@
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 78100,
     "anim_bank_count": 1,
     "anim_class": "aquatic",
@@ -6979,8 +7001,7 @@
     "team": 6,
     "tier": "trash",
     "variants": 4,
-    "weight_median": 100.0,
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "weight_median": 100.0
   },
   "c7820": {
     "_pre_correction": {
@@ -6991,6 +7012,7 @@
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 78200,
     "anim_bank_count": 1,
     "anim_class": "misc",
@@ -7011,8 +7033,7 @@
     "team": 6,
     "tier": "night_boss",
     "variants": 3,
-    "weight_median": 30000.0,
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "weight_median": 30000.0
   },
   "c7900": {
     "_backfill_justification": "known: Nameless King = humanoid post-dismount, L without mount",
@@ -7023,6 +7044,7 @@
     },
     "_source": "nr_placed",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "_tags_backfilled_v0_24_72": true,
     "anim_class": "humanoid",
     "expects_boss_arena": true,
@@ -7032,8 +7054,7 @@
     "name": "Nameless King",
     "size_class": "L",
     "tier": "night_boss",
-    "variants": 4,
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "variants": 4
   },
   "c7910": {
     "_confidence": "auto",
@@ -7044,14 +7065,14 @@
     },
     "_source": "nr_placed",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "hp_max": 819,
     "hp_median": 819,
     "name": "Storm King",
     "tier": "night_boss",
-    "variants": 4,
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "variants": 4
   },
   "c7920": {
     "_pre_correction": {
@@ -7062,6 +7083,7 @@
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_source_override": "manual_correction_v0_23_72_late",
+    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 79200,
     "anim_bank_count": 1,
     "anim_class": "misc",
@@ -7082,8 +7104,7 @@
     "team": 7,
     "tier": "night_boss",
     "variants": 3,
-    "weight_median": 100.0,
-    "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements"
+    "weight_median": 100.0
   },
   "c7930": {
     "_backfill_justification": "known: Demon from Below = winged humanoid demon",

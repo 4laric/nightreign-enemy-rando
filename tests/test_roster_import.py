@@ -1,10 +1,11 @@
 """Tests for v0.27.0's roster-driven chr import.
 
 plan_roster_import / execute_roster_import back the GUI's Diagnose +
-Import roster flow. The import set is the roster's heritage chrs plus
+Import roster flow. The import set is heritage_pack.json's tags plus
 the MMV pack tags; each chr is routed MMV-folder-first, Elden-Ring-
 folder-fallback. SFX/material are bulk-synced (same MMV-first rule).
 """
+import json
 import os
 import sys
 
@@ -18,6 +19,16 @@ import oops_v3  # noqa: E402
 
 
 CHR_EXTS = ('chrbnd', 'anibnd', 'behbnd')
+
+
+def _heritage_prefixes():
+    """The heritage chr-prefixes plan_roster_import wants. v0.27.0:
+    sourced from heritage_pack.json (the single source of truth), NOT
+    the roster's `_heritage_imported` flags — matching what the
+    function under test now reads."""
+    hp = json.load(open(os.path.join(ROOT, 'data', 'heritage_pack.json'),
+                        encoding='utf-8'))
+    return sorted((hp.get('tags') or {}).keys())
 
 
 def _mkchr(d, cp, exts=CHR_EXTS, size=512):
@@ -72,13 +83,8 @@ class TestPlanRosterImport:
         assert entry['origin'] == 'mmv', 'MMV folder must win the tie'
 
     def test_er_fallback(self, dirs):
-        """A roster heritage chr only in the ER folder routes to ER."""
-        import json
-        roster = json.load(open(os.path.join(ROOT, 'data',
-                                             'nr_enemy_roster.json')))
-        heri = sorted({v['c_prefix'] for v in roster['all_variants']
-                       if v.get('_heritage_imported')})
-        cp = heri[0]
+        """A heritage chr only in the ER folder routes to ER."""
+        cp = _heritage_prefixes()[0]
         _mkchr(os.path.join(dirs['er'], 'chr'), cp)  # ER only
         plan = oops_v3.plan_roster_import(
             dirs['mmv'], dirs['er'], os.path.join(dirs['target'], 'chr'))
@@ -94,11 +100,7 @@ class TestPlanRosterImport:
 
     def test_already_present_skipped(self, dirs):
         """A chr already in the target chr/ is not planned for copy."""
-        import json
-        roster = json.load(open(os.path.join(ROOT, 'data',
-                                             'nr_enemy_roster.json')))
-        cp = sorted({v['c_prefix'] for v in roster['all_variants']
-                     if v.get('_heritage_imported')})[0]
+        cp = _heritage_prefixes()[0]
         _mkchr(os.path.join(dirs['er'], 'chr'), cp)
         _mkchr(os.path.join(dirs['target'], 'chr'), cp)  # already there
         plan = oops_v3.plan_roster_import(
@@ -141,11 +143,7 @@ class TestExecuteRosterImport:
 
     def test_idempotent_rerun(self, dirs):
         """Second run with overwrite=False copies nothing, skips all."""
-        import json
-        roster = json.load(open(os.path.join(ROOT, 'data',
-                                             'nr_enemy_roster.json')))
-        cp = sorted({v['c_prefix'] for v in roster['all_variants']
-                     if v.get('_heritage_imported')})[0]
+        cp = _heritage_prefixes()[0]
         _mkchr(os.path.join(dirs['er'], 'chr'), cp)
         plan = oops_v3.plan_roster_import(
             dirs['mmv'], dirs['er'], os.path.join(dirs['target'], 'chr'))

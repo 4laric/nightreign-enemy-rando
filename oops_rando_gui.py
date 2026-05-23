@@ -4660,7 +4660,7 @@ class RandoGUI:
             nb = self.nb if hasattr(self, 'nb') else None
             if nb is None:
                 # Fall back: walk widget tree for the Notebook
-                for w in self.master.winfo_children():
+                for w in self.root.winfo_children():
                     if isinstance(w, ttk.Notebook):
                         nb = w; break
             if nb is None:
@@ -4788,10 +4788,10 @@ class RandoGUI:
                 import oops_v3 as ov3
             report = ov3.compatibility_preflight(target)
             text = ov3.render_compatibility_report_text(report)
-            self.master.clipboard_clear()
-            self.master.clipboard_append(text)
+            self.root.clipboard_clear()
+            self.root.clipboard_append(text)
             # Force the clipboard contents to persist past app close
-            self.master.update()
+            self.root.update()
             # Feedback in the chr log (if visible) — non-fatal if log doesn't exist
             if hasattr(self, 'chr_log'):
                 self._chr_log_write(

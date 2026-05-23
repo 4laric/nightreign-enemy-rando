@@ -1,180 +1,300 @@
 {
   "_meta": {
     "enabled": true,
-    "version": "v2",
-    "engine_authored": "v0.23.18",
+    "version": "v3",
+    "engine_authored": "v0.27.0",
     "asset_pack": "heritage_pack",
     "asset_pack_url": null,
     "asset_pack_author": null,
     "requires_external_chr_assets": true,
     "user_facing_name": "Heritage Pack (SOTE-flavored chrs)",
-    "confidence": "empirical_v2",
-    "description": "SOTE-flavored chrs that base nr_enemy_tags.json references but vanilla NR's chr/ folder does not ship. Built empirically from a diff of two chr-folder scans (vanilla NR install vs a modded me3 profile chr/) via dev/audit_vanilla_chr.py — see CHANGELOG.md for v0.23.18.\n\nDetection rule: c-prefix in nr_enemy_tags.json AND only present in the modded chr/ folder AND not declared by bfer_imports.json or bfer_imports_v2.json. The result is the chrs that come from an external Heritage Pack mod rather than vanilla NR or BFER.\n\nv2 supersedes the v0.23.16 heuristic v1 manifest. v1 had 36 entries based on `_source: heritage` tags + name-pattern adds; v2 has 41 empirical entries. Net additions in v2 (not in v1): c2272 Giant Black Crab, c3670 Aged Albinauric, c4341 Thin Mad Pumpkin Head, c4352 Cuckoo Knight (Scholar Remembrance), c4561 Bloodbane Giant Crow, c4603 Stonedigger Troll, c5190/c5192/c5193 Spider Scorpion variants, c5522/c5523 Stray variants. Net removals from v1 (no chr file in target — were heuristic adds we couldn't justify empirically): c5240 Commoner (Pot), c5241 Commoner, c5311 Inquisitor (Candles), c5312 Inquisitor (Staff), c5750 Living Jar Warrior, c5751 Living Jar."
+    "confidence": "four_set_diff_v0_27_0",
+    "description": "SOTE-flavored / cross-game chrs the rando's nr_enemy_tags.json references but vanilla NR's chr/ folder does not ship, that are importable from a vanilla Elden Ring chr/ folder.\n\nv3 regeneration rule (dev/build_heritage_pack.py): a c-prefix is included iff it is (1) referenced by nr_enemy_tags.json, (2) absent from the vanilla NR chr/ folder, (3) present in the vanilla ER chr/ folder, (4) not a System/object entry, and (5) has both size_class and locomotion in its tag (locomotion may be family-inferred — see the script). MMV-pack chrs are excluded as a separate concern.\n\nv3 supersedes v2 (v0.23.18), which was built from a chr-folder scan of one modded me3 profile and undercounted by ~30 entries as a result. Regenerate with dev/build_heritage_pack.py on any NR version bump."
   },
   "tags": {
     "c2272": {
       "name": "Giant Black Crab",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=manual_retier_v0.24.100)"
+    },
+    "c2273": {
+      "name": "Crab (Maggots)",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c2274": {
+      "name": "Giant Sleep Crab",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c2275": {
+      "name": "Crab (Clean)",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c2277": {
+      "name": "Crab (Golden Tufts)",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
     },
     "c3061": {
       "name": "Giant Beast Skeleton",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c3070": {
       "name": "Dominula Celebrant",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+    },
+    "c3201": {
+      "name": "Frenzied Nomad (Marsh Group Boss)",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
     },
     "c3330": {
       "name": "Giant Silver Tear (Unscaled)",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c3510": {
       "name": "Skeleton (Sword and Shield)",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c3670": {
       "name": "Aged Albinauric (Scholar Remembrance)",
-      "_inferred_source": "empirical_diff (orig _source=manual_tag)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=manual_tag)"
     },
     "c3730": {
       "name": "Graven School",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c3750": {
       "name": "Clayman - Spear",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c3800": {
       "name": "Cleanrot Knight",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c3860": {
       "name": "Avionette",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+    },
+    "c4140": {
+      "name": "Spiritcaller Snail (Great Church Boss)",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4162": {
+      "name": "Large Braided Dog",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4163": {
+      "name": "Braided Dog",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4167": {
+      "name": "Mushroom Dog",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4192": {
+      "name": "Large Scarab (variant)",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
     },
     "c4210": {
       "name": "Warhawk",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c4220": {
       "name": "Giant Land Octopus",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+    },
+    "c4312": {
+      "name": "Raya Lucaria Soldier",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4316": {
+      "name": "Haligtree Soldier",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
     },
     "c4341": {
       "name": "Thin Mad Pumpkin Head",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c4352": {
       "name": "Cuckoo Knight (Scholar Remembrance)",
-      "_inferred_source": "empirical_diff (orig _source=manual_tag)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=manual_tag)"
+    },
+    "c4356": {
+      "name": "Haligtree Knight",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4361": {
+      "name": "Godrick Knight's Horse",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4376": {
+      "name": "Haligtree Foot Soldier",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
     },
     "c4385": {
       "name": "Disciple of Rot",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c4420": {
       "name": "Giant Crayfish",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+    },
+    "c4430": {
+      "name": "Abnormal Stone Cluster",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4441": {
+      "name": "Land Squirt (Boss)",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4442": {
+      "name": "Land Squirt Variant",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4482": {
+      "name": "Giant Fading Miranda Sprout",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4483": {
+      "name": "Fading Miranda Sprout",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4502": {
+      "name": "Decaying Ekzykes-class Dragon",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
+    },
+    "c4504": {
+      "name": "Elder Dragon Greyoll",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
     },
     "c4561": {
       "name": "Bloodbane Giant Crow",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+    },
+    "c4601": {
+      "name": "Troll Knight",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
     },
     "c4603": {
       "name": "Stonedigger Troll",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c4800": {
       "name": "Mohg- the Omen",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+    },
+    "c4811": {
+      "name": "Erdtree Avatar Variant",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=post_dlc_dump)"
     },
     "c4820": {
       "name": "Omenkiller",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5040": {
       "name": "Curseblade",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5070": {
       "name": "Death Knight",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5080": {
       "name": "Bloodfiend",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5081": {
       "name": "Chief Bloodfiend",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5090": {
       "name": "Gravebird",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=manual_retier_v0.24.100)"
     },
     "c5160": {
       "name": "Fire Knight",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5190": {
       "name": "Spider Scorpion",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=manual_retier_v0.24.100)"
     },
     "c5192": {
       "name": "Spider Scorpion",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5193": {
       "name": "Spider Scorpion",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5210": {
       "name": "Divine Beast Dancing Lion",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+    },
+    "c5240": {
+      "name": "Commoner (Pot)",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=nr_placed)"
+    },
+    "c5241": {
+      "name": "Commoner",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=nr_placed)"
     },
     "c5250": {
       "name": "Horned Warrior",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+    },
+    "c5311": {
+      "name": "Inquisitor (Candles)",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=nr_placed)"
+    },
+    "c5312": {
+      "name": "Inquisitor (Staff)",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=nr_placed)"
     },
     "c5320": {
       "name": "Fat Inquisitor",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5522": {
       "name": "Stray",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5523": {
       "name": "Stray",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+    },
+    "c5750": {
+      "name": "Living Jar Warrior",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=nr_placed)"
+    },
+    "c5751": {
+      "name": "Living Jar",
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=nr_placed)"
     },
     "c5820": {
       "name": "Great Red Bear",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5830": {
       "name": "Messmer Soldier",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=manual_retier_v0.24.100)"
     },
     "c5860": {
       "name": "Ghostflame Dragon",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5870": {
       "name": "Imp (Lion Head)",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5900": {
       "name": "Man-Fly",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c6031": {
       "name": "Bear",
-      "_inferred_source": "empirical_diff (orig _source=<none>)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c6060": {
       "name": "Goat",
-      "_inferred_source": "empirical_diff (orig _source=heritage)"
+      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     }
   }
 }

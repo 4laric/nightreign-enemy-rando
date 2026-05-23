@@ -451,53 +451,27 @@ V3_EXCLUDE_PREFIXES = {
     # whose emerge animation would otherwise lock them dormant. Both prefixes
     # are now valid sources AND targets — slots will randomize.
 
-    # v0.26.x: ban c4500, c4504, c4505 — the three "uninteresting" or
-    # "doesn't fit" flying dragons. The remaining roster (c4501/c4502
-    # Ekzykes-class scarlet rot, c4503 Borealis ice, c4510 Ancient
-    # lightning, c5860 Ghostflame death, c7700 Gaping bile) gives
-    # every dragon swap interesting elemental/status sauce.
-    #
-    #   c4500  Flying Dragon (Agheel-class base, no element/status —
-    #          the "no sauce" dragon).
-    #   c4504  Elder Dragon Greyoll. Too big — Greyoll is the giant
-    #          prone elder dragon; spawning at random arena slots
-    #          gives clipping / collision issues + absurd healthbar
-    #          presentation. Not worth the visual chaos.
-    #   c4505  Flying Dragon (Small). Same "no sauce" complaint as
-    #          c4500 — small bland dragon when we could be putting
-    #          baby ekzykes / borealis / etc. at horde slots.
-    #
-    # TODO (dev/TODO.md): investigate which ER dragons can be heritage-
-    # imported to widen the saucy pool — Smarag, Adula, Glintstone
-    # Dragon, etc. would give even more elemental variety.
-    'c4500',
-    'c4504',
-    'c4505',
-
-    # v0.26.16: ban the three unverified regular-crab imports.
-    # CTD root cause (seed 704822, v0.26.15): c2277 "Crab (Golden Tufts)"
-    # CTDs on spawn — write fault to 0x24, near-null deref during chr
-    # init. c2277 is an imported_chr that was NEVER playtest-verified:
-    #   - v0.24.40 proactively banned c2273/c2274/c2275/c2277 (no
-    #     anim_class/locomotion/size_class — matched the c3360/c4430
-    #     confirmed-broken-runtime profile).
-    #   - v0.24.41 un-banned ONLY c2274 (Giant Sleep Crab), because it
-    #     was specifically playtest-confirmed. c2273/c2275/c2277 stayed
-    #     banned, explicitly flagged "probably aren't broken" = unverified.
-    #   - v0.24.72 tag-backfill filled c2273/c2275/c2277 -> aquatic/S by
-    #     *family inference*. That satisfied has-tags gates but verified
-    #     nothing about the actual assets.
-    #   - v0.24.102 removed their caps from _LIFTED_V0_24_65.
-    # Net: c2277 went banned -> uncapped-and-live without ever being
-    # verified the way c2274 was. Same failure shape as the c5840
-    # '(Unused)' leak — the detection signal was removed, not the defect.
-    # Likely an incomplete heritage/MMV deployment (NpcThinkParam row or
-    # behaviorVariationId mismatch on the imported behbnd).
-    # c2273/c2275 are the same unverified import batch — banning all three.
-    # c2271 (vanilla) and c2274/c2276 (verified giants) stay eligible.
-    'c2273',  # Crab (Maggots)       — unverified import, CTD-suspect
-    'c2275',  # Crab (Clean)         — unverified import, CTD-suspect
-    'c2277',  # Crab (Golden Tufts)  — confirmed CTD, seed 704822
+    # NOTE: flying dragons (c4500/c4504/c4505) and the unverified
+    # crab imports (c2273/c2275/c2277) were moved OUT of this set to
+    # V3_EXCLUDE_TARGET_PREFIXES (v0.26.x-fix). This set excludes as
+    # source AND target; only target-exclusion was intended — vanilla
+    # dragon/crab slots must stay source-eligible so they randomize.
+    # -- Mount / rider components + composites. Moved here v0.26.x from
+    # the split SOURCE+TARGET listing (consolidation per exclude audit).
+    # Excluded as BOTH: vanilla slots scramble rider-mount pairs / hand-
+    # tuned encounters if randomized away (source side); they break
+    # standalone -- riderless mounts have no AI, c3610 floats frozen
+    # off-cluster, c4450 clips everything (target side). Rider-mount
+    # proximity collapse + RIDER_MOUNT_PAIRS still handle in-cluster pairs.
+    'c3150',  # Night's Cavalry (rider)
+    'c3160',  # Funeral Steed (Night's Cavalry mount)
+    'c3170',  # Albinauric Archer (rider)
+    'c3180',  # Albinauric Archer's Wolf (mount)
+    'c4050',  # Kaiden Sellsword (rider)
+    'c4060',  # Kaiden Sellsword's Horse (mount)
+    'c4363',  # Lordsworn Knight's Horse (NB-variant mount)
+    'c3610',  # Oracle Envoy -- Maris cluster member; floats frozen off-cluster
+    'c4450',  # Walking Mausoleum -- 59m tall, clips everything; keep at home
 }
 
 # C-prefixes excluded as SOURCES only (slot stays vanilla) but allowed as targets.
@@ -528,39 +502,6 @@ V3_EXCLUDE_SOURCE_PREFIXES = {
     # Tendrils + 47 Jellyfish + 13 Envoys all shuffled into each other).
     'c5110',  # Maris' Tendril
     'c4181',  # Maris' Jellyfish
-    'c3610',  # Oracle Envoy
-    # v0.24.86-patch2: mount-component source exclude.
-    # Empirically discovered via m60_44_36_00 CTD (seed 500886): a c4060
-    # Kaiden's Horse slot at (109.47, 79.53, 1.32) was eligible for swap
-    # since c4060 wasn't source-excluded. Random pick was c3702
-    # Glintstone Sorcerer; Sorcerer at a horse slot CTDs because mount
-    # slots invoke rider-mount composite logic / horse IK constraints
-    # that non-mount chrs can't satisfy. The existing
-    # _collapse_rider_mount_pairs proximity pass would have collapsed
-    # this pair, but pi=28 c4050 rider was at (-22, 85, 14) — ~131u away
-    # from its horse — so the 2u proximity threshold missed it. Vanilla
-    # NR sometimes places riders and mounts as independent units in the
-    # same MSB (lone horse wandering, rider standing elsewhere). For
-    # those cases the proximity collapse can't help; only c-prefix-level
-    # source exclusion preserves the slot.
-    #
-    # Pairs this protects (see RIDER_MOUNT_PAIRS at line ~887):
-    #   c4050 + c4060  Kaiden Sellsword + Horse
-    #   c3170 + c3180  Albinauric Archer + Wolf
-    #   c4353 + c4363  Leyndell Knight + Lordsworn's Horse (NB variant)
-    #   c3150 + c3160  Night's Cavalry + Funeral Steed
-    #
-    # Cost: 69 vanilla slots out of 3932 total (1.75%) become non-
-    # randomizable. Trivially small; eliminates the entire mount-slot
-    # CTD class.
-    'c3160',  # Funeral Steed (mount)
-    'c3170',  # Albinauric Archer (rider) — Alaric audit: ban for safety
-              #   even though c3170 itself isn't tagged mount_component;
-              #   the slot may have residual pair linkage from vanilla.
-    'c3180',  # Albinauric Archer's Wolf (mount)
-    'c4050',  # Kaiden Sellsword (rider)
-    'c4060',  # Kaiden Sellsword's Horse (mount) — tonight's CTD culprit
-    'c4363',  # Lordsworn Knight's Horse (NB variant, mount)
     # v0.20.24: c3620 (Oracle Envoy Large; Cathedral) REMOVED from
     # source-exclude. Playtest evidence: only the SMALL Oracle Envoy
     # (c3610) has the floating-frozen-at-spawn issue at non-cluster
@@ -696,24 +637,9 @@ V3_EXCLUDE_SOURCE_PREFIXES = {
     # exclusion of c3150 (rider) and c3160 (mount, already excluded both
     # ways) is the conservative fix while the collapse pass is revisited.
     # See _collapse_rider_mount_pairs TODO at line ~969.
-    'c3150',  # Night's Cavalry (rider) — re-introduced v0.24.101
     # 'c3160',  # Funeral Steed (mount) — already excluded above
     # 'c3150',  # Night's Cavalry (rider) — LIFTED v0.23.74
     # 'c3160',  # Funeral Steed (mount) — LIFTED v0.23.74
-    # v0.19.11: Commander Night Boss spawn integrity.
-    # c3050 has only 2 slots in the entire game — both are Night Boss
-    # arenas (m49_26 Outland Commander, m49_27 Battlefield Commander).
-    # The Night Boss arena spawn handler in these maps fires scripted
-    # events that hard-depend on c3050's animation library / AI states
-    # for the wake-up cinematic and phase transitions. Swapping the
-    # source breaks the spawn (per playtest seed 246135: c3050 → c4750
-    # Grafted Monarch left the boss frozen at spawn).
-    #
-    # Both c3050 variants are themselves "(Night Boss)" — there's no
-    # vanilla c3050 placement OUTSIDE the night boss arenas, so source-
-    # excluding the whole c-prefix has zero variety cost while keeping
-    # the Commander encounter intact.
-    'c3050',  # Commander (Outland + Battlefield, both Night Boss only)
     # v0.19.13: Tree Sentinel Night Boss arena trio (m48_50 + m48_60).
     # Empirically validated by playtest: when c3250 Draconic Tree Sentinel
     # got swapped to a non-mounted boss model (Fat Inquisitor in seed
@@ -1220,12 +1146,6 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # aggression) because their NPCParam is configured for "ride-along" rather
     # than "combat". Our cluster-shape catalog still places them correctly
     # in mount+rider cluster swaps via member-by-member shape matching.
-    'c4050',  # Kaiden Sellsword (rider) — paired with c4060 horse
-    'c4060',  # Kaiden Sellsword's Horse — riderless, no standalone AI
-    'c3180',  # Albinauric Archer's Wolf — same pattern, mount component
-    'c4363',  # Lordsworn Knight's Horse (Night's Cavalry mount) — riderless
-              # mount piece; rider c3150 is dispatched separately. Solo
-              # placement = inert riderless horse trotting around.
     # v0.25.0-patch1: c4361 Godrick Knight's Horse — same failure mode as
     # c4363 but escaped the original audit because nr_enemy_tags has it
     # tagged tier='grunt' (the other Knight's Horse variants are correctly
@@ -1237,52 +1157,6 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # slot). Tag fix in nr_enemy_tags.json (grunt → mount_component) ships
     # alongside this to close the structural gap too.
     'c4361',  # Godrick Knight's Horse — paired with c4353 Leyndell Knight
-    # v0.20.69: paired/multi-part chrs promoted from SENSITIVE → EXCLUDED.
-    # User playtest revealed these break STANDALONE everywhere — not just
-    # at fragile slots — because each one is a required component of a
-    # vanilla multi-chr setup. SENSITIVE classification was based on
-    # fragile-slot CTDs but the real failure mode is "missing partner",
-    # which manifests at every kind of slot. Moving to EXCLUDED stops
-    # solo placement entirely; cluster-shape matching can still place
-    # them when their proper partner cluster is being shuffled.
-    'c3160',  # Funeral Steed (Night's Cavalry mount) — paired with c3150
-              #   rider in vanilla. v0.20.50 added to SENSITIVE; v0.20.69
-              #   user "frozen night's cav horse" confirms break-everywhere
-              #   pattern. Same role as c4363 (alternate Night's Cavalry
-              #   mount type).
-    # v0.24.86-patch2: ban Night's Cavalry as a swap target. Not tagged
-    # mount_component (tier=night_boss), so the mmv_imports auto-ban
-    # doesn't catch it. But c3150 without c3160 underneath is a lonely
-    # guy with a halberd — broken visual + AI. Source side is also
-    # covered now via the new c3160 entry in V3_EXCLUDE_SOURCE_PREFIXES.
-    'c3150',  # Night's Cavalry — banned per Alaric audit; sucks solo.
-    # v0.24.86-patch2-followup: complete bans for cluster_only/paired
-    # chrs that were in V3_EXCLUDE_SOURCE_PREFIXES but missing from
-    # target side. Source-only exclusion preserves vanilla placements
-    # but lets these chrs leak elsewhere as random swap targets, where
-    # the same break-at-non-cluster-placement issue applies.
-    #
-    # c3610 Small Oracle Envoy: the comment in V3_EXCLUDE_SOURCE_PREFIXES
-    # explicitly notes "the floating-frozen-at-spawn issue at non-cluster
-    # placements" — that intent never made it to the target side. Seed
-    # 923630 had c3610 placed at m49_43_00_00 pi=7 (canonical swap from
-    # c2500 Crucible Knight slot), which is exactly the failure scenario
-    # the source-side comment warned about. Closing the loop now.
-    'c3610',  # Small Oracle Envoy — floating-frozen at non-cluster
-              #   placements. v0.20.24 source-exclude implied target-
-              #   exclude but only source side landed. Empirical:
-              #   seed 923630 m49_43_00_00 pi=7.
-    #
-    # c3170 Albinauric Archer: source-excluded in v0.24.86-patch2 per
-    # Alaric audit ("ban the archer too, not worth the risk"). The
-    # source-only ban left 5 target placements in seed 923630; intent
-    # was full ban. Adding target side closes the gap.
-    'c3170',  # Albinauric Archer — full ban per Alaric audit;
-              #   completes v0.24.86-patch2 source-exclude.
-    'c4950',  # Tibia Mariner (XL boat-rider component) — paired with
-              #   summoned skeletons + boat in vanilla. v0.20.50 added to
-              #   SENSITIVE; v0.20.69 promoting to EXCLUDED — boat physics
-              #   / summon scripts don't initialize at non-vanilla slots.
     'c4460',  # Flame Chariot (XXL multi-part: cart + horses + rider) —
               #   v0.20.53 added to SENSITIVE; v0.20.69 promoting to
               #   EXCLUDED. Multi-physics-body compound chr; subcomponent
@@ -1339,28 +1213,6 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # Soldiers in Caria Manor that we could heritage-import for AI later;
     # for now exclude as target. Tier=grunt humanoid M (8 variants).
     'c3850',  # Marionette — Sparring Grounds Dummy variant has no combat AI
-    # v0.19.29: Three "(Unscaled)" heritage minibosses with scripted-only
-    # variants. ALL their NPCParams require a specific spawn-trigger event
-    # (Prelude / Evergaol / Field Boss / Noklateo) that doesn't fire in
-    # arbitrary slots. When placed via shuffle, the model spawns but the
-    # combat AI activation flag never gets set — the enemy stands in idle
-    # pose with weapon lowered and doesn't aggro. Confirmed in playtest
-    # (frozen Black Knife Assassin at field-boss-style altar slot;
-    # frozen Nox Swordstress in castle ruin via grunt promotion).
-    #
-    # Variant breakdown — none have a regular combat-spawn variant:
-    #   c2100 — 21000020 (Field Boss), 21000040 (Noklateo), 21000000 (generic
-    #            but rarely picked, also possibly tied to a boss script)
-    #   c3300 — 5/5 Prelude or Evergaol
-    #   c3600 — 4/4 Prelude or Evergaol
-    #
-    # These could be heritage-reimported with combat-AI variants later
-    # (vanilla ER has aggressive Black Knife Assassin in catacombs and
-    # Alabaster Lord in Mt Gelmir caves), same approach as the planned
-    # Marionette fix. Exclude as target for now.
-    'c2100',  # Black Knife Assassin (Unscaled) — scripted-only spawns
-    'c3300',  # Nox Swordstress (Unscaled) — all variants Prelude/Evergaol
-    'c3600',  # Alabaster Lord (Unscaled) — all variants Prelude/Evergaol
     # v0.19.31: Skull Plate Giant Ant (c4281) — quadruped_large XL with
     # locomotion=5 (spider-jump pathing). Empirically breaks on rubble /
     # uneven stone geometry. Originally fully excluded as a workaround
@@ -1397,10 +1249,20 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # because excluded" to "0-1 per run, only at high-quality slots."
     # 'c4910',  # Magma Wyrm (Crater) — lifted v0.23.07; cap=1
     # 'c4510',  # Ancient Dragon — lifted v0.23.07; cap=1
-    # 'c4500',  # Flying Dragon (Unscaled) — lifted v0.23.07; cap=1
+    # v0.26.x: c4500/c4505 moved here from V3_EXCLUDE_PREFIXES — they
+    # were wrongly SOURCE-excluded. Target-excluded only now; vanilla
+    # dragon slots stay source-eligible and still randomize.
+    'c4500',  # Flying Dragon (Agheel-class, "no sauce" base dragon)
     # 'c4501',  # Decaying Ekzykes (Unscaled) — lifted v0.23.07; cap=1
     # 'c4503',  # Borealis the Freezing Fog — lifted v0.23.07; cap=1
-    # 'c4505',  # Flying Dragon (Small) — lifted v0.23.07; cap=2
+    'c4505',  # Flying Dragon (Small) — "no sauce" small dragon
+    # v0.26.16: c2273/c2275/c2277 unverified crab imports moved here
+    # from V3_EXCLUDE_PREFIXES (c2277 confirmed CTD seed 704822).
+    # imported_chr — zero vanilla source slots, so target-exclude is
+    # the only meaningful exclusion for them anyway.
+    'c2273',  # Crab (Maggots)      — unverified import, CTD-suspect
+    'c2275',  # Crab (Clean)        — unverified import, CTD-suspect
+    'c2277',  # Crab (Golden Tufts) — confirmed CTD, seed 704822
     # 'c4911',  # Great Wyrm Theodorix — lifted v0.23.07; cap=1
     # v0.23.76: c5810 Demi-Human Swordmaster REMOVED from target-exclude.
     # Lifted together with c4110 Shaman source-exclusion since the original
@@ -1414,11 +1276,6 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     #   Paired with c4110 Shaman source-exclusion (above) to preserve the
     #   Demi-Human family ecosystem.
     # 'c5810',  # LIFTED v0.23.76
-    # Walking Mausoleum — 59m tall ambulatory tomb. Animation cycles + scale
-    # collide with whatever ground-level chr it lands next to (clipping, AI
-    # pathing breaks, sometimes spawned-inside-terrain). Native arena in
-    # vanilla is hand-tuned for it; nothing else is. Keep it at home.
-    'c4450',
     # v0.23.71: MMV chrbnd-preload CTD set. These MMV-imported chrs
     # consistently CTD before the map finishes loading (asset preload
     # failure), or freeze on first encounter due to missing dependency
@@ -1522,10 +1379,6 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # Companion edits below this set: c4181 also removed from
     # _FI_CPS_RESERVED_FOR_TARGET (defensive-cleanup must not undo this
     # exclusion — same pattern as v0.20.69 c5110 promotion).
-    'c4021',  # Royal Revenant (variant) — was in V3_FRAGILE_SENSITIVE_TARGETS
-              #   + V3_NIGHT_BOSS_CALIBER_TARGETS (eligible for NB arenas).
-              #   Spoiler 726484 placed it 5x across m46/m49/m60 cells.
-              #   Spoiler 412746 also had placements (v0.23.12 era CTD).
     # v0.24.101: c4181 LIFTED from V3_EXCLUDE_TARGET_PREFIXES — part of
     # the "open the floodgates" variety pass. Original v0.23.12 ban was
     # for a Rotting Woods Day 2 CTD that traced to 6× c4181 placements
@@ -1551,13 +1404,6 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # was ON for the run (expected to provide the asset) but the chr still
     # rendered invisible — suggests the asset isn't in the standard MMV
     # chrbnd preload set or fails to register for the Fort arena. Plus
-    # the swap had boss=False / tier=fort_suffix mismatch, so a Fort boss
-    # encounter degraded to a non-boss small worm anyway. Until we have
-    # per-arena chrbnd-preload-aware filtering (same workstream as the
-    # v0.23.71 SoTE-MMV CTD set above), exclude both Lamprey variants
-    # from target placement.
-    'c5060',  # Lamprey       — invisible at placement, MMV asset gap
-    'c5061',  # Lamprey (Sm)  — same family, same failure mode
     # v0.23.86: c3860 Avionette + c3370 Ancestral Follower Shaman were
     # added here on a misread of the user's playtest report. The two
     # freezes at the Lordsworn Captain Fort were SLOT-side fragility
@@ -2787,6 +2633,84 @@ V3_NIGHT_BOSS_EXTENDED_NAME_MARKERS = V3_NIGHT_BOSS_NAME_MARKERS + [
 ]
 
 
+def _assemble_exclude_target_prefixes(tags, roster, loader_stats):
+    """Single assembly point for V3_EXCLUDE_TARGET_PREFIXES (v0.26.x).
+
+    Every target-exclusion source is folded here, in order, and this is
+    the ONLY place the set is (re)assigned at load time. Previously the
+    sources were merged by `|=` mutations scattered across ~300 lines of
+    load_data(), so no single place showed the resolved set.
+
+    Sources, in fold order:
+      1. Static base -- the hand-curated V3_EXCLUDE_TARGET_PREFIXES literal
+         at the top of the file, ALREADY merged at import time with
+         data/nr_missing_chr_files.json by _load_missing_chr_files(). That
+         merge stays at import so `cp in V3_EXCLUDE_TARGET_PREFIXES` works
+         for pre-load_data() queries; this function takes the seeded set
+         as its base.
+      2. Pack-loader exclude_target_adds -- currently MMV: the
+         blacklist_when_active lists (ctd_unidentified + dlc_assets_
+         missing_in_mmv + ai_broken) plus the tier=='mount_component'
+         auto-ban. Any loader may contribute; the fold iterates uniformly.
+      3. Computed: c-prefixes tagged tier=='cinematic'.
+      4. Computed: c-prefixes whose every variant has an empty variant_name.
+      5. Computed: c-prefixes with tag data but no roster variants.
+
+    Returns the resolved set; the caller assigns it to the global.
+    """
+    resolved = set(V3_EXCLUDE_TARGET_PREFIXES)  # (1) static + missing-chr seed
+
+    # (2) pack-loader exclude_target_adds (MMV blacklist + mount-component
+    # guard). This used to be a separate fold near the loader pipeline.
+    for stats in loader_stats.values():
+        resolved |= stats.get('exclude_target_adds', set())
+
+    # (3) v0.23.34: auto-exclude tier='cinematic' c-prefixes. Post-DLC
+    # integration introduced ~30 c-prefixes for Roundtable NPCs, Revenant
+    # summons, system/template chrs and player-tier objects that break
+    # placement at random slots. Tagging tier='cinematic' in the manifests
+    # keeps the exclusion declarative.
+    _cinematic = {cp for cp, t in tags.items()
+                  if isinstance(t, dict) and t.get('tier') == 'cinematic'}
+    _n_added = len(_cinematic - resolved)
+    if _n_added:
+        print(f"v0.23.34: auto-excluded {_n_added} tier='cinematic' c-prefixes "
+              f"(plus {len(_cinematic & resolved)} already in exclude set)")
+    resolved |= _cinematic
+
+    # (4) v0.23.71: auto-exclude c-prefixes whose every variant has an
+    # empty variant_name (post_dlc_dump scrapes the engine cannot name).
+    # Conservative: only prefixes whose variants are ALL empty -- a cp
+    # with one named variant stays in the pool.
+    _named, _all_cps = set(), set()
+    for v in roster.get('all_variants', []):
+        cp = v.get('c_prefix')
+        if not cp:
+            continue
+        _all_cps.add(cp)
+        if (v.get('variant_name') or '').strip():
+            _named.add(cp)
+    _empty_variant = (_all_cps - _named) - resolved
+    if _empty_variant:
+        print(f"v0.23.71: auto-excluded {len(_empty_variant)} c-prefixes with "
+              f"all-empty variant_name variants from target pool "
+              f"({sorted(_empty_variant)})")
+        resolved |= _empty_variant
+
+    # (5) v0.23.72-late: auto-exclude c-prefixes that have tag data but NO
+    # roster variants. The picker would pick them at boss-arena slots, then
+    # pick_variant_for_tier returns None and the slot silently stays
+    # vanilla. Engine-side safety net; companion fix is data-side.
+    _no_variant = (set(tags.keys()) - _all_cps - resolved - V3_EXCLUDE_PREFIXES)
+    if _no_variant:
+        print(f"v0.23.72-late: auto-excluded {len(_no_variant)} c-prefixes with "
+              f"tag data but no roster variants from target pool "
+              f"({sorted(_no_variant)})")
+        resolved |= _no_variant
+
+    return resolved
+
+
 def load_data():
     # v0.23.34: globals declared at function top so all later assignments work,
     # even those in nested conditional blocks earlier in the function.
@@ -2851,22 +2775,17 @@ def load_data():
     # used to be inline in the mmv block (since mmv was the only loader
     # that contributed); now any loader can contribute and the fold
     # iterates uniformly.
+    # Fold per-loader caliber contributions into the NB caliber gate.
+    # (v0.26.x: pack-loader exclude_target_adds are no longer folded here
+    # -- they are merged by _assemble_exclude_target_prefixes() below, the
+    # single assembly point for V3_EXCLUDE_TARGET_PREFIXES. NB-strict gate
+    # removed; strict_adds no longer collected.)
     _all_caliber: set = set()
-    _all_exclude_target: set = set()
     for stats in loader_stats.values():
         _all_caliber |= stats.get('caliber_adds', set())
-        # v0.26.x: NB-strict gate removed. We no longer collect or apply
-        # strict_adds from pack loaders. Caliber gate still gathers
-        # boss-tier additions; strict was a more restrictive variant-name
-        # filter that's been retired (see V3_NIGHT_BOSS_STRICT_TARGETS
-        # definition near line 8816 for full rationale).
-        _all_exclude_target |= stats.get('exclude_target_adds', set())
     if _all_caliber:
         V3_NIGHT_BOSS_CALIBER_TARGETS = (
             V3_NIGHT_BOSS_CALIBER_TARGETS | _all_caliber)
-    if _all_exclude_target:
-        V3_EXCLUDE_TARGET_PREFIXES = (
-            V3_EXCLUDE_TARGET_PREFIXES | _all_exclude_target)
 
     # v0.23.72-late: manual_promotions.json mechanism removed. Historically
     # this file held synthetic tag + variant entries for scripted-spawn
@@ -3079,93 +2998,14 @@ def load_data():
                   f"unbanned target: {bool(n_unbanned)}). "
                   f"Pair with OOPS_ALL_NB_TARGET_CP='{probe_cp}' via the GUI.")
 
-    # v0.23.34: auto-exclude tier='cinematic' c-prefixes from target pool.
-    # The post-DLC integration introduced ~30 c-prefixes for Roundtable NPCs,
-    # Revenant summons, system/template chrs, and player-tier objects that
-    # would break placement at random slots. Tagging them tier='cinematic' in
-    # the manifests + auto-extending V3_EXCLUDE_TARGET_PREFIXES here keeps the
-    # exclusion declarative. (globals already declared at function top.)
-    _cinematic_cps = {cp for cp, t in tags.items()
-                      if isinstance(t, dict) and t.get('tier') == 'cinematic'}
-    if _cinematic_cps:
-        _n_already = len(_cinematic_cps & V3_EXCLUDE_TARGET_PREFIXES)
-        _n_added = len(_cinematic_cps - V3_EXCLUDE_TARGET_PREFIXES)
-        V3_EXCLUDE_TARGET_PREFIXES = V3_EXCLUDE_TARGET_PREFIXES | _cinematic_cps
-        if _n_added:
-            print(f"v0.23.34: auto-excluded {_n_added} tier='cinematic' c-prefixes "
-                  f"(plus {_n_already} already in exclude set)")
-
-    # v0.23.71: auto-exclude c-prefixes whose every variant has an empty
-    # variant_name. These come from post_dlc_dump scrapes where the engine's
-    # name extraction couldn't resolve a display name from the regulation;
-    # the variants exist in NpcParam but have no usable label, and
-    # pick_variant_for_tier rejects empty-name variants via its v0.23.04.1
-    # empty-name guard. If ALL variants for a c-prefix fail that guard,
-    # the c-prefix is a dead target: pick_target_cp picks it, then
-    # pick_variant_for_tier returns None, then pick_target returns
-    # (None, None), and the slot ends up vanilla with n_skipped_compat
-    # bumped.
-    #
-    # Concrete examples this catches: c4811 has 4 variants (npc_param
-    # 48110000, 48110010, 48110020, 48119000), all post_dlc_dump, all
-    # variant_name=''. Same for c7900. When the scripted-intro filter narrows
-    # c4910 Magma Wyrm's pool to 7 candidates including these two dead
-    # ones, ~30% of seeds pick the dead c-prefix and the spawn-pool slot
-    # stays vanilla.
-    #
-    # Fix: scan roster variants here at load time, find c-prefixes whose
-    # entire variant list fails the empty-name guard (matching the filter
-    # in pick_variant_for_tier), and add them to V3_EXCLUDE_TARGET_PREFIXES.
-    # They never enter any pool — no per-slot retry needed, no per-call
-    # overhead. Mirrors the cinematic auto-exclude above.
-    #
-    # Conservative: we only exclude prefixes whose variants are ALL empty.
-    # A c-prefix with one named variant and three empty ones stays in the
-    # pool — pick_variant_for_tier's existing tier+name filtering picks
-    # the named one. We only catch the all-empty case.
-    _named_cps = set()
-    _all_cps = set()
-    for v in roster.get('all_variants', []):
-        cp = v.get('c_prefix')
-        if not cp:
-            continue
-        _all_cps.add(cp)
-        if (v.get('variant_name') or '').strip():
-            _named_cps.add(cp)
-    _empty_variant_cps = (_all_cps - _named_cps) - V3_EXCLUDE_TARGET_PREFIXES
-    if _empty_variant_cps:
-        V3_EXCLUDE_TARGET_PREFIXES = V3_EXCLUDE_TARGET_PREFIXES | _empty_variant_cps
-        print(f"v0.23.71: auto-excluded {len(_empty_variant_cps)} "
-              f"c-prefixes with all-empty variant_name variants from target "
-              f"pool ({sorted(_empty_variant_cps)})")
-
-    # v0.23.72-late: auto-exclude c-prefixes that have tag data but NO
-    # roster variants. These come from manifests (e.g. mmv_imports.json's
-    # c4730 Starscourge Radahn) that claim a c-prefix exists with all the
-    # right tag attributes — including expects_boss_arena=True which puts
-    # them in V3_ARENA_ONLY_TARGETS — but the corresponding
-    # variants_per_prefix list is empty. The engine picks them at boss-arena
-    # slots, then pick_variant_for_tier returns None (no variants to choose
-    # from), and the slot silently stays vanilla.
-    #
-    # Symptoms before this guard: spoiler shows reduced boss-tier placement
-    # rate at arena slots; n_skipped_compat counter ticks up; no warning
-    # surfaces because the chain is "pick → variant_picker returns None →
-    # fall back to vanilla" which is a valid path for many other reasons.
-    # Catching this at load time means the cp never enters any pool, so
-    # the picker doesn't waste cycles on it.
-    #
-    # The companion fix is data-side: either author variants_per_prefix
-    # rows (requires NpcParam IDs that exist in the regulation), or remove
-    # the tag claim entirely. This guard is the engine-side safety net.
-    _tag_cps_with_no_variants = (set(tags.keys()) - _all_cps
-                                  - V3_EXCLUDE_TARGET_PREFIXES
-                                  - V3_EXCLUDE_PREFIXES)
-    if _tag_cps_with_no_variants:
-        V3_EXCLUDE_TARGET_PREFIXES = V3_EXCLUDE_TARGET_PREFIXES | _tag_cps_with_no_variants
-        print(f"v0.23.72-late: auto-excluded {len(_tag_cps_with_no_variants)} "
-              f"c-prefixes with tag data but no roster variants from target "
-              f"pool ({sorted(_tag_cps_with_no_variants)})")
+    # ---- Single assembly point for V3_EXCLUDE_TARGET_PREFIXES (v0.26.x) ----
+    # The MMV blacklist fold + the three computed unions (cinematic /
+    # all-empty-variant / tag-but-no-variant) were previously merged by |=
+    # mutations scattered across ~300 lines of load_data(). They now all
+    # land in one function, called once here with tags + roster + loader
+    # stats finalized. See _assemble_exclude_target_prefixes() docstring.
+    V3_EXCLUDE_TARGET_PREFIXES = _assemble_exclude_target_prefixes(
+        tags, roster, loader_stats)
 
     # v0.23.34: auto-extend NB caliber set with tier-tagged boss-tier c-prefixes.
     # The caliber set is otherwise populated from manifests (heritage_pack etc).
@@ -10439,9 +10279,21 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
     # that specific slot with a +2m Y reposition. User now requests the
     # class-level fix in v0.24.55 after another sunken troll.
     #
+    # v0.26.x: 'L' added to the source set. Sunken trolls kept being
+    # reported at slots Gate 7 did NOT cover -- the original {S,M,XS}
+    # scope let an XXL troll land at any L-source slot, and an
+    # L-calibrated slot Y still leaves an XXL rig waist-deep (less
+    # dramatic than at an M slot, but the same failure). Geometry
+    # clipping is not purely cosmetic -- a partially-embedded hitbox
+    # can be unhittable and physics depenetration is unpredictable --
+    # so the conservative call is to block the whole size-down range.
+    # Cost: XXL targets lose ~46 L-source slots; accepted over the
+    # clipping risk. (The surgical alternative, per-slot V3_POSITION_
+    # SHIFTS Y-lifts, stays available for any L-slot worth reclaiming.)
+    #
     # Scope:
-    # - target size_class == 'XXL'  (29 chrs)
-    # - src size_class in {'S', 'M', 'XS'}  (147 chrs total)
+    # - target size_class == 'XXL'
+    # - src size_class in {'XS', 'S', 'M', 'L'}  (195 chrs, v0.26.x count)
     # GIGA targets are NOT included here — they have their own
     # rig/anim diversity (giga_boss vs flying_dragon) that's better
     # handled by Gates 3 (forbidden_source_anim) and 5 (flying_required).
@@ -10457,7 +10309,7 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
         target_size = tags.get(target_cp, {}).get('size_class')
         if target_size == 'XXL':
             src_size = tags.get(src_cp, {}).get('size_class')
-            if src_size in ('S', 'M', 'XS'):
+            if src_size in ('XS', 'S', 'M', 'L'):
                 return 'xxl_at_small_slot'
 
     # Gate 7.5 (revised v0.24.86-patch6.1): slope-aware size-up at

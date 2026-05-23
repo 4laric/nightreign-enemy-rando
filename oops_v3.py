@@ -3564,15 +3564,16 @@ def plan_bulk_chr_import(source_chr_dir, target_chr_dir,
                                    'script')
 
     chr_re = re.compile(r'^(c\d{4})(_[a-zA-Z0-9]+)?\.(chrbnd|anibnd|behbnd|texbnd)\.dcx$')
-    # Script files use a numeric-prefix naming convention: cXXXY → XXXYZZ_*.luabnd
-    # E.g. c5210 → 521000_battle.luabnd, 521010_battle.luabnd, etc.
-    #      c3252 → 325200, 325210
-    #      c4385 → 438500
-    # The FULL 4 digits of the c-prefix identify the chr; the trailing 2 digits
-    # are the form (00=base, 10=phase-2 or first sub-form, 20=second sub-form, ...).
-    # Earlier versions of this code matched only the 3-digit family prefix, which
-    # incorrectly grouped sibling chrs (c4380, c4381, ..., c4385 all sharing the
-    # same '438' family) under a single c-prefix.
+    # Script files use a numeric-prefix naming convention. A chr cNNNX's
+    # battle/logic scripts are named after its MODEL: usually the chr's
+    # own number (cNNNX -> NNNX00_*.luabnd, e.g. c5210 -> 521000,
+    # c3252 -> 325200), but for a variant that shares its base model's
+    # scripts, the BASE number (cNNNX -> NNN000, e.g. c5192 and c5193
+    # both run 519000_battle.luabnd). So the lookup must try the chr's
+    # own 4 digits first, then fall back to the base model (variant
+    # digit forced to 0). v0.27.0: earlier code used only cp[1:5] and
+    # silently failed to import scripts for every base-model-sharing
+    # variant chr.
     # Both _battle and _logic are AI scripts (battle = combat brain,
     # logic = navigation/idle). Match both, with or without .dcx wrapper.
     script_re = re.compile(r'^(\d{4})\d{2}_(battle|logic)\.luabnd(\.dcx)?$')
@@ -3594,10 +3595,19 @@ def plan_bulk_chr_import(source_chr_dir, target_chr_dir,
                 out.append(fn)
         return sorted(out)
 
-    def cp_to_script_prefix(cp):
-        """c5210 → '5210'  (the 4-digit chr prefix used in script filenames).
-        E.g. c5250 → '5250', c4385 → '4385', c3252 → '3252'."""
-        return cp[1:5] if len(cp) >= 5 else None
+    def cp_to_script_prefix(cp, *indexes):
+        """Resolve cp to the 4-digit key its scripts are indexed under.
+        Tries the chr's own number (cp[1:5]) first, then the base-model
+        number (cp[1:4]+'0'). `indexes` are the script dicts to probe
+        for the literal key; if none contain it, the base key is used.
+        E.g. c3252 -> '3252' (own script), c5192 -> '5190' (shares the
+        c5190 base-model script)."""
+        if len(cp) < 5:
+            return None
+        lit = cp[1:5]
+        if any(lit in idx for idx in indexes):
+            return lit
+        return cp[1:4] + '0'
 
     # Pre-index script source files by chr prefix for fast lookup
     src_scripts_by_chr = defaultdict(list)
@@ -3619,7 +3629,8 @@ def plan_bulk_chr_import(source_chr_dir, target_chr_dir,
         """Return list of script files in source for this c-prefix that
         AREN'T already in target. Compares basename ignoring .dcx wrapper
         (source may be uncompressed .luabnd while target is .luabnd.dcx)."""
-        chr_prefix = cp_to_script_prefix(cp)
+        chr_prefix = cp_to_script_prefix(cp, src_scripts_by_chr,
+                                         tgt_scripts_by_chr)
         if not chr_prefix: return []
         src_files = src_scripts_by_chr.get(chr_prefix, [])
         if not src_files: return []
@@ -3989,11 +4000,27 @@ def plan_roster_import(mmv_dir, er_dir, target_chr_dir,
 
     def _scripts_to_copy(cp, src_script_idx):
         """Source script files for cp not already in target (basename
-        compare, ignoring the .dcx wrapper)."""
-        sp = cp[1:5] if len(cp) >= 5 else None
-        if not sp:
+        compare, ignoring the .dcx wrapper).
+
+        v0.27.0 bugfix: a chr cNNNX's battle/logic scripts are named
+        after the chr's MODEL, which is sometimes the chr's own number
+        (cNNNX -> NNNX00, e.g. c3252 -> 325200) and sometimes the
+        base-model number when the variant shares the base model's
+        scripts (cNNNX -> NNN000, e.g. c5192/c5193 Spider Scorpion both
+        run 519000_battle.luabnd, indexed under '5190'). The old key
+        cp[1:5] only handled the first case, so every variant chr that
+        shared a base-model script (last digit != 0) silently got no AI
+        script imported -- it ran behbnd-only. The fix tries the literal
+        key first, then falls back to the base-model key. This raised
+        heritage-pack script coverage from 43/71 to 67/71."""
+        if len(cp) < 5:
             return []
-        src = src_script_idx.get(sp, [])
+        # try the chr's own number, then fall back to its base model
+        src = src_script_idx.get(cp[1:5])
+        sp = cp[1:5]
+        if not src:
+            sp = cp[1:4] + '0'
+            src = src_script_idx.get(sp, [])
         if not src:
             return []
         tgt_bases = set()

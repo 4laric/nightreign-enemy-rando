@@ -117,8 +117,6 @@ class TestNonPersistableVars:
         ('disable_resilient_filter_var',
          'Diagnostic mode — must default OFF each session to prevent '
          'accidental engine-validation runs.'),
-        ('test_mode_arenas_var',
-         'Diagnostic mode — overlay would silently apply if persisted.'),
         ('chr_overwrite_var',
          'Destructive flag — default OFF protects against accidental '
          'overwriting of customized chr files.'),

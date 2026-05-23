@@ -3145,18 +3145,31 @@ class TestUniqueReservationFragilityFilter:
             'position': (None, 42.8, None),
         }
 
-    def test_c7910_rejected_at_fragile_slot(self, engine, tags):
-        """The headline case from seed 537773."""
+    def test_c7910_allowed_at_fragile_slot_post_flip(self, engine, tags):
+        """v0.27.0: fragile filter flipped whitelist -> blacklist. c7910
+        Storm King is NOT in V3_FRAGILE_SENSITIVE_TARGETS, so the
+        fragility gate alone no longer rejects it. (Tier + arena gates
+        still keep a night_boss out of ordinary fragile slots in a real
+        run; this test exercises the fragility gate in isolation.) The
+        seed-537773 CTD slot is separately protected by EXTRA_BANS.
+        """
+        if 'c7910' in engine.V3_FRAGILE_SENSITIVE_TARGETS:
+            import pytest
+            pytest.skip('c7910 is in SENSITIVE; rejection is expected')
         slot = self._make_fragile_slot()
-        assert engine._score_slot_for_unique(slot, 'c7910', tags) is None
+        assert engine._score_slot_for_unique(slot, 'c7910', tags) is not None
 
-    def test_freja_rejected_at_fragile_slot(self, engine, tags):
-        """c7810 Freja Spiderling — MMV DS2 import, not in SAFE_CONFIRMED.
-        Previously could reserve fragile slots. v0.24.62 blocks."""
+    def test_sensitive_chr_rejected_at_fragile_slot(self, engine, tags):
+        """v0.27.0: the blacklist is now the load-bearing fragile gate.
+        A c-prefix IN V3_FRAGILE_SENSITIVE_TARGETS must still be rejected
+        at a fragile slot."""
         slot = self._make_fragile_slot()
-        # We don't assert anim compat here — even if compat passes,
-        # the fragility filter should reject.
-        assert engine._score_slot_for_unique(slot, 'c7810', tags) is None
+        sens = sorted(engine.V3_FRAGILE_SENSITIVE_TARGETS)
+        assert sens, 'V3_FRAGILE_SENSITIVE_TARGETS unexpectedly empty'
+        sample = sens[0]
+        assert engine._score_slot_for_unique(slot, sample, tags) is None, (
+            f'{sample} (in V3_FRAGILE_SENSITIVE_TARGETS) must be '
+            f'rejected at a fragile slot')
 
     def test_other_nightlords_rejected_at_fragile_slot(self, engine, tags):
         """Nightlord c-prefixes that are explicitly in V3_FRAGILE_SENSITIVE_
@@ -4240,28 +4253,14 @@ class TestGuardianGolemPoolLooseningsV0_24_75:
             "first reconcile with the v0.24.75 user directive that "
             "anim_class CTD theories were misattributed.")
 
-    def test_cathedral_unallowed_chr_still_rejected(self, engine, tags):
-        """A random non-SAFE_CONFIRMED chr that's NOT in EXTRA_ALLOWS
-        should still be rejected by the fragile filter."""
-        # Pick a chr that's neither in SAFE_CONFIRMED, RESILIENT_BIPEDS,
-        # NOR in the m38_00 pi=51 EXTRA_ALLOWS list.
-        not_allowed_anywhere = None
-        excludes = (engine.V3_FRAGILE_SAFE_CONFIRMED
-                    | engine.V3_RESILIENT_BIPEDS
-                    | engine.V3_PROBLEM_SLOT_EXTRA_ALLOWS.get(
-                        ('m38_00_00_00.msb', 51), set()))
-        for cp, t in tags.items():
-            if cp in excludes:
-                continue
-            if cp.startswith('c52') or cp.startswith('c6'):
-                continue  # skip Nightfarer NPCs and edge cases
-            if t.get('anim_class') == 'humanoid' and t.get('size_class') == 'M':
-                not_allowed_anywhere = cp
-                break
-        assert not_allowed_anywhere is not None, (
-            'Test fixture: could not find a non-SAFE non-RESILIENT '
-            'non-EXTRA_ALLOWS chr. Pool likely shifted; update test.')
+    def test_cathedral_non_sensitive_chr_now_allowed(self, engine, tags):
+        """v0.27.0: fragile filter flipped to blacklist. A chr that is
+        NOT in V3_FRAGILE_SENSITIVE_TARGETS and not in this slot's
+        EXTRA_BANS is now accepted at a Cathedral fragile slot — the old
+        SAFE_CONFIRMED whitelist requirement was archived.
 
+        Companion to test_cathedral_sensitive_chr_still_rejected below.
+        """
         slot_info = {
             'msb': 'm38_00_00_00.msb',
             'pi': 51,
@@ -4270,11 +4269,42 @@ class TestGuardianGolemPoolLooseningsV0_24_75:
             'source_variant_name': 'Guardian Golem (Cathedral)',
             'position': [0.0, 0.0, 0.0],
         }
-        score = engine._score_slot_for_unique(slot_info, not_allowed_anywhere, tags)
+        extra_bans = engine.V3_PROBLEM_SLOT_EXTRA_BANS.get(
+            ('m38_00_00_00.msb', 51), set())
+        # Pick an M-humanoid chr that is neither SENSITIVE nor banned at
+        # this slot — pre-flip this was rejected for not being whitelisted.
+        candidate = None
+        for cp, t in tags.items():
+            if cp in engine.V3_FRAGILE_SENSITIVE_TARGETS or cp in extra_bans:
+                continue
+            if cp.startswith('c52') or cp.startswith('c6'):
+                continue
+            if t.get('anim_class') == 'humanoid' and t.get('size_class') == 'M':
+                candidate = cp
+                break
+        assert candidate is not None, 'fixture: no suitable M-humanoid chr'
+        score = engine._score_slot_for_unique(slot_info, candidate, tags)
+        assert score is not None, (
+            f'{candidate} (not SENSITIVE, not EXTRA_BANned) should now be '
+            f'accepted at the Cathedral fragile slot post-v0.27.0 flip')
+
+    def test_cathedral_sensitive_chr_still_rejected(self, engine, tags):
+        """v0.27.0: the SENSITIVE blacklist still rejects at fragile
+        slots — the flip widened the pool, it did not remove the guard."""
+        slot_info = {
+            'msb': 'm38_00_00_00.msb',
+            'pi': 51,
+            'source_cp': 'c4660',
+            'source_npc': 46600030,
+            'source_variant_name': 'Guardian Golem (Cathedral)',
+            'position': [0.0, 0.0, 0.0],
+        }
+        sens = sorted(engine.V3_FRAGILE_SENSITIVE_TARGETS)
+        assert sens, 'V3_FRAGILE_SENSITIVE_TARGETS unexpectedly empty'
+        score = engine._score_slot_for_unique(slot_info, sens[0], tags)
         assert score is None, (
-            f'{not_allowed_anywhere} should be rejected at Cathedral '
-            'fragile slot (not in SAFE / RESILIENT / EXTRA_ALLOWS), '
-            'but _score_slot_for_unique accepted it.')
+            f'{sens[0]} (SENSITIVE) must still be rejected at the '
+            f'Cathedral fragile slot')
 
     def test_merchant_pool_vanilla_restricted(self, engine):
         """v0.24.75 RESTRICTED: merchant pool should exclude all

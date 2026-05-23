@@ -1720,9 +1720,11 @@ def _build_arena_hold_trigger_event_body(
 #  - common_func: appends one new $Event(99055500) — a parameterized
 #    one-shot proximity wake: WaitFor(player within R of the boss) ->
 #    EnableCharacterAI.
-#  - per-map: for every $InitializeCommonEvent(0, 90015000, flag, eid, ...)
-#    in a non-NB arena whose file contains no explicit EnableCharacterAI(eid),
-#    injects one $InitializeCommonEvent(0, 99055500, eid, R) right after it.
+#  - per-map: for every $InitializeCommonEvent(0, <ENC>, flag, eid, ...)
+#    where <ENC> is an encounter event in the chrEntityId-2nd-arg family
+#    (90015000 / 90015007 / 90015021), in a non-NB arena whose file
+#    contains no explicit EnableCharacterAI(eid), injects one
+#    $InitializeCommonEvent(0, 99055500, eid, R) right after it.
 #
 # Why proximity-to-the-boss-ENTITY is the correct gate
 # ----------------------------------------------------
@@ -1771,6 +1773,46 @@ _PROXIMITY_WAKE_RADIUS = 15          # metres, player-to-boss. Tunable; the
 _PROXIMITY_WAKE_EXCLUDE_ENTITIES = set()   # entity ids to never auto-wake
                                            # (e.g. intro-cutscene bosses)
 
+# v0.27.0: fragile-slot wake list. data/fragile_slot_entities.json is a
+# committed static data file (generated once per NR version by
+# dev/build_fragile_slot_entities.py) mapping each map stem to the
+# entity ids of its fragile miniboss / field_boss Enemy Parts. The
+# proximity-wake patch injects a wake handler for every one of them,
+# catching fragile boss slots that the encounter-event scan misses
+# (90015023 multi-chr arenas, slots with no monitored encounter event
+# at all). MSBs do not change per run, so this file is static — see the
+# generator's docstring. Loaded lazily and cached.
+_FRAGILE_SLOT_ENTITIES = None        # None = not yet loaded; dict once loaded
+
+
+def _emevd_data_path(filename):
+    """Resolve a data-file name to data/<filename> next to this module,
+    falling back to the module dir itself (mirrors oops_v3._data_path,
+    kept local so emevd_patch has no oops_v3 import dependency)."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    in_data = os.path.join(here, 'data', filename)
+    if os.path.exists(in_data):
+        return in_data
+    return os.path.join(here, filename)
+
+
+def _load_fragile_slot_entities():
+    """Lazy-load + cache data/fragile_slot_entities.json. Returns the
+    {map_stem: [entity_id, ...]} dict, or {} if the file is absent (the
+    fragile-slot wake pass then silently does nothing — the encounter-
+    event injection still runs)."""
+    global _FRAGILE_SLOT_ENTITIES
+    if _FRAGILE_SLOT_ENTITIES is not None:
+        return _FRAGILE_SLOT_ENTITIES
+    path = _emevd_data_path('fragile_slot_entities.json')
+    try:
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+        _FRAGILE_SLOT_ENTITIES = data.get('fragile_slot_entities', {}) or {}
+    except (OSError, ValueError):
+        _FRAGILE_SLOT_ENTITIES = {}
+    return _FRAGILE_SLOT_ENTITIES
+
 
 def _build_proximity_wake_event_body(radius=_PROXIMITY_WAKE_RADIUS):
     """Render the $Event(99055500) common_func body — a one-shot,
@@ -1802,15 +1844,31 @@ def _build_proximity_wake_event_body(radius=_PROXIMITY_WAKE_RADIUS):
 @register('proximity_wake')
 def patch_proximity_wake(content, filename):
     """v0.26.x: redundant, player-proximity-gated AI activation for non-NB
-    boss/miniboss slots that vanilla never wakes (the 90015XXX monitor
+    boss/miniboss slots that vanilla never wakes (the encounter monitor
     family does not enable AI). See the section header for the full
     rationale. Scripted equivalent of the backstab that un-freezes these
     encounters.
 
+    v0.27.0: widened from 90015000 alone to the 90015000/07/21 encounter
+    family (all share the chrEntityId-2nd-arg signature). Corpus audit:
+    coverage 197/252 -> 249/252 non-NB encounter registrations.
+
+    v0.27.0: added a second, JSON-driven pass. After the encounter scan,
+    data/fragile_slot_entities.json (a committed static file generated
+    by dev/build_fragile_slot_entities.py) supplies the entity ids of
+    fragile miniboss / field_boss slots. Any not already handled by the
+    encounter scan get a wake handler injected into the constructor
+    event. This catches fragile boss slots with no findable encounter
+    event (90015023 multi-chr arenas, script-spawn-only slots). On the
+    vanilla corpus the JSON pass adds +71 wakes over the encounter scan.
+
     common_func : appends $Event(99055500) once.
-    arena files : injects one $InitializeCommonEvent(0, 99055500, eid, R)
-                  per 90015000-registered boss that the file does not
-                  already explicitly wake.
+    arena files : injects $InitializeCommonEvent(0, 99055500, eid, R) --
+                  after the encounter call for bosses the scan finds
+                  (events 90015000/07/21), and into the constructor for
+                  fragile-slot entities from fragile_slot_entities.json
+                  that the scan did not already cover. Skips any entity
+                  the arena already wakes explicitly.
     other files : untouched.
     """
     # --- common_func: append the proximity-wake event once ---
@@ -1835,8 +1893,26 @@ def patch_proximity_wake(content, filename):
     # Each named boss/miniboss is registered by
     #   $InitializeCommonEvent(0, 90015000, eventFlagId, chrEntityId, ...);
     # chrEntityId is the 2nd content argument.
+    # v0.27.0: widened from the single 90015000 event to the encounter
+    # family that shares the (eventFlagId, chrEntityId, ...) signature.
+    # Verified against the vanilla decompiled corpus (common_func.emevd):
+    #   90015000(eventFlagId, chrEntityId, nameId, ...)        — chr = arg 2
+    #   90015007(eventFlagId, chrEntityId, areaEntityId, ...)  — chr = arg 2
+    #   90015021(eventFlagId, chrEntityId, nameId, ..., flag3) — chr = arg 2
+    # All three put chrEntityId as the 2nd content arg, so the same
+    # capture group works. Audit (196-map vanilla corpus): widening here
+    # takes non-NB encounter-wake coverage from 197/252 to 249/252.
+    #
+    # NOT included — 90015023 / 90015026 are multi-chr arena events with
+    # a different layout: (eventFlagId, targetDistance, eventFlagId2,
+    # chrEntityId, chrEntityId2, nameId, [chrEntityId3, ...]). chr is at
+    # arg 4 and there are up to 4 of them. 90015026 is 100% night-boss
+    # arenas (excluded by design); 90015023 is 24/27 NB, leaving only 3
+    # non-NB registrations unhandled. Covering those needs a separate
+    # multi-chr-aware branch — deferred. See proximity-wake audit notes.
     call_re = re.compile(
-        r'^([ \t]*)(\$InitializeCommonEvent\(0,\s*90015000,\s*\d+,\s*(\d+),[^)]*\);)',
+        r'^([ \t]*)(\$InitializeCommonEvent\(0,\s*'
+        r'(?:90015000|90015007|90015021),\s*\d+,\s*(\d+),[^)]*\);)',
         re.MULTILINE)
 
     seen = set()
@@ -1862,6 +1938,53 @@ def patch_proximity_wake(content, filename):
         return f'{m.group(0)}\r\n{indent}{new_line}'
 
     new_content = call_re.sub(repl, content)
+
+    # --- v0.27.0: fragile-slot wake pass ---------------------------------
+    # The encounter scan above wakes bosses it can FIND via an
+    # InitializeCommonEvent(90015000/07/21) call. Fragile miniboss /
+    # field_boss slots that register via 90015023 (multi-chr arena) or
+    # via no monitored encounter event at all are invisible to it.
+    # data/fragile_slot_entities.json lists those slots' entity ids
+    # per map; inject a wake for any not already handled.
+    #
+    # `seen` already holds every entity the encounter scan injected for
+    # or skipped this file — reuse it so we never double-inject. The
+    # new lines go inside the constructor event ($Event(0, ...)), where
+    # InitializeCommonEvent calls legally live.
+    fragile_by_map = _load_fragile_slot_entities()
+    fragile_eids = fragile_by_map.get(stem, [])
+    if fragile_eids:
+        pending = []
+        for eid_i in fragile_eids:
+            if eid_i in seen:
+                continue                       # encounter scan handled it
+            seen.add(eid_i)
+            if eid_i in _PROXIMITY_WAKE_EXCLUDE_ENTITIES:
+                continue
+            if (f'InitializeCommonEvent(0, {_PROXIMITY_WAKE_EVENT_ID}, '
+                    f'{eid_i},') in new_content:
+                continue                       # idempotent
+            if f'EnableCharacterAI({eid_i})' in new_content:
+                continue                       # arena already wakes it
+            pending.append(eid_i)
+        if pending:
+            # Insert into the constructor event, right after its opening
+            # line. The constructor is `$Event(0, Default, function() {`.
+            ctor_re = re.compile(
+                r'(\$Event\(0,\s*Default,\s*function\(\)\s*\{[ \t]*\r?\n)')
+            cm = ctor_re.search(new_content)
+            if cm:
+                inject = ''.join(
+                    f'    $InitializeCommonEvent(0, '
+                    f'{_PROXIMITY_WAKE_EVENT_ID}, {eid}, '
+                    f'{_PROXIMITY_WAKE_RADIUS});\r\n'
+                    for eid in pending)
+                new_content = (new_content[:cm.end()] + inject
+                               + new_content[cm.end():])
+                counter[0] += len(pending)
+            # If there is no constructor event, the file is not a normal
+            # arena emevd — skip silently rather than guess an anchor.
+
     return new_content, counter[0]
 
 

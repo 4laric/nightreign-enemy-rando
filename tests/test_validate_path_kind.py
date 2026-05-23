@@ -233,3 +233,48 @@ class TestUnknownKind:
         state, detail = validate_path_kind(str(d), 'made_up_kind')
         assert state == 'unknown'
         assert 'made_up_kind' in detail or 'unknown' in detail.lower()
+
+
+class TestMe3LauncherExe:
+    """v0.27.0: the me3 launcher row never reports 'error' — the binary
+    is auto-discovered at launch, so the field is a pure override and a
+    missing/odd value caps at 'warn' (yellow)."""
+
+    def test_missing_file_is_warn_not_error(self, validate_path_kind,
+                                            tmp_path):
+        missing = tmp_path / 'nope' / 'me3.exe'
+        state, detail = validate_path_kind(str(missing), 'me3_launcher_exe')
+        assert state == 'warn', f'expected warn, got {state}'
+        assert 'auto-discovered' in detail
+
+    def test_recognised_binary_is_ok(self, validate_path_kind, tmp_path):
+        for name in ('me3.exe', 'me3', 'modengine2_launcher.exe'):
+            f = tmp_path / name
+            f.write_text('')
+            state, _ = validate_path_kind(str(f), 'me3_launcher_exe')
+            assert state == 'ok', f'{name} -> {state}'
+
+    def test_uppercase_extension_is_ok(self, validate_path_kind, tmp_path):
+        """basename match is case-folded — me3.EXE must read as ok."""
+        f = tmp_path / 'me3.EXE'
+        f.write_text('')
+        state, _ = validate_path_kind(str(f), 'me3_launcher_exe')
+        assert state == 'ok'
+
+    def test_unrecognised_name_is_warn(self, validate_path_kind, tmp_path):
+        f = tmp_path / 'something_else.exe'
+        f.write_text('')
+        state, _ = validate_path_kind(str(f), 'me3_launcher_exe')
+        assert state == 'warn'
+
+    def test_never_returns_error(self, validate_path_kind, tmp_path):
+        """The whole point: no input shape yields a red row."""
+        cases = [
+            str(tmp_path / 'missing.exe'),
+            str(tmp_path),  # a directory, not a file
+        ]
+        odd = tmp_path / 'weird.bin'; odd.write_text('')
+        cases.append(str(odd))
+        for c in cases:
+            state, _ = validate_path_kind(c, 'me3_launcher_exe')
+            assert state != 'error', f'{c} -> error (should never)'

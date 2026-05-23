@@ -41,7 +41,9 @@ INCLUDE_FILES = [
     # Runtime entry points
     'oops_rando_gui.py',
     'oops_rando_gui.pyw',   # v0.26.5: Windows double-click launcher (pythonw, no console)
-    'Launch.bat',           # v0.26.5: Windows .bat fallback for the pyw-association-missing case
+    # v0.27.0: Launch.bat removed from the manifest — Nexus flags bundled
+    # .bat files (auto-run / executable-content warnings), so it is no
+    # longer shipped. oops_rando_gui.pyw is the Windows double-click path.
     'check_setup.py',
     # Engine + core
     'oops_v3.py',

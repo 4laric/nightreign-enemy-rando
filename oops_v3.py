@@ -5115,6 +5115,68 @@ V3_RESILIENT_BIPEDS = set()
 #                                    tagger mis-keyed as quadruped. The
 #                                    real predictor is true 4-legged
 #                                    ground locomotion, not the tag.
+#
+# =====================================================================
+# v0.27.0 — FRAGILE-SLOT FILTER: WHITELIST -> BLACKLIST
+# =====================================================================
+# The production fragile-slot filter was inverted in v0.27.0. It used
+# to be inclusion-only: a c-prefix had to be in V3_FRAGILE_SAFE_CONFIRMED
+# (a 157-entry hand-curated playtest whitelist) to land at any fragile
+# slot. That design had two failures:
+#
+#   1. It rotted. Every new chr or asset pack needed manual addition.
+#      All 41 MMV-pack chrs were silently locked out of every fragile
+#      slot because nobody had hand-added them — which is the bug that
+#      surfaced this (Black Knight c5840 placing 1x vs Duelist c3400's
+#      31x in seed 129442, same tier, same weight, different slot pool).
+#   2. It conflated THREE distinct freeze classes under one flag:
+#
+#      Class 1 — AI-OFF. Swapped-in enemy boots with AI disabled; the
+#        vanilla arena emevd has no wake handler for that slot, so
+#        EnableCharacterAI never fires and the enemy stands inert. A
+#        backstab un-freezes it (the wake). RETIRED as a fragility
+#        concern: emevd_patch.py's _PROXIMITY_WAKE patch is the
+#        scripted backstab — it injects the missing wake handler.
+#
+#      Class 2 — GEOMETRY-STUCK. Enemy spawns clipped into / pinned
+#        against terrain; AI is awake but it is physically wedged. A
+#        backstab's grab-and-reposition shoves it free. The scripted
+#        equivalent is V3_POSITION_SHIFTS (per-slot position nudges) —
+#        the same mechanism used for the sunken-troll fix. Addressable
+#        per-slot, not a reason to whitelist whole c-prefixes.
+#
+#      Class 3 — LOCOMOTION/GEOMETRY MISMATCH. Enemy is awake AND
+#        unstuck and STILL cannot function: its locomotion/anim set has
+#        no valid moveset for the slot's terrain (aquatic gait on land,
+#        true-quadruped pathing on non-vanilla navmesh), or it simply
+#        does not fit (XXL/GIGA at a narrow authored sub-arena), or its
+#        AI is anchor-confused (Maris' Tendril at cluttered slots). A
+#        backstab does NOT fix this — it wakes/shoves, the enemy lurches
+#        once, then re-freezes or T-poses on the next navigation attempt.
+#
+# Only Class 3 is a genuine c-prefix-level fragility property. The new
+# filter therefore treats EVERY c-prefix as fragile-eligible EXCEPT the
+# V3_FRAGILE_SENSITIVE_TARGETS blacklist below (Class 3 chrs) and the
+# per-slot V3_PROBLEM_SLOT_EXTRA_BANS. SENSITIVE is now the load-bearing
+# guard, not the "defensive, should be redundant" pass it once was.
+#
+# V3_FRAGILE_SAFE_CONFIRMED is NOT deleted — it is demoted. It survives
+# as the "known-tested-safe" data set for two remaining consumers: the
+# Gate 5.5 grunt-trash-at-boss-bar exemption, and the diagnostic-mode
+# untested-pool computation (disable_resilient_filter). It is no longer
+# the production fragile gate.
+#
+# SENSITIVE-RETEST WORKFLOW (the path to shrinking this blacklist):
+# Class 3 membership is a hypothesis per entry, not proven law. Several
+# entries predate the _PROXIMITY_WAKE patch and may actually have been
+# Class 1 (AI-off) all along. To retest: run a diagnostic batch
+# (disable_resilient_filter + diagnostic_test_targets naming the chr)
+# forcing the suspect into Crater/Cathedral/off-mesh slots. If it no
+# longer freezes post-wake-patch, it was Class 1 — remove it here and
+# add it to SAFE_CONFIRMED (which removes it from the diagnostic pool).
+# If it still freezes, it is genuine Class 3 and stays. The blacklist
+# shrinks by evidence, the same way SAFE_CONFIRMED once grew.
+# =====================================================================
 V3_FRAGILE_SENSITIVE_TARGETS = {
     'c3470',  # Albinauric (cartwheel) — v0.20.17 (Madness Camp freeze)
     'c3610',  # Oracle Envoy (M grunt) — v0.20.39
@@ -5397,6 +5459,17 @@ V3_FRAGILE_SENSITIVE_TARGETS = {
 #     pool ∩ SAFE_CONFIRMED       (inclusion: only confirmed-safe)
 #     - SENSITIVE                  (exclusion: redundant guard)
 # and the engine relies entirely on empirical evidence.
+# v0.27.0 — DEMOTED. This set is NO LONGER the production fragile-slot
+# gate. The fragile filter was flipped from whitelist to blacklist (see
+# the three-freeze-class note above V3_FRAGILE_SENSITIVE_TARGETS). This
+# set survives only as the "known-tested-safe" data record, consumed by:
+#   - the Gate 5.5 grunt-trash-at-boss-bar exemption, and
+#   - diagnostic mode's untested-pool computation.
+# Do NOT add entries here expecting them to affect fragile-slot
+# eligibility — that is now governed by V3_FRAGILE_SENSITIVE_TARGETS
+# (the blacklist). Adding here only removes a chr from the diagnostic
+# retest pool. The 157 historical entries are kept as the empirical
+# playtest record they always were.
 V3_FRAGILE_SAFE_CONFIRMED = {
     # === v0.20.48 BULK ADD: move_type=3 untested → SAFE_CONFIRMED ===
     # 87 c-prefixes added without individual playtest based on the
@@ -8408,21 +8481,145 @@ V3_POSITION_SHIFTS = {
     # Slot is non-cluster (Queen is solo-Part in m46_77; mobs are
     # separate Parts pi=1-7). EMEVD: m46_77 healthbar binds to entity
     # 46770800 by ID, position-agnostic.
-    ('m46_77_00_00.msb', 8): {
-        'dxyz': (0.0, 0.5, -5.0),
-        'note': 'Demi-Human Queen anchor (0,0,0) — humanoid bipedal '
-                'spawn point, quadrupeds freeze with navmesh-edge '
-                'pathlock. v0.23.81 (+3, -3) shift failed for c3181 '
-                '(seed 211409) and c5820 (seed 975181). v0.24.18 '
-                'switches to cluster-symmetry-axis: pure -Z to median '
-                'grunt Z (-4.96), X=0 to stay symmetric. Three grunts '
-                '(pi 2, 3, 7) already live near (0,_,-5), so navmesh '
-                'is known-solid there. If this also freezes, escalate '
-                'to (0, +5, -5) Y-lift test or PROBLEM_SLOTS no-quadrupeds.',
-        'observed_in': 'seeds 211409 (c3181) + 975181 (c5820); cluster '
-                       'geometry analysis of m46_77 mob distribution',
+    # ----- Castle basement POI boss slot (Leonine Misbegotten source) -----
+    # v0.27.0: seed 568209 — c4680 Full-Grown Fallingstar Beast placed
+    # here (castle_interior tier, swapped onto a Leonine Misbegotten
+    # slot). Playtest: AI was ACTIVE — the boss attacked and was not
+    # inert — but it was pinned to one spot, and the reward drop spawned
+    # partly sunk into the floor. Diagnosis: this is a Class 2 (geometry-
+    # stuck) case, not Class 1 (AI-off). The slot Part transform is the
+    # (0,0,0) POI placeholder; the engine pull-in places the entity by
+    # its MODEL ORIGIN, and c4680's origin (a flying_dragon-class anim)
+    # sits lower relative to its feet than the humanoid Leonine it
+    # replaced — so the whole entity, drop included, lands too low.
+    #
+    # This entry fixes THIS slot. The general fix is the per-c-prefix
+    # V3_MODEL_Y_OFFSET table below — c4680 sinks on any humanoid-origin
+    # POI slot, not just this one. Starting guess +1.0 (user eyeballed
+    # the drop as ~1m sunk); iterate from playtest.
+    ('m46_86_00_00.msb', 1): {
+        'dxyz': (0.0, 1.0, 0.0),
+        'note': 'c4680 Fallingstar Beast sinks into castle-basement '
+                'floor — model origin lower than the humanoid slot '
+                'occupant. +1.0 Y starting guess (seed 568209). See '
+                'V3_MODEL_Y_OFFSET for the per-chr generalization.',
+        'observed_in': 'seed 568209 (c4680 at m46_86 pi=1)',
     },
 }
+
+
+# ============================================================================
+# v0.27.0 — PER-C-PREFIX MODEL Y-OFFSET
+# ----------------------------------------------------------------------------
+# V3_POSITION_SHIFTS above is keyed (msb, part_index) — it fixes one slot.
+# Some height problems are not slot properties, they are CHR properties: a
+# c-prefix whose model origin sits at a different height-above-feet than the
+# humanoid the rando swapped it for. On a POI slot (Part transform = (0,0,0),
+# engine pull-in places by model origin) such a chr lands too low (or high)
+# everywhere it is placed, regardless of slot.
+#
+# Observed v0.27.0 seed 568209: c4680 Full-Grown Fallingstar Beast sank into
+# the castle-basement floor; its reward drop spawned partly underground.
+# c4680 is a flying_dragon-class anim — its origin is calibrated for an
+# airborne pose, so it rides low on a ground POI slot. This is the same
+# class of issue for any oversized non-humanoid boss on a humanoid POI slot.
+#
+# V3_MODEL_Y_OFFSET maps c-prefix -> dy (world units, +up). It is applied at
+# MSB-write time IN ADDITION to any V3_POSITION_SHIFTS dxyz for the slot
+# (slot shift handles slot-specific problems; this handles chr-specific
+# ones; they stack). dy == 0.0 is a no-op.
+#
+# IMPORTANT — what does NOT belong here:
+#   - V3_FRAGILE_SENSITIVE_TARGETS chrs. Those are Class 3 (locomotion /
+#     terrain mismatch) — aquatic gait on land, true-quadruped navmesh
+#     pathing, anchored AI. A height offset does NOT fix Class 3; lifting
+#     a Land Octopus 1 unit just floats the same broken pathing higher.
+#     SENSITIVE is handled by the fragile-slot blacklist, not here. Do not
+#     pre-seed this table with SENSITIVE chrs.
+#
+# CALIBRATION: every value below is a playtest-derived guess. Only c4680
+# has an observation behind it (and that is a coarse +1.0 eyeball — refine
+# it). The rest are 0.0 placeholders, grouped by anim_class, so the table
+# structure exists and a playtest only needs to fill a number. A 0.0 entry
+# ships nothing — it is a no-op until measured. Do NOT bulk-fill these.
+V3_MODEL_Y_OFFSET = {
+    # --- flying_dragon anim (origin calibrated for airborne pose; these
+    #     are the most likely to sink on a ground POI slot) ---
+    'c4680': 1.0,    # Full-Grown Fallingstar Beast — seed 568209, castle
+                     #   basement, drop sank ~1m. STARTING GUESS, refine.
+    # 'c4500': 0.0,  # Flying Dragon (Unscaled)         — untested
+    # 'c4501': 0.0,  # Decaying Ekzykes (Unscaled)      — untested
+    # 'c4502': 0.0,  # Decaying Ekzykes-class Dragon    — untested
+    # 'c4503': 0.0,  # Borealis the Freezing Fog        — untested
+    # 'c4505': 0.0,  # Flying Dragon (Small)            — untested
+    # 'c4511': 0.0,  # Lichdragon Fortissax             — untested
+    # 'c4911': 0.0,  # Great Wyrm Theodorix             — untested
+    # 'c5860': 0.0,  # Ghostflame Dragon                — untested
+    # 'c6260': 0.0,  # Death Rite Bird                  — untested
+    # 'c7510': 0.0,  # Adel, Baron of Night             — untested
+    # 'c7511': 0.0,  # Adel, Baron of Night             — untested
+    # 'c7530': 0.0,  # Faurtis Stoneshield              — untested
+    #
+    # --- giga_boss anim (large ground bosses) ---
+    # 'c4241': 0.0,  # Giant Fingercreeper              — untested
+    # 'c4510': 0.0,  # Ancient Dragon                   — untested
+    # 'c4580': 0.0,  # Giant Wormface                   — untested
+    # 'c4620': 0.0,  # Astel, Stars of Darkness         — untested
+    # 'c4660': 0.0,  # Guardian Golem                   — untested
+    # 'c7700': 0.0,  # Gaping Dragon                    — untested
+    # 'c7710': 0.0,  # Centipede Demon                  — untested
+    #
+    # --- quadruped_large anim ---
+    # 'c4730': 0.0,  # Starscourge Radahn               — untested
+    # 'c4910': 0.0,  # Magma Wyrm                       — untested
+    # 'c5230': 0.0,  # Scadutree Avatar                 — untested
+    #
+    # c4900 / c4901 Caligo are GIGA but humanoid-anim — humanoid origin,
+    # expected to need no offset; intentionally not listed.
+    #
+    # --- JOSTLE TEST (v0.27.0) ----------------------------------------
+    # The entries below are NOT a known height fix. They are an
+    # experiment: per Alaric's read of how these enemies path in-game,
+    # a freeze at a fragile slot may be the enemy spawned wedged into
+    # geometry and stuck in a depenetration state its AI cannot exit.
+    # A +1.0 Y bump is a JOSTLE — nudge it off the exact wedged spot so
+    # the AI re-evaluates and finds nearby valid terrain. This is the
+    # same mechanism as the backstab-reposition theory, applied at spawn.
+    #
+    # These are all V3_FRAGILE_SENSITIVE_TARGETS quadruped-anim chrs.
+    # The offset does NOT change their fragility status (V3_MODEL_Y_OFFSET
+    # is not consulted by is_fragile_slot) — they stay SENSITIVE-gated
+    # while the jostle is evaluated. If a jostle is confirmed to work in
+    # playtest, that chr can be removed from SENSITIVE manually (the
+    # SENSITIVE-retest workflow), not automatically.
+    # Starting value +1.0 for the whole block; tune per chr from playtest.
+    'c3181': 1.0,    # Red Wolf of Radagon  — JOSTLE TEST
+    'c4070': 1.0,    # Wolf                 — JOSTLE TEST
+    'c4071': 1.0,    # White Wolf           — JOSTLE TEST
+    'c4080': 1.0,    # Rat                  — JOSTLE TEST
+    'c4090': 1.0,    # Giant Rat            — JOSTLE TEST
+    'c4150': 1.0,    # Basilisk             — JOSTLE TEST
+    'c4160': 1.0,    # Large Stray          — JOSTLE TEST
+    'c4161': 1.0,    # Stray                — JOSTLE TEST
+    'c4164': 1.0,    # Large Bloodbane Stray — JOSTLE TEST
+    'c4165': 1.0,    # Bloodbane Stray      — JOSTLE TEST
+    'c4166': 1.0,    # Large Rotten Stray   — JOSTLE TEST
+    'c4240': 1.0,    # Fingercreeper        — JOSTLE TEST
+    'c4280': 1.0,    # Giant Ant            — JOSTLE TEST
+    'c4960': 1.0,    # Giant Skeleton Torso — JOSTLE TEST
+    'c5522': 1.0,    # Stray                — JOSTLE TEST
+    'c5523': 1.0,    # Stray                — JOSTLE TEST
+    'c6060': 1.0,    # Goat                 — JOSTLE TEST
+}
+
+
+def lookup_model_y_offset(c_prefix):
+    """v0.27.0: Returns the model Y-offset (world units, +up) for a
+    c-prefix, or 0.0 if none is defined. Applied at MSB-write time on
+    top of any V3_POSITION_SHIFTS slot shift. See V3_MODEL_Y_OFFSET."""
+    if not c_prefix:
+        return 0.0
+    return V3_MODEL_Y_OFFSET.get(c_prefix, 0.0)
 
 
 def lookup_position_shift(slot_msb_name, slot_pi):
@@ -10856,19 +11053,18 @@ def _score_slot_for_unique(slot_info, target_cp, tags):
                                   slot_info.get('source_variant_name') or '',
                                   slot_pos=slot_info.get('position'))
     if is_fragile:
-        # v0.24.75: per-slot EXTRA_ALLOWS bypass at the fragile gate
-        # layer. If target_cp is explicitly whitelisted at this slot,
-        # skip BOTH the SENSITIVE_TARGETS reject AND the SAFE/RESILIENT
-        # gate. EXTRA_BANS still applies (intentional — bans are
-        # narrower/more authoritative than the broader SAFE filter).
+        # v0.27.0: WHITELIST -> BLACKLIST flip (mirrors the standard-
+        # shuffle fragile filter in pick_target_cp). The old gate
+        # required target_cp in V3_FRAGILE_SAFE_CONFIRMED; that whitelist
+        # was archived. A unique reservation now lands at a fragile slot
+        # unless target_cp is in the V3_FRAGILE_SENSITIVE_TARGETS
+        # blacklist or the per-slot EXTRA_BANS. EXTRA_ALLOWS still
+        # bypasses the SENSITIVE reject (its original purpose).
         extra_allows = V3_PROBLEM_SLOT_EXTRA_ALLOWS.get(
             (slot_info['msb'], slot_info['pi']))
         allowed_via_extra = extra_allows and target_cp in extra_allows
         if not allowed_via_extra:
             if target_cp in V3_FRAGILE_SENSITIVE_TARGETS:
-                return None
-            if (target_cp not in V3_FRAGILE_SAFE_CONFIRMED
-                    and target_cp not in V3_RESILIENT_BIPEDS):
                 return None
         extra_bans = V3_PROBLEM_SLOT_EXTRA_BANS.get(
             (slot_info['msb'], slot_info['pi']))
@@ -11784,12 +11980,17 @@ def pick_target_cp(recipient_cp, tags,
                 return None
         elif disable_resilient_filter:
             # v0.20.35: diagnostic mode. v0.20.37: untested-only filter.
-            # v0.20.40: also exclude V3_FRAGILE_SAFE_CONFIRMED — those are
-            # already-tested-and-safe; re-testing them generates no new
-            # info either. So the eligible pool at fragile slots in
-            # diagnostic mode is:
-            #   pool - RESILIENT - SAFE_CONFIRMED - SENSITIVE = untested
-            # SENSITIVE subtraction follows below.
+            # v0.20.40: also exclude V3_FRAGILE_SAFE_CONFIRMED — those
+            # are already-tested-and-safe; re-testing them yields no new
+            # info. v0.27.0: SAFE_CONFIRMED was retired as the *fragile
+            # gate* (production now uses the SENSITIVE blacklist only),
+            # but it is preserved as a data set precisely for this
+            # diagnostic path — it is still the "known-tested" record,
+            # so subtracting it here still yields the untested pool:
+            #   pool - SAFE_CONFIRMED - SENSITIVE = not-yet-tested
+            # This is the SENSITIVE-retest workflow's entry point: as
+            # chrs are confirmed safe at fragile slots, ADD them to
+            # SAFE_CONFIRMED to take them out of the diagnostic pool.
             # If empty, the slot stays vanilla (return None).
             resilient_set = V3_RESILIENT_BIPEDS
             chosen_pool = [cp for cp in chosen_pool
@@ -11815,21 +12016,32 @@ def pick_target_cp(recipient_cp, tags,
             # (Patch7 collapsed the dead v0.20.48 floater-preference if-else
             # branch — V3_OFF_MESH_PREFERRED_TARGETS was empty since v0.20.68
             # and the if-arm never executed. Same filter logic, less code.)
-            resilient_set = V3_RESILIENT_BIPEDS
-            allowed_set = resilient_set | V3_FRAGILE_SAFE_CONFIRMED
-            # v0.24.75: add EXTRA_ALLOWS for this slot
+            # v0.27.0: WHITELIST -> BLACKLIST flip. The production
+            # fragile-slot filter used to be inclusion-only: a c-prefix
+            # had to be in V3_FRAGILE_SAFE_CONFIRMED (a 157-entry hand-
+            # curated playtest whitelist) to land at a fragile slot.
+            # That whitelist was archived -- it had two fatal problems:
+            # it rotted (every new chr / pack needed manual extension,
+            # and all 41 MMV chrs were silently locked out of fragile
+            # slots, which is what surfaced this), and it conflated
+            # three distinct freeze classes under one flag. See the
+            # three-freeze-class note at V3_FRAGILE_SENSITIVE_TARGETS.
+            #
+            # New rule: at a fragile slot, EVERY c-prefix is allowed
+            # EXCEPT the V3_FRAGILE_SENSITIVE_TARGETS blacklist (the
+            # locomotion/geometry-mismatch chrs a fragile slot genuinely
+            # can't host) and the per-slot EXTRA_BANS below. The
+            # SENSITIVE subtraction that follows is now the load-bearing
+            # guard, not a redundant defensive pass.
+            allowed_set = None  # None = "all allowed"; blacklist does the work
             _extra_allows = V3_PROBLEM_SLOT_EXTRA_ALLOWS.get(
                 (slot_msb_name, slot_pi))
-            if _extra_allows:
-                allowed_set = allowed_set | _extra_allows
-            resilient_pool = [cp for cp in chosen_pool if cp in allowed_set]
-            if resilient_pool:
-                chosen_pool = resilient_pool
-            else:
-                return None
-            # Apply SENSITIVE blacklist (defensive — should be redundant
-            # since RESILIENT/SAFE_CONFIRMED don't overlap with SENSITIVE,
-            # but kept for safety).
+            # EXTRA_ALLOWS is now a no-op for inclusion (everything is
+            # already allowed) but harmless; left wired in case a future
+            # change reintroduces a per-slot inclusion gate.
+            _ = _extra_allows
+            # No inclusion filter — chosen_pool passes through. SENSITIVE
+            # blacklist + EXTRA_BANS below are the only fragile-slot cuts.
             if V3_FRAGILE_SENSITIVE_TARGETS:
                 chosen_pool = [cp for cp in chosen_pool
                                if cp not in V3_FRAGILE_SENSITIVE_TARGETS]
@@ -13205,10 +13417,15 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
         #   - Part is in a cluster (cluster aesthetics > shift benefit)
         # All decisions are logged into the trace event regardless of
         # outcome so we can audit why a shift didn't apply.
+        # v0.27.0: two independent contributions stack into one write:
+        #   - V3_POSITION_SHIFTS slot dxyz (slot-specific geometry fix)
+        #   - V3_MODEL_Y_OFFSET per-c-prefix dy (chr-specific origin fix)
+        # Either may be absent; if both are, nothing is written.
         _shift_entry = lookup_position_shift(map_name, pi)
+        _model_dy = lookup_model_y_offset(target_cp)
         _shift_applied = None
         _shift_skipped_reason = None
-        if _shift_entry:
+        if _shift_entry or _model_dy:
             if po + 0x400 + 12 > len(out):
                 _shift_skipped_reason = 'no_position_field'
             else:
@@ -13217,14 +13434,23 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
                 if _m.isnan(_ox) or _m.isnan(_oy) or _m.isnan(_oz):
                     _shift_skipped_reason = 'nan_position'
                 else:
-                    _dx, _dy, _dz = _shift_entry['dxyz']
+                    if _shift_entry:
+                        _sdx, _sdy, _sdz = _shift_entry['dxyz']
+                    else:
+                        _sdx, _sdy, _sdz = 0.0, 0.0, 0.0
+                    # model Y-offset stacks onto the slot shift's Y
+                    _dx, _dy, _dz = _sdx, _sdy + _model_dy, _sdz
                     _nx, _ny, _nz = _ox + _dx, _oy + _dy, _oz + _dz
                     struct.pack_into('<fff', out, po + 0x400, _nx, _ny, _nz)
                     _shift_applied = {
                         'from': (round(_ox, 3), round(_oy, 3), round(_oz, 3)),
                         'to':   (round(_nx, 3), round(_ny, 3), round(_nz, 3)),
                         'dxyz': (_dx, _dy, _dz),
-                        'note': _shift_entry.get('note', ''),
+                        'slot_dxyz': (_sdx, _sdy, _sdz),
+                        'model_dy': _model_dy,
+                        'note': (_shift_entry.get('note', '')
+                                 if _shift_entry else
+                                 f'model Y-offset only ({target_cp})'),
                     }
             _pos_shifts_applied.append({
                 'pi': pi,

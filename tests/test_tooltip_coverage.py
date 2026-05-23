@@ -147,17 +147,6 @@ class TestHeritageTabTooltips:
         assert found, ('Diagnostic-mode checkbox needs a direct '
                        'Tooltip — users may toggle this without '
                        'realizing it\'s an engine-validation mode.')
-
-    def test_test_mode_arenas_checkbox(self, gui_source):
-        found, _ = _has_tooltip_near(
-            gui_source,
-            '"Test-mode arenas: overlay MMV-style minimal EMEVDs',
-            window=700)
-        assert found, ('Test-mode arenas checkbox needs a direct '
-                       'Tooltip — without one, users may enable it for '
-                       'normal play and lose all the cinematic arena '
-                       'choreography.')
-
     def test_diagnostic_batch_entry(self, gui_source):
         """The batch-targets Entry (CTD attribution tool) — the input
         format isn't self-evident."""

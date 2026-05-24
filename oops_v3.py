@@ -1493,6 +1493,95 @@ V3_EXCLUDE_TARGET_PREFIXES = {
 }
 
 
+# v0.27.0: platoon-dependent chrs.
+#
+# A platoon-dependent chr is one that, in vanilla, exists ONLY as a member
+# of an MSB PlatoonInfo group (a coordinated enemy squad). Platoon members
+# start in a dormant disposition and are activated together by the platoon
+# trigger (PlatoonIDScriptActivate). They never aggro individually on
+# proximity the way a lone field grunt does.
+#
+# Nightreign's MSBs contain ZERO PlatoonInfo events (verified: 300 NR maps,
+# no PlatoonInfo records — NR's event subtypes are AreaTeam, Generator,
+# Mount, ObjAct, PatrolInfo, Treasure only). So when the rando swaps a
+# platoon-dependent chr into a plain NR field slot, it spawns dormant and
+# nothing in the NR engine ever issues the activation it is waiting for.
+# It freezes in a pre-aggro pose indefinitely. A backstab force-activates
+# it (confirmed empirically on c5830 Messmer Soldier).
+#
+# These chrs are NOT excluded outright. Instead, the swap path mints a
+# fresh per-map entity id for the placement (see _mint_wake_entity_id)
+# and records it; emevd_patch.py's patch_proximity_wake then injects a
+# 99055500 proximity-wake (player within R -> EnableCharacterAI) for each.
+# That is the scripted, bloodless equivalent of the backstab.
+#
+# Currently {c5830} — the one confirmed member. dev/build_heritage_pack.py
+# will populate this from an ER MSB PlatoonInfo audit (chrs that appear in
+# ER only as PlatoonInfo members, never as standalone Enemy parts).
+V3_PLATOON_DEPENDENT_PREFIXES = {
+    'c5830',  # Messmer Soldier. v0.27.0. Confirmed platoon-only via ER
+              #   MSB audit (m61_47_46_00 etc.): every vanilla c5830 is a
+              #   member of a "Royal Army Scout Soldiers" PlatoonInfo with
+              #   PlatoonIDScriptActivate=100, State=0 (dormant start).
+              #   All 14 NpcParam variants are ghost (sample_maps empty —
+              #   vanilla NR never places a standalone one). Freezes in a
+              #   "getting ready" pose at random field slots; backstab
+              #   un-freezes it into fully normal combat.
+}
+
+
+# v0.27.0: per-map free entity-id band for minting wake entity ids.
+#
+# Entity ids in NR MSBs follow an MMNNNXXX-ish layout keyed on the map's
+# numeric prefix. To mint a collision-free id for a platoon-dependent
+# placement, we allocate from a high band (prefix * 100000 + 99000 + n)
+# that vanilla does not populate, and verify against the map's existing
+# id set before use. Returns None if the part already has a nonzero
+# entity id (then no minting is needed — the slot is EMEVD-addressable
+# as-is) or if no map prefix can be derived.
+_WAKE_EID_BASE_OFFSET = 99000   # within a map prefix's id space
+
+
+def _collect_msb_entity_ids(data, parts_section):
+    """Return the set of all nonzero entity ids currently in an MSB."""
+    eids = set()
+    for po in parts_section['entry_offsets']:
+        if po + PART_OFF_ENTITY_ID + 4 <= len(data):
+            e = struct.unpack_from('<i', data, po + PART_OFF_ENTITY_ID)[0]
+            if e:
+                eids.add(e)
+    return eids
+
+
+def _mint_wake_entity_id(map_name, existing_eids, minted_so_far):
+    """Allocate a fresh, collision-free entity id for a wake placement.
+
+    map_name : e.g. 'm30_00_00_00.msb' — the leading two-digit group and
+               the next groups give the id prefix.
+    existing_eids : set of ids already in the map (from _collect_msb_entity_ids).
+    minted_so_far : set of ids this run has already minted for this map
+                    (so multiple platoon-dependent placements in one map
+                    do not collide with each other).
+
+    Returns an int entity id, or None if a prefix cannot be derived.
+    Vanilla NR ids look like <PP><NNN><XXX> where PP is the map's first
+    group. We mint <PP>99<NNN>: a band vanilla leaves empty. Verified
+    against the map's live id set + this run's minted set.
+    """
+    import re
+    m = re.match(r'm(\d{2})_(\d{2})_(\d{2})_(\d{2})', map_name or '')
+    if not m:
+        return None
+    pp = int(m.group(1))
+    # base: pp * 1_000_000  (e.g. m30 -> 30_000_000), + 99_000 high band
+    base = pp * 1_000_000 + _WAKE_EID_BASE_OFFSET
+    for n in range(1000):
+        cand = base + n
+        if cand not in existing_eids and cand not in minted_so_far:
+            return cand
+    return None
+
+
 # v0.26.x: drop the now-dead cap entries for c4910 and c5010 below. The
 # excludes above shadow these caps so they can't fire; leaving them as
 # dead code would surface in dev/audit_placement_budget_consistency.py
@@ -13446,6 +13535,12 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
     # write (each affected entry gets a 'position_shift' field) and the
     # end-of-MSB trace event.
     _pos_shifts_applied = []
+    # v0.27.0: wake-entity minting for platoon-dependent placements.
+    # Collect the map's existing entity ids once, up front, so minting
+    # is collision-free. _minted_wake_eids tracks ids minted within this
+    # MSB so multiple platoon-dependent placements don't collide.
+    _existing_eids = _collect_msb_entity_ids(bytes(out), parts)
+    _minted_wake_eids = set()
     for pi, target_cp, target_npc, target_think in swap_plan:
         po = parts['entry_offsets'][pi]
         new_idx = target_to_idx[target_cp]
@@ -13583,6 +13678,31 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
         struct.pack_into('<i', out, po + PART_OFF_MODEL_INDEX, new_idx)
         struct.pack_into('<I', out, po + PART_OFF_NPC_PARAM, target_npc)
         struct.pack_into('<I', out, po + PART_OFF_THINK_PARAM, target_think)
+        # v0.27.0: platoon-dependent wake minting. If a platoon-dependent
+        # chr (c5830 etc.) is being placed and the slot's Part has no
+        # entity id, mint a fresh one so emevd_patch.patch_proximity_wake
+        # can hook a 99055500 proximity-wake to it. A slot that ALREADY
+        # has an entity id needs no minting — it is EMEVD-addressable
+        # as-is, and the proximity-wake patch can target it directly.
+        if (target_cp in V3_PLATOON_DEPENDENT_PREFIXES
+                and po + PART_OFF_ENTITY_ID + 4 <= len(out)):
+            _cur_eid = struct.unpack_from('<i', out, po + PART_OFF_ENTITY_ID)[0]
+            _wake_eid = _cur_eid
+            if _cur_eid == 0:
+                _wake_eid = _mint_wake_entity_id(
+                    map_name, _existing_eids, _minted_wake_eids)
+                if _wake_eid is not None:
+                    struct.pack_into('<i', out, po + PART_OFF_ENTITY_ID,
+                                     _wake_eid)
+                    _minted_wake_eids.add(_wake_eid)
+                    _existing_eids.add(_wake_eid)
+            # record on the spoiler entry (just appended above) so
+            # cmd_shuffle_v3 can derive data/rando_wake_entities.json
+            if (_wake_eid is not None and spoiler_entries is not None
+                    and spoiler_entries):
+                spoiler_entries[-1]['new']['wake_entity_id'] = _wake_eid
+                spoiler_entries[-1]['new']['wake_entity_minted'] = (
+                    _cur_eid == 0)
         # Update instance counts on old + new
         old_e = models['entry_offsets'][old_idx]; new_e = models['entry_offsets'][new_idx]
         c_old = struct.unpack_from('<i', out, old_e + 0x18)[0]
@@ -14527,6 +14647,44 @@ def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
         print(f"Spoiler logs: {os.path.join(output_dir, '_spoilers.json')} "
               f"({len(spoiler_entries)} entries)")
         print(f"             {os.path.join(output_dir, '_spoilers.md')}")
+
+        # v0.27.0: derive rando_wake_entities.json from the spoiler.
+        # Every placement of a platoon-dependent chr carries a
+        # new.wake_entity_id (minted, or the slot's pre-existing id).
+        # emevd_patch.patch_proximity_wake reads this file as a third
+        # wake-injection pass (alongside the encounter scan and the
+        # fragile-slot pass) and emits a 99055500 proximity-wake for
+        # each — the scripted equivalent of the backstab that un-freezes
+        # these dormant platoon-only chrs at standalone field slots.
+        _wake_by_map = {}
+        for _e in spoiler_entries:
+            _weid = (_e.get('new') or {}).get('wake_entity_id')
+            if _weid is None:
+                continue
+            _mstem = (_e.get('map') or '').rsplit('.', 1)[0]
+            if not _mstem:
+                continue
+            _wake_by_map.setdefault(_mstem, []).append(int(_weid))
+        if _wake_by_map:
+            _wake_path = os.path.join(output_dir, 'rando_wake_entities.json')
+            with open(_wake_path, 'w', encoding='utf-8') as _wf:
+                json.dump({
+                    '_meta': {
+                        'schema_version': 1,
+                        'generated_by': 'oops_v3.cmd_shuffle_v3',
+                        'seed': seed,
+                        'purpose': ('Per-map entity ids of platoon-dependent '
+                                    'chr placements (c5830 etc.) that need a '
+                                    'proximity-wake. Consumed by emevd_patch.'
+                                    'patch_proximity_wake as a third wake pass.'),
+                    },
+                    'wake_entities': {k: sorted(v)
+                                      for k, v in sorted(_wake_by_map.items())},
+                }, _wf, indent=2)
+            _n_wake = sum(len(v) for v in _wake_by_map.values())
+            print(f"Wake entities: {_wake_path} "
+                  f"({_n_wake} platoon-dependent placements across "
+                  f"{len(_wake_by_map)} maps)")
 
 
 def write_spoiler_logs(output_dir, entries, seed,

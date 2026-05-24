@@ -31679,6 +31679,69 @@
       "sample_maps": [],
       "variant_name": "Furnace Golem",
       "has_reward": true
+    },
+    {
+      "c_prefix": "c5020",
+      "npc_param_id": 50200000,
+      "think_param_id": 50200000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Putrescent Knight",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5020",
+      "npc_param_id": 50200001,
+      "think_param_id": 50200000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Putrescent Knight",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5020",
+      "npc_param_id": 50200087,
+      "think_param_id": 50200000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Putrescent Knight",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5020",
+      "npc_param_id": 50200090,
+      "think_param_id": 50200000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Putrescent Knight",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5020",
+      "npc_param_id": 50200100,
+      "think_param_id": 50200000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Putrescent Knight",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5020",
+      "npc_param_id": 50200101,
+      "think_param_id": 50200000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Putrescent Knight",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5020",
+      "npc_param_id": 50200187,
+      "think_param_id": 50200000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Putrescent Knight",
+      "has_reward": false
     }
   ],
   "canonical_targets": [

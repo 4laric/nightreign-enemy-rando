@@ -7511,5 +7511,31 @@
     "tier": "field_boss",
     "variants": 14,
     "weight_median": 2000.0
+  },
+  "c5020": {
+    "_confidence": "medium",
+    "_heritage_imported": true,
+    "_source": "er_heritage_port_v0_27_0",
+    "anim_bank": 50200,
+    "anim_bank_count": 1,
+    "anim_class": "quadruped_large",
+    "expects_boss_arena": false,
+    "has_boss_reward": true,
+    "has_drops": true,
+    "has_reward": false,
+    "hit_height_median": 3.9,
+    "hit_radius_median": 1.1,
+    "hp_max": 2045,
+    "hp_median": 1745.0,
+    "locomotion": 3,
+    "move_type": 13,
+    "n_noreward_variants": 6,
+    "n_reward_variants": 1,
+    "name": "Putrescent Knight",
+    "size_class": "XL",
+    "team": 6,
+    "tier": "night_boss",
+    "variants": 7,
+    "weight_median": 100.0
   }
 }

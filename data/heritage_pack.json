@@ -319,6 +319,10 @@
     "c5170": {
       "name": "Furnace Golem",
       "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, profile mirrored from c4660 Guardian Golem)"
+    },
+    "c5020": {
+      "name": "Putrescent Knight",
+      "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, profile mirrored from c3251 Tree Sentinel)"
     }
   }
 }

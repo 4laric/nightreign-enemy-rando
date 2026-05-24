@@ -15,7 +15,7 @@
       "Seed 271328 (v0.24.33, MP-safe off): c7930 'Demon in Pain' placed at m46_82 pi=1 (castle_interior boss anchor) — no chr file → 'no health bar, no guy there' missing-boss report.",
       "Seed 798229 (v0.24.37, MP-safe off): small Oracle Envoy (c3610) placed at m45_01 pi=4 / m43_41 pi=7 in starting encampments — _cluster_only chr placed standalone → 'floating frozen'. Same seed: c3360 Ancestral Follower at m45_01 pi=1 OR c4430 Abnormal Stone Cluster at m45_01 pi=3 → invisible enemy report (both had anim_class/locomotion/size_class all None — no runtime characterization)."
     ],
-    "since_version": "v0.24.36 (initially hard-coded missing_chrs); v0.24.37 (migrated to data file, schema v1); v0.24.39 (schema v2: broken_runtime_chrs category with c3610/c3360/c4430 from playtest reports); v0.24.40 (proactive ban: all 26 remaining real-name post_dlc_dump/mmv_import chrs with no anim_class/locomotion/size_class data, matching the c3360/c4430 broken-runtime profile); v0.24.41 (UN-BANNED c2274 Giant Sleep Crab — confirmed working in playtest. The 3 regular-size crab siblings c2273/c2275/c2277 remain banned as low-value 'set dressing' per Alaric — kept for the safety net even though they likely render fine); v0.24.44 (added c7800 Duke's Dear Freja to missing_chrs — chr-asset-import tool flagged it as missing, no chrbnd in any source install); v0.24.49 (c5930 Giant Skeleton + c6220 Fire Demon added to broken_runtime_chrs — partial-tag profile escaped v0.24.40 all-three-None sweep; user playtest seed 460401 reported invisible enemy in central-south area, these are the two most likely culprits).; v0.24.65: LIFTED entire broken_runtime_chrs (30 entries) after user playtest confirmed MMV SFX + material deploy makes the full MMV roster work (proof case: Romina). The 30 lifted entries are preserved at _meta.history.broken_runtime_chrs_lifted_v0_24_65 for reference. Cap=1 applied to all lifted chrs via auto-cap in oops_v3 load_data (safety net: if any are still broken, cap limits to at most 1 placement per seed).; v0.25.0 (4 entries added to broken_runtime_chrs: c3471 Large Albinauric (Ruins) + c4281 Giant Ant (Skull Plate) — phantom-shaped post_dlc_dump variants with vanilla map placements but no per-chr script visible in script/nr/script/er/script/mmv archives; c5192 + c5193 Spider Scorpion variants — heritage imports already in IMPORT_PLAN parent-share to c5190 but cap=1 added as belt-and-suspenders pending playtest confirmation. All 4 are user-reported runtime breakage from v0.24.x playtest. Lift to placeable via _meta.history if playtest confirms working).; v0.25.0 audit pass: 8 more entries added to broken_runtime_chrs (c2272 Giant Black Crab, c3061 Giant Beast Skeleton, c4561 Bloodbane Giant Crow, c5522 + c5523 Stray, c5750 Living Jar Warrior, c5751 Living Jar, c6031 Bear). These are heritage-imported chrs that were not in import_heritage_ai_scripts.IMPORT_PLAN AND have no per-chr battle/logic luabnd in any of the ER, NR, or MMV script archives. Distinct from Category A of the same audit (c2040 Juvenile Scholar, c3510 Skeleton SwordShield, c3860 Avionette, c4220 Giant Land Octopus, c4341 Thin Mad Pumpkin Head) which had ER scripts and were added to IMPORT_PLAN instead. proactive_ban=True since no playtest incident yet — surfaced by the v0.25.0 roster audit during the investigation that resolved the c3471/c4281/c5192/c5193 cap-1 entries. v0.26.x (REMOVED c7800 Duke's Dear Freja from missing_chrs -- Alaric playtest review confirmed it works; the v0.24.44 asset-import-tool 'no chrbnd' flag was a false positive. c7800 is _source=script_spawn so it stays target-only via the script_spawn filter.)",
+    "since_version": "v0.24.36 (initially hard-coded missing_chrs); v0.24.37 (migrated to data file, schema v1); v0.24.39 (schema v2: broken_runtime_chrs category with c3610/c3360/c4430 from playtest reports); v0.24.40 (proactive ban: all 26 remaining real-name post_dlc_dump/mmv_import chrs with no anim_class/locomotion/size_class data, matching the c3360/c4430 broken-runtime profile); v0.24.41 (UN-BANNED c2274 Giant Sleep Crab — confirmed working in playtest. The 3 regular-size crab siblings c2273/c2275/c2277 remain banned as low-value 'set dressing' per Alaric — kept for the safety net even though they likely render fine); v0.24.44 (added c7800 Duke's Dear Freja to missing_chrs — chr-asset-import tool flagged it as missing, no chrbnd in any source install); v0.24.49 (c5930 Giant Skeleton + c6220 Fire Demon added to broken_runtime_chrs — partial-tag profile escaped v0.24.40 all-three-None sweep; user playtest seed 460401 reported invisible enemy in central-south area, these are the two most likely culprits).; v0.24.65: LIFTED entire broken_runtime_chrs (30 entries) after user playtest confirmed MMV SFX + material deploy makes the full MMV roster work (proof case: Romina). The 30 lifted entries are preserved at _meta.history.broken_runtime_chrs_lifted_v0_24_65 for reference. Cap=1 applied to all lifted chrs via auto-cap in oops_v3 load_data (safety net: if any are still broken, cap limits to at most 1 placement per seed).; v0.25.0 (4 entries added to broken_runtime_chrs: c3471 Large Albinauric (Ruins) + c4281 Giant Ant (Skull Plate) — phantom-shaped post_dlc_dump variants with vanilla map placements but no per-chr script visible in script/nr/script/er/script/mmv archives; c5192 + c5193 Spider Scorpion variants — heritage imports already in IMPORT_PLAN parent-share to c5190 but cap=1 added as belt-and-suspenders pending playtest confirmation. All 4 are user-reported runtime breakage from v0.24.x playtest. Lift to placeable via _meta.history if playtest confirms working).; v0.25.0 audit pass: 8 more entries added to broken_runtime_chrs (c2272 Giant Black Crab, c3061 Giant Beast Skeleton, c4561 Bloodbane Giant Crow, c5522 + c5523 Stray, c5750 Living Jar Warrior, c5751 Living Jar, c6031 Bear). These are heritage-imported chrs that were not in import_heritage_ai_scripts.IMPORT_PLAN AND have no per-chr battle/logic luabnd in any of the ER, NR, or MMV script archives. Distinct from Category A of the same audit (c2040 Juvenile Scholar, c3510 Skeleton SwordShield, c3860 Avionette, c4220 Giant Land Octopus, c4341 Thin Mad Pumpkin Head) which had ER scripts and were added to IMPORT_PLAN instead. proactive_ban=True since no playtest incident yet — surfaced by the v0.25.0 roster audit during the investigation that resolved the c3471/c4281/c5192/c5193 cap-1 entries. v0.26.x (REMOVED c7800 Duke's Dear Freja from missing_chrs -- Alaric playtest review confirmed it works; the v0.24.44 asset-import-tool 'no chrbnd' flag was a false positive. c7800 is _source=script_spawn so it stays target-only via the script_spawn filter.) v0.27.0 (LIFTED c5192 + c5193 Spider Scorpion variants from broken_runtime_chrs — the cp[1:5] script-key bug that blocked their c5190 parent-share was fixed; 519000_battle.luabnd now imports. Entries preserved at _meta.history.broken_runtime_chrs_lifted_v0_27_0. Static verification only — playtest still pending.) v0.27.0-late (Spider Scorpion family RE-BANNED in full — c5190 base added to broken_runtime_chrs alongside c5192/c5193. The v0.27.0 lift of c5192/c5193 was reverted: a playtest showed c5190 itself does not attack despite always having had 519000_battle.luabnd, proving the Spider Scorpion failure is not the missing-script bug. Root cause still unknown.)",
     "history": {
       "broken_runtime_chrs_lifted_v0_24_65": {
         "lift_rationale": "User playtest seed (post-v0.24.64) confirmed that the deploy formula (chr files + per-chr battle/logic scripts + bundled aicommon + MMV sfx/ dir + MMV material/ dir) restores cross-game and proactive-banned chrs to working state. Specific datapoint: Romina (Saint of the Bud, SoTE final boss) functions correctly after the full deploy. User directive: \"the ENTIRE MMV roster is back on the table. lift it dude\". The 30 lifted entries comprise 3 playtest-confirmed bans (c3610, c3360, c4430), 25 proactive bans from v0.24.40 all-None-tag sweep, and 2 mmv_import bans (c5930, c6220) from v0.24.49. All are now eligible as targets again, capped at 1 placement each.",
@@ -273,7 +273,7 @@
         ]
       }
     },
-    "last_updated_version": "v0.26.x"
+    "last_updated_version": "v0.27.0"
   },
   "missing_chrs": [
     {
@@ -341,24 +341,6 @@
       "_source": "post_dlc_dump",
       "symptom": "no_ai_brain",
       "reason": "2 NpcParam variants; vanilla placement at m46_02_00_00 (Limveld). No per-chr battle script in any of script/nr, script/er, script/mmv. c4280 Giant Ant has a script — c4281 may parent-share, or may be a phantom. User-reported runtime breakage motivates the cap=1 safety net.",
-      "observed_version": "v0.25.0",
-      "proactive_ban": true
-    },
-    {
-      "c_prefix": "c5192",
-      "name": "Spider Scorpion (variant)",
-      "_source": "post_dlc_dump",
-      "symptom": "no_ai_brain",
-      "reason": "Heritage import (_heritage_imported=True). No per-chr script anywhere; import_heritage_ai_scripts.IMPORT_PLAN maps c5192 to share c5190's 519000_battle.luabnd (same parent-share pattern as c5080/c5081, c5240/c5241). Cap=1 is belt-and-suspenders in case parent-share doesn't resolve at runtime — promote to placeable if playtest confirms.",
-      "observed_version": "v0.25.0",
-      "proactive_ban": true
-    },
-    {
-      "c_prefix": "c5193",
-      "name": "Spider Scorpion (variant)",
-      "_source": "post_dlc_dump",
-      "symptom": "no_ai_brain",
-      "reason": "Heritage import (_heritage_imported=True). Sibling of c5192; same parent-share-to-c5190 pattern in IMPORT_PLAN. Cap=1 belt-and-suspenders pending playtest confirmation.",
       "observed_version": "v0.25.0",
       "proactive_ban": true
     },
@@ -433,6 +415,33 @@
       "reason": "Heritage chr (1 NpcParam variant, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
       "observed_version": "v0.25.0",
       "proactive_ban": true
+    },
+    {
+      "c_prefix": "c5192",
+      "name": "Spider Scorpion (variant)",
+      "_source": "post_dlc_dump",
+      "symptom": "no_attack_with_script_present",
+      "reason": "Spider Scorpion family. v0.27.0 playtest finding: c5190 (the base model) does NOT attack in-game EVEN WITH 519000_battle.luabnd confirmed present. c5190 never had the cp[1:5] script-key bug — its literal key '5190' always matched '519000' — so it has always shipped with its script, yet still fails to fight. Therefore the Spider Scorpion failure is NOT a missing-AI-script problem; the v0.27.0 cp[1:5] fix (which does correctly resolve c5192/c5193's parent-share) does not address it. Root cause unknown — candidate: anim_class=aquatic mis-tag, or a chr-asset / behbnd issue affecting the whole c519x family. Whole family banned (c5190 base + c5192/c5193 variants) pending a real root-cause investigation. User-confirmed via v0.27.0 playtest.",
+      "observed_version": "v0.27.0",
+      "proactive_ban": false
+    },
+    {
+      "c_prefix": "c5193",
+      "name": "Spider Scorpion (variant)",
+      "_source": "post_dlc_dump",
+      "symptom": "no_attack_with_script_present",
+      "reason": "Spider Scorpion family. v0.27.0 playtest finding: c5190 (the base model) does NOT attack in-game EVEN WITH 519000_battle.luabnd confirmed present. c5190 never had the cp[1:5] script-key bug — its literal key '5190' always matched '519000' — so it has always shipped with its script, yet still fails to fight. Therefore the Spider Scorpion failure is NOT a missing-AI-script problem; the v0.27.0 cp[1:5] fix (which does correctly resolve c5192/c5193's parent-share) does not address it. Root cause unknown — candidate: anim_class=aquatic mis-tag, or a chr-asset / behbnd issue affecting the whole c519x family. Whole family banned (c5190 base + c5192/c5193 variants) pending a real root-cause investigation. User-confirmed via v0.27.0 playtest.",
+      "observed_version": "v0.27.0",
+      "proactive_ban": false
+    },
+    {
+      "c_prefix": "c5190",
+      "name": "Spider Scorpion",
+      "_source": "manual_retier_v0.24.100",
+      "symptom": "no_attack_with_script_present",
+      "reason": "Spider Scorpion family. v0.27.0 playtest finding: c5190 (the base model) does NOT attack in-game EVEN WITH 519000_battle.luabnd confirmed present. c5190 never had the cp[1:5] script-key bug — its literal key '5190' always matched '519000' — so it has always shipped with its script, yet still fails to fight. Therefore the Spider Scorpion failure is NOT a missing-AI-script problem; the v0.27.0 cp[1:5] fix (which does correctly resolve c5192/c5193's parent-share) does not address it. Root cause unknown — candidate: anim_class=aquatic mis-tag, or a chr-asset / behbnd issue affecting the whole c519x family. Whole family banned (c5190 base + c5192/c5193 variants) pending a real root-cause investigation. User-confirmed via v0.27.0 playtest.",
+      "observed_version": "v0.27.0",
+      "proactive_ban": false
     }
   ]
 }

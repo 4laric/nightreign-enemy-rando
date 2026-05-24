@@ -1814,39 +1814,6 @@ def _load_fragile_slot_entities():
     return _FRAGILE_SLOT_ENTITIES
 
 
-# v0.27.0: per-run platoon-dependent wake list. Unlike fragile_slot_
-# entities.json (a static committed data file), rando_wake_entities.json
-# is generated PER RUN by oops_v3.cmd_shuffle_v3 into the run's output
-# directory — it lists the entity ids of platoon-dependent chr
-# placements (c5830 etc.) for this specific seed. cmd_patch locates it
-# and sets _RANDO_WAKE_SEARCH_DIRS before dispatching patches; the
-# proximity-wake patch reads it as a third wake-injection pass.
-_RANDO_WAKE_ENTITIES = None       # None = not yet loaded
-_RANDO_WAKE_SEARCH_DIRS = []      # dirs cmd_patch will look in
-
-
-def _load_rando_wake_entities():
-    """Lazy-load + cache rando_wake_entities.json from the run dirs set
-    in _RANDO_WAKE_SEARCH_DIRS. Returns {map_stem: [entity_id, ...]},
-    or {} if absent (then the third wake pass silently does nothing —
-    a run with no platoon-dependent placements produces no such file)."""
-    global _RANDO_WAKE_ENTITIES
-    if _RANDO_WAKE_ENTITIES is not None:
-        return _RANDO_WAKE_ENTITIES
-    _RANDO_WAKE_ENTITIES = {}
-    for d in _RANDO_WAKE_SEARCH_DIRS:
-        path = os.path.join(d, 'rando_wake_entities.json')
-        if os.path.exists(path):
-            try:
-                with open(path, encoding='utf-8') as f:
-                    data = json.load(f)
-                _RANDO_WAKE_ENTITIES = data.get('wake_entities', {}) or {}
-                break
-            except (OSError, ValueError):
-                continue
-    return _RANDO_WAKE_ENTITIES
-
-
 def _build_proximity_wake_event_body(radius=_PROXIMITY_WAKE_RADIUS):
     """Render the $Event(99055500) common_func body — a one-shot,
     proximity-gated AI activation parameterized by (chrEntityId, radius)."""
@@ -2017,45 +1984,6 @@ def patch_proximity_wake(content, filename):
                 counter[0] += len(pending)
             # If there is no constructor event, the file is not a normal
             # arena emevd — skip silently rather than guess an anchor.
-
-    # --- v0.27.0: platoon-dependent wake pass ----------------------------
-    # rando_wake_entities.json (generated per-run by oops_v3) lists the
-    # entity ids of platoon-dependent chr placements (c5830 Messmer
-    # Soldier etc.) for this seed. These are plain field slots — the
-    # encounter scan and fragile-slot pass above never see them. Inject
-    # a 99055500 proximity-wake for each: the scripted equivalent of the
-    # backstab that un-freezes a dormant platoon-only chr. `seen` already
-    # holds every entity handled by the two passes above — reuse it so a
-    # slot that happened to be boss-adjacent is never double-injected.
-    wake_by_map = _load_rando_wake_entities()
-    wake_eids = wake_by_map.get(stem, [])
-    if wake_eids:
-        pending = []
-        for eid_i in wake_eids:
-            if eid_i in seen:
-                continue
-            seen.add(eid_i)
-            if eid_i in _PROXIMITY_WAKE_EXCLUDE_ENTITIES:
-                continue
-            if (f'InitializeCommonEvent(0, {_PROXIMITY_WAKE_EVENT_ID}, '
-                    f'{eid_i},') in new_content:
-                continue                       # idempotent
-            if f'EnableCharacterAI({eid_i})' in new_content:
-                continue                       # already woken
-            pending.append(eid_i)
-        if pending:
-            ctor_re = re.compile(
-                r'(\$Event\(0,\s*Default,\s*function\(\)\s*\{[ \t]*\r?\n)')
-            cm = ctor_re.search(new_content)
-            if cm:
-                inject = ''.join(
-                    f'    $InitializeCommonEvent(0, '
-                    f'{_PROXIMITY_WAKE_EVENT_ID}, {eid}, '
-                    f'{_PROXIMITY_WAKE_RADIUS});\r\n'
-                    for eid in pending)
-                new_content = (new_content[:cm.end()] + inject
-                               + new_content[cm.end():])
-                counter[0] += len(pending)
 
     return new_content, counter[0]
 
@@ -2578,18 +2506,6 @@ def cmd_patch(in_dir, out_dir, patch_names=None):
                 sys.exit(1)
 
     os.makedirs(out_dir, exist_ok=True)
-
-    # v0.27.0: tell the proximity-wake patch where to find this run's
-    # rando_wake_entities.json. oops_v3 writes it into the run output
-    # directory; the EMEVD dirs are typically a sibling or child of it.
-    # Search in_dir, out_dir, and their parents — first hit wins.
-    global _RANDO_WAKE_SEARCH_DIRS, _RANDO_WAKE_ENTITIES
-    _RANDO_WAKE_ENTITIES = None   # reset cache for this run
-    _RANDO_WAKE_SEARCH_DIRS = [
-        in_dir, out_dir,
-        os.path.dirname(os.path.abspath(in_dir)),
-        os.path.dirname(os.path.abspath(out_dir)),
-    ]
 
     files = sorted(f for f in os.listdir(in_dir) if f.endswith('.emevd.dcx.js'))
     print(f"Found {len(files)} EMEVD JS files in {in_dir}")

@@ -295,6 +295,14 @@
     "c6060": {
       "name": "Goat",
       "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+    },
+    "c5700": {
+      "name": "Demi-Human (SOTE)",
+      "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, template-inherited from c4100 Demi-Human)"
+    },
+    "c5661": {
+      "name": "Shadow Militia",
+      "_inferred_source": "er_heritage_port_v0_27_0 (ER SOTE grunt, Path B real-value port)"
     }
   }
 }

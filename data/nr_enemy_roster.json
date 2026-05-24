@@ -30707,6 +30707,330 @@
       "variant_name": "[Libra Undertaker] Lord's Blade",
       "has_reward": false,
       "_source": "post_dlc_dump"
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57000000,
+      "think_param_id": 57000000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57000083,
+      "think_param_id": 57000000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57000093,
+      "think_param_id": 57000000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57000200,
+      "think_param_id": 57000000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57001000,
+      "think_param_id": 57001000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57001083,
+      "think_param_id": 57001000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57001093,
+      "think_param_id": 57001000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57001200,
+      "think_param_id": 57001000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57002000,
+      "think_param_id": 57002000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57002083,
+      "think_param_id": 57002000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57002093,
+      "think_param_id": 57002000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5700",
+      "npc_param_id": 57002200,
+      "think_param_id": 57002000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56610000,
+      "think_param_id": 56610000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56610081,
+      "think_param_id": 56610000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56610090,
+      "think_param_id": 56610000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56610091,
+      "think_param_id": 56610000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56610095,
+      "think_param_id": 56610000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56610098,
+      "think_param_id": 56610000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56610099,
+      "think_param_id": 56610000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56610100,
+      "think_param_id": 56610000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56611000,
+      "think_param_id": 56611000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56611081,
+      "think_param_id": 56611000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56611090,
+      "think_param_id": 56611000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56611091,
+      "think_param_id": 56611000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56611095,
+      "think_param_id": 56611000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56611098,
+      "think_param_id": 56611000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56611099,
+      "think_param_id": 56611000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56611100,
+      "think_param_id": 56611000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56612000,
+      "think_param_id": 56612000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56612081,
+      "think_param_id": 56612000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56612090,
+      "think_param_id": 56612000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56612091,
+      "think_param_id": 56612000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56612095,
+      "think_param_id": 56612000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56612098,
+      "think_param_id": 56612000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56612099,
+      "think_param_id": 56612000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5661",
+      "npc_param_id": 56612100,
+      "think_param_id": 56612000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Shadow Militia",
+      "has_reward": false
     }
   ],
   "canonical_targets": [

@@ -42,7 +42,7 @@ _HERE = Path(__file__).resolve().parent
 _REPO = _HERE.parent
 sys.path.insert(0, str(_REPO / "dev"))
 
-from chr_asset_resolver import build_roster, check_chr, check_shared  # noqa: E402
+from chr_asset_resolver import build_roster, build_carrier_map, check_chr, check_shared  # noqa: E402
 
 
 def render_console(report):
@@ -110,9 +110,10 @@ def render_console(report):
                f"{freeze_only_count} probable freeze")
     out.append("")
 
-    hard_severities = {"REQUIRED", "AI_BATTLE", "AI_LOGIC", "COMBAT_FFX"}
+    hard_severities = {"REQUIRED", "AI_BATTLE", "AI_LOGIC", "COMBAT_FFX",
+                       "CARRIER_ANIM"}
     ctd_severities  = {"REQUIRED", "COMBAT_FFX"}
-    freeze_severities = {"AI_BATTLE", "AI_LOGIC"}
+    freeze_severities = {"AI_BATTLE", "AI_LOGIC", "CARRIER_ANIM"}
 
     # v0.24.86-patch1: split the by_status["MISSING"] bucket by whether
     # the chr is a probable CRASH (REQUIRED or COMBAT_FFX miss) or a
@@ -138,7 +139,7 @@ def render_console(report):
         for r in probable_ctd:
             hard_missing = [f for f in r["findings"]
                             if f["status"] == "MISSING"
-                            and f["severity"] in ctd_severities]
+                            and f["severity"] in hard_severities]
             soft_missing = [f for f in r["findings"]
                             if f["status"] == "MISSING"
                             and f["severity"] not in hard_severities]
@@ -158,8 +159,9 @@ def render_console(report):
 
     if probable_freeze:
         out.append(f"Probable-FREEZE c-prefixes ({len(probable_freeze)} — "
-                   f"AI scripts (battle AND logic) miss in all sources; "
-                   f"chr loads but stands idle, no crash):")
+                   f"AI scripts or anim-carrier files miss in all "
+                   f"sources; chr loads but stands idle / T-poses, "
+                   f"no crash):")
         # Only show the first ~10 of these — they're usually a long
         # tail dominated by roster phantoms or chrs with intentionally-
         # external AI (e.g. player chrs c0XXX).
@@ -168,7 +170,7 @@ def render_console(report):
                           if f["status"] == "MISSING"
                           and f["severity"] in freeze_severities]
             out.append(f"  {r['c_prefix']:<7} ({r['expected_source']}): "
-                       f"{len(ai_missing)} AI script(s) absent")
+                       f"{len(ai_missing)} AI/anim file(s) absent")
         if len(probable_freeze) > 10:
             out.append(f"  ...and {len(probable_freeze) - 10} more "
                        f"(use --json-out for full list)")
@@ -222,6 +224,11 @@ def main():
         args.heritage_pack, args.missing_chr_files,
     )
 
+    # Anim-carrier dependency map, scanned from the chr/ dirs of every
+    # available install + the target. Filename-only; see build_carrier_map.
+    carrier_map = build_carrier_map(
+        sources["nr"], sources["er"], sources["mmv"], target)
+
     if args.only:
         if args.only not in roster:
             print(f"c-prefix {args.only} not in roster — treating as 'nr' "
@@ -239,7 +246,8 @@ def main():
     for cp in sorted(roster):
         if roster[cp] == "skip":
             continue
-        report["chrs"].append(check_chr(cp, roster[cp], sources, target))
+        report["chrs"].append(
+            check_chr(cp, roster[cp], sources, target, carrier_map.get(cp)))
 
     print(render_console(report))
     if args.json_out:

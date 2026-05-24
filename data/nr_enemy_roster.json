@@ -8736,7 +8736,7 @@
       "c_prefix": "c5250",
       "npc_param_id": 52500110,
       "think_param_id": 52500110,
-      "variant_name": "Horned Warrior",
+      "variant_name": "Divine Bird Warrior",
       "hp": 960,
       "_heritage_imported": true,
       "has_reward": true
@@ -8745,7 +8745,7 @@
       "c_prefix": "c5250",
       "npc_param_id": 52500120,
       "think_param_id": 52500120,
-      "variant_name": "Horned Warrior",
+      "variant_name": "Divine Bird Warrior",
       "hp": 960,
       "_heritage_imported": true,
       "has_reward": true
@@ -8808,7 +8808,7 @@
       "c_prefix": "c5250",
       "npc_param_id": 52501210,
       "think_param_id": 52501050,
-      "variant_name": "Horned Warrior",
+      "variant_name": "Divine Beast Warrior",
       "hp": 1087,
       "_heritage_imported": true,
       "has_reward": true
@@ -8817,7 +8817,7 @@
       "c_prefix": "c5250",
       "npc_param_id": 52501220,
       "think_param_id": 52501050,
-      "variant_name": "Horned Warrior",
+      "variant_name": "Divine Beast Warrior",
       "hp": 1190,
       "_heritage_imported": true,
       "has_reward": false
@@ -31057,6 +31057,501 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Demi-Human Large (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5251",
+      "npc_param_id": 52510000,
+      "think_param_id": 52510000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Horned Shaman",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5251",
+      "npc_param_id": 52510001,
+      "think_param_id": 52510000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Horned Shaman",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5251",
+      "npc_param_id": 52510089,
+      "think_param_id": 52510000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Horned Shaman",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5251",
+      "npc_param_id": 52510100,
+      "think_param_id": 52510000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Horned Shaman",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600000,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600083,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600084,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600100,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600181,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600184,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600300,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600400,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600500,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600700,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53600790,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53601000,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53601083,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53601084,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53601100,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53601181,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53601184,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53601700,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53601790,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53602000,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53602083,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53602084,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53602100,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53602181,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53602184,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53602700,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53602790,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53603000,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53603083,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53603084,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53603100,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53603181,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53603184,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53603700,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53603790,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53604000,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53604083,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53604084,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53604100,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53604181,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53604184,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53604700,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53604790,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53605000,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53605084,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53606000,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53606084,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53607000,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53607084,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53608000,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5360",
+      "npc_param_id": 53608084,
+      "think_param_id": 53600000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Giant Beast Skeleton",
       "has_reward": false
     }
   ],

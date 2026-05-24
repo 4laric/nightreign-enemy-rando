@@ -376,6 +376,36 @@ def main():
         print("No requested prefixes found in source. Aborting.")
         return 1
 
+    # Anim-carrier expansion. A dependent chr (e.g. c5661 Shadow Militia)
+    # whose family has an anim carrier T-poses unless the carrier's
+    # anibnd-class files ship alongside it. Pull carriers into the copy
+    # set; if a carrier isn't in source, the import is incomplete.
+    from chr_asset_resolver import build_carrier_map  # noqa: E402
+    carrier_map = build_carrier_map(args.source)
+    carrier_adds = {}      # carrier prefix -> [dependents needing it]
+    carrier_missing = {}   # dependent -> carrier prefix absent from source
+    for cp in list(in_source):
+        dep = carrier_map.get(cp)
+        if not dep:
+            continue
+        carrier = dep["carrier"]
+        if carrier in source_have:
+            carrier_adds.setdefault(carrier, []).append(cp)
+        else:
+            carrier_missing[cp] = carrier
+    for carrier in sorted(carrier_adds):
+        if carrier not in in_source:
+            in_source.append(carrier)
+        print(f"  + anim carrier {carrier} (needed by "
+              f"{', '.join(sorted(carrier_adds[carrier]))})")
+    if carrier_missing:
+        print(f"\n⚠ {len(carrier_missing)} dependent(s) need an anim "
+              f"carrier NOT in source — import is INCOMPLETE, these will "
+              f"T-pose in-game:")
+        for cp, carrier in sorted(carrier_missing.items()):
+            print(f"    {cp} needs carrier {carrier}")
+        print()
+
     # Make target if needed
     if not args.dry_run:
         os.makedirs(args.target, exist_ok=True)

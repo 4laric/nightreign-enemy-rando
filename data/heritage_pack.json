@@ -307,6 +307,10 @@
     "c5701": {
       "name": "Demi-Human Large (SOTE)",
       "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, template-inherited from c4101 Demi-Human Large)"
+    },
+    "c5251": {
+      "name": "Horned Shaman",
+      "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, sibling of c5250 Horned Warrior)"
     }
   }
 }

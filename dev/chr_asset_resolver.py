@@ -40,11 +40,13 @@ Resolution per file template per c-prefix produces a Finding:
 import glob
 import json
 import os
+import re
 
 __all__ = [
     "FILE_CLASSES",
     "SHARED_DEPS",
     "build_roster",
+    "build_carrier_map",
     "check_chr",
     "check_shared",
     "worse_status",
@@ -144,7 +146,7 @@ SHARED_DEPS = [
 # the union resolution in check_chr's post-loop pass (battle OR logic
 # satisfies; both missing = freeze).
 _HARD_SEVERITIES = frozenset({"REQUIRED", "AI_BATTLE", "AI_LOGIC",
-                              "COMBAT_FFX"})
+                              "COMBAT_FFX", "CARRIER_ANIM"})
 _CTD_SEVERITIES = frozenset({"REQUIRED", "COMBAT_FFX"})
 _STATUS_ORDER = {"OK": 0, "COPYABLE": 1, "MISSING": 2}
 
@@ -253,6 +255,67 @@ def build_roster(nr_enemy_tags_path, mmv_imports_path, heritage_pack_path,
 
 
 # ---------------------------------------------------------------------
+# Anim-carrier resolution
+# ---------------------------------------------------------------------
+
+_CHR_FILE_RE = re.compile(r'^(c\d{4,5})((?:_[a-z0-9]+)*)\.([a-z]+)\.dcx$')
+
+
+def build_carrier_map(*install_roots):
+    """Scan the chr/ subdir of each install root; return
+    {dependent_c_prefix: {"carrier": cXXXX, "files": [filenames]}}.
+
+    An anim CARRIER ships .anibnd.dcx but neither .chrbnd.dcx nor
+    .behbnd.dcx — ER ships shared-animation bundles this way, and the
+    carrier's numbered family siblings reference it (e.g. c5661 Shadow
+    Militia references c5660). A dependent's family is its c-prefix
+    minus the last digit; if that family contains a carrier, the
+    dependent must also receive the carrier's anibnd-class files or it
+    T-poses.
+
+    Filename-only — no chr-file parsing. Conservative by design: every
+    spawnable family member of a carrier is treated as a dependent,
+    even one that ships a complete anibnd of its own. The cost of that
+    false positive is a few unreferenced anibnd files copied into chr/
+    (the engine never loads them); the cost of a miss is a T-pose.
+    Over-copy is the correct side to err on.
+    """
+    chrs = {}
+    for root in install_roots:
+        if not root:
+            continue
+        # accept either an install root (.../Game) or a chr/ dir directly
+        d = os.path.join(root, "chr")
+        if not os.path.isdir(d):
+            d = root
+        if not os.path.isdir(d):
+            continue
+        for fn in os.listdir(d):
+            m = _CHR_FILE_RE.match(fn)
+            if m:
+                chrs.setdefault(m.group(1), set()).add(
+                    f"{m.group(2)}.{m.group(3)}.dcx")
+
+    carriers = {c: s for c, s in chrs.items()
+                if ".anibnd.dcx" in s
+                and ".chrbnd.dcx" not in s and ".behbnd.dcx" not in s}
+    fam_carrier = {}
+    for c in sorted(carriers):
+        fam_carrier.setdefault(c[:-1], c)  # first carrier in a family wins
+
+    out = {}
+    for c, s in chrs.items():
+        carrier = fam_carrier.get(c[:-1])
+        # a dependent is a spawnable sibling (ships its own chrbnd) that
+        # is not itself the carrier
+        if carrier and c != carrier and ".chrbnd.dcx" in s:
+            files = sorted(f"{carrier}{suf}" for suf in carriers[carrier]
+                           if suf.endswith(".anibnd.dcx"))
+            out[c] = {"carrier": carrier, "files": files}
+    return out
+
+
+# ---------------------------------------------------------------------
 # Per-chr resolution
 # ---------------------------------------------------------------------
 
@@ -311,7 +374,7 @@ def _satisfaction_priority(expected_source, target_dirs, source_dirs_by_label):
         }
 
 
-def check_chr(cp, expected_source, sources, target):
+def check_chr(cp, expected_source, sources, target, carrier_dep=None):
     """Resolve dependency status for one c-prefix.
 
     Args:
@@ -321,6 +384,10 @@ def check_chr(cp, expected_source, sources, target):
                  ({"nr": "...", "er": "...", "mmv": "..."}; missing
                  entries treated as not set).
         target: me3 mod package root (str)
+        carrier_dep: optional {"carrier": cXXXX, "files": [...]} from
+                 build_carrier_map — when cp's family has an anim
+                 carrier, its anibnd files are resolved as extra
+                 CARRIER_ANIM findings on top of cp's own.
 
     Returns:
         dict with keys c_prefix, expected_source, worst_status, findings.
@@ -413,6 +480,45 @@ def check_chr(cp, expected_source, sources, target):
                 "pattern": pattern,
                 "severity": severity,
                 "status": "MISSING",
+            })
+
+    # Carrier-anim resolution. A dependent chr whose family has an
+    # anim carrier must also receive the carrier's anibnd-class files
+    # or it T-poses. Resolved against the chr/ satisfaction+copyable
+    # dirs by exact filename (no globs that could spuriously MISS).
+    # Severity CARRIER_ANIM is hard (bumps worst_status) but is NOT an
+    # AI severity, so the battle/logic union rule below cannot mask a
+    # missing carrier.
+    if carrier_dep:
+        sat_dirs, copyable_dirs = dir_lookups["chr/"]
+        for fname in carrier_dep["files"]:
+            note = f"anim carrier {carrier_dep['carrier']} for {cp}"
+            sat = next(((lbl, d) for lbl, d in sat_dirs
+                        if _glob_in(d, fname)), None)
+            if sat:
+                findings.append({
+                    "subdir": "chr/", "pattern": fname,
+                    "severity": "CARRIER_ANIM", "status": "PRESENT",
+                    "location": sat[0], "src_dir": sat[1],
+                    "files": [fname], "note": note,
+                })
+                continue
+            cpy = next(((lbl, d) for lbl, d in copyable_dirs
+                        if _glob_in(d, fname)), None)
+            if cpy:
+                findings.append({
+                    "subdir": "chr/", "pattern": fname,
+                    "severity": "CARRIER_ANIM", "status": "COPYABLE",
+                    "from": cpy[0], "src_dir": cpy[1],
+                    "dst_dir": target_dirs["chr"],
+                    "files": [fname], "note": note,
+                })
+                continue
+            findings.append({
+                "subdir": "chr/", "pattern": fname,
+                "severity": "CARRIER_ANIM", "status": "MISSING",
+                "note": note + " — missing from all sources; import "
+                               "incomplete, dependent will T-pose",
             })
 
     # v0.24.86-patch1: post-loop resolution. Two passes.

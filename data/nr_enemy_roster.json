@@ -31031,6 +31031,33 @@
       "sample_maps": [],
       "variant_name": "Shadow Militia",
       "has_reward": false
+    },
+    {
+      "c_prefix": "c5701",
+      "npc_param_id": 57010000,
+      "think_param_id": 57010000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human Large (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5701",
+      "npc_param_id": 57010083,
+      "think_param_id": 57010000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human Large (SOTE)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5701",
+      "npc_param_id": 57010093,
+      "think_param_id": 57010000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Demi-Human Large (SOTE)",
+      "has_reward": false
     }
   ],
   "canonical_targets": [

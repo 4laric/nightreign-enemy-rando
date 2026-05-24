@@ -303,6 +303,10 @@
     "c5661": {
       "name": "Shadow Militia",
       "_inferred_source": "er_heritage_port_v0_27_0 (ER SOTE grunt, Path B real-value port)"
+    },
+    "c5701": {
+      "name": "Demi-Human Large (SOTE)",
+      "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, template-inherited from c4101 Demi-Human Large)"
     }
   }
 }

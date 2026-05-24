@@ -7407,5 +7407,31 @@
     "name": "System",
     "tier": "cinematic",
     "variants": 1
+  },
+  "c5701": {
+    "_confidence": "medium",
+    "_heritage_imported": true,
+    "_source": "er_heritage_port_v0_27_0",
+    "anim_bank": 410000,
+    "anim_bank_count": 1,
+    "anim_class": "humanoid",
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": true,
+    "has_reward": false,
+    "hit_height_median": 1.8,
+    "hit_radius_median": 0.5,
+    "hp_max": 233,
+    "hp_median": 233.0,
+    "locomotion": 0,
+    "move_type": 3,
+    "n_noreward_variants": 3,
+    "n_reward_variants": 0,
+    "name": "Demi-Human Large (SOTE)",
+    "size_class": "M",
+    "team": 6,
+    "tier": "grunt",
+    "variants": 3,
+    "weight_median": 100.0
   }
 }

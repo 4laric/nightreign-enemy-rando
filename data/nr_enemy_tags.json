@@ -7485,5 +7485,31 @@
     "tier": "miniboss",
     "variants": 51,
     "weight_median": 100.0
+  },
+  "c5170": {
+    "_confidence": "medium",
+    "_heritage_imported": true,
+    "_source": "er_heritage_port_v0_27_0",
+    "anim_bank": 51700,
+    "anim_bank_count": 1,
+    "anim_class": "giga_boss",
+    "expects_boss_arena": false,
+    "has_boss_reward": true,
+    "has_drops": true,
+    "has_reward": false,
+    "hit_height_median": 27.0,
+    "hit_radius_median": 8.5,
+    "hp_max": 16000,
+    "hp_median": 12800.0,
+    "locomotion": 5,
+    "move_type": 3,
+    "n_noreward_variants": 7,
+    "n_reward_variants": 7,
+    "name": "Furnace Golem",
+    "size_class": "GIGA",
+    "team": 7,
+    "tier": "field_boss",
+    "variants": 14,
+    "weight_median": 2000.0
   }
 }

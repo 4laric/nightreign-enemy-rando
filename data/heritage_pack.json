@@ -315,6 +315,10 @@
     "c5360": {
       "name": "Giant Beast Skeleton",
       "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, template-mirrored from c3061 Giant Beast Skeleton)"
+    },
+    "c5170": {
+      "name": "Furnace Golem",
+      "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, profile mirrored from c4660 Guardian Golem)"
     }
   }
 }

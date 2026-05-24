@@ -31553,6 +31553,132 @@
       "sample_maps": [],
       "variant_name": "Giant Beast Skeleton",
       "has_reward": false
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51700000,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51700001,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51700080,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51700083,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51700090,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51700091,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51700094,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51701000,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51701001,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51701084,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51701090,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51702000,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51702001,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5170",
+      "npc_param_id": 51702094,
+      "think_param_id": 51700000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Furnace Golem",
+      "has_reward": true
     }
   ],
   "canonical_targets": [

@@ -311,6 +311,10 @@
     "c5251": {
       "name": "Horned Shaman",
       "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, sibling of c5250 Horned Warrior)"
+    },
+    "c5360": {
+      "name": "Giant Beast Skeleton",
+      "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, template-mirrored from c3061 Giant Beast Skeleton)"
     }
   }
 }

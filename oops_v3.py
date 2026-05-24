@@ -4549,6 +4549,27 @@ def _filter_primary_identity(variants, tag):
     return primary if primary else variants
 
 
+def _pick_by_identity(variants, rng):
+    """v0.27.x: two-stage variant pick. Group the (already tier-filtered)
+    variant list by variant_name, choose a named identity uniformly, then
+    pick a backing NpcParam row within that identity uniformly.
+
+    Replaces raw rng.choice(variants), which was uniform over NpcParam
+    rows and therefore over-weighted identities backed by many placement
+    copies (c5360 Giant Beast Skeleton's 51 rows drowned out c5250's
+    Divine Beast Warrior). Identity-uniform makes each named enemy
+    equally likely regardless of how many rows back it. Tier filtering
+    still happens in the caller, so grouping is within the tier set.
+    """
+    if not variants:
+        return None
+    by_name = defaultdict(list)
+    for v in variants:
+        by_name[v.get('variant_name') or ''].append(v)
+    identity = rng.choice(sorted(by_name))
+    return rng.choice(by_name[identity])
+
+
 def pick_variant_for_tier(target_cp, recipient_is_boss, prefix_variants, rng,
                           tags=None):
     """Pick a variant of target_cp whose tier matches the recipient slot's tier.
@@ -4651,20 +4672,20 @@ def pick_variant_for_tier(target_cp, recipient_is_boss, prefix_variants, rng,
     if recipient_is_boss:
         # Tier-1: reward AND boss-marked
         best = [v for v in variants if v.get('has_reward') and is_boss_tier_variant(v)]
-        if best: return rng.choice(best)
+        if best: return _pick_by_identity(best, rng)
         # Tier-2: any reward-bearing variant (covers cases where regulation
         # has reward but no Boss-name marker, e.g. some Field Bosses)
         reward_only = [v for v in variants if v.get('has_reward')]
-        if reward_only: return rng.choice(reward_only)
+        if reward_only: return _pick_by_identity(reward_only, rng)
         # Tier-3: boss-name-marked variant (no reward, but at least the boss intro)
         boss_only = [v for v in variants if is_boss_tier_variant(v)]
-        if boss_only: return rng.choice(boss_only)
+        if boss_only: return _pick_by_identity(boss_only, rng)
         # Tier-4: anything (silent reward loss)
-        return rng.choice(variants)
+        return _pick_by_identity(variants, rng)
     else:
         field_variants = [v for v in variants if not is_boss_tier_variant(v)]
         if field_variants: variants = field_variants
-        return rng.choice(variants)
+        return _pick_by_identity(variants, rng)
 
 
 def pick_target(recipient_cp, tags,

@@ -31742,6 +31742,78 @@
       "sample_maps": [],
       "variant_name": "Putrescent Knight",
       "has_reward": false
+    },
+    {
+      "c_prefix": "c5872",
+      "npc_param_id": 58720000,
+      "think_param_id": 58720000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Imp (Large)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5872",
+      "npc_param_id": 58720001,
+      "think_param_id": 58720000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Imp (Large)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5872",
+      "npc_param_id": 58720090,
+      "think_param_id": 58720000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Imp (Large)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5872",
+      "npc_param_id": 58720091,
+      "think_param_id": 58720000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Imp (Large)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5872",
+      "npc_param_id": 58720100,
+      "think_param_id": 58720000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Imp (Large)",
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5872",
+      "npc_param_id": 58727000,
+      "think_param_id": 58720000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Imp (Large)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5872",
+      "npc_param_id": 58727090,
+      "think_param_id": 58720000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Imp (Large)",
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5872",
+      "npc_param_id": 58727091,
+      "think_param_id": 58720000,
+      "count": 1,
+      "sample_maps": [],
+      "variant_name": "Imp (Large)",
+      "has_reward": true
     }
   ],
   "canonical_targets": [

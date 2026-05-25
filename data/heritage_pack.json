@@ -323,6 +323,10 @@
     "c5020": {
       "name": "Putrescent Knight",
       "_inferred_source": "er_heritage_port_v0_27_0 (ER-only chr, profile mirrored from c3251 Tree Sentinel)"
+    },
+    "c5872": {
+      "name": "Imp (Large)",
+      "_inferred_source": "er_heritage_port_v0_27_0 (ER-only SOTE chr, giant catacomb Imp; profile mirrored from c3080 native Imp)"
     }
   }
 }

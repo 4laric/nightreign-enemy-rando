@@ -83,3 +83,9 @@ oo2core_*.dll
 
 # Game-derived aicommon bundles
 /bundled_aicommon/*.dcx
+
+# Root-level run artifacts. The rando/EMEVD tools, when run with the repo
+# root as the output dir, drop these here. Regeneratable; not source.
+/_spoilers.json
+/_spoilers.md
+/apply_report.json

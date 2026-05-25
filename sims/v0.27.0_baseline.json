@@ -1,0 +1,1121 @@
+{
+  "bucket_sizes": {
+    "always": 93,
+    "castle:m13_00_00_00.msb": 2,
+    "castle:m13_20_00_00.msb": 2,
+    "shifting_earth:Crater": 15,
+    "shifting_earth:Mountaintop": 14,
+    "shifting_earth:Noklateo": 27,
+    "shifting_earth:RotForest": 2
+  },
+  "cprefixes": {
+    "c2100": {
+      "appearance_pct": 58.599999999999994,
+      "cap": null,
+      "max": 5,
+      "mean": 0.878,
+      "median": 1.0,
+      "n": 500,
+      "name": "Black Knife Assassin (Unscaled)",
+      "tier": "miniboss"
+    },
+    "c2130": {
+      "appearance_pct": 62.8,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.91,
+      "median": 1.0,
+      "n": 500,
+      "name": "Margit",
+      "tier": "night_boss"
+    },
+    "c2140": {
+      "appearance_pct": 59.599999999999994,
+      "cap": null,
+      "max": 5,
+      "mean": 0.942,
+      "median": 1.0,
+      "n": 500,
+      "name": "Omen",
+      "tier": "miniboss"
+    },
+    "c2274": {
+      "appearance_pct": 61.6,
+      "cap": 6,
+      "max": 6,
+      "mean": 0.942,
+      "median": 1.0,
+      "n": 500,
+      "name": "Giant Sleep Crab",
+      "tier": "miniboss"
+    },
+    "c2276": {
+      "appearance_pct": 62.4,
+      "cap": 6,
+      "max": 5,
+      "mean": 0.944,
+      "median": 1.0,
+      "n": 500,
+      "name": "Giant Death Crab",
+      "tier": "miniboss"
+    },
+    "c2500": {
+      "appearance_pct": 62.6,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.896,
+      "median": 1.0,
+      "n": 500,
+      "name": "Crucible Knight (Unscaled)",
+      "tier": "night_boss"
+    },
+    "c3010": {
+      "appearance_pct": 58.599999999999994,
+      "cap": null,
+      "max": 5,
+      "mean": 0.902,
+      "median": 1.0,
+      "n": 500,
+      "name": "Banished Knight",
+      "tier": "miniboss"
+    },
+    "c3050": {
+      "appearance_pct": 62.6,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.894,
+      "median": 1.0,
+      "n": 500,
+      "name": "Commander",
+      "tier": "night_boss"
+    },
+    "c3060": {
+      "appearance_pct": 60.199999999999996,
+      "cap": null,
+      "max": 6,
+      "mean": 0.966,
+      "median": 1.0,
+      "n": 500,
+      "name": "Giant Skeleton",
+      "tier": "miniboss"
+    },
+    "c3100": {
+      "appearance_pct": 63.4,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.896,
+      "median": 1.0,
+      "n": 500,
+      "name": "Elemer of the Briar",
+      "tier": "night_boss"
+    },
+    "c3150": {
+      "appearance_pct": 61.8,
+      "cap": null,
+      "max": 6,
+      "mean": 0.938,
+      "median": 1.0,
+      "n": 500,
+      "name": "Night's Cavalry",
+      "tier": "night_boss"
+    },
+    "c3181": {
+      "appearance_pct": 62.2,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.912,
+      "median": 1.0,
+      "n": 500,
+      "name": "Red Wolf of Radagon",
+      "tier": "miniboss"
+    },
+    "c3250": {
+      "appearance_pct": 62.2,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.864,
+      "median": 1.0,
+      "n": 500,
+      "name": "Draconic Tree Sentinel (Unscaled)",
+      "tier": "night_boss"
+    },
+    "c3251": {
+      "appearance_pct": 63.2,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.888,
+      "median": 1.0,
+      "n": 500,
+      "name": "Tree Sentinel (Unscaled)",
+      "tier": "night_boss"
+    },
+    "c3300": {
+      "appearance_pct": 63.0,
+      "cap": null,
+      "max": 5,
+      "mean": 0.976,
+      "median": 1.0,
+      "n": 500,
+      "name": "Nox Swordstress (Unscaled)",
+      "tier": "miniboss"
+    },
+    "c3350": {
+      "appearance_pct": 60.4,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.812,
+      "median": 1.0,
+      "n": 500,
+      "name": "Crystalian",
+      "tier": "miniboss"
+    },
+    "c3400": {
+      "appearance_pct": 60.0,
+      "cap": null,
+      "max": 5,
+      "mean": 0.914,
+      "median": 1.0,
+      "n": 500,
+      "name": "Grave Warden Duelist",
+      "tier": "miniboss"
+    },
+    "c3460": {
+      "appearance_pct": 58.599999999999994,
+      "cap": null,
+      "max": 5,
+      "mean": 0.916,
+      "median": 1.0,
+      "n": 500,
+      "name": "Leonine Misbegotten",
+      "tier": "miniboss"
+    },
+    "c3550": {
+      "appearance_pct": 61.199999999999996,
+      "cap": null,
+      "max": 5,
+      "mean": 0.946,
+      "median": 1.0,
+      "n": 500,
+      "name": "Sanguine Noble (Unscaled)",
+      "tier": "miniboss"
+    },
+    "c3560": {
+      "appearance_pct": 62.4,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.84,
+      "median": 1.0,
+      "n": 500,
+      "name": "Godskin Apostle (Unscaled)",
+      "tier": "night_boss"
+    },
+    "c3570": {
+      "appearance_pct": 63.6,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.892,
+      "median": 1.0,
+      "n": 500,
+      "name": "Godskin Noble (Unscaled)",
+      "tier": "night_boss"
+    },
+    "c3600": {
+      "appearance_pct": 62.4,
+      "cap": null,
+      "max": 5,
+      "mean": 0.934,
+      "median": 1.0,
+      "n": 500,
+      "name": "Alabaster Lord (Unscaled)",
+      "tier": "miniboss"
+    },
+    "c3670": {
+      "appearance_pct": 63.800000000000004,
+      "cap": null,
+      "max": 5,
+      "mean": 0.958,
+      "median": 1.0,
+      "n": 500,
+      "name": "Aged Albinauric (Scholar Remembrance)",
+      "tier": "miniboss"
+    },
+    "c3700": {
+      "appearance_pct": 67.0,
+      "cap": null,
+      "max": 4,
+      "mean": 1.062,
+      "median": 1.0,
+      "n": 500,
+      "name": "Depraved Perfumer",
+      "tier": "miniboss"
+    },
+    "c3701": {
+      "appearance_pct": 60.199999999999996,
+      "cap": null,
+      "max": 6,
+      "mean": 0.906,
+      "median": 1.0,
+      "n": 500,
+      "name": "Perfumer",
+      "tier": "miniboss"
+    },
+    "c3704": {
+      "appearance_pct": 57.8,
+      "cap": 6,
+      "max": 6,
+      "mean": 0.942,
+      "median": 1.0,
+      "n": 500,
+      "name": "Battlemage",
+      "tier": "miniboss"
+    },
+    "c3730": {
+      "appearance_pct": 61.8,
+      "cap": null,
+      "max": 5,
+      "mean": 0.956,
+      "median": 1.0,
+      "n": 500,
+      "name": "Graven School",
+      "tier": "miniboss"
+    },
+    "c3800": {
+      "appearance_pct": 61.6,
+      "cap": null,
+      "max": 6,
+      "mean": 0.934,
+      "median": 1.0,
+      "n": 500,
+      "name": "Cleanrot Knight",
+      "tier": "miniboss"
+    },
+    "c3810": {
+      "appearance_pct": 64.4,
+      "cap": null,
+      "max": 4,
+      "mean": 0.962,
+      "median": 1.0,
+      "n": 500,
+      "name": "Kindred of Rot",
+      "tier": "miniboss"
+    },
+    "c3900": {
+      "appearance_pct": 59.4,
+      "cap": null,
+      "max": 6,
+      "mean": 0.936,
+      "median": 1.0,
+      "n": 500,
+      "name": "Fire Monk",
+      "tier": "miniboss"
+    },
+    "c3901": {
+      "appearance_pct": 61.4,
+      "cap": null,
+      "max": 5,
+      "mean": 0.924,
+      "median": 1.0,
+      "n": 500,
+      "name": "Fire Monk",
+      "tier": "miniboss"
+    },
+    "c3910": {
+      "appearance_pct": 68.4,
+      "cap": null,
+      "max": 5,
+      "mean": 1.064,
+      "median": 1.0,
+      "n": 500,
+      "name": "Fire Prelate",
+      "tier": "miniboss"
+    },
+    "c3970": {
+      "appearance_pct": 63.4,
+      "cap": null,
+      "max": 5,
+      "mean": 0.944,
+      "median": 1.0,
+      "n": 500,
+      "name": "Azula Beastman",
+      "tier": "miniboss"
+    },
+    "c4020": {
+      "appearance_pct": 66.8,
+      "cap": 8,
+      "max": 5,
+      "mean": 1.088,
+      "median": 1.0,
+      "n": 500,
+      "name": "Royal Revenant",
+      "tier": "miniboss"
+    },
+    "c4130": {
+      "appearance_pct": 65.60000000000001,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.92,
+      "median": 1.0,
+      "n": 500,
+      "name": "Demi-Human Queen",
+      "tier": "night_boss"
+    },
+    "c4140": {
+      "appearance_pct": 62.4,
+      "cap": 1,
+      "max": 1,
+      "mean": 0.624,
+      "median": 1.0,
+      "n": 500,
+      "name": "Spiritcaller Snail (Great Church Boss)",
+      "tier": "miniboss"
+    },
+    "c4220": {
+      "appearance_pct": 62.6,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.912,
+      "median": 1.0,
+      "n": 500,
+      "name": "Giant Land Octopus",
+      "tier": "miniboss"
+    },
+    "c4241": {
+      "appearance_pct": 59.4,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.826,
+      "median": 1.0,
+      "n": 500,
+      "name": "Giant Fingercreeper",
+      "tier": "miniboss"
+    },
+    "c4260": {
+      "appearance_pct": 60.8,
+      "cap": null,
+      "max": 4,
+      "mean": 0.934,
+      "median": 1.0,
+      "n": 500,
+      "name": "Erdtree Burial Watchdog",
+      "tier": "miniboss"
+    },
+    "c4270": {
+      "appearance_pct": 60.0,
+      "cap": 8,
+      "max": 5,
+      "mean": 0.904,
+      "median": 1.0,
+      "n": 500,
+      "name": "Elder Lion",
+      "tier": "miniboss"
+    },
+    "c4290": {
+      "appearance_pct": 61.8,
+      "cap": null,
+      "max": 4,
+      "mean": 0.96,
+      "median": 1.0,
+      "n": 500,
+      "name": "Bloodhound Knight",
+      "tier": "miniboss"
+    },
+    "c4340": {
+      "appearance_pct": 62.2,
+      "cap": null,
+      "max": 4,
+      "mean": 0.912,
+      "median": 1.0,
+      "n": 500,
+      "name": "Mad Pumpkin Head",
+      "tier": "miniboss"
+    },
+    "c4341": {
+      "appearance_pct": 63.4,
+      "cap": null,
+      "max": 6,
+      "mean": 0.94,
+      "median": 1.0,
+      "n": 500,
+      "name": "Thin Mad Pumpkin Head",
+      "tier": "miniboss"
+    },
+    "c4351": {
+      "appearance_pct": 61.199999999999996,
+      "cap": null,
+      "max": 5,
+      "mean": 0.908,
+      "median": 1.0,
+      "n": 500,
+      "name": "Godrick Knight",
+      "tier": "miniboss"
+    },
+    "c4352": {
+      "appearance_pct": 61.8,
+      "cap": null,
+      "max": 6,
+      "mean": 0.908,
+      "median": 1.0,
+      "n": 500,
+      "name": "Cuckoo Knight (Scholar Remembrance)",
+      "tier": "miniboss"
+    },
+    "c4353": {
+      "appearance_pct": 64.8,
+      "cap": 6,
+      "max": 5,
+      "mean": 0.956,
+      "median": 1.0,
+      "n": 500,
+      "name": "Leyndell Knight",
+      "tier": "miniboss"
+    },
+    "c4354": {
+      "appearance_pct": 59.4,
+      "cap": null,
+      "max": 5,
+      "mean": 0.896,
+      "median": 1.0,
+      "n": 500,
+      "name": "Redmane Knight",
+      "tier": "miniboss"
+    },
+    "c4355": {
+      "appearance_pct": 61.8,
+      "cap": null,
+      "max": 5,
+      "mean": 0.938,
+      "median": 1.0,
+      "n": 500,
+      "name": "Mausoleum Knight",
+      "tier": "miniboss"
+    },
+    "c4420": {
+      "appearance_pct": 59.199999999999996,
+      "cap": 6,
+      "max": 5,
+      "mean": 0.914,
+      "median": 1.0,
+      "n": 500,
+      "name": "Giant Crayfish",
+      "tier": "miniboss"
+    },
+    "c4441": {
+      "appearance_pct": 60.4,
+      "cap": 1,
+      "max": 1,
+      "mean": 0.604,
+      "median": 1.0,
+      "n": 500,
+      "name": "Land Squirt (Boss)",
+      "tier": "miniboss"
+    },
+    "c4470": {
+      "appearance_pct": 61.199999999999996,
+      "cap": null,
+      "max": 6,
+      "mean": 0.944,
+      "median": 1.0,
+      "n": 500,
+      "name": "Abductor Virgin (Unscaled)",
+      "tier": "miniboss"
+    },
+    "c4480": {
+      "appearance_pct": 58.8,
+      "cap": 1,
+      "max": 1,
+      "mean": 0.588,
+      "median": 1.0,
+      "n": 500,
+      "name": "Miranda Blossom",
+      "tier": "miniboss"
+    },
+    "c4501": {
+      "appearance_pct": 64.0,
+      "cap": 1,
+      "max": 1,
+      "mean": 0.64,
+      "median": 1.0,
+      "n": 500,
+      "name": "Decaying Ekzykes (Unscaled)",
+      "tier": "miniboss"
+    },
+    "c4502": {
+      "appearance_pct": 63.6,
+      "cap": 1,
+      "max": 1,
+      "mean": 0.636,
+      "median": 1.0,
+      "n": 500,
+      "name": "Decaying Ekzykes-class Dragon",
+      "tier": "miniboss"
+    },
+    "c4503": {
+      "appearance_pct": 64.0,
+      "cap": 1,
+      "max": 1,
+      "mean": 0.64,
+      "median": 1.0,
+      "n": 500,
+      "name": "Borealis the Freezing Fog (Unscaled)",
+      "tier": "night_boss"
+    },
+    "c4510": {
+      "appearance_pct": 64.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.892,
+      "median": 1.0,
+      "n": 500,
+      "name": "Ancient Dragon",
+      "tier": "night_boss"
+    },
+    "c4511": {
+      "appearance_pct": 64.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.894,
+      "median": 1.0,
+      "n": 500,
+      "name": "Lichdragon Fortissax",
+      "tier": "night_boss"
+    },
+    "c4550": {
+      "appearance_pct": 63.0,
+      "cap": null,
+      "max": 4,
+      "mean": 1.016,
+      "median": 1.0,
+      "n": 500,
+      "name": "Giant Dog",
+      "tier": "miniboss"
+    },
+    "c4560": {
+      "appearance_pct": 59.8,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.854,
+      "median": 1.0,
+      "n": 500,
+      "name": "Giant Crow",
+      "tier": "miniboss"
+    },
+    "c4580": {
+      "appearance_pct": 61.6,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.856,
+      "median": 1.0,
+      "n": 500,
+      "name": "Giant Wormface",
+      "tier": "night_boss"
+    },
+    "c4600": {
+      "appearance_pct": 61.0,
+      "cap": 6,
+      "max": 5,
+      "mean": 0.896,
+      "median": 1.0,
+      "n": 500,
+      "name": "Troll",
+      "tier": "miniboss"
+    },
+    "c4601": {
+      "appearance_pct": 59.599999999999994,
+      "cap": 6,
+      "max": 6,
+      "mean": 0.96,
+      "median": 1.0,
+      "n": 500,
+      "name": "Troll Knight",
+      "tier": "miniboss"
+    },
+    "c4602": {
+      "appearance_pct": 61.0,
+      "cap": 6,
+      "max": 4,
+      "mean": 0.912,
+      "median": 1.0,
+      "n": 500,
+      "name": "Snowfield Troll",
+      "tier": "miniboss"
+    },
+    "c4603": {
+      "appearance_pct": 60.6,
+      "cap": 6,
+      "max": 5,
+      "mean": 0.93,
+      "median": 1.0,
+      "n": 500,
+      "name": "Stonedigger Troll",
+      "tier": "miniboss"
+    },
+    "c4620": {
+      "appearance_pct": 63.800000000000004,
+      "cap": 1,
+      "max": 1,
+      "mean": 0.638,
+      "median": 1.0,
+      "n": 500,
+      "name": "Astel- Stars of Darkness",
+      "tier": "night_boss"
+    },
+    "c4630": {
+      "appearance_pct": 60.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.814,
+      "median": 1.0,
+      "n": 500,
+      "name": "Runebear",
+      "tier": "miniboss"
+    },
+    "c4650": {
+      "appearance_pct": 62.8,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.904,
+      "median": 1.0,
+      "n": 500,
+      "name": "Dragonkin Soldier (Ice Lightning) (Unscaled)",
+      "tier": "night_boss"
+    },
+    "c4660": {
+      "appearance_pct": 59.599999999999994,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.818,
+      "median": 1.0,
+      "n": 500,
+      "name": "Guardian Golem",
+      "tier": "miniboss"
+    },
+    "c4670": {
+      "appearance_pct": 67.60000000000001,
+      "cap": 1,
+      "max": 1,
+      "mean": 0.676,
+      "median": 1.0,
+      "n": 500,
+      "name": "Ancestor Spirit",
+      "tier": "night_boss"
+    },
+    "c4680": {
+      "appearance_pct": 66.4,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.932,
+      "median": 1.0,
+      "n": 500,
+      "name": "Full-Grown Fallingstar Beast (Unscaled)",
+      "tier": "night_boss"
+    },
+    "c4690": {
+      "appearance_pct": 60.6,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.86,
+      "median": 1.0,
+      "n": 500,
+      "name": "Grafted Scion",
+      "tier": "miniboss"
+    },
+    "c4750": {
+      "appearance_pct": 63.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.884,
+      "median": 1.0,
+      "n": 500,
+      "name": "Godrick the Grafted (Unscaled)",
+      "tier": "night_boss"
+    },
+    "c4770": {
+      "appearance_pct": 64.60000000000001,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.916,
+      "median": 1.0,
+      "n": 500,
+      "name": "Gargoyle",
+      "tier": "night_boss"
+    },
+    "c4800": {
+      "appearance_pct": 62.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.868,
+      "median": 1.0,
+      "n": 500,
+      "name": "Mohg- the Omen",
+      "tier": "night_boss"
+    },
+    "c4810": {
+      "appearance_pct": 59.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.824,
+      "median": 1.0,
+      "n": 500,
+      "name": "Erdtree Avatar",
+      "tier": "miniboss"
+    },
+    "c4811": {
+      "appearance_pct": 64.4,
+      "cap": 1,
+      "max": 1,
+      "mean": 0.644,
+      "median": 1.0,
+      "n": 500,
+      "name": "Erdtree Avatar Variant",
+      "tier": "miniboss"
+    },
+    "c4820": {
+      "appearance_pct": 59.599999999999994,
+      "cap": null,
+      "max": 5,
+      "mean": 0.906,
+      "median": 1.0,
+      "n": 500,
+      "name": "Omenkiller",
+      "tier": "miniboss"
+    },
+    "c4911": {
+      "appearance_pct": 61.4,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.862,
+      "median": 1.0,
+      "n": 500,
+      "name": "Great Wyrm Theodorix",
+      "tier": "night_boss"
+    },
+    "c4950": {
+      "appearance_pct": 65.4,
+      "cap": null,
+      "max": 4,
+      "mean": 1.034,
+      "median": 1.0,
+      "n": 500,
+      "name": "Tibia Mariner",
+      "tier": "night_boss"
+    },
+    "c4980": {
+      "appearance_pct": 66.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.942,
+      "median": 1.0,
+      "n": 500,
+      "name": "Death Bird",
+      "tier": "night_boss"
+    },
+    "c5000": {
+      "appearance_pct": 65.60000000000001,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.912,
+      "median": 1.0,
+      "n": 500,
+      "name": "Commander Gaius",
+      "tier": "night_boss"
+    },
+    "c5011": {
+      "appearance_pct": 60.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.872,
+      "median": 1.0,
+      "n": 500,
+      "name": "Golden Hippopotamus (Golden Wings)",
+      "tier": "night_boss"
+    },
+    "c5020": {
+      "appearance_pct": 62.8,
+      "cap": null,
+      "max": 5,
+      "mean": 0.99,
+      "median": 1.0,
+      "n": 500,
+      "name": "Putrescent Knight",
+      "tier": "night_boss"
+    },
+    "c5030": {
+      "appearance_pct": 61.8,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.852,
+      "median": 1.0,
+      "n": 500,
+      "name": "Romina, Saint of the Bud",
+      "tier": "night_boss"
+    },
+    "c5040": {
+      "appearance_pct": 53.800000000000004,
+      "cap": null,
+      "max": 6,
+      "mean": 0.812,
+      "median": 1.0,
+      "n": 500,
+      "name": "Curseblade",
+      "tier": "miniboss"
+    },
+    "c5051": {
+      "appearance_pct": 62.2,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.872,
+      "median": 1.0,
+      "n": 500,
+      "name": "Midra, Lord of Frenzied Flame",
+      "tier": "night_boss"
+    },
+    "c5070": {
+      "appearance_pct": 61.8,
+      "cap": 6,
+      "max": 4,
+      "mean": 0.916,
+      "median": 1.0,
+      "n": 500,
+      "name": "Death Knight",
+      "tier": "miniboss"
+    },
+    "c5081": {
+      "appearance_pct": 63.0,
+      "cap": null,
+      "max": 5,
+      "mean": 0.98,
+      "median": 1.0,
+      "n": 500,
+      "name": "Chief Bloodfiend",
+      "tier": "miniboss"
+    },
+    "c5160": {
+      "appearance_pct": 59.599999999999994,
+      "cap": 6,
+      "max": 6,
+      "mean": 0.904,
+      "median": 1.0,
+      "n": 500,
+      "name": "Fire Knight",
+      "tier": "miniboss"
+    },
+    "c5200": {
+      "appearance_pct": 62.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.868,
+      "median": 1.0,
+      "n": 500,
+      "name": "Metyr, Mother of Fingers",
+      "tier": "night_boss"
+    },
+    "c5210": {
+      "appearance_pct": 65.8,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.932,
+      "median": 1.0,
+      "n": 500,
+      "name": "Divine Beast Dancing Lion",
+      "tier": "night_boss"
+    },
+    "c5250": {
+      "appearance_pct": 58.199999999999996,
+      "cap": null,
+      "max": 5,
+      "mean": 0.896,
+      "median": 1.0,
+      "n": 500,
+      "name": "Horned Warrior",
+      "tier": "miniboss"
+    },
+    "c5260": {
+      "appearance_pct": 58.8,
+      "cap": 6,
+      "max": 6,
+      "mean": 0.946,
+      "median": 1.0,
+      "n": 500,
+      "name": "Golem Smith",
+      "tier": "miniboss"
+    },
+    "c5311": {
+      "appearance_pct": 60.6,
+      "cap": null,
+      "max": 5,
+      "mean": 0.912,
+      "median": 1.0,
+      "n": 500,
+      "name": "Inquisitor (Candles)",
+      "tier": "miniboss"
+    },
+    "c5312": {
+      "appearance_pct": 61.199999999999996,
+      "cap": null,
+      "max": 4,
+      "mean": 0.936,
+      "median": 1.0,
+      "n": 500,
+      "name": "Inquisitor (Staff)",
+      "tier": "miniboss"
+    },
+    "c5320": {
+      "appearance_pct": 57.8,
+      "cap": null,
+      "max": 5,
+      "mean": 0.858,
+      "median": 1.0,
+      "n": 500,
+      "name": "Fat Inquisitor",
+      "tier": "miniboss"
+    },
+    "c5360": {
+      "appearance_pct": 61.6,
+      "cap": null,
+      "max": 4,
+      "mean": 0.984,
+      "median": 1.0,
+      "n": 500,
+      "name": "Giant Beast Skeleton",
+      "tier": "miniboss"
+    },
+    "c5810": {
+      "appearance_pct": 65.8,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.89,
+      "median": 1.0,
+      "n": 500,
+      "name": "Demi-Human Swordmaster Onze",
+      "tier": "night_boss"
+    },
+    "c5820": {
+      "appearance_pct": 60.8,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.844,
+      "median": 1.0,
+      "n": 500,
+      "name": "Great Red Bear",
+      "tier": "miniboss"
+    },
+    "c5860": {
+      "appearance_pct": 64.4,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.916,
+      "median": 1.0,
+      "n": 500,
+      "name": "Ghostflame Dragon",
+      "tier": "night_boss"
+    },
+    "c5872": {
+      "appearance_pct": 59.0,
+      "cap": null,
+      "max": 4,
+      "mean": 0.906,
+      "median": 1.0,
+      "n": 500,
+      "name": "Imp (Large)",
+      "tier": "miniboss"
+    },
+    "c7100": {
+      "appearance_pct": 63.2,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.912,
+      "median": 1.0,
+      "n": 500,
+      "name": "Ancient Hero of Zamor (Base)",
+      "tier": "miniboss"
+    },
+    "c7700": {
+      "appearance_pct": 65.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.918,
+      "median": 1.0,
+      "n": 500,
+      "name": "Gaping Dragon",
+      "tier": "night_boss"
+    },
+    "c7710": {
+      "appearance_pct": 66.2,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.926,
+      "median": 1.0,
+      "n": 500,
+      "name": "Centipede Demon",
+      "tier": "night_boss"
+    },
+    "c7800": {
+      "appearance_pct": 61.4,
+      "cap": null,
+      "max": 6,
+      "mean": 0.958,
+      "median": 1.0,
+      "n": 500,
+      "name": "Duke's Dear Freja",
+      "tier": "night_boss"
+    },
+    "c7820": {
+      "appearance_pct": 62.6,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.862,
+      "median": 1.0,
+      "n": 500,
+      "name": "Smelter Demon",
+      "tier": "night_boss"
+    },
+    "c7900": {
+      "appearance_pct": 61.8,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.868,
+      "median": 1.0,
+      "n": 500,
+      "name": "Nameless King",
+      "tier": "night_boss"
+    },
+    "c7910": {
+      "appearance_pct": 64.0,
+      "cap": 1,
+      "max": 1,
+      "mean": 0.64,
+      "median": 1.0,
+      "n": 500,
+      "name": "Storm King",
+      "tier": "night_boss"
+    },
+    "c7920": {
+      "appearance_pct": 66.0,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.938,
+      "median": 1.0,
+      "n": 500,
+      "name": "Dancer of the Boreal Valley",
+      "tier": "night_boss"
+    },
+    "c8300": {
+      "appearance_pct": 62.2,
+      "cap": 2,
+      "max": 2,
+      "mean": 0.864,
+      "median": 1.0,
+      "n": 500,
+      "name": "Dragonslayer Armor",
+      "tier": "night_boss"
+    }
+  },
+  "engine_fingerprint": "v0.27.0",
+  "schema_version": 1,
+  "sim_params": {
+    "include_grunts": false,
+    "n_seeds": 500,
+    "rng_seed": 0,
+    "shifting_earth_prob_each": 0.05
+  }
+}

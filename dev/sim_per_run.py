@@ -54,6 +54,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(HERE)
 ENGINE_PATH = os.path.join(PROJECT_ROOT, 'oops_v3.py')
 TAGS_PATH = os.path.join(PROJECT_ROOT, 'data/nr_enemy_tags.json')
+ALL_SLOTS_PATH = os.path.join(PROJECT_ROOT, 'data/nr_all_slots.json')
 
 # Per-NR-mechanics weighting. If Alaric reports different observed rates
 # in playtest, edit these.
@@ -89,7 +90,10 @@ def load_tags_with_overrides(o):
     sees, then inject MMV NB fallbacks."""
     with open(TAGS_PATH) as f:
         tags = json.load(f)
-    for cp, override in o.V3_TAG_OVERRIDES.items():
+    # v0.26.x: V3_TAG_OVERRIDES was removed — tiers now live directly in
+    # nr_enemy_tags.json. Guarded so the sim runs whether or not the
+    # engine carries the attribute.
+    for cp, override in getattr(o, 'V3_TAG_OVERRIDES', {}).items():
         if cp in tags:
             tags[cp].update(override)
     for cp, info in MMV_NB_FALLBACK.items():
@@ -108,8 +112,16 @@ def classify_msb(msb, o):
     return ('always', None)
 
 
-def bucket_slots(o, tags):
-    """Group swap-eligible slots by their per-run availability class."""
+def bucket_slots(o, tags, include_grunts=False):
+    """Group swap-eligible slots by their per-run availability class.
+
+    Boss/miniboss slots come from V3_BOSS_SLOT_CATALOG. When
+    include_grunts is set, grunt-tier slots are additionally pulled from
+    data/nr_all_slots.json (every enemy Part across the vanilla MSBs):
+    a slot counts as a grunt slot when its vanilla source chr is
+    grunt-tier. Grunt slots carry src_tier='grunt' and flow through the
+    same per-run availability bucketing and cap logic as boss slots.
+    """
     slots_by_class = defaultdict(list)
     preserve_msbs = o.V3_OVERLAY_PRESERVE_VANILLA_MSBS
     preserve_slots = o.V3_PRESERVE_SLOTS
@@ -128,19 +140,47 @@ def bucket_slots(o, tags):
         slots_by_class[(cls, sub)].append({
             'msb': msb, 'pi': pi, 'src_cp': cp, 'src_tier': src_tier,
         })
+    if include_grunts:
+        with open(ALL_SLOTS_PATH) as f:
+            all_slots = json.load(f)
+        for s in all_slots:
+            msb, pi, cp = s['map'], s['part_index'], s['c_prefix']
+            if msb in preserve_msbs:
+                continue
+            if (msb, pi) in preserve_slots:
+                continue
+            if tags.get(cp, {}).get('tier') != 'grunt':
+                continue
+            cls, sub = classify_msb(msb, o)
+            slots_by_class[(cls, sub)].append({
+                'msb': msb, 'pi': pi, 'src_cp': cp, 'src_tier': 'grunt',
+            })
     return slots_by_class
 
 
 def run_sim(o, tags, slots_by_class, n_seeds, rng_seed):
-    """Run N seeds with realistic per-run MSB weighting. Returns dict
-    cp -> list of per-seed counts (length N)."""
+    """Run N seeds with realistic per-run MSB weighting. Returns
+    (per_seed, pools): per_seed maps cp -> list of per-seed counts
+    (length N); pools maps tier -> candidate cp list."""
     caps = o.V3_UNIQUE_TARGET_CAPS
-    nb_pool = [cp for cp, t in tags.items()
-               if t.get('tier') == 'night_boss'
-               and cp not in o.V3_EXCLUDE_TARGET_PREFIXES]
-    mini_pool = [cp for cp, t in tags.items()
-                 if t.get('tier') == 'miniboss'
-                 and cp not in o.V3_EXCLUDE_TARGET_PREFIXES]
+    excl = o.V3_EXCLUDE_TARGET_PREFIXES
+    # Night-boss slots additionally subtract V3_NIGHT_BOSS_EXCLUDE_TARGETS
+    # (chrs barred from NB arenas but still valid as field content) —
+    # mirrors the engine's pool filter in shuffle_msb_v3.
+    nb_excl = getattr(o, 'V3_NIGHT_BOSS_EXCLUDE_TARGETS', set())
+
+    def tier_pool(tier):
+        extra = nb_excl if tier == 'night_boss' else set()
+        return [cp for cp, t in tags.items()
+                if t.get('tier') == tier
+                and cp not in excl and cp not in extra]
+
+    # Only build pools for tiers that actually have slots this run.
+    tiers_present = {slot['src_tier']
+                     for slots in slots_by_class.values()
+                     for slot in slots}
+    pools = {tier: tier_pool(tier) for tier in tiers_present}
+    all_cps = set().union(*pools.values()) if pools else set()
 
     castle_variants = sorted([sub for (cls, sub) in slots_by_class
                               if cls == 'castle'])
@@ -173,7 +213,7 @@ def run_sim(o, tags, slots_by_class, n_seeds, rng_seed):
         used = Counter()
         placements = Counter()
         for slot in seed_slots:
-            pool = nb_pool if slot['src_tier'] == 'night_boss' else mini_pool
+            pool = pools.get(slot['src_tier'], ())
             avail = [cp for cp in pool
                      if caps.get(cp) is None or used[cp] < caps[cp]]
             if not avail:
@@ -181,9 +221,9 @@ def run_sim(o, tags, slots_by_class, n_seeds, rng_seed):
             pick = rng.choice(avail)
             placements[pick] += 1
             used[pick] += 1
-        for cp in set(nb_pool) | set(mini_pool):
+        for cp in all_cps:
             per_seed[cp].append(placements[cp])
-    return per_seed, nb_pool, mini_pool
+    return per_seed, pools
 
 
 def summarize(per_seed, tags, caps):
@@ -207,7 +247,8 @@ def summarize(per_seed, tags, caps):
     return out
 
 
-def build_result(o, n_seeds, rng_seed, summary, slots_by_class):
+def build_result(o, n_seeds, rng_seed, summary, slots_by_class,
+                 include_grunts=False):
     """Dict that gets saved as JSON. Includes enough metadata that a
     diff can sanity-check it's comparing comparable runs."""
     bucket_sizes = {f'{cls}:{sub}' if sub else cls: len(s)
@@ -221,6 +262,7 @@ def build_result(o, n_seeds, rng_seed, summary, slots_by_class):
             'n_seeds': n_seeds,
             'rng_seed': rng_seed,
             'shifting_earth_prob_each': SHIFTING_EARTH_PROB_EACH,
+            'include_grunts': include_grunts,
         },
         'bucket_sizes': bucket_sizes,
         'cprefixes': summary,
@@ -231,21 +273,7 @@ def build_result(o, n_seeds, rng_seed, summary, slots_by_class):
 # Reporting
 # ---------------------------------------------------------------------
 
-def print_summary(result, focus_cps=None):
-    summary = result['cprefixes']
-    if focus_cps:
-        cps = [cp for cp in focus_cps if cp in summary]
-    else:
-        # Default: sort by tier then mean desc; show top placements
-        cps = sorted(summary, key=lambda cp: (
-            summary[cp]['tier'] or 'z', -summary[cp]['mean']))[:60]
-    print(f'Engine: {result["engine_fingerprint"]}; '
-          f'seeds={result["sim_params"]["n_seeds"]}, '
-          f'rng_seed={result["sim_params"]["rng_seed"]}')
-    print(f'\nBucket sizes:')
-    for k, v in sorted(result['bucket_sizes'].items()):
-        print(f'  {k}: {v} slots')
-    print()
+def _print_table(summary, cps):
     print(f'  {"cp":<7s} {"tier":<10s} {"name":<32s} {"cap":>4s}'
           f'  {"mean":>5s} {"med":>4s} {"max":>4s}  {"appear%":>8s}')
     for cp in cps:
@@ -255,6 +283,35 @@ def print_summary(result, focus_cps=None):
               f'{(r["name"] or "?")[:30]:<32s} {cap_s:>4s}  '
               f'{r["mean"]:>5.2f} {r["median"]:>4.1f} {r["max"]:>4d}  '
               f'{r["appearance_pct"]:>7.1f}%')
+
+
+def print_summary(result, focus_cps=None):
+    summary = result['cprefixes']
+    print(f'Engine: {result["engine_fingerprint"]}; '
+          f'seeds={result["sim_params"]["n_seeds"]}, '
+          f'rng_seed={result["sim_params"]["rng_seed"]}')
+    print(f'\nBucket sizes:')
+    for k, v in sorted(result['bucket_sizes'].items()):
+        print(f'  {k}: {v} slots')
+    print()
+    if focus_cps:
+        _print_table(summary, [cp for cp in focus_cps if cp in summary])
+        return
+    # Boss tiers and grunt tier print as separate tables — grunt means
+    # run ~10-50x boss means, so a shared sort would bury the bosses.
+    boss = sorted([cp for cp in summary
+                   if summary[cp]['tier'] in ('night_boss', 'miniboss')],
+                  key=lambda cp: (summary[cp]['tier'],
+                                  -summary[cp]['mean']))
+    grunt = sorted([cp for cp in summary
+                    if summary[cp]['tier'] == 'grunt'],
+                   key=lambda cp: -summary[cp]['mean'])
+    if boss:
+        print('BOSS-SLOT distribution (night_boss + miniboss):')
+        _print_table(summary, boss[:60])
+    if grunt:
+        print(f'\nGRUNT-SLOT distribution ({len(grunt)} chrs):')
+        _print_table(summary, grunt)
 
 
 def diff_results(base, curr,
@@ -360,6 +417,11 @@ def main():
                          'saved result instead of running a fresh sim.')
     ap.add_argument('--focus', nargs='+', metavar='CPREFIX',
                     help='Restrict the printed table to these c-prefixes.')
+    ap.add_argument('--grunts', action='store_true',
+                    help='Also simulate grunt-tier slots (from '
+                         'data/nr_all_slots.json) and print a separate '
+                         'grunt distribution table. Off by default — '
+                         'grunt slots are ~2600 vs ~120 boss slots.')
     args = ap.parse_args()
 
     if args.diff and args.against:
@@ -374,12 +436,12 @@ def main():
     # Run a fresh sim
     o = load_engine()
     tags = load_tags_with_overrides(o)
-    slots_by_class = bucket_slots(o, tags)
-    per_seed, _, _ = run_sim(o, tags, slots_by_class,
-                             n_seeds=args.seeds, rng_seed=args.rng_seed)
+    slots_by_class = bucket_slots(o, tags, include_grunts=args.grunts)
+    per_seed, _ = run_sim(o, tags, slots_by_class,
+                          n_seeds=args.seeds, rng_seed=args.rng_seed)
     summary = summarize(per_seed, tags, o.V3_UNIQUE_TARGET_CAPS)
     result = build_result(o, args.seeds, args.rng_seed, summary,
-                          slots_by_class)
+                          slots_by_class, include_grunts=args.grunts)
 
     if args.diff:
         # Diff fresh-sim vs saved baseline

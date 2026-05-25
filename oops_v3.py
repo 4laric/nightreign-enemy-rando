@@ -1175,6 +1175,25 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # name-marker audit pass; candidates listed in OPEN_ISSUES.md.
     'c3201',  # Frenzied Nomad (Marsh Group Boss) — auto-import cluster-only
 
+    # v0.27.0-late: c3361 Putrid Ancestral Follower — full target exclude.
+    # Extends the v0.27.0 c3360 finding. The c3360 playtest established
+    # that only the Axe (33600010) and Archer (33600510) Blacksmith-Group-
+    # Boss variants render and fight; the other 32 c3360 variants are
+    # broken (see V3_AVOID_VARIANT_NPC_IDS). c3361 is the SOTE rotted
+    # reskin of c3360 — same skeleton and animation family — and all 16
+    # of its variants are plain-named "Putrid Ancestral Follower" with no
+    # Blacksmith-Group-Boss working subset (15 are post_dlc_dump ghosts,
+    # 1 canonical). Nothing distinguishes a working variant, so unlike
+    # c3360 there is no Axe/Archer pair to keep — the whole c-prefix is
+    # excluded as a target rather than enumerating 16 ids in the variant
+    # avoid-set. Empirical leak: 28 placements in seed 617175. (c3361 was
+    # previously listed in V3_FRAGILE_SAFE_CONFIRMED on a stale v0.20.43
+    # "ancestral shaman good" note — removed alongside this, since that
+    # note refers to the Shaman c3370 and a target-excluded chr cannot be
+    # placed at a fragile slot anyway. Sibling c3371 Putrid Ancestral
+    # Shaman is the same situation but is left for a separate call.)
+    'c3361',  # Putrid Ancestral Follower — broken-variant family (c3360 kin)
+
     # v0.23.72-late: c5110 Maris' Tendril REMOVED from EXCLUDED — moved
     # back to V3_FRAGILE_SENSITIVE_TARGETS where it lived in v0.20.55-69.
     # Reason: user playtest reports that Tendril at non-fragile slots
@@ -5678,8 +5697,11 @@ V3_FRAGILE_SAFE_CONFIRMED = {
               #   v0.20.78). User: "actually promote silver tear again
               #   i think its chill". Keeping for record that the
               #   demote/repromote round-trip happened.
-    'c3361',  # Putrid Ancestral Follower — v0.20.43 (user: "ancestral
-              #                          shaman good")
+    # v0.27.0-late: c3361 Putrid Ancestral Follower removed from this
+    # list. It was added v0.20.43 on a "ancestral shaman good" note that
+    # actually describes the Shaman (c3370). c3361 is now in
+    # V3_EXCLUDE_TARGET_PREFIXES (broken-variant family, c3360 kin), so a
+    # fragile-safe entry for it is both contradictory and dead.
     'c3450',  # Misbegotten            — v0.20.44 (user: "misbegotten
               #                          safe"). KEY DATA POINT — was in
               #                          predicted-BROKEN bucket per the
@@ -7492,9 +7514,41 @@ V3_RANDOMIZE_SAFE_NB_ARENAS = False
 # that kept this flag experimental is closed -- all-NB randomization
 # is normal play. Supersedes the safe-NB flag -- all 25 includes the
 # safe 12.
-V3_RANDOMIZE_ALL_NB_ARENAS = True
+#
+# v0.27.0: SET FALSE. NB-arena boss swaps produce a recurring CTD
+# class — XXL large_boss_ground bosses (Ulcerated Tree Spirit, Golden
+# Hippo, Death Bird) land on arenas whose scripted intro expects a
+# different anim class and lack the matching wake-up anim bank
+# (confirmed seeds 677311, 740664). Until the anim_class compat fix
+# lands, NB arenas are held vanilla: with both V3_RANDOMIZE_*_NB_ARENAS
+# False, _force_rando_nb is never True and the whole-MSB preservation
+# gate holds all 25 arenas byte-vanilla. Field / grunt / non-NB-boss
+# randomization is unaffected.
+V3_RANDOMIZE_ALL_NB_ARENAS = False
 
 
+
+# v0.27.0: add-heavy night-boss encounters where the rando preserves
+# the boss Part(s) but DOES randomize the surrounding adds. The boss
+# anim-mismatch CTD class is avoided entirely (the boss is never
+# swapped); the adds are plain enemy Parts that go through normal
+# randomization. Add-Part swaps preserve entity_ids and Part count,
+# so wave-complete EMEVD ("entities [list] dead") still resolves.
+#
+# In the whole-MSB preserve gates in pick_target_cp, an arena in this
+# set preserves a Part only when recipient_is_boss; every other Part
+# falls through. All four are 'preserve_primary' in
+# nr_boss_arena_chr_roles.json (-> V3_OVERLAY_PRESERVE_VANILLA_MSBS);
+# the three m48/m49 arenas are also in V3_NIGHT_BOSS_ARENA_MSBS, so
+# both preserve gates carry the carve-out.
+V3_ADD_RANDOMIZE_ARENAS = frozenset({
+    'm48_00_00_00.msb',   # Duke's Dear Freja  - randomize the spider swarm
+    'm49_26_00_00.msb',   # Commander          - randomize the Exile Soldier army
+    'm49_27_00_00.msb',   # Commander          - randomize the Exile Soldier army
+    'm47_70_00_00.msb',   # Tibia Mariner      - randomize the skeleton catacomb
+})
+
+ 
 
 # v0.24.28: Starting encampment catalog. Asset MSBs that get instantiated
 # near the wagon spawn at the start of a Limveld Expedition. Used by:
@@ -9804,6 +9858,11 @@ V3_NIGHT_BOSS_CALIBER_TARGETS = {
 # entry in V3_UNIQUE_TARGET_CAPS, so at worst one stall per seed.
 V3_NIGHT_BOSS_EXCLUDE_TARGETS = {
     'c4490',  # Jar Warrior — NPC-style "wait for challenge" idle, no NB trigger
+    'c4640',  # Ulcerated Tree Spirit — XXL large_boss_ground; lacks the
+              #   scripted-intro wake-up anim bank, so it CTDs at strict NB
+              #   arenas (seed 677311 m49_29, Demi-Human Queen duo). Same
+              #   failure class as Astel/Hippo at m38_00 pi51. Dropped from
+              #   NB eligibility per user; still valid as field content.
     # 'c8300', # LIFTED v0.24.73 — Dragonslayer Armor freeze covered by
               #                  boss_clear_watchdog (300s) +
               #                  preboss_wake_timeout (90s) EMEVD patches
@@ -10166,6 +10225,25 @@ V3_UNIQUE_TARGET_CAPS = {
     'c5160': 6,  # Fire Knight (M humanoid miniboss, heritage) —
                  #   sim max=4 (already under cap=6 but flood-prone via
                  #   broad anim-compat eligibility); cap as safety net.
+    'c3704': 6,  # Battlemage (L humanoid miniboss) — v0.27.0 cap audit:
+                 #   uncapped, sim max=7 per seed. Leyndell-pattern cap=6
+                 #   trims the spike to elite-filler band (user request).
+    'c5260': 6,  # Golem Smith (L humanoid miniboss, heritage) — v0.27.0:
+                 #   uncapped, sim spiked to 5-7/seed after the grunt->
+                 #   miniboss retier. cap=6 to the miniboss flood band
+                 #   alongside Battlemage (user request).
+
+    # ----- v0.27.0 grunt caps -----
+    # Centipede Grub feels over-present in playtest — not from raw
+    # frequency (sim_per_run.py --grunts: c7711/c7712 both land at the
+    # grunt-tier norm, ~14/seed, max ~27-29) but because the Grub aggros
+    # from extreme range, so a normal count reads as a swarm. cap=6 cuts
+    # felt presence well below the ~14 grunt-tier norm. (user request)
+    'c7711': 6,  # Centipede Grub
+    'c7712': 6,  # Centipede Grub (variant)
+    'c3664': 6,  # Cemetery Shade (grunt) — v0.27.0: uncapped, ~14/seed at
+                 #   the grunt-tier norm but a playtest menace; cap=6 to
+                 #   the grunt-cap band alongside c7711/c7712 (user req).
 }
 
 
@@ -11687,7 +11765,11 @@ def pick_target_cp(recipient_cp, tags,
     if (slot_msb_name is not None
             and slot_msb_name in V3_OVERLAY_PRESERVE_VANILLA_MSBS
             and not _force_rando_nb):
-        return None
+        # v0.27.0: add-randomize arenas preserve the boss Part only -
+        # non-boss (add) Parts fall through to normal randomization.
+        if not (slot_msb_name in V3_ADD_RANDOMIZE_ARENAS
+                and not recipient_is_boss):
+            return None
 
     # v0.26.16: night-boss-arena whole-MSB preservation. When test-mode
     # arenas are OFF (normal play), V3_PRESERVE_NIGHT_BOSS_ARENAS is True
@@ -11696,7 +11778,10 @@ def pick_target_cp(recipient_cp, tags,
     if (V3_PRESERVE_NIGHT_BOSS_ARENAS and slot_msb_name is not None
             and slot_msb_name in V3_NIGHT_BOSS_ARENA_MSBS
             and not _force_rando_nb):
-        return None
+        # v0.27.0: add-randomize arenas preserve the boss Part only.
+        if not (slot_msb_name in V3_ADD_RANDOMIZE_ARENAS
+                and not recipient_is_boss):
+            return None
 
     # v0.24.101: V3_PRESERVE_SLOTS strict (msb, pi)-level preservation gate.
     # When the slot is in V3_PRESERVE_SLOTS, return None so the Part stays
@@ -12723,6 +12808,25 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
         # V3_BOSSY_PROMOTE_SLOTS still applies below for per-slot
         # boss_reward upgrades when audit-confirmed.
         if (msb_base, pi) in V3_BOSS_SLOT_CATALOG:
+            recipient_is_boss = True
+        # v0.27.1: NB-anchor boss promotion. NR's Night Boss arenas use
+        # entity_id % 10000 == 800 for the primary boss anchor (the same
+        # signature the emerge-marker bypass below relies on). For some
+        # vanilla boss c-prefixes — notably c3050 Commander — the variant
+        # carries an empty variant_name, so is_boss_tier_variant returns
+        # False and is_boss_tier_prefix('c3050') also fails (no reward, sub-4m
+        # hit height, not heritage). That left recipient_is_boss=False for
+        # the actual night boss. Harmless until v0.27.0's add-randomize
+        # carve-out, which keys on recipient_is_boss: in V3_ADD_RANDOMIZE_
+        # ARENAS the Commander anchor was being read as an add and SWAPPED
+        # OUT (seed 791285: m49_26 pi8 + m49_27 pi13 c3050 -> Watchdog /
+        # Elder Lion). Promote any 800-anchor in an m48_/m49_ map to
+        # boss-tier so the carve-out preserves it. Unconditional — does not
+        # depend on recipient_variant being empty-named.
+        if (msb_base is not None
+                and (msb_base.startswith('m48_')
+                     or msb_base.startswith('m49_'))
+                and slot_eid > 0 and slot_eid % 10000 == 800):
             recipient_is_boss = True
         # v0.23.22: source-side emerge-marker skip. The engine already has
         # filter_emerge_variants for TARGETS (so we never write an emerge-

@@ -1,67 +1,77 @@
 #!/usr/bin/env python3
 """
-register_heritage_imports.py -- register heritage-import chrs into the rando's
-data files so the engine can place them.
+register_heritage_imports.py -- register a heritage-import chr into the
+rando's data files so the engine can place it.
 
-This pass:
-  * Registers c5840 (Black Knight) -- an ER heritage chr absent from all four
-    data files -- into nr_enemy_tags.json, nr_enemy_roster.json,
-    heritage_pack.json and batch_import_plan_comprehensive.json.
-  * Corrects the now-stale PARTIAL_ATK / PARTIAL_BHV statuses on the eight
-    other target chrs (c5190/c5192/c5193/c5250/c5522/c5523/c5750/c5751).
-    A four-table diff of the current mod regulation against vanilla ER
-    (NpcParam, NpcThinkParam, BehaviorParam-by-behaviorVariationId, and the
-    AtkParam_Npc rows those behaviors reference) found ZERO missing rows for
-    every one of these chrs -- their params are complete. The only remaining
-    work for all nine is the chr/script asset copy on the user's rig, so every
-    target chr is set to status ASSETS_PENDING.
+Usage:
+    python3 dev/register_heritage_imports.py --chr c5750 --tier miniboss
+    python3 dev/register_heritage_imports.py --chr c5750 --tier grunt \
+        --anim-class humanoid --size-class M --dry-run
 
-Idempotent: re-running replaces the c5840 entries and re-applies the statuses
-without duplicating anything.
+Registers ONE c-prefix into nr_enemy_tags.json, nr_enemy_roster.json,
+heritage_pack.json and batch_import_plan_comprehensive.json, and sets that
+chr's batch-plan status to ASSETS_PENDING (params verified complete; the
+chr/script asset copy is the only remaining step).
 
-CAVEATS (in-container limitations -- regenerate on a full rig to normalize):
-  * nr_enemy_roster.json and heritage_pack.json are normally rebuilt by an
-    external pipeline that needs decompiled NR MSBs + ER param dumps
-    (dev/build_heritagae_pack.py, dev/extract_npc_think_pairs.py). Those cannot
-    run here.
-  * c5840 is never placed in vanilla NR, so it has no entry in
-    nr_vanilla_npc_think_pairs.json and no NpcParam think-pointer column exists
-    in the exported CSVs. c5840's roster variants therefore use
-    think_param_id == npc_param_id (identity mapping). The game reads the real
-    think pointer from regulation.bin's NpcParam at runtime regardless, so this
-    affects only the rando's bookkeeping.
-  * c5840 variants are registered one-per-usable-NpcParam-row (no dedup
-    collapse). Usable == name contains neither '(Unused)' nor 'Boss'.
+Idempotent: re-running with the same arguments reproduces identical files.
+
+WHERE EACH TAG FIELD COMES FROM
+  derived from data/NpcParam.csv : hp_max, hp_median, hit_height_median,
+      hit_radius_median, weight_median, team, move_type, anim_bank,
+      variants, n_*_variants, and the per-row roster entries.
+  from the batch_import_plan entry : name, locomotion. Overridable with
+      --name / --locomotion; if the chr is not yet in the plan these flags
+      are required and a new plan entry is created.
+  judgement / not derivable here : tier  (--tier; default heuristic:
+      heritage + hp_median >= 300 -> miniboss, else grunt -- printed loudly)
+                                    anim_class  (--anim-class; default: the
+      batch-plan value, unless that is the placeholder "misc")
+                                    size_class  (--size-class; default: a
+      hitHeight proxy, S/M/L/XL/XXL -- a rough default, verify on a rig)
+
+NOT HANDLED (run the dedicated tools afterward):
+  * reward fields default to none (has_reward / has_drops / has_boss_reward
+    = false, n_reward_variants = 0). Run dev/emit_has_reward.py to populate
+    reward status for reward-bearing chrs.
+  * roster variants use think_param_id == npc_param_id (identity mapping):
+    a heritage chr is never placed in vanilla NR so no MSB-derived think
+    pairs exist; the game reads the real pointer from regulation.bin anyway.
+  * variants are not dedup-collapsed; variant_prune_list.json clusters on
+    the pick path -- rerun dev/audit_genuine_variants.py.
+  * heritage_pack.json is normally rebuilt by dev/build_heritagae_pack.py
+    from a chr-folder scan; this script hand-adds a single entry.
 """
+import argparse
 import csv
 import json
 import os
 import statistics
+import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'data')
-
-TARGET_CHRS = ('c5190', 'c5192', 'c5193', 'c5250', 'c5522', 'c5523',
-               'c5750', 'c5751', 'c5840')
 NEW_STATUS = 'ASSETS_PENDING'
-C5840_LO, C5840_HI = 58400000, 58410000
+# Marks heritage_pack entries this tool produced. Bump if the registration
+# semantics change; kept stable so prior registrations reproduce.
+REG_SOURCE = 'manual_register_v0.27.12'
 
 
-def load_c5840_npcparam():
-    """Pull c5840's rows out of data/NpcParam.csv."""
+def npcparam_rows(cp_int):
+    """Rows of data/NpcParam.csv whose ID is in the cp's 10000-wide band."""
+    lo, hi = cp_int * 10000, (cp_int + 1) * 10000
     path = os.path.join(DATA, 'NpcParam.csv')
     with open(path, encoding='utf-8', errors='replace') as f:
         reader = csv.reader(f)
         hdr = next(reader)
         col = {n: hdr.index(n) for n in
                ('ID', 'Name', 'hitHeight', 'hitRadius', 'weight', 'hp',
-                'teamType')}
+                'teamType', 'moveType')}
         out = []
         for row in reader:
             if not row or not row[col['ID']].strip().isdigit():
                 continue
             rid = int(row[col['ID']])
-            if not (C5840_LO <= rid < C5840_HI):
+            if not (lo <= rid < hi):
                 continue
             out.append({
                 'id': rid,
@@ -71,76 +81,42 @@ def load_c5840_npcparam():
                 'weight': float(row[col['weight']] or 0),
                 'hp': int(float(row[col['hp']] or 0)),
                 'team': int(float(row[col['teamType']] or 0)),
+                'move_type': int(float(row[col['moveType']] or 0)),
             })
     return out
 
 
 def is_usable(name):
-    """Placeable in the grunt pool iff not the leaked '(Unused)' CASTLE
-    variant and not a named-boss variant (Garrew / Edredd)."""
+    """Placeable in a random pool iff not an '(Unused)' row and not a
+    named-boss row (boss variants are deployed by other means)."""
     return '(Unused)' not in name and 'Boss' not in name
 
 
-def build_c5840(rows):
-    """Return (tag_entry, roster_variants) for c5840 from its NpcParam rows."""
-    usable = [r for r in rows if is_usable(r['name'])]
-    if not usable:
-        raise SystemExit('c5840: no usable NpcParam rows found -- aborting')
-    hps = [r['hp'] for r in usable]
-
-    # tag entry -- keys alphabetical to match the rest of nr_enemy_tags.json
-    tag = {
-        '_heritage_imported': True,
-        '_source': 'heritage',
-        'anim_bank': 58400,
-        'anim_bank_count': 1,
-        'anim_class': 'humanoid',
-        'expects_boss_arena': False,
-        'has_boss_reward': False,
-        'has_drops': False,
-        'has_reward': False,
-        'hit_height_median': statistics.median(r['hit_height'] for r in usable),
-        'hit_radius_median': statistics.median(r['hit_radius'] for r in usable),
-        'hp_max': max(hps),
-        'hp_median': statistics.median(hps),
-        'locomotion': 0,
-        'move_type': 3,
-        'n_noreward_variants': len(usable),
-        'n_reward_variants': 0,
-        'name': 'Black Knight',
-        'size_class': 'M',
-        'team': statistics.mode(r['team'] for r in usable),
-        'tier': 'grunt',
-        'variants': len(usable),
-        'weight_median': statistics.median(r['weight'] for r in usable),
-    }
-
-    # roster variants -- fixed field order to match all_variants entries
-    variants = [{
-        'c_prefix': 'c5840',
-        'npc_param_id': r['id'],
-        'think_param_id': r['id'],   # identity mapping -- see module docstring
-        'variant_name': 'Black Knight',
-        'hp': r['hp'],
-        '_heritage_imported': True,
-        'has_reward': False,
-    } for r in usable]
-
-    return tag, variants
+def size_class_from_hit_height(h):
+    """hitHeight proxy for size_class. Fits the known heritage tags
+    (Juvenile Scholar 1.0=S, Black Knight 2.0=M, Giant Beast Skeleton
+    2.5=L, Giant Black Crab 3.8=XL). A default only -- verify on a rig."""
+    if h < 1.6:
+        return 'S'
+    if h < 2.4:
+        return 'M'
+    if h < 3.2:
+        return 'L'
+    if h < 4.8:
+        return 'XL'
+    return 'XXL'
 
 
 def load_json(path):
-    """Load JSON, capturing the file's serialization conventions so a
-    rewrite produces a minimal diff. These data files were authored by
-    different tools: nr_enemy_tags.json stores literal UTF-8 (em-dash,
-    arrow), the others escape non-ASCII; trailing newlines also vary."""
+    """Load JSON, capturing serialization conventions for a minimal diff.
+    nr_enemy_tags.json stores literal UTF-8; the others escape non-ASCII;
+    trailing newlines vary."""
     with open(path, encoding='utf-8') as f:
         text = f.read()
-    fmt = {
+    return json.loads(text), {
         'non_ascii': any(ord(c) > 127 for c in text),
         'trailing_nl': text.endswith('\n'),
     }
-    return json.loads(text), fmt
 
 
 def write_json(path, obj, fmt):
@@ -151,61 +127,174 @@ def write_json(path, obj, fmt):
 
 
 def main():
-    p_tags = os.path.join(DATA, 'nr_enemy_tags.json')
-    p_roster = os.path.join(DATA, 'nr_enemy_roster.json')
-    p_pack = os.path.join(DATA, 'heritage_pack.json')
-    p_plan = os.path.join(DATA, 'batch_import_plan_comprehensive.json')
+    ap = argparse.ArgumentParser(
+        description='Register one heritage-import chr into the rando data '
+                    'files.')
+    ap.add_argument('--chr', required=True, metavar='cXXXX',
+                    help='c-prefix to register, e.g. c5750')
+    ap.add_argument('--tier',
+                    help='grunt / miniboss / ... (default: hp-based heuristic)')
+    ap.add_argument('--name',
+                    help='display name (default: batch-plan entry)')
+    ap.add_argument('--anim-class', dest='anim_class',
+                    help='anim_class (default: batch-plan entry if not "misc")')
+    ap.add_argument('--size-class', dest='size_class',
+                    help='S/M/L/XL/XXL (default: hitHeight proxy)')
+    ap.add_argument('--locomotion', type=int,
+                    help='locomotion code (default: batch-plan entry)')
+    ap.add_argument('--dry-run', action='store_true',
+                    help='print the plan without writing any files')
+    args = ap.parse_args()
 
-    tags, fmt_tags = load_json(p_tags)
-    roster, fmt_roster = load_json(p_roster)
-    pack, fmt_pack = load_json(p_pack)
-    plan, fmt_plan = load_json(p_plan)
+    cp = args.chr.strip()
+    if not (cp.startswith('c') and cp[1:].isdigit()):
+        ap.error(f'--chr must look like cXXXX, got {cp!r}')
+    cp_int = int(cp[1:])
 
-    rows = load_c5840_npcparam()
-    c5840_tag, c5840_variants = build_c5840(rows)
+    rows = npcparam_rows(cp_int)
+    if not rows:
+        sys.exit(f'{cp}: no NpcParam rows in band {cp_int * 10000}-'
+                 f'{(cp_int + 1) * 10000} -- nothing to register')
+    usable = [r for r in rows if is_usable(r['name'])]
+    if not usable:
+        sys.exit(f'{cp}: all {len(rows)} NpcParam rows are Unused/Boss')
 
-    # 1. nr_enemy_tags -- upsert c5840 (new key appends last)
-    tags['c5840'] = c5840_tag
+    paths = {n: os.path.join(DATA, f) for n, f in (
+        ('tags', 'nr_enemy_tags.json'),
+        ('roster', 'nr_enemy_roster.json'),
+        ('pack', 'heritage_pack.json'),
+        ('plan', 'batch_import_plan_comprehensive.json'))}
+    tags, fmt_tags = load_json(paths['tags'])
+    roster, fmt_roster = load_json(paths['roster'])
+    pack, fmt_pack = load_json(paths['pack'])
+    plan, fmt_plan = load_json(paths['plan'])
 
-    # 2. nr_enemy_roster -- replace any existing c5840 variants
+    plan_entry = next((e for e in plan if e.get('c_prefix') == cp), None)
+
+    # resolve per-chr fields ------------------------------------------------
+    name = args.name or (plan_entry or {}).get('name')
+    if not name:
+        sys.exit(f'{cp}: not in batch plan and no --name -- cannot resolve '
+                 f'display name')
+
+    if args.locomotion is not None:
+        locomotion, loco_src = args.locomotion, 'flag'
+    elif plan_entry and plan_entry.get('locomotion') is not None:
+        locomotion, loco_src = plan_entry['locomotion'], 'batch plan'
+    else:
+        sys.exit(f'{cp}: not in batch plan and no --locomotion')
+
+    if args.anim_class:
+        anim_class, ac_src = args.anim_class, 'flag'
+    else:
+        plan_ac = (plan_entry or {}).get('anim_class')
+        if plan_ac and plan_ac != 'misc':
+            anim_class, ac_src = plan_ac, 'batch plan'
+        else:
+            sys.exit(f'{cp}: anim_class unresolved (batch plan has '
+                     f'{plan_ac!r}) -- pass --anim-class')
+
+    hps = [r['hp'] for r in usable]
+    hit_h = statistics.median(r['hit_height'] for r in usable)
+    if args.size_class:
+        size_class, sc_src = args.size_class, 'flag'
+    else:
+        size_class = size_class_from_hit_height(hit_h)
+        sc_src = f'hitHeight proxy ({hit_h:g})'
+
+    if args.tier:
+        tier, tier_src = args.tier, 'flag'
+    else:
+        hp_med = statistics.median(hps)
+        tier = 'miniboss' if hp_med >= 300 else 'grunt'
+        tier_src = f'heuristic (hp_median={hp_med:g})'
+
+    # build entries ---------------------------------------------------------
+    tag = {
+        '_heritage_imported': True,
+        '_source': 'heritage',
+        'anim_bank': cp_int * 10,
+        'anim_bank_count': 1,
+        'anim_class': anim_class,
+        'expects_boss_arena': False,
+        'has_boss_reward': False,
+        'has_drops': False,
+        'has_reward': False,
+        'hit_height_median': hit_h,
+        'hit_radius_median': statistics.median(r['hit_radius'] for r in usable),
+        'hp_max': max(hps),
+        'hp_median': statistics.median(hps),
+        'locomotion': locomotion,
+        'move_type': statistics.mode(r['move_type'] for r in usable),
+        'n_noreward_variants': len(usable),
+        'n_reward_variants': 0,
+        'name': name,
+        'size_class': size_class,
+        'team': statistics.mode(r['team'] for r in usable),
+        'tier': tier,
+        'variants': len(usable),
+        'weight_median': statistics.median(r['weight'] for r in usable),
+    }
+    variants = [{
+        'c_prefix': cp,
+        'npc_param_id': r['id'],
+        'think_param_id': r['id'],   # identity mapping -- see module docstring
+        'variant_name': name,
+        'hp': r['hp'],
+        '_heritage_imported': True,
+        'has_reward': False,
+    } for r in usable]
+
+    # upserts ---------------------------------------------------------------
+    tags[cp] = tag
+
     av = roster['all_variants']
     before = len(av)
-    av[:] = [v for v in av if v.get('c_prefix') != 'c5840']
-    av.extend(c5840_variants)
+    av[:] = [v for v in av if v.get('c_prefix') != cp]
+    av.extend(variants)
 
-    # 3. heritage_pack -- upsert c5840
-    pack['tags']['c5840'] = {
-        'name': 'Black Knight',
-        '_inferred_source': 'manual_register_v0.27.12 (orig _source=heritage)',
+    pack['tags'][cp] = {
+        'name': name,
+        '_inferred_source': f'{REG_SOURCE} (orig _source=heritage)',
     }
 
-    # 4. batch_import_plan -- refresh status for all nine targets
-    have = {e.get('c_prefix') for e in plan}
-    for e in plan:
-        if e.get('c_prefix') in TARGET_CHRS:
-            e['status'] = NEW_STATUS
-    if 'c5840' not in have:
+    if plan_entry is None:
         plan.append({
-            'c_prefix': 'c5840',
-            'name': 'Black Knight',
-            'locomotion': 0,
-            'status': NEW_STATUS,
-            'hp_max': c5840_tag['hp_max'],
-            'anim_class': 'humanoid',
+            'c_prefix': cp, 'name': name, 'locomotion': locomotion,
+            'status': NEW_STATUS, 'hp_max': max(hps),
+            'anim_class': anim_class,
         })
+        plan_action = 'appended new entry'
+    else:
+        plan_entry['status'] = NEW_STATUS
+        plan_action = 'status updated'
 
-    write_json(p_tags, tags, fmt_tags)
-    write_json(p_roster, roster, fmt_roster)
-    write_json(p_pack, pack, fmt_pack)
-    write_json(p_plan, plan, fmt_plan)
+    if not args.dry_run:
+        write_json(paths['tags'], tags, fmt_tags)
+        write_json(paths['roster'], roster, fmt_roster)
+        write_json(paths['pack'], pack, fmt_pack)
+        write_json(paths['plan'], plan, fmt_plan)
 
-    print(f'c5840: {len(rows)} NpcParam rows -> {len(c5840_variants)} usable '
-          f'variants (excluded {len(rows) - len(c5840_variants)} Unused/Boss)')
-    print(f'  nr_enemy_tags     : c5840 upserted ({len(tags)} entries)')
-    print(f'  nr_enemy_roster   : all_variants {before} -> {len(av)}')
-    print(f'  heritage_pack     : c5840 upserted ({len(pack["tags"])} tags)')
-    print(f'  batch_import_plan : {len(plan)} entries, '
-          f'9 targets -> status={NEW_STATUS}')
+    # report ----------------------------------------------------------------
+    head = 'DRY RUN -- would register' if args.dry_run else 'registered'
+    print(f'{head} {cp} "{name}"')
+    print(f'  NpcParam rows    : {len(rows)} ({len(usable)} usable, '
+          f'{len(rows) - len(usable)} Unused/Boss excluded)')
+    print(f'  tier             : {tier}   [{tier_src}]')
+    print(f'  anim_class       : {anim_class}   [{ac_src}]')
+    print(f'  size_class       : {size_class}   [{sc_src}]')
+    print(f'  locomotion       : {locomotion}   [{loco_src}]')
+    print(f'  move_type / team : {tag["move_type"]} / {tag["team"]}   '
+          f'[NpcParam]')
+    print(f'  hp_max / median  : {tag["hp_max"]} / {tag["hp_median"]:g}')
+    print(f'  nr_enemy_tags    : {cp} upserted ({len(tags)} entries)')
+    print(f'  nr_enemy_roster  : all_variants {before} -> {len(av)}')
+    print(f'  heritage_pack    : {cp} upserted ({len(pack["tags"])} tags)')
+    print(f'  batch_import_plan: {plan_action}, status={NEW_STATUS}')
+    if tier_src.startswith('heuristic'):
+        print('  NOTE: tier inferred -- pass --tier to set it explicitly.')
+    print('  NOTE: reward fields default to none -- run '
+          'dev/emit_has_reward.py for reward-bearing chrs.')
 
 
 if __name__ == '__main__':

@@ -2181,12 +2181,19 @@ class TestFlyingRequiredSlots:
         assert ('m60_43_36_50.msb', 23) in engine.V3_FLYING_REQUIRED_SLOTS
 
     def test_eligible_targets_have_flying_anim(self, engine):
-        """Every cp in eligible_targets must have anim_class=flying_dragon."""
+        """Every cp in eligible_targets is either a flying_dragon, a loco=2
+        bat, or one of the v0.27.10 hand-vetted hover-capable exceptions
+        (c4180/c4181 jellyfish, c4210 Warhawk)."""
         roster, tags = engine.load_data()
+        _vetted = {'c4180', 'c4181', 'c4210'}
         for cp in engine.V3_FLYING_ELIGIBLE_TARGETS:
-            assert tags.get(cp, {}).get('anim_class') == 'flying_dragon', (
-                f'{cp} listed as flying-eligible but anim_class != '
-                f'flying_dragon ({tags.get(cp, {}).get("anim_class")})')
+            t = tags.get(cp, {})
+            ok = (t.get('anim_class') == 'flying_dragon'
+                  or t.get('locomotion') == 2
+                  or cp in _vetted)
+            assert ok, (
+                f'{cp} listed as flying-eligible but is neither a flier '
+                f'nor a vetted exception (anim={t.get("anim_class")})')
 
     def test_astel_rejected_at_flying_slot(self, engine):
         """The original bug case: Astel at m60_43_36_50 pi=23 must reject."""

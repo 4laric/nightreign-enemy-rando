@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.27.9'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.10'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -11041,7 +11041,20 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
                 from swap_compat import is_flier as _is_flier
             except ImportError:
                 _is_flier = lambda t: t.get('anim_class') == 'flying_dragon'  # noqa: E731
-            if not _is_flier(tags.get(target_cp, {})):
+            # v0.27.10: also honor the data file's eligible_target_chrs
+            # whitelist (V3_FLYING_ELIGIBLE_TARGETS). is_flier covers the
+            # flying_dragon chrs + loco=2 bats; the whitelist additionally
+            # clears hand-vetted hover-capable non-fliers (jellyfish c4180/
+            # c4181, Warhawk c4210) so grunt-tier flier-required slots are
+            # not limited to the 2-bat pool. The whitelist plumbing has
+            # existed since v0.24.45 (_load_flying_required_slots) but Gate
+            # 5 was never wired to it — v0.24.100 switched to is_flier and
+            # left it dead. Asymmetric by construction: this only widens
+            # the TARGET set at catalogued flier slots; it does not make
+            # jellyfish/Warhawk slots flier-required (that is the separate
+            # V3_FLYING_REQUIRED_SLOTS catalog).
+            if (not _is_flier(tags.get(target_cp, {}))
+                    and target_cp not in V3_FLYING_ELIGIBLE_TARGETS):
                 return 'flying_required_slot'
 
     # v0.24.67 Gate 5.5: grunt/trash target at boss-healthbar slot.

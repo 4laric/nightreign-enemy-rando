@@ -1,3 +1,29 @@
+## v0.27.10
+
+Flier-eligible whitelist activated — jellyfish + Warhawk cleared for
+catalogued aerial slots.
+
+Gate 5 (flying-required slots) now honors V3_FLYING_ELIGIBLE_TARGETS,
+the eligible_target_chrs whitelist loaded from
+nr_flying_required_slots.json. That plumbing has existed since v0.24.45
+but Gate 5 was never wired to it — v0.24.100 switched the gate to the
+is_flier predicate and left the whitelist dead. Reviving it lets a
+hand-vetted set of hover-capable non-fliers stand in at aerial slots:
+c4180 Spirit Jellyfish, c4181 Maris' Jellyfish (aquatic float rig),
+c4210 Warhawk (mis-tagged quadruped_large; genuinely a flier). The
+change is asymmetric by construction — it only widens the TARGET set
+at the 34 catalogued flier-required slots; it does not make
+jellyfish/Warhawk slots flier-required.
+
+Scope, honestly: this is a variety change, not a no-target fix. The
+flier-required catalog is 34 slots and they were never starved — the
+sim shows c4200 Man-Bat / c4201 Operatic Bat at ~10 / ~7 placements
+per seed, far below the cap. Grunt-tier aerial slots now draw from 5
+chrs (2 bats + 2 jellyfish + Warhawk) instead of 2; the no-target
+count is unchanged at ~383/seed. The earlier "flier bottleneck"
+framing conflated flier-source slots (cap-limited) with the much
+smaller flier-required catalog.
+
 ## v0.27.9
 
 Grunt cap raised 32 -> 40 (interim).

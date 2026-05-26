@@ -1,266 +1,269 @@
 {
-  "_meta": {
-    "schema_version": 1,
-    "since_version": "v0.24.45",
-    "purpose": "Slots whose vanilla NR chr has anim_class='flying_dragon' \u2014 designed for aerial-spawning bosses. Picker must select a chr with anim_class='flying_dragon' as target; non-flying chrs at these slots cause CTD on cell-load (anim bank mismatch + asset budget mismatch). Discovered v0.24.45 via seed 552688: vanilla c4500 Flying Dragon at m60_43_36_50 pi=23 (Y=106 mid-air) \u2192 rando swapped to c4620 Astel GIGA giga_boss \u2192 CTD walking through castle front door.",
-    "engine_field": "V3_FLYING_REQUIRED_SLOTS",
-    "eligible_target_chrs": [
-      "c4500",
-      "c4501",
-      "c4502",
-      "c4503",
-      "c4504",
-      "c4505",
-      "c4511",
-      "c4680",
-      "c4911",
-      "c5860",
-      "c6260",
-      "c7510",
-      "c7511",
-      "c7530"
-    ],
-    "n_eligible_targets": 14,
-    "n_slots": 34
+ "_meta": {
+  "schema_version": 1,
+  "since_version": "v0.24.45",
+  "purpose": "Slots whose vanilla NR chr has anim_class='flying_dragon' \u2014 designed for aerial-spawning bosses. Picker must select a chr with anim_class='flying_dragon' as target; non-flying chrs at these slots cause CTD on cell-load (anim bank mismatch + asset budget mismatch). Discovered v0.24.45 via seed 552688: vanilla c4500 Flying Dragon at m60_43_36_50 pi=23 (Y=106 mid-air) \u2192 rando swapped to c4620 Astel GIGA giga_boss \u2192 CTD walking through castle front door. eligible_target_chrs lists the canonical flying_dragon/bat fliers PLUS (v0.27.10) hand-vetted hover-capable non-fliers cleared for aerial slots: c4180 Spirit Jellyfish, c4181 Maris' Jellyfish (aquatic float rig), c4210 Warhawk (mis-tagged quadruped_large; genuinely a flier).",
+  "engine_field": "V3_FLYING_REQUIRED_SLOTS",
+  "eligible_target_chrs": [
+   "c4500",
+   "c4501",
+   "c4502",
+   "c4503",
+   "c4504",
+   "c4505",
+   "c4511",
+   "c4680",
+   "c4911",
+   "c5860",
+   "c6260",
+   "c7510",
+   "c7511",
+   "c7530",
+   "c4180",
+   "c4181",
+   "c4210"
+  ],
+  "n_eligible_targets": 17,
+  "n_slots": 34
+ },
+ "slots": [
+  {
+   "map": "m20_00_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
   },
-  "slots": [
-    {
-      "map": "m20_00_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m20_10_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m20_20_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m20_30_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m20_40_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m20_50_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m20_60_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m20_70_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m20_80_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m20_90_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m21_00_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m21_10_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m21_20_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m21_30_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m21_40_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m21_50_00_00.msb",
-      "part_index": 3,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m46_04_00_00.msb",
-      "part_index": 1,
-      "vanilla_c_prefix": "c4505",
-      "vanilla_name": "Flying Dragon (Small)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m46_04_00_00.msb",
-      "part_index": 2,
-      "vanilla_c_prefix": "c4505",
-      "vanilla_name": "Flying Dragon (Small)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m46_58_00_00.msb",
-      "part_index": 1,
-      "vanilla_c_prefix": "c4500",
-      "vanilla_name": "Flying Dragon (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m46_59_00_00.msb",
-      "part_index": 2,
-      "vanilla_c_prefix": "c4501",
-      "vanilla_name": "Decaying Ekzykes (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m48_20_00_00.msb",
-      "part_index": 1,
-      "vanilla_c_prefix": "c4505",
-      "vanilla_name": "Flying Dragon (Small)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m49_18_00_00.msb",
-      "part_index": 5,
-      "vanilla_c_prefix": "c4911",
-      "vanilla_name": "Great Wyrm Theodorix",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m49_20_00_00.msb",
-      "part_index": 5,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_42_38_10.msb",
-      "part_index": 49,
-      "vanilla_c_prefix": "c4503",
-      "vanilla_name": "Borealis the Freezing Fog (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_42_38_10.msb",
-      "part_index": 50,
-      "vanilla_c_prefix": "c4505",
-      "vanilla_name": "Flying Dragon (Small)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_42_39_10.msb",
-      "part_index": 11,
-      "vanilla_c_prefix": "c4503",
-      "vanilla_name": "Borealis the Freezing Fog (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_43_36_50.msb",
-      "part_index": 23,
-      "vanilla_c_prefix": "c4500",
-      "vanilla_name": "Flying Dragon (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_43_39_10.msb",
-      "part_index": 19,
-      "vanilla_c_prefix": "c4503",
-      "vanilla_name": "Borealis the Freezing Fog (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_43_39_10.msb",
-      "part_index": 20,
-      "vanilla_c_prefix": "c4503",
-      "vanilla_name": "Borealis the Freezing Fog (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_44_38_20.msb",
-      "part_index": 90,
-      "vanilla_c_prefix": "c4680",
-      "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_44_39_20.msb",
-      "part_index": 74,
-      "vanilla_c_prefix": "c4505",
-      "vanilla_name": "Flying Dragon (Small)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_45_36_00.msb",
-      "part_index": 45,
-      "vanilla_c_prefix": "c4500",
-      "vanilla_name": "Flying Dragon (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_45_36_20.msb",
-      "part_index": 45,
-      "vanilla_c_prefix": "c4500",
-      "vanilla_name": "Flying Dragon (Unscaled)",
-      "vanilla_size": "GIGA"
-    },
-    {
-      "map": "m60_45_36_50.msb",
-      "part_index": 45,
-      "vanilla_c_prefix": "c4500",
-      "vanilla_name": "Flying Dragon (Unscaled)",
-      "vanilla_size": "GIGA"
-    }
-  ]
+  {
+   "map": "m20_10_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m20_20_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m20_30_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m20_40_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m20_50_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m20_60_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m20_70_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m20_80_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m20_90_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m21_00_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m21_10_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m21_20_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m21_30_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m21_40_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m21_50_00_00.msb",
+   "part_index": 3,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m46_04_00_00.msb",
+   "part_index": 1,
+   "vanilla_c_prefix": "c4505",
+   "vanilla_name": "Flying Dragon (Small)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m46_04_00_00.msb",
+   "part_index": 2,
+   "vanilla_c_prefix": "c4505",
+   "vanilla_name": "Flying Dragon (Small)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m46_58_00_00.msb",
+   "part_index": 1,
+   "vanilla_c_prefix": "c4500",
+   "vanilla_name": "Flying Dragon (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m46_59_00_00.msb",
+   "part_index": 2,
+   "vanilla_c_prefix": "c4501",
+   "vanilla_name": "Decaying Ekzykes (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m48_20_00_00.msb",
+   "part_index": 1,
+   "vanilla_c_prefix": "c4505",
+   "vanilla_name": "Flying Dragon (Small)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m49_18_00_00.msb",
+   "part_index": 5,
+   "vanilla_c_prefix": "c4911",
+   "vanilla_name": "Great Wyrm Theodorix",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m49_20_00_00.msb",
+   "part_index": 5,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_42_38_10.msb",
+   "part_index": 49,
+   "vanilla_c_prefix": "c4503",
+   "vanilla_name": "Borealis the Freezing Fog (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_42_38_10.msb",
+   "part_index": 50,
+   "vanilla_c_prefix": "c4505",
+   "vanilla_name": "Flying Dragon (Small)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_42_39_10.msb",
+   "part_index": 11,
+   "vanilla_c_prefix": "c4503",
+   "vanilla_name": "Borealis the Freezing Fog (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_43_36_50.msb",
+   "part_index": 23,
+   "vanilla_c_prefix": "c4500",
+   "vanilla_name": "Flying Dragon (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_43_39_10.msb",
+   "part_index": 19,
+   "vanilla_c_prefix": "c4503",
+   "vanilla_name": "Borealis the Freezing Fog (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_43_39_10.msb",
+   "part_index": 20,
+   "vanilla_c_prefix": "c4503",
+   "vanilla_name": "Borealis the Freezing Fog (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_44_38_20.msb",
+   "part_index": 90,
+   "vanilla_c_prefix": "c4680",
+   "vanilla_name": "Full-Grown Fallingstar Beast (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_44_39_20.msb",
+   "part_index": 74,
+   "vanilla_c_prefix": "c4505",
+   "vanilla_name": "Flying Dragon (Small)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_45_36_00.msb",
+   "part_index": 45,
+   "vanilla_c_prefix": "c4500",
+   "vanilla_name": "Flying Dragon (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_45_36_20.msb",
+   "part_index": 45,
+   "vanilla_c_prefix": "c4500",
+   "vanilla_name": "Flying Dragon (Unscaled)",
+   "vanilla_size": "GIGA"
+  },
+  {
+   "map": "m60_45_36_50.msb",
+   "part_index": 45,
+   "vanilla_c_prefix": "c4500",
+   "vanilla_name": "Flying Dragon (Unscaled)",
+   "vanilla_size": "GIGA"
+  }
+ ]
 }

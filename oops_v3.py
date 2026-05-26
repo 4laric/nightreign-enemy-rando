@@ -2487,6 +2487,58 @@ V3_AVOID_VARIANT_NPC_IDS = {
 V3_PREFER_CANONICAL_VARIANTS = True
 
 
+# v0.27.x: REDUNDANT-VARIANT PRUNE LIST
+# ----------------------------------------------------------------------------
+# The NR roster carries ~3100 NpcParam rows, but most are the SAME enemy
+# re-authored once per placement context (Castle / Evergaol / Encampment
+# / field) plus untested post-DLC-dump "ghost" rows. The model, anims and
+# behavior are keyed on the c-prefix, not the NpcParam row, so context-
+# duplicate rows are interchangeable in the random pool.
+#
+# dev/audit_genuine_variants.py clusters rows by genuine identity
+# (behaviorVariationId, think_param_id // 1000) and emits
+# data/variant_prune_list.json — the npc_param_ids that are redundant
+# duplicates of a kept representative. Every genuine variant keeps >=1
+# representative row, and within a cluster that has both rewarded and
+# non-rewarded rows the rewarded one is kept (so the variant still drops
+# its reward). Pruning therefore does NOT remove any genuine variant
+# from the pool.
+#
+# The prune list is applied ONLY in pick_variant_for_tier — the RANDOM
+# variant-pick path. Explicitly-targeted placements (manual_promotions,
+# boss-arena chr roles, scripted-intro slots) reference specific
+# npc_param_ids and go through other code paths; they are unaffected.
+#
+# Disable by setting this False or by deleting data/variant_prune_list.json
+# (an absent file yields an empty set — no-op).
+V3_APPLY_VARIANT_PRUNE_LIST = True
+
+_V3_VARIANT_PRUNE_IDS = None  # lazily-loaded cache; None = not yet loaded
+
+
+def _variant_prune_ids():
+    """Lazily load + cache the redundant-variant prune set.
+
+    Returns a set of npc_param_id ints. Empty when the feature is off,
+    the file is missing, or the file is malformed (fail-open: a bad
+    prune file must never crash a rando run, only forgo the pruning).
+    """
+    global _V3_VARIANT_PRUNE_IDS
+    if _V3_VARIANT_PRUNE_IDS is None:
+        ids = set()
+        if V3_APPLY_VARIANT_PRUNE_LIST:
+            path = _data_path('variant_prune_list.json')
+            if os.path.exists(path):
+                try:
+                    with open(path, encoding='utf-8') as f:
+                        data = json.load(f)
+                    ids = {int(x) for x in data.get('prune_npc_param_ids', [])}
+                except (json.JSONDecodeError, OSError, ValueError, TypeError):
+                    ids = set()
+        _V3_VARIANT_PRUNE_IDS = ids
+    return _V3_VARIANT_PRUNE_IDS
+
+
 def _filter_canonical_variants(variants):
     """Soft filter: prefer variants with sample_maps non-empty.
 
@@ -4634,6 +4686,18 @@ def pick_variant_for_tier(target_cp, recipient_is_boss, prefix_variants, rng,
     pool = prefix_variants.get(target_cp)
     if not pool:
         return None
+    # v0.27.x: drop redundant context-duplicate variants via the prune
+    # list (data/variant_prune_list.json — see _variant_prune_ids and
+    # V3_APPLY_VARIANT_PRUNE_LIST). Each genuine variant keeps a
+    # representative row, so this never removes a genuine variant from
+    # the pool. SOFT: if pruning somehow empties the pool the original
+    # is restored (defensive — by construction every c-prefix retains
+    # >=1 row, so this fallback should not trigger).
+    _prune = _variant_prune_ids()
+    if _prune:
+        _kept = [v for v in pool if v.get('npc_param_id') not in _prune]
+        if _kept:
+            pool = _kept
     variants = filter_emerge_variants(pool)
     # v0.23.04.1: drop empty-name variants (phantom/summon placeholders).
     variants = [v for v in variants if (v.get('variant_name') or '').strip()]

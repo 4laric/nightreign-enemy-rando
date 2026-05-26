@@ -31816,6 +31816,321 @@
       "has_reward": true
     },
     {
+      "c_prefix": "c5260",
+      "npc_param_id": 52600000,
+      "think_param_id": 52600000,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52600001,
+      "think_param_id": 52600001,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52600081,
+      "think_param_id": 52600081,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52600090,
+      "think_param_id": 52600090,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52600093,
+      "think_param_id": 52600093,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52600100,
+      "think_param_id": 52600100,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52600181,
+      "think_param_id": 52600181,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52600200,
+      "think_param_id": 52600200,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52600290,
+      "think_param_id": 52600290,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52601000,
+      "think_param_id": 52601000,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52601001,
+      "think_param_id": 52601001,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52601090,
+      "think_param_id": 52601090,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52601093,
+      "think_param_id": 52601093,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52601095,
+      "think_param_id": 52601095,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52601100,
+      "think_param_id": 52601100,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52601190,
+      "think_param_id": 52601190,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52601200,
+      "think_param_id": 52601200,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52601290,
+      "think_param_id": 52601290,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602000,
+      "think_param_id": 52602000,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602001,
+      "think_param_id": 52602001,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602081,
+      "think_param_id": 52602081,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602090,
+      "think_param_id": 52602090,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602093,
+      "think_param_id": 52602093,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602095,
+      "think_param_id": 52602095,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602100,
+      "think_param_id": 52602100,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602181,
+      "think_param_id": 52602181,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602200,
+      "think_param_id": 52602200,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602201,
+      "think_param_id": 52602201,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602281,
+      "think_param_id": 52602281,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602290,
+      "think_param_id": 52602290,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602295,
+      "think_param_id": 52602295,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602300,
+      "think_param_id": 52602300,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602381,
+      "think_param_id": 52602381,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602400,
+      "think_param_id": 52602400,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5260",
+      "npc_param_id": 52602490,
+      "think_param_id": 52602490,
+      "variant_name": "Golem Smith",
+      "hp": 778,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
       "c_prefix": "c5840",
       "npc_param_id": 58400001,
       "think_param_id": 58400001,

@@ -391,5 +391,13 @@
     "status": "ASSETS_PENDING",
     "hp_max": 1212,
     "anim_class": "humanoid"
+  },
+  {
+    "c_prefix": "c5260",
+    "name": "Golem Smith",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 778,
+    "anim_class": "humanoid"
   }
 ]

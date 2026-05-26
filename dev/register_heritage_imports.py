@@ -15,6 +15,11 @@ chr/script asset copy is the only remaining step).
 
 Idempotent: re-running with the same arguments reproduces identical files.
 
+If the chr already has an entry in nr_enemy_tags.json (e.g. from an earlier
+heritage-port pass), that tag is authoritative -- it is preserved untouched
+and only the roster / heritage_pack / batch-plan entries are filled in. The
+--tier / --anim-class / --size-class / --locomotion flags are then ignored.
+
 WHERE EACH TAG FIELD COMES FROM
   derived from data/NpcParam.csv : hp_max, hp_median, hit_height_median,
       hit_radius_median, weight_median, team, move_type, anim_bank,
@@ -171,70 +176,88 @@ def main():
 
     plan_entry = next((e for e in plan if e.get('c_prefix') == cp), None)
 
-    # resolve per-chr fields ------------------------------------------------
-    name = args.name or (plan_entry or {}).get('name')
+    # resolve display name --------------------------------------------------
+    existing = tags.get(cp)
+    name = (existing or {}).get('name') or args.name \
+        or (plan_entry or {}).get('name')
     if not name:
-        sys.exit(f'{cp}: not in batch plan and no --name -- cannot resolve '
-                 f'display name')
-
-    if args.locomotion is not None:
-        locomotion, loco_src = args.locomotion, 'flag'
-    elif plan_entry and plan_entry.get('locomotion') is not None:
-        locomotion, loco_src = plan_entry['locomotion'], 'batch plan'
-    else:
-        sys.exit(f'{cp}: not in batch plan and no --locomotion')
-
-    if args.anim_class:
-        anim_class, ac_src = args.anim_class, 'flag'
-    else:
-        plan_ac = (plan_entry or {}).get('anim_class')
-        if plan_ac and plan_ac != 'misc':
-            anim_class, ac_src = plan_ac, 'batch plan'
-        else:
-            sys.exit(f'{cp}: anim_class unresolved (batch plan has '
-                     f'{plan_ac!r}) -- pass --anim-class')
+        sys.exit(f'{cp}: not in nr_enemy_tags or the batch plan and no '
+                 f'--name -- cannot resolve a display name')
 
     hps = [r['hp'] for r in usable]
-    hit_h = statistics.median(r['hit_height'] for r in usable)
-    if args.size_class:
-        size_class, sc_src = args.size_class, 'flag'
-    else:
-        size_class = size_class_from_hit_height(hit_h)
-        sc_src = f'hitHeight proxy ({hit_h:g})'
 
-    if args.tier:
-        tier, tier_src = args.tier, 'flag'
+    # tag --------------------------------------------------------------------
+    # An authored tag already in nr_enemy_tags.json is the source of truth: an
+    # earlier heritage-port pass may have curated reward splits, team, or a
+    # _confidence field that this script cannot reconstruct. Preserve it
+    # untouched; derive a tag from NpcParam only when none exists.
+    if existing is not None:
+        for flag in ('tier', 'anim_class', 'size_class', 'locomotion'):
+            if getattr(args, flag) is not None:
+                print(f'  note: --{flag.replace("_", "-")} ignored -- {cp} '
+                      f'already has a tag; the existing tag is authoritative')
+        tag = existing
+        tag_src = f"preserved (existing _source={existing.get('_source', '?')})"
+        locomotion = existing.get('locomotion', 0)
+        anim_class = existing.get('anim_class', 'misc')
+        hp_max = existing.get('hp_max', max(hps))
     else:
-        hp_med = statistics.median(hps)
-        tier = 'miniboss' if hp_med >= 300 else 'grunt'
-        tier_src = f'heuristic (hp_median={hp_med:g})'
+        if args.locomotion is not None:
+            locomotion = args.locomotion
+        elif plan_entry and plan_entry.get('locomotion') is not None:
+            locomotion = plan_entry['locomotion']
+        else:
+            sys.exit(f'{cp}: not in batch plan and no --locomotion')
 
-    # build entries ---------------------------------------------------------
-    tag = {
-        '_heritage_imported': True,
-        '_source': 'heritage',
-        'anim_bank': cp_int * 10,
-        'anim_bank_count': 1,
-        'anim_class': anim_class,
-        'expects_boss_arena': False,
-        'has_boss_reward': False,
-        'has_drops': False,
-        'has_reward': False,
-        'hit_height_median': hit_h,
-        'hit_radius_median': statistics.median(r['hit_radius'] for r in usable),
-        'hp_max': max(hps),
-        'hp_median': statistics.median(hps),
-        'locomotion': locomotion,
-        'move_type': statistics.mode(r['move_type'] for r in usable),
-        'n_noreward_variants': len(usable),
-        'n_reward_variants': 0,
-        'name': name,
-        'size_class': size_class,
-        'team': statistics.mode(r['team'] for r in usable),
-        'tier': tier,
-        'variants': len(usable),
-        'weight_median': statistics.median(r['weight'] for r in usable),
-    }
+        if args.anim_class:
+            anim_class = args.anim_class
+        else:
+            plan_ac = (plan_entry or {}).get('anim_class')
+            if plan_ac and plan_ac != 'misc':
+                anim_class = plan_ac
+            else:
+                sys.exit(f'{cp}: anim_class unresolved (batch plan has '
+                         f'{plan_ac!r}) -- pass --anim-class')
+
+        hit_h = statistics.median(r['hit_height'] for r in usable)
+        size_class = args.size_class or size_class_from_hit_height(hit_h)
+        if args.tier:
+            tier, tier_src = args.tier, 'flag'
+        else:
+            tier = 'miniboss' if statistics.median(hps) >= 300 else 'grunt'
+            tier_src = f'heuristic (hp_median={statistics.median(hps):g})'
+
+        tag = {
+            '_heritage_imported': True,
+            '_source': 'heritage',
+            'anim_bank': cp_int * 10,
+            'anim_bank_count': 1,
+            'anim_class': anim_class,
+            'expects_boss_arena': False,
+            'has_boss_reward': False,
+            'has_drops': False,
+            'has_reward': False,
+            'hit_height_median': hit_h,
+            'hit_radius_median': statistics.median(
+                r['hit_radius'] for r in usable),
+            'hp_max': max(hps),
+            'hp_median': statistics.median(hps),
+            'locomotion': locomotion,
+            'move_type': statistics.mode(r['move_type'] for r in usable),
+            'n_noreward_variants': len(usable),
+            'n_reward_variants': 0,
+            'name': name,
+            'size_class': size_class,
+            'team': statistics.mode(r['team'] for r in usable),
+            'tier': tier,
+            'variants': len(usable),
+            'weight_median': statistics.median(r['weight'] for r in usable),
+        }
+        tags[cp] = tag
+        tag_src = f'derived (tier {tier} [{tier_src}])'
+        hp_max = tag['hp_max']
+
+    # roster variants -- one per usable NpcParam row ------------------------
     variants = [{
         'c_prefix': cp,
         'npc_param_id': r['id'],
@@ -245,9 +268,6 @@ def main():
         'has_reward': False,
     } for r in usable]
 
-    # upserts ---------------------------------------------------------------
-    tags[cp] = tag
-
     av = roster['all_variants']
     before = len(av)
     av[:] = [v for v in av if v.get('c_prefix') != cp]
@@ -255,13 +275,14 @@ def main():
 
     pack['tags'][cp] = {
         'name': name,
-        '_inferred_source': f'{REG_SOURCE} (orig _source=heritage)',
+        '_inferred_source':
+            f"{REG_SOURCE} (orig _source={tag.get('_source', 'heritage')})",
     }
 
     if plan_entry is None:
         plan.append({
             'c_prefix': cp, 'name': name, 'locomotion': locomotion,
-            'status': NEW_STATUS, 'hp_max': max(hps),
+            'status': NEW_STATUS, 'hp_max': hp_max,
             'anim_class': anim_class,
         })
         plan_action = 'appended new entry'
@@ -280,21 +301,21 @@ def main():
     print(f'{head} {cp} "{name}"')
     print(f'  NpcParam rows    : {len(rows)} ({len(usable)} usable, '
           f'{len(rows) - len(usable)} Unused/Boss excluded)')
-    print(f'  tier             : {tier}   [{tier_src}]')
-    print(f'  anim_class       : {anim_class}   [{ac_src}]')
-    print(f'  size_class       : {size_class}   [{sc_src}]')
-    print(f'  locomotion       : {locomotion}   [{loco_src}]')
-    print(f'  move_type / team : {tag["move_type"]} / {tag["team"]}   '
-          f'[NpcParam]')
-    print(f'  hp_max / median  : {tag["hp_max"]} / {tag["hp_median"]:g}')
-    print(f'  nr_enemy_tags    : {cp} upserted ({len(tags)} entries)')
-    print(f'  nr_enemy_roster  : all_variants {before} -> {len(av)}')
+    print(f'  nr_enemy_tags    : {tag_src}')
+    print(f'  tier / size_class: {tag.get("tier")} / {tag.get("size_class")}'
+          f'   (anim_class {tag.get("anim_class")})')
+    print(f'  hp_max / median  : {tag.get("hp_max")} / {tag.get("hp_median")}')
+    print(f'  nr_enemy_roster  : all_variants {before} -> {len(av)} '
+          f'(+{len(variants)})')
     print(f'  heritage_pack    : {cp} upserted ({len(pack["tags"])} tags)')
     print(f'  batch_import_plan: {plan_action}, status={NEW_STATUS}')
-    if tier_src.startswith('heuristic'):
-        print('  NOTE: tier inferred -- pass --tier to set it explicitly.')
-    print('  NOTE: reward fields default to none -- run '
-          'dev/emit_has_reward.py for reward-bearing chrs.')
+    n_rw = tag.get('n_reward_variants', 0)
+    if n_rw:
+        print(f'  NOTE: tag declares {n_rw} reward variant(s); roster written '
+              f'all-noreward -- run dev/emit_has_reward.py to reconcile.')
+    else:
+        print('  NOTE: reward fields default to none -- run '
+              'dev/emit_has_reward.py for reward-bearing chrs.')
 
 
 if __name__ == '__main__':

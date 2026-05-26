@@ -331,6 +331,10 @@
     "c5840": {
       "name": "Black Knight",
       "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5260": {
+      "name": "Golem Smith",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=er_heritage_port_v0_27_0)"
     }
   }
 }

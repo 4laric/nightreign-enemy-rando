@@ -1936,14 +1936,14 @@ class TestSeed798229Freezes:
         assert 'c3620' not in engine.V3_EXCLUDE_TARGET_PREFIXES
 
     def test_c3360_ancestral_follower_no_longer_excluded(self, engine):
-        """v0.24.65: lifted. v0.27.8: grunt-tier cap=32."""
+        """v0.24.65: lifted. v0.27.8: grunt-tier cap. v0.27.9: cap 32->40."""
         assert 'c3360' not in engine.V3_EXCLUDE_TARGET_PREFIXES
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c3360') == 32
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c3360') == 40
 
     def test_c4430_abnormal_stone_cluster_no_longer_excluded(self, engine):
-        """v0.24.65: lifted. v0.27.8: grunt-tier cap=32 (was trash)."""
+        """v0.24.65: lifted. v0.27.8: grunt cap (was trash). v0.27.9: 32->40."""
         assert 'c4430' not in engine.V3_EXCLUDE_TARGET_PREFIXES
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c4430') == 32
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c4430') == 40
 
     def test_fi_reserved_only_protects_c3620(self, engine):
         """v0.24.39: the defensive cleanup (_FI_CPS_RESERVED_FOR_TARGET) now

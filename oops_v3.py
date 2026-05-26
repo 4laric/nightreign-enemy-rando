@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.27.8'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.9'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -3285,18 +3285,22 @@ def load_data():
         print(f"v0.27.3/.6: miniboss tier — floor=1 added to {_mb_floored} "
               f"chrs, cap=4 set on {_mb_capped} chrs")
 
-    # v0.27.8: grunt tier (grunt + the now-collapsed trash) — cap=32,
-    # floor=4. Alaric direction. The 20-seed sim (dev/simulate_engine.py)
-    # showed the tier saturating: 52 of 105 eligible chrs flatlined at
-    # the old implicit global cap of 50 — 74% of all grunt placements —
-    # with no shaping below it, while ~14 chrs sat at <=2/seed. cap=32
-    # (power-of-2, down from 50) trims the saturated band; floor=4
-    # guarantees every grunt appears >=4x, eliminating the cameo tail.
-    # Mirrors the v0.27.3/.6 miniboss block; applied across the board,
-    # overriding any prior hand-tuned cap.
+    # v0.27.8: grunt tier (grunt + the now-collapsed trash) — floor=4,
+    # plus a tier-wide cap. Alaric direction. The 20-seed sim
+    # (dev/simulate_engine.py) showed the tier saturating: 52 of 105
+    # eligible chrs flatlined at the old implicit global cap of 50 — 74%
+    # of all grunt placements — with no shaping below it, while ~14 chrs
+    # sat at <=2/seed. floor=4 guarantees every grunt appears >=4x,
+    # eliminating the cameo tail. Mirrors the v0.27.3/.6 miniboss block;
+    # applied across the board, overriding any prior hand-tuned cap.
     #
-    # Slot budget: ~3,300 grunt-strength slots/seed vs ~105 grunts x
-    # floor 4 = ~420 reservations — ample headroom.
+    # v0.27.9: cap raised 32 -> 40. cap=32 was leaving ~10% of grunt
+    # slots vanilla (no-target) — 104 grunts x 32 = 3,328 capacity vs
+    # ~3,506 non-hub grunt slots, plus uneven cap fill across MSBs. 40
+    # gives 4,160 capacity — comfortable headroom. This is an INTERIM
+    # value: the durable fix is enlarging the grunt pool by importing
+    # more ER grunt assets (each new eligible grunt = +40 capacity),
+    # after which the cap can come back down.
     _gr_exclude = (V3_EXCLUDE_PREFIXES | V3_EXCLUDE_TARGET_PREFIXES
                    | V3_GHOST_EXCLUDE_TARGET_PREFIXES)
     _gr_floored = 0
@@ -3309,12 +3313,12 @@ def load_data():
         if V3_RESERVATION_FLOORS.get(_cp) != 4:
             V3_RESERVATION_FLOORS[_cp] = 4
             _gr_floored += 1
-        if V3_UNIQUE_TARGET_CAPS.get(_cp) != 32:
-            V3_UNIQUE_TARGET_CAPS[_cp] = 32
+        if V3_UNIQUE_TARGET_CAPS.get(_cp) != 40:
+            V3_UNIQUE_TARGET_CAPS[_cp] = 40
             _gr_capped += 1
     if _gr_floored or _gr_capped:
-        print(f"v0.27.8: grunt tier — floor=4 set on {_gr_floored} "
-              f"chrs, cap=32 set on {_gr_capped} chrs")
+        print(f"v0.27.8/.9: grunt tier — floor=4 set on {_gr_floored} "
+              f"chrs, cap=40 set on {_gr_capped} chrs")
 
     return roster, tags
 

@@ -1,3 +1,24 @@
+## v0.27.9
+
+Grunt cap raised 32 -> 40 (interim).
+
+v0.27.8's cap=32 left ~10% of grunt slots vanilla — 104 eligible grunts
+x 32 = 3,328 placement capacity vs ~3,506 non-hub grunt slots, plus
+uneven cap fill across MSBs pushing the real no-target count to
+~745/seed. 40 gives 4,160 capacity; the MSB-free sim (5 seeds) confirms
+no-target back down to ~383/seed (about the pre-v0.27.8 level), 0 cap
+violations, with the v0.27.8 floor=4 / collapsed-tier shaping intact.
+
+Interim value. The durable fix is enlarging the grunt pool by importing
+more ER grunt assets — each new eligible grunt adds 40 capacity — after
+which the cap can come back down.
+
+Investigated but NOT changed: the c5522/c5523 Stray and c5750/c5751
+Living Jar un-bans. All four are in nr_missing_chr_files.json — they are
+missing-asset excludes (no chr files in the deployment), not stale
+fragility classifications. They cannot be un-banned by a flag flip;
+they need their ER assets imported first.
+
 ## v0.27.8
 
 Grunt/trash tier collapse + re-cap. The 20-seed sim

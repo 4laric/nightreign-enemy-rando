@@ -1,3 +1,34 @@
+## v0.27.11
+
+Variant-prune list + miniboss reward overrides — merged from a parallel
+branch.
+
+REDUNDANT-VARIANT PRUNE LIST. The NR roster carries ~3100 NpcParam rows,
+but most are the same enemy re-authored once per placement context
+(Castle / Evergaol / Encampment / field). dev/audit_genuine_variants.py
+clusters rows by genuine identity (behaviorVariationId,
+think_param_id // 1000) and emits data/variant_prune_list.json — 2357 of
+3141 rows are redundant duplicates of a kept representative, leaving 520
+genuine variants. pick_variant_for_tier now soft-filters the prune set
+on the random pick path only; explicitly-targeted placements (manual
+promotions, boss-arena roles, scripted intros) are untouched. Every
+genuine variant keeps >=1 representative, and a rewarded row is kept
+over a non-rewarded sibling, so pruning never drops a genuine variant or
+its reward. Fail-open: a missing or malformed prune file yields an empty
+set. Gated by V3_APPLY_VARIANT_PRUNE_LIST.
+
+MINIBOSS REWARD OVERRIDES. dev/emit_reward_overrides.py +
+data/npcparam_reward_overrides.csv — an opt-in NpcParam patch CSV
+assigning a tier-appropriate itemLotId_enemy to the 817 miniboss-tier
+rows that vanilla authored with no drop (all 22 fully-stiffed c-prefixes
+covered). Deterministic per npc_param_id.
+
+Merge note: the branch was authored with CRLF line endings; normalized
+to LF before merging. Suite shows zero regressions — the 4 new
+TestVariantPruneList tests pass and one pre-existing test was fixed
+(test_picker_with_canonical_pref_disabled now isolates the flag it
+actually tests).
+
 ## v0.27.10
 
 Flier-eligible whitelist activated — jellyfish + Warhawk cleared for

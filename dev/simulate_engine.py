@@ -50,6 +50,7 @@ def simulate(seed, inventory, roster, tags, pv, pc):
     swap_plan = []          # (msb, pi, target_cp)
     target_count = {}       # run-wide accumulator, as in the real engine
     n_slots = n_skipped = n_no_target = 0
+    no_target = []          # diagnostic: slots that found no target
 
     for msb_name in sorted(by_msb):
         if msb_name in o.V3_HUB_MAPS:
@@ -112,6 +113,11 @@ def simulate(seed, inventory, roster, tags, pv, pc):
                 chaos_mode=False, gates=None, run_ctx=run_ctx)
             if target_cp is None:
                 n_no_target += 1
+                no_target.append({
+                    'msb': msb_name, 'pi': pi, 'source_cp': cur_cp,
+                    'recipient_is_boss': recipient_is_boss,
+                    'size_class': (tags.get(cur_cp, {}) or {}).get('size_class'),
+                })
                 continue
 
             target_count[target_cp] = target_count.get(target_cp, 0) + 1
@@ -129,6 +135,7 @@ def simulate(seed, inventory, roster, tags, pv, pc):
         'n_slots_seen': n_slots,
         'n_skipped': n_skipped,
         'n_no_target': n_no_target,
+        'no_target_slots': no_target,
         'n_reservations': len(run_ctx.unique_reservations),
         'placed_counts': dict(placed),
         'unique_placed_counts': dict(run_ctx.unique_placed_counts),

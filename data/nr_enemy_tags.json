@@ -7589,5 +7589,30 @@
     "tier": "miniboss",
     "variants": 35,
     "weight_median": 130.0
+  },
+  "c5840": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 58400,
+    "anim_bank_count": 1,
+    "anim_class": "humanoid",
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": false,
+    "hit_height_median": 2.0,
+    "hit_radius_median": 0.5,
+    "hp_max": 1212,
+    "hp_median": 512.0,
+    "locomotion": 0,
+    "move_type": 3,
+    "n_noreward_variants": 38,
+    "n_reward_variants": 0,
+    "name": "Black Knight",
+    "size_class": "M",
+    "team": 48,
+    "tier": "grunt",
+    "variants": 38,
+    "weight_median": 150.0
   }
 }

@@ -31814,6 +31814,348 @@
       "sample_maps": [],
       "variant_name": "Imp (Large)",
       "has_reward": true
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400001,
+      "think_param_id": 58400001,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400050,
+      "think_param_id": 58400050,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400080,
+      "think_param_id": 58400080,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400081,
+      "think_param_id": 58400081,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400082,
+      "think_param_id": 58400082,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400090,
+      "think_param_id": 58400090,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400093,
+      "think_param_id": 58400093,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400098,
+      "think_param_id": 58400098,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400100,
+      "think_param_id": 58400100,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400101,
+      "think_param_id": 58400101,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400182,
+      "think_param_id": 58400182,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400190,
+      "think_param_id": 58400190,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400193,
+      "think_param_id": 58400193,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400195,
+      "think_param_id": 58400195,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400198,
+      "think_param_id": 58400198,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400200,
+      "think_param_id": 58400200,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400201,
+      "think_param_id": 58400201,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400290,
+      "think_param_id": 58400290,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400293,
+      "think_param_id": 58400293,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400300,
+      "think_param_id": 58400300,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400301,
+      "think_param_id": 58400301,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400382,
+      "think_param_id": 58400382,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400390,
+      "think_param_id": 58400390,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400398,
+      "think_param_id": 58400398,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400500,
+      "think_param_id": 58400500,
+      "variant_name": "Black Knight",
+      "hp": 660,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400501,
+      "think_param_id": 58400501,
+      "variant_name": "Black Knight",
+      "hp": 660,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400600,
+      "think_param_id": 58400600,
+      "variant_name": "Black Knight",
+      "hp": 660,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58400601,
+      "think_param_id": 58400601,
+      "variant_name": "Black Knight",
+      "hp": 660,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58401000,
+      "think_param_id": 58401000,
+      "variant_name": "Black Knight",
+      "hp": 612,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58401010,
+      "think_param_id": 58401010,
+      "variant_name": "Black Knight",
+      "hp": 612,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58401020,
+      "think_param_id": 58401020,
+      "variant_name": "Black Knight",
+      "hp": 1212,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58401030,
+      "think_param_id": 58401030,
+      "variant_name": "Black Knight",
+      "hp": 1212,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58401290,
+      "think_param_id": 58401290,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58401390,
+      "think_param_id": 58401390,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58402000,
+      "think_param_id": 58402000,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58403000,
+      "think_param_id": 58403000,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58409000,
+      "think_param_id": 58409000,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
+    },
+    {
+      "c_prefix": "c5840",
+      "npc_param_id": 58409098,
+      "think_param_id": 58409098,
+      "variant_name": "Black Knight",
+      "hp": 512,
+      "_heritage_imported": true,
+      "has_reward": false
     }
   ],
   "canonical_targets": [

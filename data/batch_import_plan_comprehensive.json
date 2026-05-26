@@ -235,7 +235,7 @@
     "c_prefix": "c5250",
     "name": "Horned Warrior",
     "locomotion": 0,
-    "status": "PARTIAL_ATK",
+    "status": "ASSETS_PENDING",
     "hp_max": 1190,
     "anim_class": "misc"
   },
@@ -267,7 +267,7 @@
     "c_prefix": "c5190",
     "name": "Spider Scorpion",
     "locomotion": 0,
-    "status": "PARTIAL_ATK",
+    "status": "ASSETS_PENDING",
     "hp_max": 168,
     "anim_class": "misc"
   },
@@ -299,7 +299,7 @@
     "c_prefix": "c5750",
     "name": "Living Jar Warrior",
     "locomotion": 0,
-    "status": "PARTIAL_BHV",
+    "status": "ASSETS_PENDING",
     "hp_max": 449,
     "anim_class": "misc"
   },
@@ -307,7 +307,7 @@
     "c_prefix": "c5192",
     "name": "Spider Scorpion",
     "locomotion": 0,
-    "status": "PARTIAL_BHV",
+    "status": "ASSETS_PENDING",
     "hp_max": 422,
     "anim_class": "misc"
   },
@@ -323,7 +323,7 @@
     "c_prefix": "c5522",
     "name": "Stray",
     "locomotion": 0,
-    "status": "PARTIAL_BHV",
+    "status": "ASSETS_PENDING",
     "hp_max": 338,
     "anim_class": "misc"
   },
@@ -339,7 +339,7 @@
     "c_prefix": "c5523",
     "name": "Stray",
     "locomotion": 0,
-    "status": "PARTIAL_BHV",
+    "status": "ASSETS_PENDING",
     "hp_max": 162,
     "anim_class": "misc"
   },
@@ -347,7 +347,7 @@
     "c_prefix": "c5751",
     "name": "Living Jar",
     "locomotion": 0,
-    "status": "PARTIAL_BHV",
+    "status": "ASSETS_PENDING",
     "hp_max": 150,
     "anim_class": "misc"
   },
@@ -355,7 +355,7 @@
     "c_prefix": "c5193",
     "name": "Spider Scorpion",
     "locomotion": 0,
-    "status": "PARTIAL_BHV",
+    "status": "ASSETS_PENDING",
     "hp_max": 58,
     "anim_class": "misc"
   },
@@ -383,5 +383,13 @@
     "hp_max": 1700,
     "anim_class": "humanoid",
     "_notes": "SotE remembrance boss. Spectral horse is part of c5020's chr (no separate c-prefix). Pattern resembles Nameless King + Storm King but combined into one chr \u2014 simpler import."
+  },
+  {
+    "c_prefix": "c5840",
+    "name": "Black Knight",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 1212,
+    "anim_class": "humanoid"
   }
 ]

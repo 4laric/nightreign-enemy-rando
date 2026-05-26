@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.27.11'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.12'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

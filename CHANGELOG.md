@@ -1,3 +1,33 @@
+## v0.27.12
+
+Heritage registration — c5840 Black Knight enters the placement pool,
+and the eight other heritage targets get their stale import statuses
+corrected.
+
+c5840 BLACK KNIGHT REGISTERED. The ER Black Knight (c5840) was referenced
+by the import plan but absent from all four data files, so the engine
+could never place it. dev/register_heritage_imports.py now registers it:
+38 placeable variants (the 45 NpcParam rows minus the leaked "(Unused)"
+CASTLE variant and the six named-boss rows — Garrew and Edredd), tier
+grunt, into nr_enemy_tags.json, nr_enemy_roster.json and
+heritage_pack.json. think_param_id uses the identity mapping
+(think_param_id == npc_param_id): c5840 is never placed in vanilla NR so
+no MSB-derived think pairs exist, and the game reads the real think
+pointer from regulation.bin at runtime regardless. Variants are not
+dedup-collapsed — the roster keeps every row and variant_prune_list.json
+(v0.27.11) clusters on the pick path; rerun dev/audit_genuine_variants.py
+to fold c5840 into the prune set.
+
+IMPORT STATUS CORRECTION. A four-table diff of the current mod regulation
+against vanilla ER — NpcParam, NpcThinkParam, BehaviorParam (traced by
+behaviorVariationId) and the AtkParam_Npc rows those behaviors reference
+— found zero missing rows for all nine heritage targets
+(c5190/c5192/c5193/c5250/c5522/c5523/c5750/c5751/c5840). Their params
+are complete; the stale PARTIAL_ATK / PARTIAL_BHV flags in
+batch_import_plan_comprehensive.json predated the finished regulation.
+All nine are now status ASSETS_PENDING — the only remaining work is the
+chr/script asset copy on the import rig.
+
 ## v0.27.11
 
 Variant-prune list + miniboss reward overrides — merged from a parallel

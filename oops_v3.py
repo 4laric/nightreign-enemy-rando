@@ -2564,6 +2564,41 @@ def _variant_prune_ids():
     return _V3_VARIANT_PRUNE_IDS
 
 
+# v0.27.x: ROSTER-SUBTYPE MAP (groundwork — see data/nr_roster_subtypes.json)
+# ----------------------------------------------------------------------------
+# Records c-prefixes whose NpcParam variants split into 2+ distinct gameplay
+# identities (e.g. c5250 -> Horned Warrior / Divine Bird Warrior / Divine
+# Beast Warrior — three enemies, one chr asset). This is DATA ONLY: the loader
+# exposes the map, but no decision path consumes it yet. A later stage will
+# let a subtype carry its own attributes (flier flag, cap, ...). c-prefixes
+# absent from the file remain a single roster entry == the c-prefix.
+_V3_ROSTER_SUBTYPES = None  # lazily-loaded cache; None = not yet loaded
+
+
+def _roster_subtypes():
+    """Lazily load + cache the roster-subtype map.
+
+    Returns the {c_prefix: {base_name, entries: [...]}} dict from
+    data/nr_roster_subtypes.json, or {} when the file is absent or
+    malformed (fail-open: groundwork data must never crash a run).
+    """
+    global _V3_ROSTER_SUBTYPES
+    if _V3_ROSTER_SUBTYPES is None:
+        subtypes = {}
+        path = _data_path('nr_roster_subtypes.json')
+        if os.path.exists(path):
+            try:
+                with open(path, encoding='utf-8') as f:
+                    data = json.load(f)
+                got = data.get('subtypes', {})
+                if isinstance(got, dict):
+                    subtypes = got
+            except (json.JSONDecodeError, OSError, ValueError, TypeError):
+                subtypes = {}
+        _V3_ROSTER_SUBTYPES = subtypes
+    return _V3_ROSTER_SUBTYPES
+
+
 def _filter_canonical_variants(variants):
     """Soft filter: prefer variants with sample_maps non-empty.
 

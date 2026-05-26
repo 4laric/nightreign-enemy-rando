@@ -139,13 +139,12 @@ class TestNightBossFloorPolicy:
             f'{len(missing)} marquee NB chrs missing from '
             f'V3_RESERVATION_FLOORS: {sorted(missing)}. Either add them '
             f'to the FLOORS dict or remove from the marquee list here.')
-        # Extra is also a fail — keeps the marquee policy explicit and
-        # disciplined. Adding a new floor should be a deliberate roster
-        # decision, not a drive-by.
-        assert not extra, (
-            f'{len(extra)} chrs in V3_RESERVATION_FLOORS not on the '
-            f'marquee list: {sorted(extra)}. If intentional, add them '
-            f'to the marquee set in this test with rationale comment.')
+        # v0.27.3 deliberately added floor=1 to the whole miniboss
+        # tier (76 chrs) on top of the marquee NB set, so FLOORS is now
+        # a superset of `marquee`. The old "no extra" discipline check
+        # is dropped — this test now only guards that every marquee NB
+        # still carries a floor.
+        _ = extra  # informational only
 
     def test_nb_caliber_mmv_imports_have_floor_1(self, engine):
         """NB-caliber MMV imports (Lichdragon Fortissax, Commander Gaius,
@@ -160,29 +159,24 @@ class TestNightBossFloorPolicy:
                 f'{cp} (NB-caliber MMV) should have floor=1; got '
                 f'{engine.V3_RESERVATION_FLOORS.get(cp)!r}')
 
-    def test_night_boss_ceilings_normalized_to_2(self, engine, tags):
-        """v0.26.x policy: night_boss-tier ceilings normalized to 2 for
-        the marquee NB roster. Excluded from this rule:
-          - c7910 Storm King (paired-only, stays at 1)
-          - c4353 Leyndell Knight (retiered miniboss, cap=6 filler stays)
-          - "flood-prone" night_boss-tier chrs that were field-boss-
-            previously and now run as NB but with elevated ceilings
-            (Trolls cap=6, Fire Knight cap=6, etc.) — they get
-            ceiling-only enforcement with their existing higher caps,
-            no floor.
-
-        The policy applies to chrs in V3_RESERVATION_FLOORS specifically
-        (i.e., the chrs we DO want guaranteed) — their ceilings should
-        be 2 to bracket the floor=1 guarantee."""
+    def test_floored_chrs_have_a_ceiling(self, engine, tags):
+        """v0.27.3 superseded the v0.26.x "all floored chrs ceiling=2"
+        rule. The miniboss-tier floor pass gives each tier its own
+        ceiling — marquee NB stays at 2, the newly-floored miniboss
+        tier defaults to 6, and chrs with a pre-existing explicit cap
+        keep it (some at 1 or 8). The invariant that still matters:
+        every chr with a reservation FLOOR also has a finite CEILING,
+        so the floor=1 guarantee is always bracketed by a cap — a
+        floor with no ceiling would be an unbounded guarantee."""
         violations = []
         for cp in engine.V3_RESERVATION_FLOORS:
             ceiling = engine.V3_UNIQUE_TARGET_CAPS.get(cp)
-            if ceiling != 2:
+            if ceiling is None:
                 violations.append((cp, ceiling))
         assert not violations, (
-            f'{len(violations)} V3_RESERVATION_FLOORS chrs have ceilings != 2: '
-            f'{violations}. Expected: all floored chrs ceiling=2 '
-            f'(floor=1 + ceiling=2 = "guarantee 1, allow up to 2").')
+            f'{len(violations)} V3_RESERVATION_FLOORS chrs have NO ceiling: '
+            f'{violations}. Every floored chr must also carry a cap '
+            f'in V3_UNIQUE_TARGET_CAPS to bound the guarantee.')
 
 
 # ---------------------------------------------------------------------------
@@ -194,9 +188,8 @@ class TestNonNightBossCeilingOnly:
     ceiling-only enforcement — no reservation guarantee."""
 
     @pytest.mark.parametrize('cp,name', [
-        ('c4020', 'Royal Revenant'),   # miniboss
-        ('c4690', 'Grafted Scion'),    # miniboss
-        ('c4441', 'Land Squirt'),      # miniboss
+        # v0.27.3: miniboss tier (Royal Revenant, Grafted Scion, Land
+        # Squirt, ...) now carries floor=1 — removed from this list.
         ('c4240', 'Fingercreeper'),    # grunt
         ('c4442', 'Land Squirt Var'),  # grunt
         ('c4170', 'Putrid Flesh'),     # trash
@@ -224,13 +217,14 @@ class TestDedicatedArenaBossChrs:
         Per the v0.26.x audit (dev/audit_source_tags.py against
         vanilla NR MSBs)."""
         expected = {
-            'c4670',   # Ancestor Spirit
+            # v0.27.2: c4670 Ancestor Spirit + c7910 Storm King lifted
+            # from V3_DEDICATED_ARENA_BOSS_CHRS (returned as placeable
+            # cap=1 bosses) — removed from this baseline.
             'c7700',   # Gaping Dragon       @ m47_80
             'c7710',   # Centipede Demon     @ m47_90
             'c7800',   # Duke's Dear Freja   @ m48_00
             'c7820',   # Smelter Demon       @ m48_10
             'c7900',   # Nameless King       @ m48_20 + m19_00
-            'c7910',   # Storm King          @ m48_20 + m19_00
             'c7920',   # Dancer of the Boreal Valley @ m48_30
         }
         actual = set(engine.V3_DEDICATED_ARENA_BOSS_CHRS)

@@ -93,6 +93,21 @@ class RunContext:
     # relax the cap criteria.
     unique_unplaced_log: List[dict] = field(default_factory=list)
 
+    # --- v0.27.5: per-MSB size-budget state for the placement-time
+    # proximity / density gates. Ephemeral within one shuffle_msb_v3
+    # call (NOT cross-run bookkeeping like the dicts above). begin_msb()
+    # resets these and arms the gate; end_msb() disarms it. While
+    # disarmed (reservation pre-pass, legacy callers, tests) the gates
+    # in _reject_target_for_slot no-op, so reservations are never
+    # subject to proximity/density — this is what keeps a reserved big
+    # chr from being demoted.
+    msb_size_gate_active: bool = False
+    msb_big_positions: List[Tuple[float, float, float]] = field(default_factory=list)
+    msb_xl_count: int = 0
+    msb_l_count: int = 0
+    msb_xl_cap: int = 999
+    msb_l_cap: int = 999
+
     # =====================================================================
     # Construction
     # =====================================================================
@@ -161,6 +176,33 @@ class RunContext:
         per-run state)."""
         return self.unique_placed_counts.get(cp, 0) >= cap
 
+    def begin_msb(self, xl_cap: int, l_cap: int) -> None:
+        """Reset per-MSB size state and arm the proximity/density gates
+        at the start of a shuffle_msb_v3 call. xl_cap/l_cap are the
+        per-MSB caps (tunnel profile or global default)."""
+        self.msb_size_gate_active = True
+        self.msb_big_positions = []
+        self.msb_xl_count = 0
+        self.msb_l_count = 0
+        self.msb_xl_cap = xl_cap
+        self.msb_l_cap = l_cap
+
+    def end_msb(self) -> None:
+        """Disarm the per-MSB size gates after a shuffle_msb_v3 call."""
+        self.msb_size_gate_active = False
+
+    def register_big(self, size_class: str, pos) -> None:
+        """Record a committed placement into per-MSB size state so later
+        slots in the same MSB see it for proximity/density. L+ bumps the
+        L count; XL+ bumps the XL count and (given a position) joins the
+        proximity set."""
+        if size_class in ('L', 'XL', 'XXL', 'GIGA'):
+            self.msb_l_count += 1
+        if size_class in ('XL', 'XXL', 'GIGA'):
+            self.msb_xl_count += 1
+            if pos is not None:
+                self.msb_big_positions.append(pos)
+
     def reset(self) -> None:
         """Clear all counters/dicts/logs in place.
 
@@ -171,3 +213,7 @@ class RunContext:
         self.unique_reservations.clear()
         self.unique_placed_counts.clear()
         self.unique_unplaced_log.clear()
+        self.msb_size_gate_active = False
+        self.msb_big_positions = []
+        self.msb_xl_count = 0
+        self.msb_l_count = 0

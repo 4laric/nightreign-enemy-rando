@@ -5,7 +5,7 @@ that aren't blocking a release but need to be carried forward across
 sessions. Add new entries at the top of the relevant section. Resolve by
 deleting the entry and noting the CHANGELOG version where it landed.
 
-Last updated: v0.26.9.
+Last updated: v0.27.3.
 
 > **Scope note.** Active feature work and deferred-but-actionable items
 > live in `docs/TODO.md`. This file is narrower: open *questions* and
@@ -107,6 +107,55 @@ c8911. Action: add with a `# v0.23.24 audit: entirely team=26` comment.
 ---
 
 ## Investigation threads (need more data before fixing)
+
+### Reservation-floor chrs demoted out of their reserved slot
+
+**RESOLVED in v0.27.5.** The BIG_PROXIMITY and DENSITY_CAP swap-plan
+post-passes were the cause: they ran after the reservation pre-pass and
+demoted reserved XL+ chrs, decrementing `_placed_counts` below floor.
+v0.27.5 replaced both post-passes with placement-time gates (Gates 8 &
+9 in `_reject_target_for_slot`). The gates only fire for organic picks
+inside `shuffle_msb_v3`'s slot loop — the reservation pre-pass and the
+reservation early-return never arm them, so a reserved big chr is never
+proximity/density-rejected and can no longer be demoted. A 5-seed
+v0.27.5 check (714653/628653/42/394059/877217) returned 100 reservations
+honored and 0 below-floor each seed. The original investigation notes
+are kept below for history.
+
+<details>
+<summary>Original v0.27.2/v0.27.3 investigation (historical)</summary>
+
+**Priority raised in v0.27.3** — this bug now governs 76 miniboss-tier
+floors (the v0.27.3 tier-wide floor=1), not the ~10 it was originally
+filed against. A 12-seed v0.27.3 check showed 14 XL+/XXL/GIGA minibosses
+still missing seeds despite their floors. The tier-wide floor cannot be
+considered fully delivered until this is fixed; it is the natural
+next task.
+
+Surfaced by the v0.27.2 98-seed placement audit (seeds 200001-200098,
+see dev/SESSION_NOTES_2026-05-26.md). Ten chrs carry a
+`V3_RESERVATION_FLOORS` guarantee of 1 and the pre-pass successfully
+reserves a slot for every one of them every seed (`unique_unplaced` is
+empty), yet the *final* `unique_placed_counts` comes back below floor in
+a large fraction of seeds:
+
+- c7820 Smelter Demon — below floor 49/98 (50%)
+- c7920 Dancer of the Boreal Valley — 39/98 (40%)
+- c5000 Commander Gaius — 23/98
+- c5030 Romina, Saint of the Bud — 20/98
+- c4511 Lichdragon Fortissax — 17/98
+- c5200 Metyr, Mother of Fingers — 15/98
+- c5011 Golden Hippopotamus — 5/98
+- c7710 / c4510 / c7700 — 1-3/98 each
+
+The reservation succeeds (count starts >=1) and final count is 0, so
+something decrements it after the pre-pass. The only code that
+decrements `_placed_counts` post-reservation is the BIG_PROXIMITY /
+DENSITY_CAP demotion passes (`_placed_counts[_old_cp] -= 1` on
+demote-out) — and every chr at the top of the list is XL+, exactly the
+demote-prone size classes.
+
+</details>
 
 ### c4640 Ulcerated Tree Spirit "missing skin"
 

@@ -1,3 +1,255 @@
+## v0.27.5
+
+Size-handling refactor, Stage 2 — the BIG_PROXIMITY and DENSITY_CAP
+swap-plan post-passes are converted to placement-time gates. Completes
+the refactor begun in v0.27.4 (geometry gate) and resolves the
+reservation-floor-demotion bug.
+
+### The problem
+
+Two of the five size mechanisms were swap-plan POST-passes: they ran
+after a whole MSB was placed, then walked the finished plan and
+*demoted* big chrs — BIG_PROXIMITY (v0.21) demoted the higher-pi of any
+two XL+ within 30u; DENSITY_CAP (v0.23.61) demoted excess once an MSB
+exceeded 3 XL+ / 10 L+ (tunnels 0 / 4). Demoting after the fact meant a
+big was placed badly and then evicted, and — the real bug — the
+post-passes ran after the reservation pre-pass, so a reserved big chr
+sitting in its guaranteed slot could be demoted right back out. The
+v0.27.2 98-seed audit measured this: Smelter Demon below its floor in
+50% of seeds, Dancer 40%, despite both being reserved every seed. The
+post-passes also carried ~250 lines of demotion machinery (caliber
+mirror, cap accounting, Gate-5.6 mirror, slug fallback) that existed
+only to re-implement, badly, what the picker already does.
+
+### The change
+
+BIG_PROXIMITY and DENSITY_CAP are now Gates 8 and 9 in
+`_reject_target_for_slot`, evaluated at pick time against per-MSB
+running state on the RunContext (placed-big positions, XL+/L+ counts,
+per-MSB caps). When a big would clip a neighbour or bust the budget it
+drops out of the candidate pool and the picker selects a smaller chr
+through its normal pipeline — so there is no separate demotion path and
+none of the mirror machinery is needed. The slot loop is pi-ascending,
+so "low-pi wins" matches the post-passes' "first-pi wins / highest-pi
+demoted" exactly.
+
+The gates are inert unless `run_ctx.msb_size_gate_active` is set, which
+`begin_msb()` does only inside `shuffle_msb_v3`'s slot loop. The
+reservation pre-pass and the reservation early-return never arm them —
+so a reserved big chr is never proximity/density-rejected and can no
+longer be demoted. This closes the reservation-floor-demotion bug
+(docs/OPEN_ISSUES.md).
+
+Both post-passes (487 lines) are deleted. `RunContext` gains per-MSB
+size state plus `begin_msb()` / `end_msb()` / `register_big()`.
+
+### Validation
+
+5-seed sim (714653 / 628653 / 42 / 394059 / 877217): 0 proximity
+violations (no XL+ pair within 30u), 0 density over-cap MSBs, 100
+reservations honored and 0 below-floor each seed. Full test suite back
+to its pre-session 53-failure baseline (all 53 predate this work).
+
+Known minor effect: ~40 fewer placements per seed (~3,700 -> ~3,660).
+Slots whose entire compatible pool is big-and-over-budget now stay
+vanilla rather than receive the old DENSITY_DEMOTE_FALLBACK slug — a
+~1% diversity reduction at genuinely over-budget slots, in exchange for
+never force-placing a slug. `V3_DENSITY_DEMOTE_FALLBACK_CPS` and
+`V3_BIG_PROXIMITY_DEMOTE_TO_SIZES` are now dead constants (trivial
+follow-up sweep).
+
+## v0.27.4
+
+Geometry-aware size gate (Stage 1 of the size-handling refactor). The
+first of two stages replacing scattered, blunt size logic with
+placement-time gates driven by the slot-terrain data the engine now has.
+
+### The problem
+
+Size handling was spread across five mechanisms: the BIG_PROXIMITY and
+DENSITY_CAP swap-plan post-passes, plus three placement-time gates in
+`_reject_target_for_slot` (Gate 6 XXL/GIGA-source integrity, Gate 7
+"XXL at XS/S/M/L-source -> reject", Gate 7.5 slope-aware size-up).
+Gate 7 was the bluntest: it banned XXL at every non-XXL/GIGA vanilla
+slot with no geometry check at all, threw away ~46 legitimate L-source
+slots by its own comment's admission, and never covered GIGA.
+
+### The change
+
+Gate 7 is now a geometry-aware size gate. A slot's size capacity is the
+LARGER of (a) the vanilla occupant's size class — strict baseline, no
+grace step: an XL-vanilla slot does NOT auto-qualify for XXL — and
+(b) the geometry-derived capacity from `slot_terrain.json` `face_dist`
+(metres to nearest collision face), mapped through median per-class
+footprint radii (M 0.5 / L 0.84 / XL 1.4 / XXL 3.25 / GIGA 7.0 m). An
+XXL/GIGA target is rejected ('geometry_clip') unless its size class is
+within that capacity. XS..XL are not gated — they clear essentially any
+navmesh slot. Slots with no terrain data fall back to the strict
+vanilla baseline. The gate never rejects a target <= the vanilla
+occupant's size, so it cannot drain a candidate pool.
+
+Net effect vs the blunt gate: XXL/GIGA are now allowed wherever the
+navmesh geometry proves the clearance (recovering legit big slots the
+old gate discarded) and blocked everywhere it doesn't — including the
+XL-vanilla slots Gate 7 let XXL through on unconditionally, and now
+GIGA, which Gate 7 never touched.
+
+New: `V3_GEOMETRY_GATE_ENABLED`, `V3_SIZE_RANK`,
+`V3_SIZE_FOOTPRINT_RADIUS`, `V3_GEOMETRY_GATED_SIZES`; loader
+`_load_slot_face_dist()` and helper `_geometry_capacity_rank()`.
+
+### Validation
+
+Per-size slot capacity (vanilla baseline + geometry recovery, 5,510
+slots): XXL 748 (14%), GIGA 556 (10%), XL 2,062 (37%), L 3,048 (55%) —
+big chrs keep ample homes; the v0.27.3 reservation floors for XXL
+minibosses are not slot-starved. `TestGate7XxlAtSmallSlot` rewritten
+for the geometry gate, 8/8 pass.
+
+### Pending
+
+Stage 2 — convert the BIG_PROXIMITY and DENSITY_CAP post-passes to
+placement-time gates with per-MSB running state; this also closes the
+reservation-floor-demotion bug (the post-pass is what evicts reserved
+big chrs).
+
+## v0.27.3
+
+Miniboss tier — reservation floor + cap normalization. Follows the
+v0.27.2 98-seed audit, which found the tier healthy in pool size (76
+eligible chrs) but badly top-heavy.
+
+### The problem
+
+A cap/floor survey of the miniboss tier: 32 of 76 capped, 44 uncapped,
+and ZERO reservation floors. Result was a steep distribution — ~8
+uncapped M-humanoid vanilla chrs (Perfumer, Leonine Misbegotten, Black
+Knife Assassin, Depraved Perfumer, Grave Warden Duelist, Azula Beastman,
+Omen, Banished Knight) landed 11-15x per seed each, a mid-band sat ~7x,
+and a ~30-chr tail sat below 1x/seed with nothing to rescue it. The
+"miniboss tier feels small" complaint was a distribution problem, not a
+pool-size one.
+
+### The change
+
+In load_data(), after the exclude sets and prior cap blocks are
+finalized: every eligible miniboss-tier chr (tier='miniboss', not
+excluded) gets `V3_RESERVATION_FLOORS` = 1, and every previously-
+uncapped miniboss gets `V3_UNIQUE_TARGET_CAPS` = 6. Existing caps are
+left alone — the hand-tuned 1/2 on singular bosses + archetype giants
+and the 6/8 values are preserved; only the 44 uncapped chrs get cap=6.
+Implemented as a computed loop (idempotent — re-running load_data is a
+no-op) rather than 120 dict literals, matching the v0.24.65 auto-cap
+pattern. Floor=1 added to 76 chrs, cap=6 added to 44.
+
+Slot budget checked first: ~360 boss-strength slots per seed (357 with a
+boss-strength vanilla source, 361 catalogued) vs 100 floored chrs total
+(24 pre-existing night_boss/nightlord + 76 miniboss) — ~3.6x headroom.
+Capping the top-8 also frees ~60 slots, so the change nets more variety,
+not a slot crunch.
+
+### Validation
+
+12-seed run (seeds 400001-400012): the formerly-uncapped top-8 now sit
+at 5.75-6.00 mean (cap binding); Aged Albinauric went 0.00 -> 6.00 in
+every seed (floor working). Of the 76 floored minibosses, 16 still miss
+at least one seed and 14 of those are XL+/XXL/GIGA — see caveat.
+
+### Caveat — XL+ floors and the demotion bug
+
+26 of the 76 floored minibosses are XL+/XXL/GIGA and exposed to the
+reservation-floor-demotion bug (docs/OPEN_ISSUES.md): the BIG_PROXIMITY
+/ DENSITY post-passes evict reserved big chrs. Their floors do NOT
+reliably hold yet — the 12-seed check shows 14 of them still missing
+seeds. The floor is fully effective for the ~50 S/M/L minibosses
+immediately. Fixing the demotion bug is the natural follow-up to make
+the tier-wide floor land for the big chrs too; v0.27.3 substantially
+raises that bug's priority since it now governs 76 floors, not ~10.
+
+### Notes
+
+- Engine fingerprint bumped to v0.27.3.
+- Survey + slot-budget detail: dev/SESSION_NOTES_2026-05-26.md.
+
+## v0.27.2
+
+98-seed placement-budget audit and four pool-gap / mis-tag fixes. Run
+against the full set of decompressed vanilla MSBs with the production
+config (multiplayer_safe=False, MMV pack loaded, prefer-canonical OFF).
+
+### The audit
+
+98 seeds simulated through the real `cmd_shuffle_v3` (seeds
+200001-200098). ~3,708 swaps/seed, very stable. Two clean results and
+two problem classes:
+
+- Unique caps: zero violations. No `V3_UNIQUE_TARGET_CAPS` ceiling was
+  exceeded in any seed. The reservation pre-bump + exhaustion gate hold.
+- Global cap (`V3_TARGET_PLACEMENT_CAP=50`): soft, behaving as designed.
+  58 grunt/trash c-prefixes brushed 51-54 in their hottest seed (the
+  `if capped_pool` fallback firing when every under-cap candidate is
+  exhausted). Means sit 45-49. Not changed.
+- Reservation floors missed (DEFERRED — see docs/OPEN_ISSUES.md): 10
+  floor=1 chrs come back below floor in a chunk of seeds despite the
+  pre-pass reserving a slot — Smelter Demon 50%, Dancer 40%, the four
+  MMV night bosses 15-23%. Likely the BIG_PROXIMITY / DENSITY_CAP
+  post-passes demoting the reserved chr out of its slot. Not fixed this
+  revision; logged as an open issue with the measured rates.
+- Pool gaps / mis-tags: fixed below.
+
+### Fix 1 — MMV nightlord pool gap
+
+c4720 Godfrey, c4721 Hoarah Loux, c4730 Starscourge Radahn, c5230
+Scadutree Avatar, c8500 Manus placed 0x across all 98 seeds. Root cause:
+they are tagged `expects_boss_arena=true` in mmv_imports.json, so
+load_data folds them into `V3_ARENA_ONLY_TARGETS`; v0.27.1's whole-MSB
+night-boss arena preservation then left them with zero eligible slots.
+New `V3_ARENA_ONLY_FORCE_LIFT` set, subtracted from
+`V3_ARENA_ONLY_TARGETS` at the end of the load_data auto-extend block
+(mirrors the M-humanoid lift). The `expects_boss_arena` tag is left
+intact (still feeds the +10 placement score); only the hard arena-lock
+is lifted. Post-fix 12-seed check: Godfrey / Scadutree / Manus now place;
+Hoarah Loux and Radahn are low-frequency and need the full sweep to
+confirm rate.
+
+### Fix 2 — Storm King + Ancestor Spirit re-enabled
+
+c4670 Ancestor Spirit and c7910 Storm King (both `_source='nr_placed'`,
+night_boss tier) also placed 0x — same mechanism, but their arena-lock
+came through `V3_DEDICATED_ARENA_BOSS_CHRS`. Both lifted from that set
+and given `cap=1` in `V3_UNIQUE_TARGET_CAPS` so they read as singular
+encounters at night_boss-tier world slots. c7900 Nameless King — the
+vanilla pair-partner of c7910 — was deliberately left in
+`V3_DEDICATED_ARENA_BOSS_CHRS`; revisit if the pair should move together.
+
+### Fix 3 — Aged Albinauric placeable again
+
+c3670 Aged Albinauric placed 0x. Its only named/canonical variant
+(36708100, 'Aged Albinauric (Scholar Remembrance)', sample_maps
+['m10_00_00_00']) was in `V3_AVOID_VARIANT_NPC_IDS` from a v0.23.24
+'team=26 cinematic' attribution; the other three c3670 ids are empty-name
+placeholders culled upstream anyway. With the only named variant
+avoid-listed, `pick_variant_for_tier` returned None every time and the
+slot fell back to vanilla. 36708100 removed from the avoid-list. CAVEAT
+noted inline: the roster entry carries think_param_id=0 — if playtest
+shows the placed chr is AI-inert outside m10, the avoid-add was right
+and the line should be restored. Post-fix: c3670 places ~7/seed, every
+seed.
+
+### Fix 4 — playable-character models excluded
+
+c52309 Priestess (Duchess), c52312 Witch of the Wheel (Recluse), c52313
+Executor are NR playable Nightfarer class models that post_dlc_dump
+scraped into the target pool as tier='grunt' enemies. Added to
+`V3_EXCLUDE_TARGET_PREFIXES`. (Alaric named Duchess + Executor; c52312
+Recluse was excluded on the same grounds — same class family. Flag if
+that read is wrong.)
+
+### Notes
+
+- Engine fingerprint bumped to v0.27.2.
+- Full audit methodology and per-chr numbers: dev/SESSION_NOTES_2026-05-26.md.
+
 ## v0.26.15
 
 Mount/rider pair tracking — cut 1 (detection foundation). Adds an

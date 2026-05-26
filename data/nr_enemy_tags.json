@@ -3485,6 +3485,7 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
+    "_tier_override_v0_27_13": "v0.27.13: promoted from 'grunt' to 'miniboss' (playtest: Haligtree Knight AI confirmed working for the first time as a placed chr — plays as a bounded elite encounter, not grunt-tier filler).",
     "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
@@ -3493,7 +3494,7 @@
     "locomotion": 0,
     "name": "Haligtree Knight",
     "size_class": "M",
-    "tier": "grunt",
+    "tier": "miniboss",
     "variants": 6
   },
   "c4358": {

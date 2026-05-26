@@ -1,5 +1,10 @@
 # Dev tooling
 
+> **New to this repo?** Read `ARCHITECTURE.md` (this folder) first — it maps
+> the engine, the `data/` file schemas + serialization conventions, the
+> heritage-import pipeline, and the gotchas that otherwise cost a session
+> real time to rediscover.
+
 These scripts are not part of the rando runtime. They were used during
 v0.2 development to measure placement variety and diagnose 0% prefixes.
 

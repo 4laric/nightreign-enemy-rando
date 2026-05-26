@@ -4,6 +4,56 @@ Living list of open items, deferred fixes, and ideas worth circling back to.
 Add date next to entries when noted; remove when resolved (and document the
 fix in CHANGELOG.md).
 
+## v0.27.5 follow-ups (2026-05-26)
+
+Queued after the size-handling refactor (v0.27.4 geometry gate +
+v0.27.5 proximity/density gates). Alaric's list.
+
+- **Grunt-tier density pass.** Apply the same per-MSB budgeting the
+  v0.27.5 Gate 9 gives L+/XL+ sizes to the grunt tier - a per-MSB cap
+  on grunt-tier placements so a single map can't fill with grunts.
+  Mechanism is already there: add a grunt counter to the RunContext
+  per-MSB state, a V3_DENSITY_CAP_GRUNT constant, and a grunt branch
+  in the Gate 9 block of _reject_target_for_slot. Open question to
+  confirm with Alaric: is this a tier-count cap (grunt-tier targets per
+  MSB) or a size-count thing, and does proximity (Gate 8) also want a
+  grunt variant? Filed as count-cap by default.
+
+- **Randomize the pi order in the slot loop.** shuffle_msb_v3 walks
+  `for pi, po in enumerate(parts['entry_offsets'])` - strictly
+  pi-ascending. Shuffle the (pi, po) list with rng so iteration is
+  seed-deterministic but not positionally biased. pi must stay the
+  real Part index (it keys swap_plan, repositions, bans). Interactions
+  to be aware of, NOT blockers:
+    - v0.27.5 Gates 8/9 currently resolve ties "low-pi wins" (first big
+      placed survives, later ones rejected) because the loop is
+      pi-ascending. Randomized order makes it "random-order wins" -
+      still deterministic per seed; removes the low-pi survivorship
+      bias. Likely desirable, but it is a deliberate behaviour change.
+    - Unique-cap allocation is first-come-first-served in loop order;
+      randomizing spreads capped chrs more uniformly across slots.
+    - Reservations are computed in the pre-pass and are unaffected.
+
+- **Geometry data sufficiency check.** The v0.27.4 geometry gate uses
+  only face_dist (distance to nearest collision face) from
+  slot_terrain.json. Decide whether that single metric is enough or
+  whether a fresh extraction pass is warranted. Known gaps face_dist
+  does not capture: vertical/ceiling clearance (tall chrs; flying-chr
+  spawn headroom) and overhang. Tooling already exists to extend the
+  data - dev/augment_slot_terrain_with_aabb_metrics.py,
+  dev/navmesh_polygon_metrics.py. Investigation, not a committed change:
+  audit a sample of XXL/GIGA slots, confirm whether face_dist-only
+  produces wrong calls, and if so add a ceiling-height metric.
+
+- **Lower miniboss caps to 4.** v0.27.3 normalized previously-uncapped
+  minibosses to cap=6. Bring the whole miniboss tier to cap=4 (power of
+  2): the v0.27.3 cap=6 block in load_data() becomes 4, and the cap=8
+  outliers c4270 Elder Lion and c4020 Royal Revenant come down to 4.
+  Open question for Alaric: a few miniboss chrs carry an explicit
+  cap=1/2 - "lower all to 4" can't lower those; confirm whether they
+  stay as deliberate exceptions or are also set to 4. Pairs with the
+  v0.27.3 floor=1 (floor 1 + ceiling 4 instead of 6).
+
 ## High priority — known bugs awaiting data
 
 - **Guardian Golem (Cathedra) slot — gate occupants on idle/entrance

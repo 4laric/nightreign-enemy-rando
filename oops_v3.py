@@ -7612,7 +7612,7 @@ V3_ADD_RANDOMIZE_ARENAS = frozenset({
     'm47_70_00_00.msb',   # Tibia Mariner      - randomize the skeleton catacomb
 })
 
- 
+ 
 
 # v0.24.28: Starting encampment catalog. Asset MSBs that get instantiated
 # near the wagon spawn at the start of a Limveld Expedition. Used by:

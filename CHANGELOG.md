@@ -1,3 +1,41 @@
+## v0.27.8
+
+Grunt/trash tier collapse + re-cap. The 20-seed sim
+(dev/simulate_engine.py) showed the grunt/trash tier had no shaping
+below a flat cap of 50 — 52 of 105 eligible chrs saturated at the
+ceiling (74% of all grunt placements) while ~14 sat at <=2/seed.
+
+### Changes
+
+- The 'trash' tier is collapsed into 'grunt'. load_data() retags every
+  trash chr to grunt (50 chrs), so the whole engine — caps, floors,
+  the boss-bar gate, target pools — treats them as one tier. The
+  grunt/trash distinction is gone.
+- Grunt tier (now incl. former trash): cap=32 and reservation floor=4
+  for every eligible chr (104), applied across the board, overriding
+  any prior hand-tuned cap. cap 32 trims the saturated band (down from
+  the implicit global 50); floor 4 lifts the cameo tail.
+- The _LIFTED_V0_24_65 defensive cap=1 mechanism is removed. The lifted
+  chrs have been playtested since v0.24.40 without reported CTDs; each
+  now takes its tier cap (grunt 32, miniboss 4). The frozenset is kept
+  only as a record of the historical lift. NOTE: this re-exposes c5930
+  Giant Skeleton / c6220 Fire Demon (invisible-render history) at up
+  to 4x/seed.
+- c6201 Scarab is excluded — it carries a tag but has no roster
+  variants (an orphan; the sim placed it 0/20).
+- Miniboss tier: with the _LIFTED exemption removed, all 76 eligible
+  minibosses are now uniformly cap=4 (was 70 + 6 exempt at cap=1).
+
+### Validated
+
+Real engine, 3 seeds: 0 grunt cap>32 violations; grunt placements
+~2,990/seed (down from ~3,300). floor=4 lifts the rare tail from 14
+sub-2/seed chrs to 1. Two genuinely compat-starved grunts (c4171
+Giant Putrid Flesh, c4481 Miranda Sprout) still land 2-3 — the
+reservation pre-pass cannot find 4 compatible slots for them, so the
+floor is best-effort, not a hard guarantee. Test suite at the
+53-failure baseline.
+
 ## v0.27.7
 
 MSB-free decision simulation. Tooling — the engine's placement

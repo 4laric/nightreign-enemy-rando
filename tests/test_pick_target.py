@@ -1936,14 +1936,14 @@ class TestSeed798229Freezes:
         assert 'c3620' not in engine.V3_EXCLUDE_TARGET_PREFIXES
 
     def test_c3360_ancestral_follower_no_longer_excluded(self, engine):
-        """v0.24.65: lifted."""
+        """v0.24.65: lifted. v0.27.8: grunt-tier cap=32."""
         assert 'c3360' not in engine.V3_EXCLUDE_TARGET_PREFIXES
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c3360') == 1
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c3360') == 32
 
     def test_c4430_abnormal_stone_cluster_no_longer_excluded(self, engine):
-        """v0.24.65: lifted."""
+        """v0.24.65: lifted. v0.27.8: grunt-tier cap=32 (was trash)."""
         assert 'c4430' not in engine.V3_EXCLUDE_TARGET_PREFIXES
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c4430') == 1
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c4430') == 32
 
     def test_fi_reserved_only_protects_c3620(self, engine):
         """v0.24.39: the defensive cleanup (_FI_CPS_RESERVED_FOR_TARGET) now
@@ -2065,13 +2065,18 @@ class TestProactiveNoTagDataBan:
             f'individually re-banned for a different reason.')
 
     def test_all_26_proactive_bans_capped(self, engine):
-        """v0.24.65 safety net: each lifted chr capped at 1 placement so
-        that if any specific one is still broken, exposure is limited."""
+        """v0.27.8: the v0.24.65 defensive cap=1 safety net was removed.
+        Each proactive-ban chr is now either excluded outright or carries
+        its tier cap (grunt=32, miniboss=4) — none is left uncapped."""
+        excl = (engine.V3_EXCLUDE_PREFIXES
+                | engine.V3_EXCLUDE_TARGET_PREFIXES
+                | engine.V3_GHOST_EXCLUDE_TARGET_PREFIXES)
         uncapped = [cp for cp in self.PROACTIVE_BANS
-                    if engine.V3_UNIQUE_TARGET_CAPS.get(cp) is None]
+                    if cp not in excl
+                    and engine.V3_UNIQUE_TARGET_CAPS.get(cp) is None]
         assert not uncapped, (
-            f'v0.24.65 lift should have applied cap=1 to all lifted chrs; '
-            f'missing caps on: {uncapped}')
+            f'eligible proactive-ban chrs should carry a tier cap; '
+            f'uncapped: {uncapped}')
 
     def test_proactive_bans_have_proactive_ban_flag(self):
         """Data file entries for proactive bans should be tagged
@@ -2479,11 +2484,13 @@ class TestC5930C6220InvisibleBan:
             'v0.24.65 lifted c6220 — should no longer be hard-excluded')
 
     def test_c5930_capped(self, engine):
-        """MMV auto-cap from v0.24.53 still applies."""
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c5930') == 1
+        """v0.27.8: the v0.24.53 MMV defensive cap=1 was removed; c5930
+        is now capped by its miniboss tier at 4."""
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c5930') == 4
 
     def test_c6220_capped(self, engine):
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c6220') == 1
+        """v0.27.8: miniboss-tier cap=4 (defensive cap=1 removed)."""
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c6220') == 4
 
     def test_c2274_NOT_banned(self, engine):
         """c2274 has the same partial-tag profile but Alaric explicitly
@@ -2722,17 +2729,15 @@ class TestMmvImportCap1:
 
     def test_nr_placed_NOT_auto_capped(self, engine, tags):
         """The v0.24.53 rule only applies to MMV imports. Regular
-        nr_placed chrs are not affected — they retain their existing
-        cap state (most uncapped)."""
-        # Pick a known nr_placed chr that's not in V3_UNIQUE_TARGET_CAPS
-        # and verify it's still uncapped
-        nr_uncapped_examples = ['c3500', 'c4380', 'c4381']  # common grunts
-        for cp in nr_uncapped_examples:
+        nr_placed chrs are never given the MMV cap=1. (v0.27.8: grunt
+        chrs do carry cap=32 from the grunt-tier block — the point here
+        is only that the MMV rule didn't touch them.)"""
+        nr_examples = ['c3500', 'c4380', 'c4381']  # common grunts
+        for cp in nr_examples:
             if tags.get(cp, {}).get('_source') == 'nr_placed':
-                assert cp not in engine.V3_UNIQUE_TARGET_CAPS or \
-                       engine.V3_UNIQUE_TARGET_CAPS[cp] >= 50, (
-                    f'{cp} is nr_placed grunt — should not have been '
-                    f'auto-capped by v0.24.53 MMV rule')
+                assert engine.V3_UNIQUE_TARGET_CAPS.get(cp) != 1, (
+                    f'{cp} is an nr_placed grunt — should never have '
+                    f'received the v0.24.53 MMV cap=1')
 
 
 # v0.24.54: Gate 4 anim_class-based rejection + Red Wolf cap
@@ -4323,27 +4328,25 @@ class TestReservationOrderBigFirstV0_24_76:
             f'Unknown-size should sort last: got {order}')
 
     def test_real_engine_giga_before_m(self, engine, tags):
-        """Integration smoke test using real engine V3_UNIQUE_TARGET_CAPS:
-        confirm at least one cap=1 GIGA chr exists AND at least one
-        cap=1 M chr exists, so the ordering actually matters in
-        practice."""
-        cap1_gigas = [cp for cp, cap in engine.V3_UNIQUE_TARGET_CAPS.items()
-                      if cap == 1 and tags.get(cp, {}).get('size_class') == 'GIGA']
-        cap1_mediums = [cp for cp, cap in engine.V3_UNIQUE_TARGET_CAPS.items()
-                        if cap == 1 and tags.get(cp, {}).get('size_class') == 'M']
-        # v0.27.6: threshold 5 -> 3. The "4 across the board" miniboss
-        # cap policy raised the miniboss-tier cap=1 GIGAs to 4; 3 cap=1
-        # GIGAs remain, still enough for the bucket to coexist with M.
-        assert len(cap1_gigas) >= 3, (
-            f'Expected at least 3 cap=1 GIGA chrs; got {len(cap1_gigas)}')
-        # v0.26.x: floor lowered from 10 → 9 after c3610 was dropped from
-        # `_LIFTED_V0_24_65` (its cap was dead anyway since the chr is
-        # excluded — see dev/audit_placement_budget_consistency.py). This
-        # is a "does ordering matter in practice" smoke check, not a
-        # tight count; the floor only needs to be high enough that the
-        # M and GIGA buckets coexist non-trivially.
-        assert len(cap1_mediums) >= 9, (
-            f'Expected at least 9 cap=1 M chrs; got {len(cap1_mediums)}')
+        """Integration smoke test: confirm the reserved/floored set
+        spans both a big size bucket and M, so the big-first ordering
+        is exercised in practice.
+
+        v0.27.8: rebased from cap=1 chrs onto V3_RESERVATION_FLOORS.
+        The defensive cap=1 mechanism was removed (it left 0 cap=1 M
+        chrs), but ~204 chrs now carry reservation floors — 104 grunts
+        + 76 minibosses + the pre-existing 24 — spanning every size
+        class, so size-ordering of reservations still very much
+        matters."""
+        floored = set(engine.V3_RESERVATION_FLOORS)
+        floored_gigas = [cp for cp in floored
+                         if tags.get(cp, {}).get('size_class') == 'GIGA']
+        floored_mediums = [cp for cp in floored
+                           if tags.get(cp, {}).get('size_class') == 'M']
+        assert len(floored_gigas) >= 3, (
+            f'Expected at least 3 floored GIGA chrs; got {len(floored_gigas)}')
+        assert len(floored_mediums) >= 9, (
+            f'Expected at least 9 floored M chrs; got {len(floored_mediums)}')
 
 
 # v0.24.77: Fort GG re-protected against emerge-anim CTDs

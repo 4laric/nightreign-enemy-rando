@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.27.7'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.8'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -3205,18 +3205,34 @@ def load_data():
         # v0.24.49 mmv_import bans (already capped via v0.24.53 — listed for completeness)
         'c5930', 'c6220',
     })
-    lifted_capped_count = 0
-    lifted_skipped_count = 0
-    for _cp in _LIFTED_V0_24_65:
-        if _cp in V3_UNIQUE_TARGET_CAPS:
-            lifted_skipped_count += 1
-            continue
-        V3_UNIQUE_TARGET_CAPS[_cp] = 1
-        lifted_capped_count += 1
-    if lifted_capped_count or lifted_skipped_count:
-        print(f"v0.24.65: capped {lifted_capped_count} newly-lifted chrs "
-              f"at 1 placement ({lifted_skipped_count} skipped — explicit "
-              f"cap already in V3_UNIQUE_TARGET_CAPS).")
+    # v0.27.8: the _LIFTED_V0_24_65 defensive cap=1 loop is REMOVED.
+    # Alaric direction — the cap=1 blast-radius limiter was suppressing
+    # organic distribution (the 20-seed sim showed 10 grunt/trash chrs
+    # pinned at exactly 1/seed) and the lifted chrs have been playtested
+    # since v0.24.40 with no reported CTDs. The frozenset above is kept
+    # purely as a record of the historical lift. Each former-cap=1 chr
+    # now falls to its tier cap below: grunt -> 32, miniboss -> 4.
+    # NOTE: this re-exposes c5930 Giant Skeleton / c6220 Fire Demon
+    # (invisible-render history) at up to 4x/seed.
+
+    # v0.27.8: exclude c6201 Scarab — it carries a tag but has no roster
+    # variants (an orphan; the 20-seed sim placed it 0/20). The picker
+    # cannot place a variantless chr, so it only ever wasted a pool slot.
+    V3_EXCLUDE_TARGET_PREFIXES.add('c6201')
+
+    # v0.27.8: collapse the 'trash' tier into 'grunt'. Alaric direction —
+    # the grunt/trash distinction carries no design weight; retagging
+    # every trash chr to grunt here makes the whole engine (caps, floors,
+    # the boss-bar gate, target pools) treat them as one tier. Done
+    # before the grunt cap/floor block below so that block covers both.
+    _retagged = 0
+    for _t in tags.values():
+        if isinstance(_t, dict) and _t.get('tier') == 'trash':
+            _t['tier'] = 'grunt'
+            _retagged += 1
+    if _retagged:
+        print(f"v0.27.8: collapsed 'trash' tier into 'grunt' "
+              f"({_retagged} chrs retagged)")
 
     # v0.27.3: miniboss tier — reservation floor + cap normalization.
     # The 98-seed audit (dev/SESSION_NOTES_2026-05-26.md) showed the
@@ -3258,18 +3274,47 @@ def load_data():
         if _cp not in V3_RESERVATION_FLOORS:
             V3_RESERVATION_FLOORS[_cp] = 1
             _mb_floored += 1
-        # v0.27.6: 4 across the board — override any prior cap. EXEMPT:
-        # the _LIFTED_V0_24_65 defensive cap=1 chrs. That cap limits the
-        # blast radius of a chr that may still be runtime-broken
-        # (invisible-render etc.) — a different concern from miniboss
-        # feel-tuning — so it stands.
-        if (_cp not in _LIFTED_V0_24_65
-                and V3_UNIQUE_TARGET_CAPS.get(_cp) != 4):
+        # v0.27.6: 4 across the board — override any prior cap. As of
+        # v0.27.8 there is no exemption: the _LIFTED_V0_24_65 defensive
+        # cap=1 mechanism was removed, so every miniboss-tier chr —
+        # c4140/c4441/c4601/c4811/c5930/c6220 included — is capped at 4.
+        if V3_UNIQUE_TARGET_CAPS.get(_cp) != 4:
             V3_UNIQUE_TARGET_CAPS[_cp] = 4
             _mb_capped += 1
     if _mb_floored or _mb_capped:
         print(f"v0.27.3/.6: miniboss tier — floor=1 added to {_mb_floored} "
               f"chrs, cap=4 set on {_mb_capped} chrs")
+
+    # v0.27.8: grunt tier (grunt + the now-collapsed trash) — cap=32,
+    # floor=4. Alaric direction. The 20-seed sim (dev/simulate_engine.py)
+    # showed the tier saturating: 52 of 105 eligible chrs flatlined at
+    # the old implicit global cap of 50 — 74% of all grunt placements —
+    # with no shaping below it, while ~14 chrs sat at <=2/seed. cap=32
+    # (power-of-2, down from 50) trims the saturated band; floor=4
+    # guarantees every grunt appears >=4x, eliminating the cameo tail.
+    # Mirrors the v0.27.3/.6 miniboss block; applied across the board,
+    # overriding any prior hand-tuned cap.
+    #
+    # Slot budget: ~3,300 grunt-strength slots/seed vs ~105 grunts x
+    # floor 4 = ~420 reservations — ample headroom.
+    _gr_exclude = (V3_EXCLUDE_PREFIXES | V3_EXCLUDE_TARGET_PREFIXES
+                   | V3_GHOST_EXCLUDE_TARGET_PREFIXES)
+    _gr_floored = 0
+    _gr_capped = 0
+    for _cp, _t in tags.items():
+        if not isinstance(_t, dict) or _t.get('tier') != 'grunt':
+            continue
+        if _cp in _gr_exclude:
+            continue
+        if V3_RESERVATION_FLOORS.get(_cp) != 4:
+            V3_RESERVATION_FLOORS[_cp] = 4
+            _gr_floored += 1
+        if V3_UNIQUE_TARGET_CAPS.get(_cp) != 32:
+            V3_UNIQUE_TARGET_CAPS[_cp] = 32
+            _gr_capped += 1
+    if _gr_floored or _gr_capped:
+        print(f"v0.27.8: grunt tier — floor=4 set on {_gr_floored} "
+              f"chrs, cap=32 set on {_gr_capped} chrs")
 
     return roster, tags
 

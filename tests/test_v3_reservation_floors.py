@@ -184,15 +184,15 @@ class TestNightBossFloorPolicy:
 # ---------------------------------------------------------------------------
 
 class TestNonNightBossCeilingOnly:
-    """v0.26.x policy: mini-bosses, grunts, field-bosses, trash get
-    ceiling-only enforcement — no reservation guarantee."""
+    """v0.27.x policy: field-bosses get ceiling-only enforcement (no
+    reservation guarantee). Mini-bosses (v0.27.3) and grunts incl. the
+    collapsed trash tier (v0.27.8) now carry reservation floors."""
 
     @pytest.mark.parametrize('cp,name', [
         # v0.27.3: miniboss tier (Royal Revenant, Grafted Scion, Land
-        # Squirt, ...) now carries floor=1 — removed from this list.
-        ('c4240', 'Fingercreeper'),    # grunt
-        ('c4442', 'Land Squirt Var'),  # grunt
-        ('c4170', 'Putrid Flesh'),     # trash
+        # Squirt, ...) carries floor=1 — removed from this list.
+        # v0.27.8: grunt + trash tiers carry floor=4 — c4240/c4442/c4170
+        # removed too. Only field_boss remains ceiling-only.
         ('c4500', 'Flying Dragon'),    # field_boss
         ('c4503', 'Borealis'),         # field_boss
         ('c4620', 'Astel'),            # field_boss

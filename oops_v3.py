@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.27.6'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.7'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -11569,7 +11569,7 @@ def _shifting_earth_event(msb_name):
     return tens
 
 
-def _enumerate_unique_candidate_slots(input_dir):
+def _enumerate_unique_candidate_slots(input_dir, inventory=None):
     """Walk all MSBs in input_dir, return list of slot_info dicts for
     every Part. Used by the reservation pre-pass.
 
@@ -11578,8 +11578,41 @@ def _enumerate_unique_candidate_slots(input_dir):
       cluster_id (if cluster-aware)
 
     Position is (x, y, z) tuple or None if read failed.
+
+    v0.27.7: when `inventory` is given (a list of nr_slot_inventory.json
+    records), the candidate list is built from it instead of parsing the
+    MSBs in input_dir — this is what lets dev/simulate_engine.py run the
+    reservation pre-pass with no MSBs. Hub filtering is identical to the
+    binary path.
     """
     slots = []
+    if inventory is not None:
+        for rec in inventory:
+            fname = rec['map']
+            # Hub MSBs: skipped entirely unless they carry pinned slots,
+            # in which case only the pinned Parts are walked. Mirrors the
+            # binary path below.
+            if fname in V3_HUB_MAPS:
+                if not _msb_has_pinned_slots(fname):
+                    continue
+                if (fname, rec['part_index']) not in V3_BOSS_TIER_PINNED_SLOTS:
+                    continue
+            src_cp = rec['c_prefix']
+            if not (src_cp.startswith('c') and src_cp[1:].isdigit()):
+                continue
+            pos = rec.get('position')
+            if pos is not None:
+                pos = (round(pos[0], 2), round(pos[1], 2), round(pos[2], 2))
+            slots.append({
+                'msb': fname,
+                'pi': rec['part_index'],
+                'source_cp': src_cp,
+                'source_npc': rec['npc_param_id'],
+                'source_variant_name': None,
+                'position': pos,
+                'cluster_id': None,
+            })
+        return slots
     for fname in sorted(os.listdir(input_dir)):
         if not fname.endswith('.msb'):
             continue
@@ -11658,7 +11691,7 @@ def _populate_variant_names(slots, prefix_variants):
 
 def _compute_unique_reservations(input_dir, tags, prefix_variants, rng,
                                    already_placed_counts=None,
-                                   run_ctx=None):
+                                   run_ctx=None, inventory=None):
     """Pre-pass: pick reservations for every c-prefix in V3_UNIQUE_TARGET_CAPS.
 
     Mutates _V3_UNIQUE_RESERVATIONS (dict (msb,pi) -> cp), bumps
@@ -11710,7 +11743,7 @@ def _compute_unique_reservations(input_dir, tags, prefix_variants, rng,
                                 | V3_EXCLUDE_TARGET_PREFIXES
                                 | V3_GHOST_EXCLUDE_TARGET_PREFIXES)
 
-    slots = _enumerate_unique_candidate_slots(input_dir)
+    slots = _enumerate_unique_candidate_slots(input_dir, inventory=inventory)
     _populate_variant_names(slots, prefix_variants)
     print(f"  Enumerated {len(slots)} candidate Parts from input MSBs")
 

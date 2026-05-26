@@ -1,3 +1,48 @@
+## v0.27.7
+
+MSB-free decision simulation. Tooling — the engine's placement
+behaviour is unchanged (the one engine edit is a behaviour-neutral
+optional parameter).
+
+### What it adds
+
+The placement engine reads two things from the binary MSBs: a per-Part
+slot inventory (source c-prefix, npc/think params, entity id, position,
+variant) and the Models section (needed only to write output). v0.27.7
+makes the *decision* path runnable without the binaries:
+
+- dev/emit_slot_inventory.py -> data/nr_slot_inventory.json — the
+  complete per-Part decision input (5,329 enemy Parts across 195 MSBs),
+  emitted once from the decompressed MSBs. Superset of
+  nr_slot_metadata.json: adds think_param_id, position, and the
+  resolved source variant_name.
+- dev/simulate_engine.py — reproduces the shuffle decisions (swap_plan,
+  reservations, placement counts, the v0.27.4-6 size gates) from that
+  JSON, with no MSBs and no Oodle. It calls the engine's own
+  pick_target / _reject_target_for_slot / _compute_unique_reservations
+  / RunContext, so the decision logic IS the engine's.
+- _enumerate_unique_candidate_slots / _compute_unique_reservations gain
+  an optional inventory= parameter (default None = unchanged binary
+  path) so the reservation pre-pass runs inventory-fed.
+
+### Fidelity
+
+Validated against the real engine on 3 seeds: total placements within
+-0.4%, distribution correlation r = 0.96-0.98, 0 cap violations, 100
+reservations honoured. It is a faithful decision-logic model, not a
+per-seed byte clone — exact reproduction would require replicating the
+rider/mount collapse pass and bit-matching rng consumption across the
+full pipeline (merchant swaps, MSB iteration order), which a
+decision-sim omits. For cap/distribution tuning and CI it is what is
+wanted: change a cap, see the distribution response, no corpus and no
+decompression.
+
+### Not covered
+
+Output .msb byte generation (inherently needs the binaries); the
+diagnostic-only oops_all / terrain_test / pinned modes; hub MSBs
+(pinned-only in production, normally empty).
+
 ## v0.27.6
 
 Miniboss caps — "4 across the board". Follows the v0.27.3 floor pass.

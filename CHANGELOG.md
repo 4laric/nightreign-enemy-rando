@@ -1,3 +1,39 @@
+## v0.27.6
+
+Miniboss caps — "4 across the board". Follows the v0.27.3 floor pass.
+
+### The change
+
+v0.27.3 floored the whole miniboss tier (floor=1) but left caps
+uneven — 6 for the previously-uncapped bulk, plus pre-existing
+hand-tuned 1/2/8 values. v0.27.6 sets every miniboss-tier chr to a
+uniform cap of 4 (a power of 2): the v0.27.3 cap=6 default comes down
+to 4, Elder Lion (c4270) and Royal Revenant (c4020) come down from 8,
+and the prior single-boss feel-caps (Red Wolf c3181, Great Red Bear
+c5820, etc.) are raised from 2. Floor=1 + ceiling=4 across the tier —
+guarantee one, allow up to four.
+
+Exempt: the _LIFTED_V0_24_65 defensive cap=1 chrs (c5930 Giant
+Skeleton, c6220 Fire Demon, c4140, c4441, c4811, ...). That cap limits
+the blast radius of a chr that may still be runtime-broken — a
+different concern from miniboss feel-tuning — so it stands. Night-boss
+and field-boss tiers are untouched.
+
+Result: 70 miniboss-tier chrs set to cap=4 (6 lifted/defensive-cap
+chrs exempt; 11 hard-excluded chrs have no live cap either way).
+
+### Validation
+
+3-seed sim (714653 / 628653 / 42): 0 unplaced, no cap-4 miniboss
+exceeds 4 placements, ~220 miniboss placements/seed across the 70
+capped chrs. Full test suite at its 53-failure baseline — three tests
+pinning superseded pre-v0.27.6 caps (Red Wolf cap=2, Ghostflame
+archetype, the cap=1-GIGA smoke threshold) updated to the new policy.
+
+Minor effect: ~40 fewer placements/seed (~3,660 -> ~3,620) — tighter
+caps exhaust the dominant minibosses sooner, so a few late slots stay
+vanilla rather than place a 5th/6th copy. ~1%, intended direction.
+
 ## v0.27.5
 
 Size-handling refactor, Stage 2 — the BIG_PROXIMITY and DENSITY_CAP

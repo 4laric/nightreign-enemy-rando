@@ -2801,10 +2801,12 @@ class TestGate4AnimClassRejection:
 
 
 class TestRedWolfCap:
-    """v0.24.54: cap c3181 Red Wolf of Radagon at 2 per seed."""
+    """v0.24.54: c3181 Red Wolf of Radagon capped per seed.
+    v0.27.6: raised 2 -> 4 by the "4 across the board" miniboss cap
+    policy (c3181 is tier=miniboss)."""
 
-    def test_c3181_capped_at_2(self, engine):
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c3181') == 2
+    def test_c3181_capped_at_4(self, engine):
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c3181') == 4
 
     def test_red_wolf_in_quadruped_family_caps(self, engine):
         """Red Wolf cap=2 mirrors c4630 Runebear (same archetype: L-size
@@ -3240,12 +3242,13 @@ class TestGhostflameDragonCap:
     def test_c5860_capped_at_2(self, engine):
         assert engine.V3_UNIQUE_TARGET_CAPS.get('c5860') == 2
 
-    def test_c5860_cap_matches_runebear_archetype(self, engine):
-        """c5860 cap=2 matches similar heritage / large-flying archetypes
-        (c4630 Runebear, c4560 Giant Crow, c5820 Great Red Bear)."""
+    def test_c5860_nightboss_cap_vs_c5820_miniboss_cap(self, engine):
+        """c5860 Ghostflame Dragon is tier=night_boss and keeps cap=2.
+        c5820 Great Red Bear is tier=miniboss, so v0.27.6's "4 across
+        the board" miniboss policy puts it at 4 — the two no longer
+        share a cap."""
         assert engine.V3_UNIQUE_TARGET_CAPS['c5860'] == 2
-        # c5820 is the closest analog (heritage XXL boss)
-        assert engine.V3_UNIQUE_TARGET_CAPS['c5820'] == 2
+        assert engine.V3_UNIQUE_TARGET_CAPS['c5820'] == 4
 
 
 # v0.24.67: Gate 5.5 — grunt/trash target at boss-healthbar slot
@@ -4328,8 +4331,11 @@ class TestReservationOrderBigFirstV0_24_76:
                       if cap == 1 and tags.get(cp, {}).get('size_class') == 'GIGA']
         cap1_mediums = [cp for cp, cap in engine.V3_UNIQUE_TARGET_CAPS.items()
                         if cap == 1 and tags.get(cp, {}).get('size_class') == 'M']
-        assert len(cap1_gigas) >= 5, (
-            f'Expected at least 5 cap=1 GIGA chrs; got {len(cap1_gigas)}')
+        # v0.27.6: threshold 5 -> 3. The "4 across the board" miniboss
+        # cap policy raised the miniboss-tier cap=1 GIGAs to 4; 3 cap=1
+        # GIGAs remain, still enough for the bucket to coexist with M.
+        assert len(cap1_gigas) >= 3, (
+            f'Expected at least 3 cap=1 GIGA chrs; got {len(cap1_gigas)}')
         # v0.26.x: floor lowered from 10 → 9 after c3610 was dropped from
         # `_LIFTED_V0_24_65` (its cap was dead anyway since the chr is
         # excluded — see dev/audit_placement_budget_consistency.py). This

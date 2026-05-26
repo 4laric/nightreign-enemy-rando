@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.27.5'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.6'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -3224,10 +3224,15 @@ def load_data():
     # top-heavy: ~8 uncapped M-humanoid vanilla chrs land 11-15x/seed
     # while ~30 sit below 1x/seed, and the tier carried ZERO reservation
     # floors. Alaric direction: give every eligible miniboss a floor of 1
-    # (guarantees the rare tail appears) and cap every previously-uncapped
-    # miniboss at 6 (brings the dominant chrs down). Existing caps are
-    # LEFT ALONE — the hand-tuned 1/2 on singular bosses + archetype
-    # giants and the 6/8 values stay; only uncapped chrs get cap=6.
+    # (guarantees the rare tail appears).
+    #
+    # v0.27.6: cap policy is now "4 across the board" — every
+    # miniboss-tier chr is capped at 4, overriding the v0.27.3 cap=6
+    # default AND every pre-existing hand-tuned 1/2/8 (Elder Lion 8->4;
+    # the singular-boss 1/2 values raised to 4). Power-of-2 ceiling;
+    # pairs with the floor=1 (guarantee 1, allow up to 4). Exempt: the
+    # _LIFTED_V0_24_65 defensive cap=1 chrs (bug-blast-radius limits,
+    # not feel-tuning) keep their cap.
     #
     # Slot budget: ~360 boss-strength slots/seed vs 100 floored chrs
     # (24 pre-existing + 76 miniboss) — ~3.6x headroom.
@@ -3253,12 +3258,18 @@ def load_data():
         if _cp not in V3_RESERVATION_FLOORS:
             V3_RESERVATION_FLOORS[_cp] = 1
             _mb_floored += 1
-        if _cp not in V3_UNIQUE_TARGET_CAPS:
-            V3_UNIQUE_TARGET_CAPS[_cp] = 6
+        # v0.27.6: 4 across the board — override any prior cap. EXEMPT:
+        # the _LIFTED_V0_24_65 defensive cap=1 chrs. That cap limits the
+        # blast radius of a chr that may still be runtime-broken
+        # (invisible-render etc.) — a different concern from miniboss
+        # feel-tuning — so it stands.
+        if (_cp not in _LIFTED_V0_24_65
+                and V3_UNIQUE_TARGET_CAPS.get(_cp) != 4):
+            V3_UNIQUE_TARGET_CAPS[_cp] = 4
             _mb_capped += 1
     if _mb_floored or _mb_capped:
-        print(f"v0.27.3: miniboss tier — floor=1 added to {_mb_floored} "
-              f"chrs, cap=6 added to {_mb_capped} previously-uncapped chrs")
+        print(f"v0.27.3/.6: miniboss tier — floor=1 added to {_mb_floored} "
+              f"chrs, cap=4 set on {_mb_capped} chrs")
 
     return roster, tags
 

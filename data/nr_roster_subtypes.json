@@ -1,0 +1,68 @@
+{
+  "_doc": [
+    "ROSTER-SUBTYPE MAP — groundwork for variant-level roster entries (v0.27.x).",
+    "",
+    "Why this exists:",
+    "  The engine reasons at c-prefix granularity. One c-prefix is one chr",
+    "  ASSET, and the engine treats it as one roster ENTRY — caps, floors,",
+    "  tier, flier-status and exclusion are all keyed on the c-prefix.",
+    "  But a single asset can host several distinct gameplay IDENTITIES:",
+    "  c5250's chr hosts Horned Warrior, Divine Bird Warrior AND Divine",
+    "  Beast Warrior — three enemies, one skeleton. This file records those",
+    "  splits so a later stage can let a subtype carry its own attributes.",
+    "",
+    "  THIS FILE ALONE CHANGES NO ENGINE BEHAVIOR. It is data only. The",
+    "  loader (_roster_subtypes in oops_v3.py) exposes it; nothing consumes",
+    "  it yet. A c-prefix not listed here remains exactly one roster entry,",
+    "  identical to today.",
+    "",
+    "Schema — subtypes[c_prefix]:",
+    "  base_name : the c-prefix's umbrella name (informational).",
+    "  entries   : ordered list of subtype objects, each with:",
+    "    subtype       : short stable id, snake_case, unique within the",
+    "                    c-prefix. The eventual roster-entry id is the pair",
+    "                    (c_prefix, subtype).",
+    "    display_name  : human-facing enemy name.",
+    "    EXACTLY ONE matcher, mapping the subtype to NpcParam variants:",
+    "      variant_name  : matches every variant whose variant_name equals",
+    "                      this string. Use when the names already",
+    "                      distinguish the subtypes (the common case).",
+    "      npc_param_ids : explicit id list. Use when variant_name does NOT",
+    "                      distinguish them — e.g. a winged variant that",
+    "                      shares its ground siblings' name.",
+    "    attributes    : RESERVED for the next stage (e.g. {\"is_flier\":",
+    "                    true}). Leave absent until a consumer exists.",
+    "",
+    "Curation note: dev/audit_genuine_variants.py clusters NpcParam rows by",
+    "genuine identity (behaviorVariationId, think_param_id // 1000) — its",
+    "--variation-report is the intended tool for discovering which c-prefixes",
+    "host genuinely distinct sub-identities worth listing here.",
+    "",
+    "Seed: c5250 only — the verified, worked example. Expand deliberately;",
+    "a multi-name variant scan flagged ~42 candidate c-prefixes but most",
+    "need a per-case judgement call and some need an NpcParam dig."
+  ],
+
+  "subtypes": {
+    "c5250": {
+      "base_name": "Horned Warrior",
+      "entries": [
+        {
+          "subtype": "horned_warrior",
+          "display_name": "Horned Warrior",
+          "variant_name": "Horned Warrior"
+        },
+        {
+          "subtype": "divine_bird_warrior",
+          "display_name": "Divine Bird Warrior",
+          "variant_name": "Divine Bird Warrior"
+        },
+        {
+          "subtype": "divine_beast_warrior",
+          "display_name": "Divine Beast Warrior",
+          "variant_name": "Divine Beast Warrior"
+        }
+      ]
+    }
+  }
+}

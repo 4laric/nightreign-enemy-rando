@@ -10595,16 +10595,18 @@ V3_UNIQUE_TARGET_CAPS = {
                  #   miniboss retier. cap=6 to the miniboss flood band
                  #   alongside Battlemage (user request).
 
-    # ----- v0.27.0 grunt caps -----
+    # ----- v0.27.0 grunt caps (cap value corrected v0.27.13) -----
     # Centipede Grub feels over-present in playtest — not from raw
     # frequency (sim_per_run.py --grunts: c7711/c7712 both land at the
     # grunt-tier norm, ~14/seed, max ~27-29) but because the Grub aggros
-    # from extreme range, so a normal count reads as a swarm. cap=6 cuts
+    # from extreme range, so a normal count reads as a swarm. cap=4 cuts
     # felt presence well below the ~14 grunt-tier norm. (user request)
-    'c7711': 6,  # Centipede Grub
-    'c7712': 6,  # Centipede Grub (variant)
-    'c3664': 6,  # Cemetery Shade (grunt) — v0.27.0: uncapped, ~14/seed at
-                 #   the grunt-tier norm but a playtest menace; cap=6 to
+    # v0.27.13: cap restored to 4 — the v0.27.0 balance pass had left
+    # these at 6; intended grunt-cap value is 4 (playtest confirmed).
+    'c7711': 4,  # Centipede Grub
+    'c7712': 4,  # Centipede Grub (variant)
+    'c3664': 4,  # Cemetery Shade (grunt) — v0.27.0: uncapped, ~14/seed at
+                 #   the grunt-tier norm but a playtest menace; cap=4 to
                  #   the grunt-cap band alongside c7711/c7712 (user req).
 }
 

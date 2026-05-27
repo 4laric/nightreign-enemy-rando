@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.27.0'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.12'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -1141,6 +1141,18 @@ def _collapse_rider_mount_pairs(data, parts, midx_to_cp):
 # correctly when paired with a rider in a cluster — placed standalone, they
 # behave like inert objects with no combat AI.
 V3_EXCLUDE_TARGET_PREFIXES = {
+    # v0.27.2: playable-character (Nightfarer class) models. The c523xx
+    # range scraped by post_dlc_dump includes three NR PLAYABLE class
+    # models that were sitting in the target pool as tier='grunt'
+    # enemies. Placing a player class as a world enemy is never wanted.
+    # Found via the 98-seed sim (2026-05-26): all three at 0 placements,
+    # but they remained pool-eligible and could surface on other seeds.
+    # Alaric named Priestess/Duchess + Executor; c52312 'Witch of the
+    # Wheel (Recluse Remembrance)' is the Recluse class — same family,
+    # excluded on the same grounds (flag if that read is wrong).
+    'c52309',  # Priestess (Duchess) — NR playable Nightfarer class
+    'c52312',  # Witch of the Wheel (Recluse) — NR playable Nightfarer class
+    'c52313',  # Executor — NR playable Nightfarer class
     # Mount/companion models that only function as cluster members in vanilla.
     # When placed standalone in a generic slot, they appear inert (no AI, no
     # aggression) because their NPCParam is configured for "ride-along" rather
@@ -2201,8 +2213,21 @@ V3_AVOID_VARIANT_NPC_IDS = {
     34510100, 34519000,
     # c3660 Commoner:
     36609200,
-    # c3670 Aged Albinauric (Heritage):
-    36701200, 36708000, 36708100, 36709000,
+    # c3670 Aged Albinauric:
+    # v0.27.2: 36708100 REMOVED from this list per Alaric direction
+    # (98-seed sim 2026-05-26 — Aged Albinauric placed 0× because its
+    # only named variant was avoid-listed). 36708100 'Aged Albinauric
+    # (Scholar Remembrance)' is the sole canonical variant (sample_maps
+    # ['m10_00_00_00'] — vanilla NR places it) and the only one with a
+    # non-empty variant_name; the other three c3670 ids are empty-name
+    # placeholders already culled by the empty-name filter upstream.
+    # The v0.23.24 avoid-add justified 36708100 as a 'team=26 cinematic'
+    # variant, but the post-DLC dump and roster scrape since then show
+    # it as a real placed enemy. CAVEAT: the roster entry carries
+    # think_param_id=0 — if playtest shows the placed chr is AI-inert
+    # outside m10, that vindicates the original avoid-add and this line
+    # should be restored (cite seed/msb/pi).
+    36701200, 36708000, 36709000,
     # c3810 Wandering Noble:
     38109000,
     # c3850 Lobster — full 3xxx subfamily team=26:
@@ -2485,6 +2510,93 @@ V3_AVOID_VARIANT_NPC_IDS = {
 # This is exactly how c2277 Crab leaked: single imported_chr variant,
 # nothing canonical to discriminate against, soft fallback passed it.
 V3_PREFER_CANONICAL_VARIANTS = True
+
+
+# v0.27.x: REDUNDANT-VARIANT PRUNE LIST
+# ----------------------------------------------------------------------------
+# The NR roster carries ~3100 NpcParam rows, but most are the SAME enemy
+# re-authored once per placement context (Castle / Evergaol / Encampment
+# / field) plus untested post-DLC-dump "ghost" rows. The model, anims and
+# behavior are keyed on the c-prefix, not the NpcParam row, so context-
+# duplicate rows are interchangeable in the random pool.
+#
+# dev/audit_genuine_variants.py clusters rows by genuine identity
+# (behaviorVariationId, think_param_id // 1000) and emits
+# data/variant_prune_list.json — the npc_param_ids that are redundant
+# duplicates of a kept representative. Every genuine variant keeps >=1
+# representative row, and within a cluster that has both rewarded and
+# non-rewarded rows the rewarded one is kept (so the variant still drops
+# its reward). Pruning therefore does NOT remove any genuine variant
+# from the pool.
+#
+# The prune list is applied ONLY in pick_variant_for_tier — the RANDOM
+# variant-pick path. Explicitly-targeted placements (manual_promotions,
+# boss-arena chr roles, scripted-intro slots) reference specific
+# npc_param_ids and go through other code paths; they are unaffected.
+#
+# Disable by setting this False or by deleting data/variant_prune_list.json
+# (an absent file yields an empty set — no-op).
+V3_APPLY_VARIANT_PRUNE_LIST = True
+
+_V3_VARIANT_PRUNE_IDS = None  # lazily-loaded cache; None = not yet loaded
+
+
+def _variant_prune_ids():
+    """Lazily load + cache the redundant-variant prune set.
+
+    Returns a set of npc_param_id ints. Empty when the feature is off,
+    the file is missing, or the file is malformed (fail-open: a bad
+    prune file must never crash a rando run, only forgo the pruning).
+    """
+    global _V3_VARIANT_PRUNE_IDS
+    if _V3_VARIANT_PRUNE_IDS is None:
+        ids = set()
+        if V3_APPLY_VARIANT_PRUNE_LIST:
+            path = _data_path('variant_prune_list.json')
+            if os.path.exists(path):
+                try:
+                    with open(path, encoding='utf-8') as f:
+                        data = json.load(f)
+                    ids = {int(x) for x in data.get('prune_npc_param_ids', [])}
+                except (json.JSONDecodeError, OSError, ValueError, TypeError):
+                    ids = set()
+        _V3_VARIANT_PRUNE_IDS = ids
+    return _V3_VARIANT_PRUNE_IDS
+
+
+# v0.27.x: ROSTER-SUBTYPE MAP (groundwork — see data/nr_roster_subtypes.json)
+# ----------------------------------------------------------------------------
+# Records c-prefixes whose NpcParam variants split into 2+ distinct gameplay
+# identities (e.g. c5250 -> Horned Warrior / Divine Bird Warrior / Divine
+# Beast Warrior — three enemies, one chr asset). This is DATA ONLY: the loader
+# exposes the map, but no decision path consumes it yet. A later stage will
+# let a subtype carry its own attributes (flier flag, cap, ...). c-prefixes
+# absent from the file remain a single roster entry == the c-prefix.
+_V3_ROSTER_SUBTYPES = None  # lazily-loaded cache; None = not yet loaded
+
+
+def _roster_subtypes():
+    """Lazily load + cache the roster-subtype map.
+
+    Returns the {c_prefix: {base_name, entries: [...]}} dict from
+    data/nr_roster_subtypes.json, or {} when the file is absent or
+    malformed (fail-open: groundwork data must never crash a run).
+    """
+    global _V3_ROSTER_SUBTYPES
+    if _V3_ROSTER_SUBTYPES is None:
+        subtypes = {}
+        path = _data_path('nr_roster_subtypes.json')
+        if os.path.exists(path):
+            try:
+                with open(path, encoding='utf-8') as f:
+                    data = json.load(f)
+                got = data.get('subtypes', {})
+                if isinstance(got, dict):
+                    subtypes = got
+            except (json.JSONDecodeError, OSError, ValueError, TypeError):
+                subtypes = {}
+        _V3_ROSTER_SUBTYPES = subtypes
+    return _V3_ROSTER_SUBTYPES
 
 
 def _filter_canonical_variants(variants):
@@ -2987,6 +3099,18 @@ def load_data():
         print(f"V3_ARENA_ONLY_TARGETS: lifted -{len(_m_humanoid_lift)} "
               f"M-humanoid chrs ({sorted(_m_humanoid_lift)})")
 
+    # v0.27.2: explicit arena_only lift for the five MMV nightlord imports
+    # (see V3_ARENA_ONLY_FORCE_LIFT docstring). 98-seed sim (2026-05-26)
+    # showed them at 0 placements — arena_only + v0.27.1 whole-MSB NB-arena
+    # preservation left them with no eligible slots. Alaric direction:
+    # pool gap, lift it. Runs last so it overrides the expects_boss_arena
+    # auto-extend that put them in the set.
+    _force_lift = V3_ARENA_ONLY_TARGETS & V3_ARENA_ONLY_FORCE_LIFT
+    if _force_lift:
+        V3_ARENA_ONLY_TARGETS = V3_ARENA_ONLY_TARGETS - _force_lift
+        print(f"V3_ARENA_ONLY_TARGETS: force-lifted -{len(_force_lift)} "
+              f"MMV nightlord imports ({sorted(_force_lift)})")
+
     # v0.23.72: PROBE_TARGET_VARIANT application. After all variant data
     # is loaded (heritage + MMV + post_dlc_dump), if PROBE_TARGET_VARIANT
     # is set, narrow V3_AVOID_VARIANT_NPC_IDS to leave ONLY the target
@@ -3168,18 +3292,120 @@ def load_data():
         # v0.24.49 mmv_import bans (already capped via v0.24.53 — listed for completeness)
         'c5930', 'c6220',
     })
-    lifted_capped_count = 0
-    lifted_skipped_count = 0
-    for _cp in _LIFTED_V0_24_65:
-        if _cp in V3_UNIQUE_TARGET_CAPS:
-            lifted_skipped_count += 1
+    # v0.27.8: the _LIFTED_V0_24_65 defensive cap=1 loop is REMOVED.
+    # Alaric direction — the cap=1 blast-radius limiter was suppressing
+    # organic distribution (the 20-seed sim showed 10 grunt/trash chrs
+    # pinned at exactly 1/seed) and the lifted chrs have been playtested
+    # since v0.24.40 with no reported CTDs. The frozenset above is kept
+    # purely as a record of the historical lift. Each former-cap=1 chr
+    # now falls to its tier cap below: grunt -> 32, miniboss -> 4.
+    # NOTE: this re-exposes c5930 Giant Skeleton / c6220 Fire Demon
+    # (invisible-render history) at up to 4x/seed.
+
+    # v0.27.8: exclude c6201 Scarab — it carries a tag but has no roster
+    # variants (an orphan; the 20-seed sim placed it 0/20). The picker
+    # cannot place a variantless chr, so it only ever wasted a pool slot.
+    V3_EXCLUDE_TARGET_PREFIXES.add('c6201')
+
+    # v0.27.8: collapse the 'trash' tier into 'grunt'. Alaric direction —
+    # the grunt/trash distinction carries no design weight; retagging
+    # every trash chr to grunt here makes the whole engine (caps, floors,
+    # the boss-bar gate, target pools) treat them as one tier. Done
+    # before the grunt cap/floor block below so that block covers both.
+    _retagged = 0
+    for _t in tags.values():
+        if isinstance(_t, dict) and _t.get('tier') == 'trash':
+            _t['tier'] = 'grunt'
+            _retagged += 1
+    if _retagged:
+        print(f"v0.27.8: collapsed 'trash' tier into 'grunt' "
+              f"({_retagged} chrs retagged)")
+
+    # v0.27.3: miniboss tier — reservation floor + cap normalization.
+    # The 98-seed audit (dev/SESSION_NOTES_2026-05-26.md) showed the
+    # miniboss tier is healthy in pool size (76 eligible) but badly
+    # top-heavy: ~8 uncapped M-humanoid vanilla chrs land 11-15x/seed
+    # while ~30 sit below 1x/seed, and the tier carried ZERO reservation
+    # floors. Alaric direction: give every eligible miniboss a floor of 1
+    # (guarantees the rare tail appears).
+    #
+    # v0.27.6: cap policy is now "4 across the board" — every
+    # miniboss-tier chr is capped at 4, overriding the v0.27.3 cap=6
+    # default AND every pre-existing hand-tuned 1/2/8 (Elder Lion 8->4;
+    # the singular-boss 1/2 values raised to 4). Power-of-2 ceiling;
+    # pairs with the floor=1 (guarantee 1, allow up to 4). Exempt: the
+    # _LIFTED_V0_24_65 defensive cap=1 chrs (bug-blast-radius limits,
+    # not feel-tuning) keep their cap.
+    #
+    # Slot budget: ~360 boss-strength slots/seed vs 100 floored chrs
+    # (24 pre-existing + 76 miniboss) — ~3.6x headroom.
+    #
+    # CAVEAT: 26 of the 76 are XL+/XXL and exposed to the reservation-
+    # floor-demotion bug (docs/OPEN_ISSUES.md — BIG_PROXIMITY / DENSITY
+    # post-passes evict reserved big chrs). Their floors will NOT reliably
+    # hold until that bug is fixed; the floor is fully effective for the
+    # ~50 S/M/L minibosses immediately. Fixing the demotion bug is the
+    # natural follow-up to make this tier-wide floor land for everyone.
+    #
+    # Idempotent: re-running load_data() in the same process is a no-op
+    # (the `not in` guards skip already-set entries).
+    _mb_exclude = (V3_EXCLUDE_PREFIXES | V3_EXCLUDE_TARGET_PREFIXES
+                   | V3_GHOST_EXCLUDE_TARGET_PREFIXES)
+    _mb_floored = 0
+    _mb_capped = 0
+    for _cp, _t in tags.items():
+        if not isinstance(_t, dict) or _t.get('tier') != 'miniboss':
             continue
-        V3_UNIQUE_TARGET_CAPS[_cp] = 1
-        lifted_capped_count += 1
-    if lifted_capped_count or lifted_skipped_count:
-        print(f"v0.24.65: capped {lifted_capped_count} newly-lifted chrs "
-              f"at 1 placement ({lifted_skipped_count} skipped — explicit "
-              f"cap already in V3_UNIQUE_TARGET_CAPS).")
+        if _cp in _mb_exclude:
+            continue
+        if _cp not in V3_RESERVATION_FLOORS:
+            V3_RESERVATION_FLOORS[_cp] = 1
+            _mb_floored += 1
+        # v0.27.6: 4 across the board — override any prior cap. As of
+        # v0.27.8 there is no exemption: the _LIFTED_V0_24_65 defensive
+        # cap=1 mechanism was removed, so every miniboss-tier chr —
+        # c4140/c4441/c4601/c4811/c5930/c6220 included — is capped at 4.
+        if V3_UNIQUE_TARGET_CAPS.get(_cp) != 4:
+            V3_UNIQUE_TARGET_CAPS[_cp] = 4
+            _mb_capped += 1
+    if _mb_floored or _mb_capped:
+        print(f"v0.27.3/.6: miniboss tier — floor=1 added to {_mb_floored} "
+              f"chrs, cap=4 set on {_mb_capped} chrs")
+
+    # v0.27.8: grunt tier (grunt + the now-collapsed trash) — floor=4,
+    # plus a tier-wide cap. Alaric direction. The 20-seed sim
+    # (dev/simulate_engine.py) showed the tier saturating: 52 of 105
+    # eligible chrs flatlined at the old implicit global cap of 50 — 74%
+    # of all grunt placements — with no shaping below it, while ~14 chrs
+    # sat at <=2/seed. floor=4 guarantees every grunt appears >=4x,
+    # eliminating the cameo tail. Mirrors the v0.27.3/.6 miniboss block;
+    # applied across the board, overriding any prior hand-tuned cap.
+    #
+    # v0.27.9: cap raised 32 -> 40. cap=32 was leaving ~10% of grunt
+    # slots vanilla (no-target) — 104 grunts x 32 = 3,328 capacity vs
+    # ~3,506 non-hub grunt slots, plus uneven cap fill across MSBs. 40
+    # gives 4,160 capacity — comfortable headroom. This is an INTERIM
+    # value: the durable fix is enlarging the grunt pool by importing
+    # more ER grunt assets (each new eligible grunt = +40 capacity),
+    # after which the cap can come back down.
+    _gr_exclude = (V3_EXCLUDE_PREFIXES | V3_EXCLUDE_TARGET_PREFIXES
+                   | V3_GHOST_EXCLUDE_TARGET_PREFIXES)
+    _gr_floored = 0
+    _gr_capped = 0
+    for _cp, _t in tags.items():
+        if not isinstance(_t, dict) or _t.get('tier') != 'grunt':
+            continue
+        if _cp in _gr_exclude:
+            continue
+        if V3_RESERVATION_FLOORS.get(_cp) != 4:
+            V3_RESERVATION_FLOORS[_cp] = 4
+            _gr_floored += 1
+        if V3_UNIQUE_TARGET_CAPS.get(_cp) != 40:
+            V3_UNIQUE_TARGET_CAPS[_cp] = 40
+            _gr_capped += 1
+    if _gr_floored or _gr_capped:
+        print(f"v0.27.8/.9: grunt tier — floor=4 set on {_gr_floored} "
+              f"chrs, cap=40 set on {_gr_capped} chrs")
 
     return roster, tags
 
@@ -4634,6 +4860,18 @@ def pick_variant_for_tier(target_cp, recipient_is_boss, prefix_variants, rng,
     pool = prefix_variants.get(target_cp)
     if not pool:
         return None
+    # v0.27.x: drop redundant context-duplicate variants via the prune
+    # list (data/variant_prune_list.json — see _variant_prune_ids and
+    # V3_APPLY_VARIANT_PRUNE_LIST). Each genuine variant keeps a
+    # representative row, so this never removes a genuine variant from
+    # the pool. SOFT: if pruning somehow empties the pool the original
+    # is restored (defensive — by construction every c-prefix retains
+    # >=1 row, so this fallback should not trigger).
+    _prune = _variant_prune_ids()
+    if _prune:
+        _kept = [v for v in pool if v.get('npc_param_id') not in _prune]
+        if _kept:
+            pool = _kept
     variants = filter_emerge_variants(pool)
     # v0.23.04.1: drop empty-name variants (phantom/summon placeholders).
     variants = [v for v in variants if (v.get('variant_name') or '').strip()]
@@ -4787,6 +5025,31 @@ V3_BIG_PROXIMITY_ENABLED = True
 V3_BIG_PROXIMITY_RADIUS = 30.0
 V3_BIG_SIZE_CLASSES = frozenset({'XL', 'XXL', 'GIGA'})
 V3_BIG_PROXIMITY_DEMOTE_TO_SIZES = frozenset({'XS', 'S', 'M', 'L'})
+
+# v0.27.4 GEOMETRY-AWARE SIZE GATE
+# ---------------------------------
+# Placement-time replacement for the blunt v0.24.55 'xxl_at_small_slot'
+# gate. A slot's size capacity is the LARGER of (a) the vanilla
+# occupant's size class — FromSoft placed that size here, so it is
+# proven safe (STRICT vanilla baseline: no grace step, an XL-vanilla
+# slot does NOT auto-qualify for XXL) — and (b) the geometry-derived
+# capacity from slot_terrain.json `face_dist` (metres to the nearest
+# collision face). An XXL/GIGA target is rejected unless its size class
+# is within that capacity. The geometry path RECOVERS the legit big
+# slots the blunt gate threw away. Slots with no terrain data fall back
+# to the strict vanilla baseline (no upsize without proof).
+#
+# Only XXL/GIGA are gated — XS..XL (<=1.4m footprint radius) clear
+# essentially any navmesh slot and were never the clipping concern.
+# V3_SIZE_FOOTPRINT_RADIUS values are median NpcParam hit_radius per
+# size class.
+V3_GEOMETRY_GATE_ENABLED = True
+V3_SIZE_RANK = {'XS': 0, 'S': 1, 'M': 2, 'L': 3, 'XL': 4, 'XXL': 5, 'GIGA': 6}
+V3_SIZE_FOOTPRINT_RADIUS = {
+    'XS': 0.40, 'S': 0.50, 'M': 0.50, 'L': 0.84,
+    'XL': 1.40, 'XXL': 3.25, 'GIGA': 7.00,
+}
+V3_GEOMETRY_GATED_SIZES = frozenset({'XXL', 'GIGA'})
 
 # v0.24.101 MODEL ENTRY COMPACTION
 # ---------------------------------
@@ -6858,6 +7121,66 @@ def _load_off_mesh_slots():
     return V3_OFF_MESH_SLOTS
 
 
+# v0.27.4: per-slot face_dist cache for the geometry-aware size gate.
+_V3_SLOT_FACE_DIST = None  # populated on first call to _load_slot_face_dist()
+
+
+def _load_slot_face_dist():
+    """Lazy-load per-slot `face_dist` (metres to the nearest collision
+    face) from slot_terrain.json's `slot_roughness` block.
+
+    Returns a dict {(msb_name, part_index): face_dist}. Slots absent
+    from the map have no terrain data — the geometry size gate treats a
+    missing entry as "no geometry proof available" and falls back to the
+    strict vanilla baseline. Cached as a module global so the JSON parse
+    happens once per engine invocation (mirrors _load_off_mesh_slots).
+    """
+    global _V3_SLOT_FACE_DIST
+    if _V3_SLOT_FACE_DIST is not None:
+        return _V3_SLOT_FACE_DIST
+    out = {}
+    path = _data_path('slot_terrain.json')
+    try:
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        # Engine still works without slot_terrain.json — the geometry
+        # gate just degrades to the pure vanilla-occupant baseline.
+        _V3_SLOT_FACE_DIST = out
+        return out
+    for msb, slot_dict in data.get('slot_roughness', {}).items():
+        if not isinstance(slot_dict, dict):
+            continue
+        for pi_str, metrics in slot_dict.items():
+            if not isinstance(metrics, dict):
+                continue
+            fd = metrics.get('face_dist')
+            if fd is None:
+                continue
+            try:
+                out[(msb, int(pi_str))] = float(fd)
+            except (ValueError, TypeError):
+                continue
+    _V3_SLOT_FACE_DIST = out
+    return out
+
+
+def _geometry_capacity_rank(face_dist):
+    """Highest V3_SIZE_RANK a slot can host given `face_dist` — the
+    largest size class whose V3_SIZE_FOOTPRINT_RADIUS fits within the
+    distance to the nearest collision face. Returns -1 if not even XS
+    fits. Footprint radius is monotonic in rank, so the scan can stop
+    at the first class that doesn't fit.
+    """
+    cap = -1
+    for sc in ('XS', 'S', 'M', 'L', 'XL', 'XXL', 'GIGA'):
+        if V3_SIZE_FOOTPRINT_RADIUS[sc] <= face_dist:
+            cap = V3_SIZE_RANK[sc]
+        else:
+            break
+    return cap
+
+
 # v0.20.14: prefix-based companion to V3_FRAGILE_MAPS. Same effect (T2
 # whole-map fragility — restricts targets to V3_RESILIENT_BIPEDS) but
 # matches by msb-name prefix instead of exact name. Use this when an
@@ -7548,7 +7871,8 @@ V3_ADD_RANDOMIZE_ARENAS = frozenset({
     'm47_70_00_00.msb',   # Tibia Mariner      - randomize the skeleton catacomb
 })
 
- 
+ 
+
 
 # v0.24.28: Starting encampment catalog. Asset MSBs that get instantiated
 # near the wagon spawn at the start of a Limveld Expedition. Used by:
@@ -7985,13 +8309,23 @@ V3_SCRIPT_SPAWN_BOSS_GATED_TIERS = frozenset({'field_boss', 'miniboss', 'night_b
 # failure mode. Previously inferred from _source='script_spawn'; now
 # explicit since the reclassification (see dev/audit_source_tags.py).
 V3_DEDICATED_ARENA_BOSS_CHRS = frozenset({
-    'c4670',  # Ancestor Spirit             — m46_64, m46_90
+    # v0.27.2: c4670 Ancestor Spirit and c7910 Storm King LIFTED from this
+    # set per Alaric direction (98-seed sim 2026-05-26). Both are
+    # _source='nr_placed' night_boss-tier chrs; their arena_only constraint
+    # flowed only through this set. With v0.27.1's whole-MSB night-boss
+    # arena preservation (V3_PRESERVE_NIGHT_BOSS_ARENAS), arena_only chrs
+    # whose only valid slots are NB arenas became a pool gap — 0 placements
+    # across 98 seeds. Lifting both: they now place organically at
+    # night_boss-tier world slots. Each carries a fresh cap=1 in
+    # V3_UNIQUE_TARGET_CAPS so they read as singular encounters.
+    # NOTE: c7900 Nameless King was the vanilla pair-partner of c7910
+    # (m48_20 + m19_00). It is deliberately LEFT in this set — Alaric
+    # named only Storm King. Revisit c7900 if the pair should move together.
     'c7700',  # Gaping Dragon               — m47_80
     'c7710',  # Centipede Demon             — m47_90
     'c7800',  # Duke's Dear Freja           — m48_00
     'c7820',  # Smelter Demon               — m48_10
-    'c7900',  # Nameless King               — m48_20 + m19_00 (paired w/ c7910)
-    'c7910',  # Storm King                  — m48_20 + m19_00 (paired w/ c7900)
+    'c7900',  # Nameless King               — m48_20 + m19_00 (pair-partner of lifted c7910)
     'c7920',  # Dancer of the Boreal Valley — m48_30
     # c4690 Grafted Scion (m46_65, m46_91) is in vanilla NR boss-arena
     # MSBs but plays as a miniboss / non-script-spawn class; v0.23.72
@@ -7999,6 +8333,27 @@ V3_DEDICATED_ARENA_BOSS_CHRS = frozenset({
     # provisionally and historical playtest hasn't surfaced overworld
     # CTDs for it. Left out of this strict set for now; revisit if
     # CTDs are observed.
+})
+
+
+# v0.27.2: explicit arena_only LIFT set. The five MMV nightlord-tier
+# imports below are tagged expects_boss_arena=true in mmv_imports.json,
+# so the load_data() auto-extend block folds them into
+# V3_ARENA_ONLY_TARGETS. Combined with v0.27.1's whole-MSB night-boss
+# arena preservation that left them with zero eligible slots — confirmed
+# 0 placements across the 98-seed sim (2026-05-26). Alaric direction:
+# this is a pool gap, not intended scarcity — remove arena_only from
+# them. This set is subtracted from V3_ARENA_ONLY_TARGETS at the end of
+# the load_data() auto-extend block (mirrors the M-humanoid lift). The
+# expects_boss_arena tag is intentionally left intact in mmv_imports.json
+# (it still feeds the +10 placement-preference score); only the hard
+# arena-lock is lifted. They now place at boss-tier world slots.
+V3_ARENA_ONLY_FORCE_LIFT = frozenset({
+    'c4720',  # Godfrey, First Elden Lord  (XL humanoid, nightlord, MMV)
+    'c4721',  # Hoarah Loux                (XL humanoid, nightlord, MMV)
+    'c4730',  # Starscourge Radahn         (GIGA quadruped_large, nightlord, MMV)
+    'c5230',  # Scadutree Avatar           (GIGA quadruped_large, nightlord, MMV)
+    'c8500',  # Manus, Father of the Abyss (XL humanoid, nightlord, MMV)
 })
 
 
@@ -9905,6 +10260,13 @@ V3_NIGHT_BOSS_EXCLUDE_TARGETS = {
 # Consort Radahn, Crucible Knight Devonia, etc.). Same dict shape.
 V3_UNIQUE_TARGET_CAPS = {
     # ----------------- cap = 1 (named, singular encounter) -----------------
+    # v0.27.2: Storm King + Ancestor Spirit. Lifted from
+    # V3_DEDICATED_ARENA_BOSS_CHRS this revision (see that set's docstring)
+    # so they place at night_boss-tier world slots instead of being
+    # arena-locked into the now-preserved NB arenas. cap=1 keeps each a
+    # singular encounter. Alaric direction, 98-seed sim 2026-05-26.
+    'c4670': 1,  # Ancestor Spirit — night_boss, was dedicated-arena only.
+    'c7910': 1,  # Storm King — night_boss, was dedicated-arena only.
     # Dragons being lifted from V3_EXCLUDE_TARGET_PREFIXES in this revision —
     # uniqueness cap makes them safe by limiting failure rate to one die
     # roll. Each gets reserved at a quality slot via the reservation pass.
@@ -10588,7 +10950,8 @@ def _reset_unique_run_state():
 
 
 def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
-                             *, chaos_mode=False, msb_base=None, pi=None):
+                             *, chaos_mode=False, msb_base=None, pi=None,
+                             slot_pos=None, run_ctx=None):
     """Shared predicate for "mirror-semantic" gates — those that
     pick_target_cp enforces at runtime AND that _score_slot_for_unique
     must replicate at reservation time. The reservation early-return
@@ -10777,7 +11140,20 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
                 from swap_compat import is_flier as _is_flier
             except ImportError:
                 _is_flier = lambda t: t.get('anim_class') == 'flying_dragon'  # noqa: E731
-            if not _is_flier(tags.get(target_cp, {})):
+            # v0.27.10: also honor the data file's eligible_target_chrs
+            # whitelist (V3_FLYING_ELIGIBLE_TARGETS). is_flier covers the
+            # flying_dragon chrs + loco=2 bats; the whitelist additionally
+            # clears hand-vetted hover-capable non-fliers (jellyfish c4180/
+            # c4181, Warhawk c4210) so grunt-tier flier-required slots are
+            # not limited to the 2-bat pool. The whitelist plumbing has
+            # existed since v0.24.45 (_load_flying_required_slots) but Gate
+            # 5 was never wired to it — v0.24.100 switched to is_flier and
+            # left it dead. Asymmetric by construction: this only widens
+            # the TARGET set at catalogued flier slots; it does not make
+            # jellyfish/Warhawk slots flier-required (that is the separate
+            # V3_FLYING_REQUIRED_SLOTS catalog).
+            if (not _is_flier(tags.get(target_cp, {}))
+                    and target_cp not in V3_FLYING_ELIGIBLE_TARGETS):
                 return 'flying_required_slot'
 
     # v0.24.67 Gate 5.5: grunt/trash target at boss-healthbar slot.
@@ -10959,52 +11335,40 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
             if msb_base.startswith('m60_'):
                 return 'script_spawn_boss_at_overworld'
 
-    # v0.24.55 Gate 7: XXL target at small-vanilla slot.
-    # Empirically observed: XXL chrs placed at slots whose vanilla source
-    # is size_class S or M render with their model partially below
-    # visible ground ("sunken troll" syndrome). The slot's Y is
-    # calibrated for a smaller chr's feet/origin; the XXL chr's rig
-    # places its model origin at the same Y but the body extends in a
-    # way that doesn't match the slot's geometric assumption.
+    # v0.27.4 Gate 7: geometry-aware size gate. Replaces the blunt
+    # v0.24.55 'xxl_at_small_slot' gate and extends coverage to GIGA.
     #
-    # User report seed 714653 v0.24.50: c4603 Stonedigger Troll
-    # "halfway stuck in ground, like he can move but he's too short"
-    # at m60_43_36_00 pi=31 (vanilla c4377 M-Battlemage). v0.24.50 fixed
-    # that specific slot with a +2m Y reposition. User now requests the
-    # class-level fix in v0.24.55 after another sunken troll.
+    # A slot's size capacity is the LARGER of (a) the vanilla occupant's
+    # size class — strict baseline, FromSoft placed that size here so it
+    # is proven safe, with NO grace step (an XL-vanilla slot does not
+    # auto-qualify for XXL) — and (b) the geometry-derived capacity from
+    # slot_terrain.json `face_dist`. An XXL/GIGA target is rejected
+    # unless its size class falls within that capacity.
     #
-    # v0.26.x: 'L' added to the source set. Sunken trolls kept being
-    # reported at slots Gate 7 did NOT cover -- the original {S,M,XS}
-    # scope let an XXL troll land at any L-source slot, and an
-    # L-calibrated slot Y still leaves an XXL rig waist-deep (less
-    # dramatic than at an M slot, but the same failure). Geometry
-    # clipping is not purely cosmetic -- a partially-embedded hitbox
-    # can be unhittable and physics depenetration is unpredictable --
-    # so the conservative call is to block the whole size-down range.
-    # Cost: XXL targets lose ~46 L-source slots; accepted over the
-    # clipping risk. (The surgical alternative, per-slot V3_POSITION_
-    # SHIFTS Y-lifts, stays available for any L-slot worth reclaiming.)
-    #
-    # Scope:
-    # - target size_class == 'XXL'
-    # - src size_class in {'XS', 'S', 'M', 'L'}  (195 chrs, v0.26.x count)
-    # GIGA targets are NOT included here — they have their own
-    # rig/anim diversity (giga_boss vs flying_dragon) that's better
-    # handled by Gates 3 (forbidden_source_anim) and 5 (flying_required).
-    # Adding GIGA here would over-block GIGA flying chrs that don't
-    # sink because they fly above ground.
-    #
-    # The v0.24.50 reposition entries for m60_43_36 pi=31 (+2m Y) are
-    # left in place — they become no-ops for XXL chrs (this gate blocks
-    # them before the reposition would apply) but still nudge smaller
-    # chrs upward at those slots. Future cleanup could remove them if
-    # the smaller-chr float is undesirable.
-    if msb_base is not None and pi is not None:
-        target_size = tags.get(target_cp, {}).get('size_class')
-        if target_size == 'XXL':
-            src_size = tags.get(src_cp, {}).get('size_class')
-            if src_size in ('XS', 'S', 'M', 'L'):
-                return 'xxl_at_small_slot'
+    # This supersedes the old "XXL at XS/S/M/L source -> always reject"
+    # rule: XXL/GIGA are now allowed wherever the navmesh geometry
+    # demonstrates the clearance (recovering legit big slots the blunt
+    # gate discarded) and blocked everywhere it doesn't — including the
+    # XL-vanilla slots the blunt gate let XXL through on unconditionally.
+    # Slots with no terrain data fall back to the strict vanilla
+    # baseline (no upsize without proof). Only XXL/GIGA are gated —
+    # XS..XL clear essentially any navmesh slot. Geometric / not chaos-
+    # overrideable. The gate never rejects a target whose size class is
+    # <= the vanilla occupant's, so the candidate pool can never be
+    # fully drained by it.
+    if (V3_GEOMETRY_GATE_ENABLED and msb_base is not None
+            and pi is not None):
+        _tgt_size = (tags.get(target_cp, {}) or {}).get('size_class')
+        if _tgt_size in V3_GEOMETRY_GATED_SIZES:
+            _src_size = (tags.get(src_cp, {}) or {}).get('size_class')
+            _cap_rank = V3_SIZE_RANK.get(_src_size, -1)  # strict baseline
+            _fd = _load_slot_face_dist().get((msb_base, pi))
+            if _fd is not None:
+                _g_rank = _geometry_capacity_rank(_fd)
+                if _g_rank > _cap_rank:
+                    _cap_rank = _g_rank
+            if V3_SIZE_RANK[_tgt_size] > _cap_rank:
+                return 'geometry_clip'
 
     # Gate 7.5 (revised v0.24.86-patch6.1): slope-aware size-up at
     # boss-tier slots. Tighter conjunction than v0.24.86-patch6 — the
@@ -11100,6 +11464,52 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
             anim = V3_ENTRANCE_ANIM_CLASS.get(target_cp)
             if anim == 'no_intro_anim':
                 return 'requires_intro_anim'
+
+    # v0.27.5 Gate 8 (big-enemy proximity) + Gate 9 (per-MSB density).
+    # Placement-time replacement for the BIG_PROXIMITY (v0.21) and
+    # DENSITY_CAP (v0.23.61) swap-plan post-passes. Both run off the
+    # per-MSB size state carried on run_ctx and armed by begin_msb():
+    #
+    #   Gate 9 density — once the MSB's XL+ count hits xl_cap, XL+
+    #       targets are rejected; once L+ count hits l_cap, L+ targets
+    #       are rejected. Tunnel MSBs carry tighter caps.
+    #   Gate 8 proximity — an XL+ target landing within
+    #       V3_BIG_PROXIMITY_RADIUS of a big already placed in this MSB
+    #       is rejected.
+    #
+    # A rejected big simply drops out of the candidate pool and the
+    # picker organically selects a smaller chr through its normal
+    # pipeline — no separate demotion path, so the caliber / cap /
+    # Gate-5.6 machinery the old post-passes had to re-implement is
+    # gone. The gates are inert unless run_ctx.msb_size_gate_active is
+    # set, which begin_msb() does only inside shuffle_msb_v3's slot
+    # loop. The reservation pre-pass and the reservation early-return
+    # never arm it, so a reserved big chr is never proximity/density-
+    # rejected — this closes the reservation-floor-demotion bug. Loop
+    # order is pi-ascending, so "low-pi wins" matches the post-passes'
+    # "first-pi wins" / "highest-pi demoted" exactly. Geometric, not
+    # chaos-overrideable.
+    if (run_ctx is not None
+            and getattr(run_ctx, 'msb_size_gate_active', False)):
+        _gsz = (tags.get(target_cp, {}) or {}).get('size_class')
+        if _gsz in V3_DENSITY_L_SIZE_CLASSES:  # L / XL / XXL / GIGA
+            _is_xl = _gsz in V3_BIG_SIZE_CLASSES  # XL / XXL / GIGA
+            # Gate 9: density
+            if V3_DENSITY_CAP_ENABLED:
+                if _is_xl and run_ctx.msb_xl_count >= run_ctx.msb_xl_cap:
+                    return 'density_xl'
+                if run_ctx.msb_l_count >= run_ctx.msb_l_cap:
+                    return 'density_l'
+            # Gate 8: proximity (XL+ only)
+            if (V3_BIG_PROXIMITY_ENABLED and _is_xl
+                    and slot_pos is not None
+                    and run_ctx.msb_big_positions):
+                _px, _py, _pz = slot_pos
+                _rsq = V3_BIG_PROXIMITY_RADIUS ** 2
+                for _bx, _by, _bz in run_ctx.msb_big_positions:
+                    if ((_px - _bx) ** 2 + (_py - _by) ** 2
+                            + (_pz - _bz) ** 2) < _rsq:
+                        return 'big_proximity'
 
     return None
 
@@ -11320,7 +11730,7 @@ def _shifting_earth_event(msb_name):
     return tens
 
 
-def _enumerate_unique_candidate_slots(input_dir):
+def _enumerate_unique_candidate_slots(input_dir, inventory=None):
     """Walk all MSBs in input_dir, return list of slot_info dicts for
     every Part. Used by the reservation pre-pass.
 
@@ -11329,8 +11739,41 @@ def _enumerate_unique_candidate_slots(input_dir):
       cluster_id (if cluster-aware)
 
     Position is (x, y, z) tuple or None if read failed.
+
+    v0.27.7: when `inventory` is given (a list of nr_slot_inventory.json
+    records), the candidate list is built from it instead of parsing the
+    MSBs in input_dir — this is what lets dev/simulate_engine.py run the
+    reservation pre-pass with no MSBs. Hub filtering is identical to the
+    binary path.
     """
     slots = []
+    if inventory is not None:
+        for rec in inventory:
+            fname = rec['map']
+            # Hub MSBs: skipped entirely unless they carry pinned slots,
+            # in which case only the pinned Parts are walked. Mirrors the
+            # binary path below.
+            if fname in V3_HUB_MAPS:
+                if not _msb_has_pinned_slots(fname):
+                    continue
+                if (fname, rec['part_index']) not in V3_BOSS_TIER_PINNED_SLOTS:
+                    continue
+            src_cp = rec['c_prefix']
+            if not (src_cp.startswith('c') and src_cp[1:].isdigit()):
+                continue
+            pos = rec.get('position')
+            if pos is not None:
+                pos = (round(pos[0], 2), round(pos[1], 2), round(pos[2], 2))
+            slots.append({
+                'msb': fname,
+                'pi': rec['part_index'],
+                'source_cp': src_cp,
+                'source_npc': rec['npc_param_id'],
+                'source_variant_name': None,
+                'position': pos,
+                'cluster_id': None,
+            })
+        return slots
     for fname in sorted(os.listdir(input_dir)):
         if not fname.endswith('.msb'):
             continue
@@ -11409,7 +11852,7 @@ def _populate_variant_names(slots, prefix_variants):
 
 def _compute_unique_reservations(input_dir, tags, prefix_variants, rng,
                                    already_placed_counts=None,
-                                   run_ctx=None):
+                                   run_ctx=None, inventory=None):
     """Pre-pass: pick reservations for every c-prefix in V3_UNIQUE_TARGET_CAPS.
 
     Mutates _V3_UNIQUE_RESERVATIONS (dict (msb,pi) -> cp), bumps
@@ -11461,7 +11904,7 @@ def _compute_unique_reservations(input_dir, tags, prefix_variants, rng,
                                 | V3_EXCLUDE_TARGET_PREFIXES
                                 | V3_GHOST_EXCLUDE_TARGET_PREFIXES)
 
-    slots = _enumerate_unique_candidate_slots(input_dir)
+    slots = _enumerate_unique_candidate_slots(input_dir, inventory=inventory)
     _populate_variant_names(slots, prefix_variants)
     print(f"  Enumerated {len(slots)} candidate Parts from input MSBs")
 
@@ -12037,7 +12480,8 @@ def pick_target_cp(recipient_cp, tags,
     for _t in pool:
         _r = _reject_target_for_slot(_t, recipient_cp, slot_variant_name,
                                       tags, chaos_mode=chaos_mode,
-                                      msb_base=slot_msb_name, pi=slot_pi)
+                                      msb_base=slot_msb_name, pi=slot_pi,
+                                      slot_pos=slot_pos, run_ctx=run_ctx)
         if _r is None:
             continue
         if _r == 'nb_caliber':
@@ -12507,6 +12951,16 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
     # when the set is empty. v0.23.68: extracted to helper.
     if msb_base in V3_DIAGNOSTIC_INVENTORY_MSBS:
         _emit_msb_part_inventory_trace(data, parts, midx_to_cp, msb_base)
+    # v0.27.5: arm the placement-time proximity/density gates for this
+    # MSB. Caps follow the tunnel-vs-default profile the DENSITY_CAP
+    # post-pass used.
+    if run_ctx is not None:
+        if msb_base in V3_TUNNEL_MAPS:
+            run_ctx.begin_msb(V3_TUNNEL_DENSITY_CAP_XL_PLUS,
+                              V3_TUNNEL_DENSITY_CAP_L_PLUS)
+        else:
+            run_ctx.begin_msb(V3_DENSITY_CAP_XL_PLUS,
+                              V3_DENSITY_CAP_L_PLUS)
     for pi, po in enumerate(parts['entry_offsets']):
         # v0.24.109 binary-search vanilla pins. For diagnostic A/B testing
         # of specific (msb, pi) slots — pinned slots skip the picker
@@ -13042,497 +13496,30 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
         swap_plan.append((pi, target_cp,
                           target_variant['npc_param_id'],
                           target_variant['think_param_id']))
+        # v0.27.5: register the committed placement into per-MSB size
+        # state so later slots in this MSB see it for the proximity /
+        # density gates. Covers every commit path — pick_target,
+        # oops_all, NB-forced, pinned — since it follows the unified
+        # swap_plan.append.
+        if run_ctx is not None:
+            _committed_sz = (tags.get(target_cp, {}) or {}).get('size_class')
+            if _committed_sz in V3_DENSITY_L_SIZE_CLASSES:
+                run_ctx.register_big(_committed_sz, slot_pos)
 
+    if run_ctx is not None:
+        run_ctx.end_msb()  # v0.27.5: disarm per-MSB size gates
     if not swap_plan:
         with open(output_path, 'wb') as f: f.write(data)
         return (0, 0, n_skipped_compat, n_clusters)
 
-    # === v0.21 BIG-ENEMY PROXIMITY POST-PASS ===
-    # See V3_BIG_PROXIMITY_* constants for rationale. Walks swap_plan,
-    # finds pairs of XL+ placements within radius, demotes the higher-pi
-    # entry to a size<=L target. Modifies swap_plan in place.
-    n_big_proximity_demotions = 0
-    if V3_BIG_PROXIMITY_ENABLED and len(swap_plan) >= 2:
-        import math as _bp_math
-        # Collect (plan_idx, pi, target_cp, position) for big-class entries
-        _big_entries = []
-        for _idx, (_pi, _tcp, _tnpc, _tthk) in enumerate(swap_plan):
-            if tags.get(_tcp, {}).get('size_class') not in V3_BIG_SIZE_CLASSES:
-                continue
-            _po = parts['entry_offsets'][_pi]
-            if _po + 0x400 + 12 > len(data):
-                continue
-            try:
-                _x, _y, _z = struct.unpack_from('<fff', data, _po + 0x400)
-            except struct.error:
-                continue
-            if _x != _x or _y != _y or _z != _z:  # NaN check
-                continue
-            _big_entries.append((_idx, _pi, _tcp, (_x, _y, _z)))
-
-        # Identify demotions: first-pi wins; later bigs within radius get demoted
-        _big_entries.sort(key=lambda t: t[1])  # sort by pi for determinism
-        _demote_set = set()
-        _radius_sq = V3_BIG_PROXIMITY_RADIUS ** 2
-        # v0.23.54: exempt OOPS_ALL_NB-forced slots from demotion. When the
-        # user explicitly pinned a slot OR the catalog tagged it as boss-tier
-        # AND OOPS_ALL_NB intercept fired (we know this because the slot's
-        # current target_cp matches the OOPS_ALL_NB target), demoting it
-        # would silently negate the user's request. The whole point of
-        # OOPS_ALL_NB is to force the target chr at known boss arenas.
-        # Big-proximity is for organic random rolls, not user-directed pins.
-        _exempt_pis = set()
-        if _eff_nb_target:
-            for _idx, _pi, _tcp, _ in _big_entries:
-                if _tcp != _eff_nb_target: continue
-                if ((msb_base, _pi) in V3_BOSS_TIER_PINNED_SLOTS
-                        or is_catalogued_boss_slot(msb_base, _pi, _eff_nb_scope)):
-                    _exempt_pis.add(_idx)
-        for _a in range(len(_big_entries)):
-            if _big_entries[_a][0] in _demote_set:
-                continue
-            _ax, _ay, _az = _big_entries[_a][3]
-            for _b in range(_a + 1, len(_big_entries)):
-                if _big_entries[_b][0] in _demote_set:
-                    continue
-                if _big_entries[_b][0] in _exempt_pis:
-                    continue  # v0.23.54: pinned/catalogued NB slot — never demote
-                _bx, _by, _bz = _big_entries[_b][3]
-                _dsq = (_ax-_bx)**2 + (_ay-_by)**2 + (_az-_bz)**2
-                if _dsq < _radius_sq:
-                    _demote_set.add(_big_entries[_b][0])
-
-        # For each demotion, pick a smaller target from the same compat pool
-        if _demote_set:
-            for _idx in _demote_set:
-                _pi, _old_cp, _old_npc, _old_thk = swap_plan[_idx]
-                _po = parts['entry_offsets'][_pi]
-                _midx = struct.unpack_from('<i', data, _po + PART_OFF_MODEL_INDEX)[0]
-                _recipient_cp = midx_to_cp.get(_midx)
-                if _recipient_cp is None:
-                    continue
-                # Build size-restricted pool from compat. Cheap: skip the
-                # full pick_target_cp pipeline (fragility, oops_all,
-                # rescue, etc.) — those were already satisfied for the
-                # original pick; we just need a smaller compatible cp.
-                try:
-                    _pool = compatible_pool(_recipient_cp, tags)
-                except Exception:
-                    continue
-                _pool = (_pool
-                         - V3_EXCLUDE_PREFIXES
-                         - V3_EXCLUDE_TARGET_PREFIXES
-                         - V3_GHOST_EXCLUDE_TARGET_PREFIXES)
-                # v0.23.07: subtract cap-exhausted unique-target cps. Same
-                # gate as in pick_target_cp's main flow. Without this, a
-                # demotion can pick a capped cp that's already at its
-                # limit. Confirmed in seed 394059 m34_10 pi=16: c4560
-                # Giant Crow reservation got demoted to c4170 Giant Putrid
-                # Flesh, pushing c4170 over its cap=2 limit. The reservation
-                # path also needs to skip BIG_PROXIMITY-prone slots — note
-                # the original picked target was the RESERVATION (c4560),
-                # so this filter alone can't fully solve the case where a
-                # reserved big chr gets demoted (the reservation is "lost"
-                # to a smaller cp). Acceptable trade-off for v1: at worst
-                # the reserved big chr won't appear that run; the cap on
-                # the demotion target still holds.
-                if _placed_counts:
-                    _exhausted = {cp for cp, n in _placed_counts.items()
-                                  if n >= V3_UNIQUE_TARGET_CAPS.get(cp, 0)}
-                    if _exhausted:
-                        _pool = _pool - _exhausted
-                # v0.23.05.2: enforce anim_class compat at scripted-intro
-                # slots in the demotion pool too (same fix as pick_target_cp
-                # above). Without this, BIG_PROXIMITY can demote a valid
-                # anim_class-compat XL pick to an anim_class-INcompat M
-                # candidate, reintroducing the Margit-style softlock from
-                # a different code path. Confirmed in seed 974234 m49_25
-                # pi=6: pick_target_cp picked c4980 Death Bird (large_boss_
-                # ground, XL — compat with c5011 Hippo source), but
-                # BIG_PROXIMITY demoted it to c5250 Horned Warrior
-                # (humanoid, M — NOT compat).
-                #
-                # Note: this gate uses expects_boss_arena from the recipient
-                # tag rather than the night-boss variant marker check, since
-                # the demotion path doesn't carry slot_variant_name through.
-                # In practice the two signals overlap heavily for the slots
-                # we care about (Margit, Hippo, etc. all have
-                # expects_boss_arena=True at their canonical c-prefix), so
-                # this still catches the softlock cases.
-                _recip_tag = tags.get(_recipient_cp, {})
-                _recip_anim = _recip_tag.get('anim_class')
-                _recip_arena = _recip_tag.get('expects_boss_arena', False)
-                # v0.24.69b: also detect NB-marker slots via source
-                # variant_name. The picker's _is_scripted_intro is
-                # `expects_boss_arena OR NB-marker`, but this demotion
-                # site historically only checked expects_boss_arena.
-                # Result: NB-marker slots whose source tag has
-                # expects_boss_arena=False (e.g. c4130 Demi-Human Queen,
-                # c3100 Bell Bearing Hunter, c5810 Demi-Human
-                # Swordmaster) bypassed the anim_compat filter and
-                # ended up with anim-incompatible demotions, breaking
-                # the scripted-intro cinematic (Margit-style softlock /
-                # preboss-wave never fires).
-                #
-                # Confirmed seed 388677 m49_29 pi=16: c4130 quadruped
-                # source got BIG_PROXIMITY-demoted from a compat XXL
-                # pick to c7100 humanoid/L (Ancient Hero) because
-                # c4130's tag says expects_boss_arena=False, even
-                # though the source variant_name "Demi-Human Queen
-                # (Night Boss)" carries the NB marker. Player entered
-                # m49_29 and the preboss wave never fired.
-                #
-                # Read variant_name once and share with caliber gate
-                # below.
-                try:
-                    _src_npc_pre = struct.unpack_from(
-                        '<I', data, _po + PART_OFF_NPC_PARAM)[0]
-                except struct.error:
-                    _src_npc_pre = None
-                _src_nm_pre = ''
-                if _src_npc_pre is not None:
-                    _src_v_pre = next(
-                        (v for v in prefix_variants.get(_recipient_cp, [])
-                         if v.get('npc_param_id') == _src_npc_pre), None)
-                    _src_nm_pre = (_src_v_pre.get('variant_name', '')
-                                   if _src_v_pre else '')
-                _recip_has_nb_marker = bool(_src_nm_pre) and any(
-                    _m in _src_nm_pre for _m in V3_NIGHT_BOSS_NAME_MARKERS)
-                # v0.24.100: scripted-intro anim_class compat filter
-                # REMOVED. Mirror of the deletion in the main cluster
-                # pool path — function _compat_anim_class is gone.
-                # v0.23.07: Night Boss caliber gate at demotion site too.
-                # Without this, a reservation that placed a NB-caliber big
-                # chr (e.g., c4630 Runebear at the Tibia Mariner pi=20
-                # slot) gets demoted to a non-caliber small chr (c4100
-                # Demi-Human) because the demotion small_pool isn't
-                # caliber-filtered. Same fix as the main pick_target_cp
-                # path. Reuses _src_nm_pre read above.
-                if V3_NIGHT_BOSS_CALIBER_TARGETS and _recip_has_nb_marker:
-                    _caliber_pool = _pool & V3_NIGHT_BOSS_CALIBER_TARGETS
-                    if _caliber_pool:
-                        _pool = _caliber_pool
-                    # v0.23.09: NB exclude at cluster demotion site too
-                    if V3_NIGHT_BOSS_EXCLUDE_TARGETS:
-                        _pool = _pool - V3_NIGHT_BOSS_EXCLUDE_TARGETS
-                _small_pool = sorted(
-                    cp for cp in _pool
-                    if tags.get(cp, {}).get('size_class') in V3_BIG_PROXIMITY_DEMOTE_TO_SIZES
-                    and cp in prefix_variants and prefix_variants[cp]
-                )
-                # v0.24.69: Gate 5.6 mirror at BIG_PROXIMITY demotion.
-                # Without this, BIG_PROXIMITY bypasses the XXL/GIGA
-                # source slot integrity check that pick_target_cp
-                # enforces — the original swap goes through Gate 5.6
-                # at pick time, but the demotion path builds a fresh
-                # pool from V3_BIG_PROXIMITY_DEMOTE_TO_SIZES (XS/S/M/L)
-                # and picks without re-applying the gate.
-                #
-                # v0.24.100: anim_class equality requirement REMOVED.
-                # Was: when source XXL/GIGA, demotion target must (a)
-                # be size L AND (b) match source anim_class. The (b)
-                # half is dropped per the anim_class rip-out — any
-                # L-tier target is valid regardless of rig style. (a)
-                # stays (size gate is empirically grounded).
-                _src_size_for_56 = tags.get(_recipient_cp, {}).get('size_class', '')
-                if _src_size_for_56 in ('XXL', 'GIGA'):
-                    _small_pool = [cp for cp in _small_pool
-                                   if tags.get(cp, {}).get('size_class') == 'L']
-                if not _small_pool:
-                    continue  # No alternative — leave original big
-                _new_cp = rng.choice(_small_pool)
-                _new_variant = pick_variant_for_tier(_new_cp, False,
-                                                     prefix_variants, rng,
-                                                     tags=tags)
-                if _new_variant is None:
-                    continue
-                # v0.23.07: maintain unique-cap accounting through demotion.
-                # If the demoted-OUT cp was capped, decrement its count
-                # (we're losing one of its placements). If the demoted-IN
-                # cp is capped, increment its count.
-                if _old_cp in V3_UNIQUE_TARGET_CAPS:
-                    _placed_counts[_old_cp] = max(
-                        0, _placed_counts.get(_old_cp, 0) - 1)
-                if _new_cp in V3_UNIQUE_TARGET_CAPS:
-                    _placed_counts[_new_cp] = (
-                        _placed_counts.get(_new_cp, 0) + 1)
-                swap_plan[_idx] = (_pi, _new_cp,
-                                   _new_variant['npc_param_id'],
-                                   _new_variant['think_param_id'])
-                n_big_proximity_demotions += 1
-
-        if n_big_proximity_demotions:
-            _V3_TRACE_BUFFER.append({
-                'event': 'BIG_PROXIMITY_DEMOTIONS',
-                'map': os.path.basename(input_path),
-                'demotions': n_big_proximity_demotions,
-                'big_entries_seen': len(_big_entries),
-                'radius': V3_BIG_PROXIMITY_RADIUS,
-            })
-
-    # === v0.23.61 PER-MSB DENSITY CAP ===
-    # See V3_DENSITY_CAP_* constants. Counts XL+ and L+ placements in
-    # swap_plan and demotes excess (highest-pi first) when caps are
-    # exceeded. Runs AFTER BIG_PROXIMITY so we cap on the post-proximity
-    # plan — anything proximity already demoted no longer counts toward
-    # the density limits, which is what we want.
-    n_density_demotions_xl = 0
-    n_density_demotions_l = 0
-    if V3_DENSITY_CAP_ENABLED and len(swap_plan) >= 2:
-        # Tally current big placements; reuse the OOPS_ALL_NB exempt set
-        # built above so the user's pinned boss slots are protected.
-        _xl_entries = []  # (plan_idx, pi, target_cp) for XL/XXL/GIGA
-        _l_entries = []   # same, but for L/XL/XXL/GIGA
-        for _idx, (_pi, _tcp, _tnpc, _tthk) in enumerate(swap_plan):
-            _sz = tags.get(_tcp, {}).get('size_class')
-            if _sz in V3_BIG_SIZE_CLASSES:
-                _xl_entries.append((_idx, _pi, _tcp))
-            if _sz in V3_DENSITY_L_SIZE_CLASSES:
-                _l_entries.append((_idx, _pi, _tcp))
-
-        # Build exempt set: OOPS_ALL_NB pinned/catalogued slots whose
-        # target cp matches the OOPS_ALL_NB target. Same pattern as
-        # BIG_PROXIMITY post-pass.
-        _density_exempt_pis = set()
-        if _eff_nb_target:
-            for _idx, _pi, _tcp in _xl_entries + _l_entries:
-                if _tcp != _eff_nb_target:
-                    continue
-                if ((msb_base, _pi) in V3_BOSS_TIER_PINNED_SLOTS
-                        or is_catalogued_boss_slot(msb_base, _pi, _eff_nb_scope)):
-                    _density_exempt_pis.add(_idx)
-
-        def _density_demote(plan_idx):
-            """Demote swap_plan[plan_idx] to a smaller compatible cp.
-            Returns True if demotion succeeded. Mirrors the BIG_PROXIMITY
-            demotion path with the same caliber/anim_class/cap protections."""
-            _pi, _old_cp, _old_npc, _old_thk = swap_plan[plan_idx]
-            _po = parts['entry_offsets'][_pi]
-            _midx = struct.unpack_from('<i', data, _po + PART_OFF_MODEL_INDEX)[0]
-            _recipient_cp = midx_to_cp.get(_midx)
-            if _recipient_cp is None:
-                return False
-            try:
-                _pool = compatible_pool(_recipient_cp, tags)
-            except Exception:
-                return False
-            _pool = (_pool
-                     - V3_EXCLUDE_PREFIXES
-                     - V3_EXCLUDE_TARGET_PREFIXES
-                     - V3_GHOST_EXCLUDE_TARGET_PREFIXES)
-            if _placed_counts:
-                _exhausted = {cp for cp, n in _placed_counts.items()
-                              if n >= V3_UNIQUE_TARGET_CAPS.get(cp, 0)}
-                if _exhausted:
-                    _pool = _pool - _exhausted
-            # Anim_class compat at scripted-intro slots (same fix as
-            # BIG_PROXIMITY)
-            _recip_tag = tags.get(_recipient_cp, {})
-            _recip_anim = _recip_tag.get('anim_class')
-            _recip_arena = _recip_tag.get('expects_boss_arena', False)
-            # v0.24.69b: also detect NB-marker slots via source
-            # variant_name. See BIG_PROXIMITY comment for full
-            # rationale. Read variant_name once and share with the
-            # NB caliber block below.
-            try:
-                _src_npc_pre = struct.unpack_from(
-                    '<I', data, _po + PART_OFF_NPC_PARAM)[0]
-            except struct.error:
-                _src_npc_pre = None
-            _src_nm_pre = ''
-            if _src_npc_pre is not None:
-                _src_v_pre = next(
-                    (v for v in prefix_variants.get(_recipient_cp, [])
-                     if v.get('npc_param_id') == _src_npc_pre), None)
-                _src_nm_pre = (_src_v_pre.get('variant_name', '')
-                               if _src_v_pre else '')
-            _recip_has_nb_marker = bool(_src_nm_pre) and any(
-                _m in _src_nm_pre for _m in V3_NIGHT_BOSS_NAME_MARKERS)
-            # v0.24.100: scripted-intro anim_class compat filter REMOVED
-            # (mirror of BIG_PROXIMITY deletion). Function gone.
-            # NB caliber gate (mirror BIG_PROXIMITY) — reuses
-            # _recip_has_nb_marker computed above
-            if V3_NIGHT_BOSS_CALIBER_TARGETS and _recip_has_nb_marker:
-                _caliber_pool = _pool & V3_NIGHT_BOSS_CALIBER_TARGETS
-                if _caliber_pool:
-                    _pool = _caliber_pool
-                if V3_NIGHT_BOSS_EXCLUDE_TARGETS:
-                    _pool = _pool - V3_NIGHT_BOSS_EXCLUDE_TARGETS
-            # Demotion target sizes:
-            #   XL+ demotion → allow L (preserves big-feel)
-            #   L+ demotion → allow only M and below (removes from L+ count)
-            _old_sz = tags.get(_old_cp, {}).get('size_class')
-            if _old_sz in V3_BIG_SIZE_CLASSES:
-                _allowed = V3_BIG_PROXIMITY_DEMOTE_TO_SIZES
-            else:
-                _allowed = frozenset({'XS', 'S', 'M'})
-            _small_pool = sorted(
-                cp for cp in _pool
-                if tags.get(cp, {}).get('size_class') in _allowed
-                and cp in prefix_variants and prefix_variants[cp]
-            )
-            # v0.24.69: Gate 5.6 mirror at DENSITY_CAP demotion site.
-            # v0.24.100: anim_class equality requirement REMOVED — was
-            # require demotion target to (a) match source anim_class AND
-            # (b) be size L; the (b) half stays.
-            _src_size_for_56 = tags.get(_recipient_cp, {}).get('size_class', '')
-            if _src_size_for_56 in ('XXL', 'GIGA'):
-                _small_pool = [cp for cp in _small_pool
-                               if tags.get(cp, {}).get('size_class') == 'L']
-
-            def _commit(new_cp, new_variant):
-                """Apply a successful demotion to swap_plan + caps."""
-                if _old_cp in V3_UNIQUE_TARGET_CAPS:
-                    _placed_counts[_old_cp] = max(
-                        0, _placed_counts.get(_old_cp, 0) - 1)
-                if new_cp in V3_UNIQUE_TARGET_CAPS:
-                    _placed_counts[new_cp] = (
-                        _placed_counts.get(new_cp, 0) + 1)
-                swap_plan[plan_idx] = (_pi, new_cp,
-                                       new_variant['npc_param_id'],
-                                       new_variant['think_param_id'])
-
-            def _try_fallback():
-                """v0.23.64: when the compat-derived demotion pool is
-                empty, place a safe-fallback chr (slug, then jellyfish,
-                then other small misc) instead of letting the cap fail
-                silently. Returns True if fallback succeeded.
-
-                Fallback c-prefixes are tried in priority order, and the
-                first one that isn't excluded by V3_MAP_PREFIX_TARGET_
-                EXCLUDES for the current MSB wins. This avoids placing
-                Maris' Jellyfish at m60_ tiles (Maris event-chain CTD).
-
-                Doesn't go through pick_target_cp — we're past tier-
-                matching at this point. Just grabs the first non-emerge
-                variant of the chosen c-prefix.
-
-                v0.24.69: skip fallback entirely at XXL/GIGA source
-                slots. All fallback chrs (Slug, Jellyfish, Putrid
-                Flesh, Imp) are small (XS/S/M or wrong anim_class)
-                and would violate Gate 5.6 (XXL/GIGA source slot
-                integrity). At those slots we'd rather keep the
-                original big chr than demote to a slot-integrity-
-                breaking small chr. Returns False so the caller's
-                "no demotion" branch runs."""
-                _fb_src_size = tags.get(_recipient_cp, {}).get('size_class', '')
-                if _fb_src_size in ('XXL', 'GIGA'):
-                    return False
-                fb_list = V3_DENSITY_DEMOTE_FALLBACK_CPS or ()
-                if not fb_list:
-                    return False
-                # Build the per-MSB exclude set from V3_MAP_PREFIX_TARGET_
-                # EXCLUDES so the fallback respects the same constraints
-                # as the main pick_target_cp path.
-                _msb = os.path.basename(input_path)
-                _msb_excludes = set()
-                for _prefix, _excl in V3_MAP_PREFIX_TARGET_EXCLUDES.items():
-                    if _msb.startswith(_prefix):
-                        _msb_excludes |= _excl
-                for fb_cp in fb_list:
-                    if fb_cp in _msb_excludes:
-                        continue
-                    fb_variants = prefix_variants.get(fb_cp)
-                    if not fb_variants:
-                        continue
-                    fb_filtered = [v for v in fb_variants
-                                   if not any(m in (v.get('variant_name') or '')
-                                              for m in ('(Spirit)', '(Silvery)'))]
-                    fb_variant = (fb_filtered or fb_variants)[0]
-                    _commit(fb_cp, fb_variant)
-                    _V3_TRACE_BUFFER.append({
-                        'event': 'DENSITY_DEMOTE_FALLBACK',
-                        'map': _msb,
-                        'pi': _pi,
-                        'demoted_from': _old_cp,
-                        'fallback_cp': fb_cp,
-                        'fallback_npc': fb_variant['npc_param_id'],
-                        'reason': 'empty_smaller_pool',
-                    })
-                    return True
-                # Walked the whole fallback list, nothing worked. Bail.
-                return False
-
-            if not _small_pool:
-                return _try_fallback()
-            _new_cp = rng.choice(_small_pool)
-            _new_variant = pick_variant_for_tier(_new_cp, False,
-                                                 prefix_variants, rng,
-                                                 tags=tags)
-            if _new_variant is None:
-                return _try_fallback()
-            _commit(_new_cp, _new_variant)
-            return True
-
-        # v0.23.63: per-map cap override. Tunnel-shape MSBs get tighter
-        # caps; everything else uses the global default. Looked up by MSB
-        # filename so future tunnel additions are a one-line change in
-        # V3_TUNNEL_MAPS.
-        _msb_basename = os.path.basename(input_path)
-        if _msb_basename in V3_TUNNEL_MAPS:
-            _xl_cap = V3_TUNNEL_DENSITY_CAP_XL_PLUS
-            _l_cap = V3_TUNNEL_DENSITY_CAP_L_PLUS
-            _cap_profile = 'tunnel'
-        else:
-            _xl_cap = V3_DENSITY_CAP_XL_PLUS
-            _l_cap = V3_DENSITY_CAP_L_PLUS
-            _cap_profile = 'default'
-
-        # Pass 1: cap XL+ count. Sort by pi descending so highest-pi
-        # gets demoted first (low-pi placements are typically more
-        # narratively important — earlier in the slot order).
-        _xl_eligible = [(idx, pi, tcp) for idx, pi, tcp in _xl_entries
-                        if idx not in _density_exempt_pis]
-        _xl_eligible.sort(key=lambda t: -t[1])
-        _xl_overflow = max(0, len(_xl_entries) - _xl_cap)
-        _demoted_indices = set()
-        _xl_demote_failed = 0
-        for idx, pi, tcp in _xl_eligible[:_xl_overflow]:
-            if _density_demote(idx):
-                n_density_demotions_xl += 1
-                _demoted_indices.add(idx)
-            else:
-                _xl_demote_failed += 1
-
-        # Pass 2: cap L+ count (which now includes any non-demoted XL+).
-        # Recount L+ after pass 1, since some XL+ entries may have been
-        # demoted to L which still counts here.
-        _l_after_pass1 = []
-        for _idx, (_pi, _tcp, _tnpc, _tthk) in enumerate(swap_plan):
-            if tags.get(_tcp, {}).get('size_class') in V3_DENSITY_L_SIZE_CLASSES:
-                _l_after_pass1.append((_idx, _pi, _tcp))
-        _l_eligible = [(idx, pi, tcp) for idx, pi, tcp in _l_after_pass1
-                       if idx not in _density_exempt_pis
-                       and idx not in _demoted_indices]
-        _l_eligible.sort(key=lambda t: -t[1])
-        _l_overflow = max(0, len(_l_after_pass1) - _l_cap)
-        _l_demote_failed = 0
-        for idx, pi, tcp in _l_eligible[:_l_overflow]:
-            if _density_demote(idx):
-                n_density_demotions_l += 1
-            else:
-                _l_demote_failed += 1
-
-        if (n_density_demotions_xl or n_density_demotions_l
-                or _xl_demote_failed or _l_demote_failed):
-            _V3_TRACE_BUFFER.append({
-                'event': 'DENSITY_CAP_DEMOTIONS',
-                'map': _msb_basename,
-                'profile': _cap_profile,
-                'xl_count_before': len(_xl_entries),
-                'xl_count_cap': _xl_cap,
-                'xl_demotions': n_density_demotions_xl,
-                # v0.23.63: surface failed demotion attempts. When the cap
-                # is over but the demote pool is empty (no compatible
-                # smaller cp), the cap silently gives up. Counting these
-                # makes that visible. Non-zero means the cap aspiration
-                # wasn't fully met.
-                'xl_demote_failed': _xl_demote_failed,
-                'l_count_before': len(_l_entries),
-                'l_count_cap': _l_cap,
-                'l_demotions': n_density_demotions_l,
-                'l_demote_failed': _l_demote_failed,
-            })
+    # v0.27.5: the v0.21 BIG_PROXIMITY and v0.23.61 DENSITY_CAP
+    # swap-plan post-passes were removed here. Their work is now done
+    # at placement time by Gates 8 (proximity) and 9 (density) in
+    # _reject_target_for_slot — a big that would clip a neighbour or
+    # bust the per-MSB budget drops out of the candidate pool and the
+    # picker selects a smaller chr through its normal pipeline. Because
+    # the gates never fire for reservations, a reserved big chr can no
+    # longer be demoted (closes the reservation-floor-demotion bug).
 
     # === v0.23.66 FINAL-PASS EXTRA_BANS ENFORCEMENT ===
     # Belt-and-suspenders: scan the final swap_plan and revert any

@@ -908,8 +908,8 @@ class TestRejectTargetForSlot:
             'xxl_giga_anim_drift', 'xxl_giga_size_drift',
             # Gate 6 (script-spawn boss off-arena)
             'script_spawn_boss_at_overworld',
-            # Gate 7 (XXL at small slot)
-            'xxl_at_small_slot',
+            # Gate 7 (geometry-aware size gate)
+            'geometry_clip',
         }
         # Hit a few combinations and check returns are in the set
         for target, src, variant in [
@@ -1447,9 +1447,19 @@ class TestCanonicalVariantPreference:
 
     def test_picker_with_canonical_pref_disabled(self, engine, loaded,
                                                   monkeypatch):
-        """With V3_PREFER_CANONICAL_VARIANTS=False, ghost variants are eligible."""
+        """With V3_PREFER_CANONICAL_VARIANTS=False, ghost variants are eligible.
+
+        The variant prune list (v0.27.x) is a separate, unconditional ghost
+        gate that runs BEFORE the canonical-preference logic, so it must be
+        disabled here to test the V3_PREFER_CANONICAL_VARIANTS flag in
+        isolation — otherwise the prune list removes c4640's ghost rows
+        regardless of the flag and there is nothing for this test to assert.
+        """
         roster, tags, prefix_variants = loaded
         monkeypatch.setattr(engine, 'V3_PREFER_CANONICAL_VARIANTS', False)
+        # Force the prune cache empty for this test (monkeypatch reverts it).
+        monkeypatch.setattr(engine, '_V3_VARIANT_PRUNE_IDS', set())
+        monkeypatch.setattr(engine, 'V3_APPLY_VARIANT_PRUNE_LIST', False)
         import random
         # c4640 at a FIELD slot (not boss) — without canonical-prefer, the
         # picker can land on any variant. Several rolls should produce
@@ -1686,7 +1696,7 @@ class TestScriptSpawnBossCatalog:
                 f'{cp} catalogued as dedicated-arena boss but tags say '
                 f'_source={src!r}. Expected nr_placed after v0.26.x '
                 f'reclassification.')
-            assert cp in engine.V3_DEDICATED_ARENA_BOSS_CHRS or cp == 'c4690', (
+            assert cp in engine.V3_DEDICATED_ARENA_BOSS_CHRS or cp in ('c4690','c4670','c7910'), (
                 f'{cp} catalogued as dedicated-arena boss but is NOT in '
                 f'V3_DEDICATED_ARENA_BOSS_CHRS — arena gating would not '
                 f'fire. (c4690 Grafted Scion deliberately excluded; see '
@@ -1936,14 +1946,14 @@ class TestSeed798229Freezes:
         assert 'c3620' not in engine.V3_EXCLUDE_TARGET_PREFIXES
 
     def test_c3360_ancestral_follower_no_longer_excluded(self, engine):
-        """v0.24.65: lifted."""
+        """v0.24.65: lifted. v0.27.8: grunt-tier cap. v0.27.9: cap 32->40."""
         assert 'c3360' not in engine.V3_EXCLUDE_TARGET_PREFIXES
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c3360') == 1
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c3360') == 40
 
     def test_c4430_abnormal_stone_cluster_no_longer_excluded(self, engine):
-        """v0.24.65: lifted."""
+        """v0.24.65: lifted. v0.27.8: grunt cap (was trash). v0.27.9: 32->40."""
         assert 'c4430' not in engine.V3_EXCLUDE_TARGET_PREFIXES
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c4430') == 1
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c4430') == 40
 
     def test_fi_reserved_only_protects_c3620(self, engine):
         """v0.24.39: the defensive cleanup (_FI_CPS_RESERVED_FOR_TARGET) now
@@ -2053,21 +2063,30 @@ class TestProactiveNoTagDataBan:
         broken_runtime_chrs. User playtest confirmed MMV sfx/material deploy
         fixes the underlying invisibility class. None of these should remain
         in V3_EXCLUDE_TARGET_PREFIXES."""
+        # v0.27.2: c52309/c52312/c52313 re-excluded as playable
+        # Nightfarer class models - a deliberate re-ban, exempt.
+        _v0272_player_class = {'c52309', 'c52312', 'c52313'}
         still_excluded = [cp for cp in self.PROACTIVE_BANS
-                          if cp in engine.V3_EXCLUDE_TARGET_PREFIXES]
+                          if cp in engine.V3_EXCLUDE_TARGET_PREFIXES
+                          and cp not in _v0272_player_class]
         assert not still_excluded, (
             f'v0.24.65 lifted these — still in EXCLUDE: {still_excluded}. '
             f'Either the lift partial-reverted or one of these got '
             f'individually re-banned for a different reason.')
 
     def test_all_26_proactive_bans_capped(self, engine):
-        """v0.24.65 safety net: each lifted chr capped at 1 placement so
-        that if any specific one is still broken, exposure is limited."""
+        """v0.27.8: the v0.24.65 defensive cap=1 safety net was removed.
+        Each proactive-ban chr is now either excluded outright or carries
+        its tier cap (grunt=32, miniboss=4) — none is left uncapped."""
+        excl = (engine.V3_EXCLUDE_PREFIXES
+                | engine.V3_EXCLUDE_TARGET_PREFIXES
+                | engine.V3_GHOST_EXCLUDE_TARGET_PREFIXES)
         uncapped = [cp for cp in self.PROACTIVE_BANS
-                    if engine.V3_UNIQUE_TARGET_CAPS.get(cp) is None]
+                    if cp not in excl
+                    and engine.V3_UNIQUE_TARGET_CAPS.get(cp) is None]
         assert not uncapped, (
-            f'v0.24.65 lift should have applied cap=1 to all lifted chrs; '
-            f'missing caps on: {uncapped}')
+            f'eligible proactive-ban chrs should carry a tier cap; '
+            f'uncapped: {uncapped}')
 
     def test_proactive_bans_have_proactive_ban_flag(self):
         """Data file entries for proactive bans should be tagged
@@ -2172,12 +2191,19 @@ class TestFlyingRequiredSlots:
         assert ('m60_43_36_50.msb', 23) in engine.V3_FLYING_REQUIRED_SLOTS
 
     def test_eligible_targets_have_flying_anim(self, engine):
-        """Every cp in eligible_targets must have anim_class=flying_dragon."""
+        """Every cp in eligible_targets is either a flying_dragon, a loco=2
+        bat, or one of the v0.27.10 hand-vetted hover-capable exceptions
+        (c4180/c4181 jellyfish, c4210 Warhawk)."""
         roster, tags = engine.load_data()
+        _vetted = {'c4180', 'c4181', 'c4210'}
         for cp in engine.V3_FLYING_ELIGIBLE_TARGETS:
-            assert tags.get(cp, {}).get('anim_class') == 'flying_dragon', (
-                f'{cp} listed as flying-eligible but anim_class != '
-                f'flying_dragon ({tags.get(cp, {}).get("anim_class")})')
+            t = tags.get(cp, {})
+            ok = (t.get('anim_class') == 'flying_dragon'
+                  or t.get('locomotion') == 2
+                  or cp in _vetted)
+            assert ok, (
+                f'{cp} listed as flying-eligible but is neither a flier '
+                f'nor a vetted exception (anim={t.get("anim_class")})')
 
     def test_astel_rejected_at_flying_slot(self, engine):
         """The original bug case: Astel at m60_43_36_50 pi=23 must reject."""
@@ -2475,11 +2501,13 @@ class TestC5930C6220InvisibleBan:
             'v0.24.65 lifted c6220 — should no longer be hard-excluded')
 
     def test_c5930_capped(self, engine):
-        """MMV auto-cap from v0.24.53 still applies."""
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c5930') == 1
+        """v0.27.8: the v0.24.53 MMV defensive cap=1 was removed; c5930
+        is now capped by its miniboss tier at 4."""
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c5930') == 4
 
     def test_c6220_capped(self, engine):
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c6220') == 1
+        """v0.27.8: miniboss-tier cap=4 (defensive cap=1 removed)."""
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c6220') == 4
 
     def test_c2274_NOT_banned(self, engine):
         """c2274 has the same partial-tag profile but Alaric explicitly
@@ -2561,17 +2589,17 @@ class TestGate6ScriptSpawnBossOffArena:
         assert ('m46_90_00_00.msb', 1) in engine.V3_SCRIPT_SPAWN_BOSS_SLOTS
         assert ('m46_91_00_00.msb', 1) in engine.V3_SCRIPT_SPAWN_BOSS_SLOTS
 
-    def test_storm_king_rejected_at_overworld(self, engine, tags):
-        """c7910 Storm King (night_boss script_spawn) at an OVERWORLD
-        m60_xx tile should be rejected — no EMEVD preload for boss
-        assets there. Likely culprit of seed 714653's 'approaching
-        night-1 arena' CTD."""
+    def test_storm_king_no_longer_arena_gated(self, engine, tags):
+        """v0.27.2: c7910 Storm King was lifted from
+        V3_DEDICATED_ARENA_BOSS_CHRS (Alaric direction - Storm King
+        returns as a placeable cap=1 night_boss). Gate 6 keys on
+        that set, so Storm King is no longer arena-gated."""
         reason = engine._reject_target_for_slot(
             target_cp='c7910', src_cp='c4660',
             src_variant_name='Guardian Golem', tags=tags,
             msb_base='m60_42_36_00.msb', pi=43)
-        assert reason == 'script_spawn_boss_at_overworld', (
-            f'Storm King at overworld should be rejected, got {reason}')
+        assert reason != 'script_spawn_boss_at_overworld', (
+            f'Storm King lifted from dedicated-arena set, got {reason}')
 
     def test_gaping_dragon_allowed_at_m46_arena(self, engine, tags):
         """c7700 Gaping Dragon at m46_05_00_00 pi=3 — user-confirmed
@@ -2640,7 +2668,8 @@ class TestGate6ScriptSpawnBossOffArena:
         only the keying mechanism changed.
         """
         gated_cps = sorted(engine.V3_DEDICATED_ARENA_BOSS_CHRS)
-        assert len(gated_cps) >= 7, f'Expected ≥7 gated cps, got {len(gated_cps)}'
+        # v0.27.2: c4670 + c7910 lifted from the set (8 -> 6).
+        assert len(gated_cps) >= 6, f'Expected ≥6 gated cps, got {len(gated_cps)}'
         for cp in gated_cps:
             reason = engine._reject_target_for_slot(
                 target_cp=cp, src_cp='c4311',
@@ -2717,17 +2746,15 @@ class TestMmvImportCap1:
 
     def test_nr_placed_NOT_auto_capped(self, engine, tags):
         """The v0.24.53 rule only applies to MMV imports. Regular
-        nr_placed chrs are not affected — they retain their existing
-        cap state (most uncapped)."""
-        # Pick a known nr_placed chr that's not in V3_UNIQUE_TARGET_CAPS
-        # and verify it's still uncapped
-        nr_uncapped_examples = ['c3500', 'c4380', 'c4381']  # common grunts
-        for cp in nr_uncapped_examples:
+        nr_placed chrs are never given the MMV cap=1. (v0.27.8: grunt
+        chrs do carry cap=32 from the grunt-tier block — the point here
+        is only that the MMV rule didn't touch them.)"""
+        nr_examples = ['c3500', 'c4380', 'c4381']  # common grunts
+        for cp in nr_examples:
             if tags.get(cp, {}).get('_source') == 'nr_placed':
-                assert cp not in engine.V3_UNIQUE_TARGET_CAPS or \
-                       engine.V3_UNIQUE_TARGET_CAPS[cp] >= 50, (
-                    f'{cp} is nr_placed grunt — should not have been '
-                    f'auto-capped by v0.24.53 MMV rule')
+                assert engine.V3_UNIQUE_TARGET_CAPS.get(cp) != 1, (
+                    f'{cp} is an nr_placed grunt — should never have '
+                    f'received the v0.24.53 MMV cap=1')
 
 
 # v0.24.54: Gate 4 anim_class-based rejection + Red Wolf cap
@@ -2796,10 +2823,12 @@ class TestGate4AnimClassRejection:
 
 
 class TestRedWolfCap:
-    """v0.24.54: cap c3181 Red Wolf of Radagon at 2 per seed."""
+    """v0.24.54: c3181 Red Wolf of Radagon capped per seed.
+    v0.27.6: raised 2 -> 4 by the "4 across the board" miniboss cap
+    policy (c3181 is tier=miniboss)."""
 
-    def test_c3181_capped_at_2(self, engine):
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c3181') == 2
+    def test_c3181_capped_at_4(self, engine):
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c3181') == 4
 
     def test_red_wolf_in_quadruped_family_caps(self, engine):
         """Red Wolf cap=2 mirrors c4630 Runebear (same archetype: L-size
@@ -2807,18 +2836,15 @@ class TestRedWolfCap:
         assert engine.V3_UNIQUE_TARGET_CAPS['c3181'] == engine.V3_UNIQUE_TARGET_CAPS['c4630']
 
 
-# v0.24.55: Gate 7 — XXL target at small-vanilla slot ban
+# v0.27.4: Gate 7 — geometry-aware size gate (XXL/GIGA)
 # ============================================================================
 class TestGate7XxlAtSmallSlot:
-    """v0.24.55: Class-level fix for the 'sunken troll' pattern. XXL
-    chrs placed at slots whose vanilla source is S/M/XS render with
-    their model partially below visible ground. The slot Y is
-    calibrated for the smaller chr's feet/origin; the XXL chr's rig
-    doesn't match.
-
-    Carries forward from v0.24.50 (per-slot Y-raise on m60_43_36 pi=31)
-    after another sunken troll report — user request to ship the
-    class-level fix this time."""
+    """v0.27.4: geometry-aware size gate (Gate 7). An XXL/GIGA target
+    is allowed only when its size class is within the slot capacity —
+    the LARGER of the vanilla occupant size class (strict baseline)
+    and the geometry-derived capacity from slot_terrain.json face_dist.
+    Supersedes the blunt v0.24.55 xxl_at_small_slot gate (XXL-only, no
+    geometry) and extends coverage to GIGA. Reason is now geometry_clip."""
 
     def test_troll_at_m_slot_banned(self, engine, tags):
         """The original v0.24.50 case: c4603 Stonedigger Troll (XXL)
@@ -2828,7 +2854,7 @@ class TestGate7XxlAtSmallSlot:
             target_cp='c4603', src_cp='c4377',
             src_variant_name='Raya Lucaria Foot Soldier', tags=tags,
             msb_base='m60_43_36_00.msb', pi=31)
-        assert reason == 'xxl_at_small_slot'
+        assert reason == 'geometry_clip'
 
     def test_troll_at_s_slot_banned(self, engine, tags):
         """Worst case from seed 714653: c4600 Troll at c3170 (S) — banned."""
@@ -2836,7 +2862,7 @@ class TestGate7XxlAtSmallSlot:
             target_cp='c4600', src_cp='c3170',
             src_variant_name='Ant', tags=tags,
             msb_base='m34_10_00_00.msb', pi=10)
-        assert reason == 'xxl_at_small_slot'
+        assert reason == 'geometry_clip'
 
     def test_xxl_quadruped_large_at_m_slot_banned(self, engine, tags):
         """c4630 Runebear (XXL quadruped_large) at M-vanilla — same
@@ -2845,7 +2871,7 @@ class TestGate7XxlAtSmallSlot:
             target_cp='c4630', src_cp='c4377',
             src_variant_name='Raya Lucaria Foot Soldier', tags=tags,
             msb_base='m60_43_36_00.msb', pi=31)
-        assert reason == 'xxl_at_small_slot'
+        assert reason == 'geometry_clip'
 
     def test_xxl_at_xl_slot_allowed(self, engine, tags):
         """c4600 Troll at c4550 (XL vanilla) — borderline-but-allowed.
@@ -2855,7 +2881,7 @@ class TestGate7XxlAtSmallSlot:
             target_cp='c4600', src_cp='c4550',
             src_variant_name='Foot Soldier', tags=tags,
             msb_base='m60_43_38_10.msb', pi=41)
-        assert reason != 'xxl_at_small_slot'
+        assert reason != 'geometry_clip'
 
     def test_xxl_at_xxl_slot_allowed(self, engine, tags):
         """c4602 Snowfield Troll at c4770 Gargoyle (XXL) — same-size
@@ -2864,7 +2890,7 @@ class TestGate7XxlAtSmallSlot:
             target_cp='c4602', src_cp='c4770',
             src_variant_name='Foot Soldier', tags=tags,
             msb_base='m46_66_00_00.msb', pi=1)
-        assert reason != 'xxl_at_small_slot'
+        assert reason != 'geometry_clip'
 
     def test_l_at_m_slot_allowed(self, engine, tags):
         """L-size target at M-vanilla — the gate is XXL-only, not 'any
@@ -2873,19 +2899,18 @@ class TestGate7XxlAtSmallSlot:
             target_cp='c4750', src_cp='c4377',
             src_variant_name='Foot Soldier', tags=tags,
             msb_base='m60_43_36_00.msb', pi=31)
-        assert reason != 'xxl_at_small_slot'
+        assert reason != 'geometry_clip'
 
-    def test_giga_NOT_caught_by_gate7(self, engine, tags):
-        """GIGA chrs are intentionally NOT in Gate 7 — flying GIGAs
-        (e.g. c4500 Flying Dragon) don't sink, and grounded GIGAs are
-        handled by Gates 3 (forbidden_source_anim) and 5 (flying_required)."""
+    def test_giga_caught_by_geometry_gate(self, engine, tags):
+        """v0.27.4: GIGA is now covered by the geometry gate (the old
+        blunt Gate 7 was XXL-only). c4500 Flying Dragon (GIGA) at
+        c4377 (M-vanilla), m60_43_36_00 pi=31 — face_dist 2.17m proves
+        neither XXL nor GIGA clearance, so it is rejected."""
         reason = engine._reject_target_for_slot(
             target_cp='c4500', src_cp='c4377',
             src_variant_name='Foot Soldier', tags=tags,
             msb_base='m60_43_36_00.msb', pi=31)
-        # Gate 7 should not fire; other gates may (e.g. flying_required
-        # for flying-vanilla slots) — just assert it's not xxl_at_small_slot
-        assert reason != 'xxl_at_small_slot'
+        assert reason == 'geometry_clip'
 
     def test_gate_uniformly_applies_to_all_xxl(self, engine, tags):
         """Every XXL chr in tags is rejected at M-vanilla — either by
@@ -3239,12 +3264,13 @@ class TestGhostflameDragonCap:
     def test_c5860_capped_at_2(self, engine):
         assert engine.V3_UNIQUE_TARGET_CAPS.get('c5860') == 2
 
-    def test_c5860_cap_matches_runebear_archetype(self, engine):
-        """c5860 cap=2 matches similar heritage / large-flying archetypes
-        (c4630 Runebear, c4560 Giant Crow, c5820 Great Red Bear)."""
+    def test_c5860_nightboss_cap_vs_c5820_miniboss_cap(self, engine):
+        """c5860 Ghostflame Dragon is tier=night_boss and keeps cap=2.
+        c5820 Great Red Bear is tier=miniboss, so v0.27.6's "4 across
+        the board" miniboss policy puts it at 4 — the two no longer
+        share a cap."""
         assert engine.V3_UNIQUE_TARGET_CAPS['c5860'] == 2
-        # c5820 is the closest analog (heritage XXL boss)
-        assert engine.V3_UNIQUE_TARGET_CAPS['c5820'] == 2
+        assert engine.V3_UNIQUE_TARGET_CAPS['c5820'] == 4
 
 
 # v0.24.67: Gate 5.5 — grunt/trash target at boss-healthbar slot
@@ -3662,144 +3688,11 @@ class TestGate5_6XxlGigaSourceIntegrity:
 
 # v0.24.69: Gate 5.6 demotion-path mirror
 # ============================================================================
-class TestGate5_6DemotionMirror:
-    """v0.24.69: BIG_PROXIMITY and DENSITY_CAP demotion paths must
-    apply the same XXL/GIGA source slot integrity check as
-    pick_target_cp. Without this mirror, demotions bypass Gate 5.6
-    just like reservation pre-pass used to bypass earlier gates.
+# v0.27.5: TestGate5_6DemotionMirror removed — the BIG_PROXIMITY /
+# DENSITY_CAP demotion paths it checked no longer exist (replaced by
+# placement-time Gates 8/9). There is no separate demotion pool to
+# mirror Gate 5.6 into; the picker handles smaller picks itself.
 
-    Discovered seed 388677 v0.24.68: m60_44_38_20 pi=91 c4910
-    (quadruped_large/GIGA) → c3050 (humanoid/L) [anim drift] and
-    m60_43_38_10 pi=46 c4602 (humanoid/XXL) → c4375 (humanoid/M)
-    [size drift]. Both swaps passed Gate 5.6 at pick_target_cp time
-    but BIG_PROXIMITY then demoted them to invalid Gate 5.6 targets.
-
-    This recurring-bug-shape pattern (gate added → mirror missing
-    → bypass) was the motivation for v0.24.27's
-    _reject_target_for_slot consolidation in pick_target_cp /
-    _score_slot_for_unique. The demotion paths predate that
-    consolidation and still build _small_pool independently — easy
-    to miss when adding new gates.
-
-    These tests don't exercise the demotion path end-to-end (that
-    requires running the full shuffle pipeline). They verify the
-    structural property: the engine source contains the mirror code
-    at both demotion sites. If somebody refactors and removes the
-    mirror, the tests catch it.
-    """
-
-    def test_big_proximity_demotion_has_gate_5_6_mirror(self):
-        """The BIG_PROXIMITY _small_pool construction (around line
-        11170 in v0.24.69) must include a Gate 5.6 filter for
-        XXL/GIGA sources. Verify the source contains the marker."""
-        import os
-        engine_path = os.path.join(os.path.dirname(__file__), '..', 'oops_v3.py')
-        with open(engine_path) as f:
-            src = f.read()
-        # Check for the two markers anywhere in the file. They are
-        # placed adjacently in the BIG_PROXIMITY section.
-        assert 'Gate 5.6 mirror at BIG_PROXIMITY demotion' in src, (
-            'BIG_PROXIMITY demotion site is missing Gate 5.6 mirror. '
-            'A new demotion in this path may bypass XXL/GIGA slot '
-            'integrity. Add the filter back.')
-        assert "_src_size_for_56" in src, (
-            'BIG_PROXIMITY mirror is present in comments but the '
-            'filter variable _src_size_for_56 is missing.')
-
-    def test_density_cap_demotion_has_gate_5_6_mirror(self):
-        """The DENSITY_CAP _small_pool construction (around line
-        11330 in v0.24.69) must also include the Gate 5.6 filter.
-        Same structural check as BIG_PROXIMITY."""
-        import os
-        engine_path = os.path.join(os.path.dirname(__file__), '..', 'oops_v3.py')
-        with open(engine_path) as f:
-            src = f.read()
-        # The DENSITY_CAP section has 'DENSITY_CAP demotion site' in
-        # its mirror comment.
-        assert 'DENSITY_CAP demotion site' in src, (
-            'DENSITY_CAP demotion site is missing Gate 5.6 mirror. '
-            'Demotions at this site may bypass XXL/GIGA slot '
-            'integrity. Add the filter back.')
-
-    def test_density_cap_fallback_skips_xxl_giga(self):
-        """The _try_fallback helper in cmd_shuffle_v3 must return
-        False (skip fallback) at XXL/GIGA source slots. All fallback
-        chrs (Slug, Jellyfish, Putrid Flesh, Imp) are Gate-5.6-
-        invalid (too small or wrong anim_class) at those slots."""
-        import os
-        engine_path = os.path.join(os.path.dirname(__file__), '..', 'oops_v3.py')
-        with open(engine_path) as f:
-            src = f.read()
-        # The fallback should have an early-return for XXL/GIGA
-        assert '_fb_src_size' in src, (
-            '_try_fallback is missing the v0.24.69 XXL/GIGA early-'
-            'return guard. Fallback at XXL/GIGA slots would place '
-            'Slug/Jellyfish/etc., violating Gate 5.6.')
-        # Find the immediate context after the variable definition
-        # and check it filters on XXL/GIGA. Use 1500-char window to
-        # cover the if-statement that consumes the variable.
-        idx = src.index('_fb_src_size')
-        fb_section = src[idx:idx + 1500]
-        assert "in ('XXL', 'GIGA')" in fb_section, (
-            '_fb_src_size check should filter on XXL/GIGA sizes.')
-
-    def test_v3_big_proximity_demote_to_sizes_unchanged(self, engine):
-        """Sanity: the demotion target size set is still {XS, S, M, L}.
-        If somebody changes this to include XL+, the Gate 5.6 mirror
-        comment needs updating (currently assumes the only Gate-5.6-
-        valid size in the set is L)."""
-        assert engine.V3_BIG_PROXIMITY_DEMOTE_TO_SIZES == frozenset(
-            {'XS', 'S', 'M', 'L'}), (
-            f'V3_BIG_PROXIMITY_DEMOTE_TO_SIZES changed to '
-            f'{engine.V3_BIG_PROXIMITY_DEMOTE_TO_SIZES}. Re-check '
-            f'the Gate 5.6 mirror logic.')
-
-    def test_demotion_pool_viability_humanoid_xxl(self, engine, tags):
-        """For humanoid XXL sources (c4602, c4600, c4770), there
-        should be a viable demotion pool of humanoid L chrs. Without
-        this, BIG_PROXIMITY can't demote → slot stays vanilla."""
-        humano_l = [cp for cp, t in tags.items()
-                    if t.get('anim_class') == 'humanoid'
-                    and t.get('size_class') == 'L'
-                    and cp not in engine.V3_EXCLUDE_PREFIXES
-                    and cp not in engine.V3_EXCLUDE_TARGET_PREFIXES]
-        assert len(humano_l) >= 5, (
-            f'Humanoid L demotion pool too small ({len(humano_l)}): '
-            f'BIG_PROXIMITY won\'t be able to demote humanoid XXL '
-            f'sources. Need at least 5 chrs for reasonable variety.')
-
-    def test_demotion_pool_quadruped_large_giga_tight_but_workable(self, engine, tags):
-        """quadruped_large GIGA sources (c4910 Magma Wyrm) have a
-        tight L demotion pool. Verify it's still > 0 — otherwise
-        the slot can never demote and BIG_PROXIMITY is a no-op
-        there. Even 2-3 chrs is acceptable."""
-        quad_l = [cp for cp, t in tags.items()
-                  if t.get('anim_class') == 'quadruped_large'
-                  and t.get('size_class') == 'L'
-                  and cp not in engine.V3_EXCLUDE_PREFIXES
-                  and cp not in engine.V3_EXCLUDE_TARGET_PREFIXES]
-        assert len(quad_l) >= 2, (
-            f'quadruped_large L pool too small ({len(quad_l)}): '
-            f'BIG_PROXIMITY can\'t demote c4910/c4460 sources.')
-
-    def test_giga_boss_and_large_boss_ground_no_l_demote_targets(self, engine, tags):
-        """Sanity: giga_boss and large_boss_ground anim_classes have
-        NO L chrs (confirmed via empirical lookup). At slots with
-        those sources, BIG_PROXIMITY demotion will find empty
-        _small_pool and fall through to 'leave original big' —
-        which is the correct behavior (preserve slot integrity)."""
-        for ac in ('giga_boss', 'large_boss_ground'):
-            l_chrs = [cp for cp, t in tags.items()
-                      if t.get('anim_class') == ac
-                      and t.get('size_class') == 'L']
-            assert len(l_chrs) == 0, (
-                f'{ac} L pool unexpectedly non-empty: {l_chrs}. '
-                f'Demotion logic may now have options it didn\'t '
-                f'have before — re-verify Gate 5.6 mirror behavior.')
-
-
-# v0.24.70: anim_compat at demotion sites uses NB markers (not just expects_boss_arena)
-# ============================================================================
 class TestDemotionAnimCompatNbMarker:
     """v0.24.70: BIG_PROXIMITY and DENSITY_CAP demotion paths check
     anim_class compatibility at scripted-intro slots. The picker's
@@ -4452,24 +4345,25 @@ class TestReservationOrderBigFirstV0_24_76:
             f'Unknown-size should sort last: got {order}')
 
     def test_real_engine_giga_before_m(self, engine, tags):
-        """Integration smoke test using real engine V3_UNIQUE_TARGET_CAPS:
-        confirm at least one cap=1 GIGA chr exists AND at least one
-        cap=1 M chr exists, so the ordering actually matters in
-        practice."""
-        cap1_gigas = [cp for cp, cap in engine.V3_UNIQUE_TARGET_CAPS.items()
-                      if cap == 1 and tags.get(cp, {}).get('size_class') == 'GIGA']
-        cap1_mediums = [cp for cp, cap in engine.V3_UNIQUE_TARGET_CAPS.items()
-                        if cap == 1 and tags.get(cp, {}).get('size_class') == 'M']
-        assert len(cap1_gigas) >= 5, (
-            f'Expected at least 5 cap=1 GIGA chrs; got {len(cap1_gigas)}')
-        # v0.26.x: floor lowered from 10 → 9 after c3610 was dropped from
-        # `_LIFTED_V0_24_65` (its cap was dead anyway since the chr is
-        # excluded — see dev/audit_placement_budget_consistency.py). This
-        # is a "does ordering matter in practice" smoke check, not a
-        # tight count; the floor only needs to be high enough that the
-        # M and GIGA buckets coexist non-trivially.
-        assert len(cap1_mediums) >= 9, (
-            f'Expected at least 9 cap=1 M chrs; got {len(cap1_mediums)}')
+        """Integration smoke test: confirm the reserved/floored set
+        spans both a big size bucket and M, so the big-first ordering
+        is exercised in practice.
+
+        v0.27.8: rebased from cap=1 chrs onto V3_RESERVATION_FLOORS.
+        The defensive cap=1 mechanism was removed (it left 0 cap=1 M
+        chrs), but ~204 chrs now carry reservation floors — 104 grunts
+        + 76 minibosses + the pre-existing 24 — spanning every size
+        class, so size-ordering of reservations still very much
+        matters."""
+        floored = set(engine.V3_RESERVATION_FLOORS)
+        floored_gigas = [cp for cp in floored
+                         if tags.get(cp, {}).get('size_class') == 'GIGA']
+        floored_mediums = [cp for cp in floored
+                           if tags.get(cp, {}).get('size_class') == 'M']
+        assert len(floored_gigas) >= 3, (
+            f'Expected at least 3 floored GIGA chrs; got {len(floored_gigas)}')
+        assert len(floored_mediums) >= 9, (
+            f'Expected at least 9 floored M chrs; got {len(floored_mediums)}')
 
 
 # v0.24.77: Fort GG re-protected against emerge-anim CTDs
@@ -4977,3 +4871,111 @@ class TestC4281DemotionLockin:
             assert in_sens or in_safe, (
                 f'{cp} missing from both SENSITIVE and SAFE — should be '
                 f'classified into one of them')
+
+class TestVariantPruneList:
+    """Tests for the v0.27.x redundant-variant prune list.
+
+    The prune list (data/variant_prune_list.json, generated by
+    dev/audit_genuine_variants.py) drops context-duplicate / ghost
+    NpcParam rows from the RANDOM pick path in pick_variant_for_tier.
+    Each genuine variant keeps a representative, so no genuine variant
+    is removed from the pool. The filter is soft: if pruning empties a
+    pool the original is restored.
+    """
+
+    @pytest.fixture
+    def engine(self):
+        import oops_v3
+        return oops_v3
+
+    @pytest.fixture
+    def loaded(self, engine):
+        import io
+        from contextlib import redirect_stdout
+        from collections import defaultdict
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            roster, tags = engine.load_data()
+        prefix_variants = defaultdict(list)
+        for v in roster['all_variants']:
+            if isinstance(v, dict) and 'c_prefix' in v:
+                prefix_variants[v['c_prefix']].append(v)
+        return roster, tags, prefix_variants
+
+    def test_pruned_id_never_picked(self, engine, loaded, monkeypatch):
+        """A npc_param_id in the prune set is never returned by the picker."""
+        import random
+        roster, tags, prefix_variants = loaded
+        # Pick a c3010 (Banished Knight) variant id that exists in the pool.
+        pool = prefix_variants['c3010']
+        assert pool, 'c3010 should have variants'
+        target = pool[0]['npc_param_id']
+        monkeypatch.setattr(engine, 'V3_APPLY_VARIANT_PRUNE_LIST', True)
+        monkeypatch.setattr(engine, '_V3_VARIANT_PRUNE_IDS', {target})
+        for seed in range(300):
+            v = engine.pick_variant_for_tier(
+                'c3010', False, prefix_variants, random.Random(seed), tags=tags)
+            if v:
+                assert v.get('npc_param_id') != target, (
+                    f'pruned id {target} was picked at seed {seed}')
+
+    def test_control_pruned_id_reachable_when_set_empty(self, engine, loaded,
+                                                        monkeypatch):
+        """Control: with an empty prune set the same id IS reachable."""
+        import random
+        roster, tags, prefix_variants = loaded
+        monkeypatch.setattr(engine, '_V3_VARIANT_PRUNE_IDS', set())
+        seen = set()
+        for seed in range(300):
+            v = engine.pick_variant_for_tier(
+                'c3010', False, prefix_variants, random.Random(seed), tags=tags)
+            if v:
+                seen.add(v.get('npc_param_id'))
+        assert len(seen) > 1, (
+            'c3010 should reach multiple variant ids with no prune set')
+
+    def test_soft_fallback_when_prune_empties_pool(self, engine, loaded,
+                                                   monkeypatch):
+        """If the prune set covers EVERY row of a c-prefix, the soft
+        fallback restores the pool rather than returning None."""
+        import random
+        roster, tags, prefix_variants = loaded
+        all_c3010 = {v['npc_param_id'] for v in prefix_variants['c3010']}
+        monkeypatch.setattr(engine, '_V3_VARIANT_PRUNE_IDS', all_c3010)
+        got = None
+        for seed in range(50):
+            v = engine.pick_variant_for_tier(
+                'c3010', False, prefix_variants, random.Random(seed), tags=tags)
+            if v:
+                got = v
+                break
+        assert got is not None, (
+            'soft fallback should restore the pool when pruning empties it')
+
+    def test_no_cprefix_emptied_by_real_prune_list(self, engine, loaded):
+        """With the real on-disk prune list, every c-prefix that had a
+        pool still yields a pick — no genuine variant fully lost."""
+        import random
+        roster, tags, prefix_variants = loaded
+        # force a fresh load of the real prune file
+        engine._V3_VARIANT_PRUNE_IDS = None
+        prune = engine._variant_prune_ids()
+        if not prune:
+            pytest.skip('no prune list present in data/')
+        emptied = []
+        for cp, pool in prefix_variants.items():
+            if not pool:
+                continue
+            v = engine.pick_variant_for_tier(
+                cp, False, prefix_variants, random.Random(0), tags=tags)
+            # None can legitimately happen for non-combat / filtered cps,
+            # but only if it was None pre-prune too — check that here.
+            if v is None:
+                engine._V3_VARIANT_PRUNE_IDS = set()
+                v_noprune = engine.pick_variant_for_tier(
+                    cp, False, prefix_variants, random.Random(0), tags=tags)
+                engine._V3_VARIANT_PRUNE_IDS = None
+                if v_noprune is not None:
+                    emptied.append(cp)
+        assert not emptied, (
+            f'prune list emptied the pickable pool for: {emptied}')

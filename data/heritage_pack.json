@@ -327,6 +327,10 @@
     "c5872": {
       "name": "Imp (Large)",
       "_inferred_source": "er_heritage_port_v0_27_0 (ER-only SOTE chr, giant catacomb Imp; profile mirrored from c3080 native Imp)"
+    },
+    "c5840": {
+      "name": "Black Knight",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
     }
   }
 }

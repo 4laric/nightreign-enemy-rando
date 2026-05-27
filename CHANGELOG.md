@@ -1,3 +1,482 @@
+## v0.27.12
+
+Heritage registration — c5840 Black Knight enters the placement pool,
+and the eight other heritage targets get their stale import statuses
+corrected.
+
+c5840 BLACK KNIGHT REGISTERED. The ER Black Knight (c5840) was referenced
+by the import plan but absent from all four data files, so the engine
+could never place it. dev/register_heritage_imports.py now registers it:
+38 placeable variants (the 45 NpcParam rows minus the leaked "(Unused)"
+CASTLE variant and the six named-boss rows — Garrew and Edredd), tier
+grunt, into nr_enemy_tags.json, nr_enemy_roster.json and
+heritage_pack.json. think_param_id uses the identity mapping
+(think_param_id == npc_param_id): c5840 is never placed in vanilla NR so
+no MSB-derived think pairs exist, and the game reads the real think
+pointer from regulation.bin at runtime regardless. Variants are not
+dedup-collapsed — the roster keeps every row and variant_prune_list.json
+(v0.27.11) clusters on the pick path; rerun dev/audit_genuine_variants.py
+to fold c5840 into the prune set.
+
+IMPORT STATUS CORRECTION. A four-table diff of the current mod regulation
+against vanilla ER — NpcParam, NpcThinkParam, BehaviorParam (traced by
+behaviorVariationId) and the AtkParam_Npc rows those behaviors reference
+— found zero missing rows for all nine heritage targets
+(c5190/c5192/c5193/c5250/c5522/c5523/c5750/c5751/c5840). Their params
+are complete; the stale PARTIAL_ATK / PARTIAL_BHV flags in
+batch_import_plan_comprehensive.json predated the finished regulation.
+All nine are now status ASSETS_PENDING — the only remaining work is the
+chr/script asset copy on the import rig.
+
+## v0.27.11
+
+Variant-prune list + miniboss reward overrides — merged from a parallel
+branch.
+
+REDUNDANT-VARIANT PRUNE LIST. The NR roster carries ~3100 NpcParam rows,
+but most are the same enemy re-authored once per placement context
+(Castle / Evergaol / Encampment / field). dev/audit_genuine_variants.py
+clusters rows by genuine identity (behaviorVariationId,
+think_param_id // 1000) and emits data/variant_prune_list.json — 2357 of
+3141 rows are redundant duplicates of a kept representative, leaving 520
+genuine variants. pick_variant_for_tier now soft-filters the prune set
+on the random pick path only; explicitly-targeted placements (manual
+promotions, boss-arena roles, scripted intros) are untouched. Every
+genuine variant keeps >=1 representative, and a rewarded row is kept
+over a non-rewarded sibling, so pruning never drops a genuine variant or
+its reward. Fail-open: a missing or malformed prune file yields an empty
+set. Gated by V3_APPLY_VARIANT_PRUNE_LIST.
+
+MINIBOSS REWARD OVERRIDES. dev/emit_reward_overrides.py +
+data/npcparam_reward_overrides.csv — an opt-in NpcParam patch CSV
+assigning a tier-appropriate itemLotId_enemy to the 817 miniboss-tier
+rows that vanilla authored with no drop (all 22 fully-stiffed c-prefixes
+covered). Deterministic per npc_param_id.
+
+Merge note: the branch was authored with CRLF line endings; normalized
+to LF before merging. Suite shows zero regressions — the 4 new
+TestVariantPruneList tests pass and one pre-existing test was fixed
+(test_picker_with_canonical_pref_disabled now isolates the flag it
+actually tests).
+
+## v0.27.10
+
+Flier-eligible whitelist activated — jellyfish + Warhawk cleared for
+catalogued aerial slots.
+
+Gate 5 (flying-required slots) now honors V3_FLYING_ELIGIBLE_TARGETS,
+the eligible_target_chrs whitelist loaded from
+nr_flying_required_slots.json. That plumbing has existed since v0.24.45
+but Gate 5 was never wired to it — v0.24.100 switched the gate to the
+is_flier predicate and left the whitelist dead. Reviving it lets a
+hand-vetted set of hover-capable non-fliers stand in at aerial slots:
+c4180 Spirit Jellyfish, c4181 Maris' Jellyfish (aquatic float rig),
+c4210 Warhawk (mis-tagged quadruped_large; genuinely a flier). The
+change is asymmetric by construction — it only widens the TARGET set
+at the 34 catalogued flier-required slots; it does not make
+jellyfish/Warhawk slots flier-required.
+
+Scope, honestly: this is a variety change, not a no-target fix. The
+flier-required catalog is 34 slots and they were never starved — the
+sim shows c4200 Man-Bat / c4201 Operatic Bat at ~10 / ~7 placements
+per seed, far below the cap. Grunt-tier aerial slots now draw from 5
+chrs (2 bats + 2 jellyfish + Warhawk) instead of 2; the no-target
+count is unchanged at ~383/seed. The earlier "flier bottleneck"
+framing conflated flier-source slots (cap-limited) with the much
+smaller flier-required catalog.
+
+## v0.27.9
+
+Grunt cap raised 32 -> 40 (interim).
+
+v0.27.8's cap=32 left ~10% of grunt slots vanilla — 104 eligible grunts
+x 32 = 3,328 placement capacity vs ~3,506 non-hub grunt slots, plus
+uneven cap fill across MSBs pushing the real no-target count to
+~745/seed. 40 gives 4,160 capacity; the MSB-free sim (5 seeds) confirms
+no-target back down to ~383/seed (about the pre-v0.27.8 level), 0 cap
+violations, with the v0.27.8 floor=4 / collapsed-tier shaping intact.
+
+Interim value. The durable fix is enlarging the grunt pool by importing
+more ER grunt assets — each new eligible grunt adds 40 capacity — after
+which the cap can come back down.
+
+Investigated but NOT changed: the c5522/c5523 Stray and c5750/c5751
+Living Jar un-bans. All four are in nr_missing_chr_files.json — they are
+missing-asset excludes (no chr files in the deployment), not stale
+fragility classifications. They cannot be un-banned by a flag flip;
+they need their ER assets imported first.
+
+## v0.27.8
+
+Grunt/trash tier collapse + re-cap. The 20-seed sim
+(dev/simulate_engine.py) showed the grunt/trash tier had no shaping
+below a flat cap of 50 — 52 of 105 eligible chrs saturated at the
+ceiling (74% of all grunt placements) while ~14 sat at <=2/seed.
+
+### Changes
+
+- The 'trash' tier is collapsed into 'grunt'. load_data() retags every
+  trash chr to grunt (50 chrs), so the whole engine — caps, floors,
+  the boss-bar gate, target pools — treats them as one tier. The
+  grunt/trash distinction is gone.
+- Grunt tier (now incl. former trash): cap=32 and reservation floor=4
+  for every eligible chr (104), applied across the board, overriding
+  any prior hand-tuned cap. cap 32 trims the saturated band (down from
+  the implicit global 50); floor 4 lifts the cameo tail.
+- The _LIFTED_V0_24_65 defensive cap=1 mechanism is removed. The lifted
+  chrs have been playtested since v0.24.40 without reported CTDs; each
+  now takes its tier cap (grunt 32, miniboss 4). The frozenset is kept
+  only as a record of the historical lift. NOTE: this re-exposes c5930
+  Giant Skeleton / c6220 Fire Demon (invisible-render history) at up
+  to 4x/seed.
+- c6201 Scarab is excluded — it carries a tag but has no roster
+  variants (an orphan; the sim placed it 0/20).
+- Miniboss tier: with the _LIFTED exemption removed, all 76 eligible
+  minibosses are now uniformly cap=4 (was 70 + 6 exempt at cap=1).
+
+### Validated
+
+Real engine, 3 seeds: 0 grunt cap>32 violations; grunt placements
+~2,990/seed (down from ~3,300). floor=4 lifts the rare tail from 14
+sub-2/seed chrs to 1. Two genuinely compat-starved grunts (c4171
+Giant Putrid Flesh, c4481 Miranda Sprout) still land 2-3 — the
+reservation pre-pass cannot find 4 compatible slots for them, so the
+floor is best-effort, not a hard guarantee. Test suite at the
+53-failure baseline.
+
+## v0.27.7
+
+MSB-free decision simulation. Tooling — the engine's placement
+behaviour is unchanged (the one engine edit is a behaviour-neutral
+optional parameter).
+
+### What it adds
+
+The placement engine reads two things from the binary MSBs: a per-Part
+slot inventory (source c-prefix, npc/think params, entity id, position,
+variant) and the Models section (needed only to write output). v0.27.7
+makes the *decision* path runnable without the binaries:
+
+- dev/emit_slot_inventory.py -> data/nr_slot_inventory.json — the
+  complete per-Part decision input (5,329 enemy Parts across 195 MSBs),
+  emitted once from the decompressed MSBs. Superset of
+  nr_slot_metadata.json: adds think_param_id, position, and the
+  resolved source variant_name.
+- dev/simulate_engine.py — reproduces the shuffle decisions (swap_plan,
+  reservations, placement counts, the v0.27.4-6 size gates) from that
+  JSON, with no MSBs and no Oodle. It calls the engine's own
+  pick_target / _reject_target_for_slot / _compute_unique_reservations
+  / RunContext, so the decision logic IS the engine's.
+- _enumerate_unique_candidate_slots / _compute_unique_reservations gain
+  an optional inventory= parameter (default None = unchanged binary
+  path) so the reservation pre-pass runs inventory-fed.
+
+### Fidelity
+
+Validated against the real engine on 3 seeds: total placements within
+-0.4%, distribution correlation r = 0.96-0.98, 0 cap violations, 100
+reservations honoured. It is a faithful decision-logic model, not a
+per-seed byte clone — exact reproduction would require replicating the
+rider/mount collapse pass and bit-matching rng consumption across the
+full pipeline (merchant swaps, MSB iteration order), which a
+decision-sim omits. For cap/distribution tuning and CI it is what is
+wanted: change a cap, see the distribution response, no corpus and no
+decompression.
+
+### Not covered
+
+Output .msb byte generation (inherently needs the binaries); the
+diagnostic-only oops_all / terrain_test / pinned modes; hub MSBs
+(pinned-only in production, normally empty).
+
+## v0.27.6
+
+Miniboss caps — "4 across the board". Follows the v0.27.3 floor pass.
+
+### The change
+
+v0.27.3 floored the whole miniboss tier (floor=1) but left caps
+uneven — 6 for the previously-uncapped bulk, plus pre-existing
+hand-tuned 1/2/8 values. v0.27.6 sets every miniboss-tier chr to a
+uniform cap of 4 (a power of 2): the v0.27.3 cap=6 default comes down
+to 4, Elder Lion (c4270) and Royal Revenant (c4020) come down from 8,
+and the prior single-boss feel-caps (Red Wolf c3181, Great Red Bear
+c5820, etc.) are raised from 2. Floor=1 + ceiling=4 across the tier —
+guarantee one, allow up to four.
+
+Exempt: the _LIFTED_V0_24_65 defensive cap=1 chrs (c5930 Giant
+Skeleton, c6220 Fire Demon, c4140, c4441, c4811, ...). That cap limits
+the blast radius of a chr that may still be runtime-broken — a
+different concern from miniboss feel-tuning — so it stands. Night-boss
+and field-boss tiers are untouched.
+
+Result: 70 miniboss-tier chrs set to cap=4 (6 lifted/defensive-cap
+chrs exempt; 11 hard-excluded chrs have no live cap either way).
+
+### Validation
+
+3-seed sim (714653 / 628653 / 42): 0 unplaced, no cap-4 miniboss
+exceeds 4 placements, ~220 miniboss placements/seed across the 70
+capped chrs. Full test suite at its 53-failure baseline — three tests
+pinning superseded pre-v0.27.6 caps (Red Wolf cap=2, Ghostflame
+archetype, the cap=1-GIGA smoke threshold) updated to the new policy.
+
+Minor effect: ~40 fewer placements/seed (~3,660 -> ~3,620) — tighter
+caps exhaust the dominant minibosses sooner, so a few late slots stay
+vanilla rather than place a 5th/6th copy. ~1%, intended direction.
+
+## v0.27.5
+
+Size-handling refactor, Stage 2 — the BIG_PROXIMITY and DENSITY_CAP
+swap-plan post-passes are converted to placement-time gates. Completes
+the refactor begun in v0.27.4 (geometry gate) and resolves the
+reservation-floor-demotion bug.
+
+### The problem
+
+Two of the five size mechanisms were swap-plan POST-passes: they ran
+after a whole MSB was placed, then walked the finished plan and
+*demoted* big chrs — BIG_PROXIMITY (v0.21) demoted the higher-pi of any
+two XL+ within 30u; DENSITY_CAP (v0.23.61) demoted excess once an MSB
+exceeded 3 XL+ / 10 L+ (tunnels 0 / 4). Demoting after the fact meant a
+big was placed badly and then evicted, and — the real bug — the
+post-passes ran after the reservation pre-pass, so a reserved big chr
+sitting in its guaranteed slot could be demoted right back out. The
+v0.27.2 98-seed audit measured this: Smelter Demon below its floor in
+50% of seeds, Dancer 40%, despite both being reserved every seed. The
+post-passes also carried ~250 lines of demotion machinery (caliber
+mirror, cap accounting, Gate-5.6 mirror, slug fallback) that existed
+only to re-implement, badly, what the picker already does.
+
+### The change
+
+BIG_PROXIMITY and DENSITY_CAP are now Gates 8 and 9 in
+`_reject_target_for_slot`, evaluated at pick time against per-MSB
+running state on the RunContext (placed-big positions, XL+/L+ counts,
+per-MSB caps). When a big would clip a neighbour or bust the budget it
+drops out of the candidate pool and the picker selects a smaller chr
+through its normal pipeline — so there is no separate demotion path and
+none of the mirror machinery is needed. The slot loop is pi-ascending,
+so "low-pi wins" matches the post-passes' "first-pi wins / highest-pi
+demoted" exactly.
+
+The gates are inert unless `run_ctx.msb_size_gate_active` is set, which
+`begin_msb()` does only inside `shuffle_msb_v3`'s slot loop. The
+reservation pre-pass and the reservation early-return never arm them —
+so a reserved big chr is never proximity/density-rejected and can no
+longer be demoted. This closes the reservation-floor-demotion bug
+(docs/OPEN_ISSUES.md).
+
+Both post-passes (487 lines) are deleted. `RunContext` gains per-MSB
+size state plus `begin_msb()` / `end_msb()` / `register_big()`.
+
+### Validation
+
+5-seed sim (714653 / 628653 / 42 / 394059 / 877217): 0 proximity
+violations (no XL+ pair within 30u), 0 density over-cap MSBs, 100
+reservations honored and 0 below-floor each seed. Full test suite back
+to its pre-session 53-failure baseline (all 53 predate this work).
+
+Known minor effect: ~40 fewer placements per seed (~3,700 -> ~3,660).
+Slots whose entire compatible pool is big-and-over-budget now stay
+vanilla rather than receive the old DENSITY_DEMOTE_FALLBACK slug — a
+~1% diversity reduction at genuinely over-budget slots, in exchange for
+never force-placing a slug. `V3_DENSITY_DEMOTE_FALLBACK_CPS` and
+`V3_BIG_PROXIMITY_DEMOTE_TO_SIZES` are now dead constants (trivial
+follow-up sweep).
+
+## v0.27.4
+
+Geometry-aware size gate (Stage 1 of the size-handling refactor). The
+first of two stages replacing scattered, blunt size logic with
+placement-time gates driven by the slot-terrain data the engine now has.
+
+### The problem
+
+Size handling was spread across five mechanisms: the BIG_PROXIMITY and
+DENSITY_CAP swap-plan post-passes, plus three placement-time gates in
+`_reject_target_for_slot` (Gate 6 XXL/GIGA-source integrity, Gate 7
+"XXL at XS/S/M/L-source -> reject", Gate 7.5 slope-aware size-up).
+Gate 7 was the bluntest: it banned XXL at every non-XXL/GIGA vanilla
+slot with no geometry check at all, threw away ~46 legitimate L-source
+slots by its own comment's admission, and never covered GIGA.
+
+### The change
+
+Gate 7 is now a geometry-aware size gate. A slot's size capacity is the
+LARGER of (a) the vanilla occupant's size class — strict baseline, no
+grace step: an XL-vanilla slot does NOT auto-qualify for XXL — and
+(b) the geometry-derived capacity from `slot_terrain.json` `face_dist`
+(metres to nearest collision face), mapped through median per-class
+footprint radii (M 0.5 / L 0.84 / XL 1.4 / XXL 3.25 / GIGA 7.0 m). An
+XXL/GIGA target is rejected ('geometry_clip') unless its size class is
+within that capacity. XS..XL are not gated — they clear essentially any
+navmesh slot. Slots with no terrain data fall back to the strict
+vanilla baseline. The gate never rejects a target <= the vanilla
+occupant's size, so it cannot drain a candidate pool.
+
+Net effect vs the blunt gate: XXL/GIGA are now allowed wherever the
+navmesh geometry proves the clearance (recovering legit big slots the
+old gate discarded) and blocked everywhere it doesn't — including the
+XL-vanilla slots Gate 7 let XXL through on unconditionally, and now
+GIGA, which Gate 7 never touched.
+
+New: `V3_GEOMETRY_GATE_ENABLED`, `V3_SIZE_RANK`,
+`V3_SIZE_FOOTPRINT_RADIUS`, `V3_GEOMETRY_GATED_SIZES`; loader
+`_load_slot_face_dist()` and helper `_geometry_capacity_rank()`.
+
+### Validation
+
+Per-size slot capacity (vanilla baseline + geometry recovery, 5,510
+slots): XXL 748 (14%), GIGA 556 (10%), XL 2,062 (37%), L 3,048 (55%) —
+big chrs keep ample homes; the v0.27.3 reservation floors for XXL
+minibosses are not slot-starved. `TestGate7XxlAtSmallSlot` rewritten
+for the geometry gate, 8/8 pass.
+
+### Pending
+
+Stage 2 — convert the BIG_PROXIMITY and DENSITY_CAP post-passes to
+placement-time gates with per-MSB running state; this also closes the
+reservation-floor-demotion bug (the post-pass is what evicts reserved
+big chrs).
+
+## v0.27.3
+
+Miniboss tier — reservation floor + cap normalization. Follows the
+v0.27.2 98-seed audit, which found the tier healthy in pool size (76
+eligible chrs) but badly top-heavy.
+
+### The problem
+
+A cap/floor survey of the miniboss tier: 32 of 76 capped, 44 uncapped,
+and ZERO reservation floors. Result was a steep distribution — ~8
+uncapped M-humanoid vanilla chrs (Perfumer, Leonine Misbegotten, Black
+Knife Assassin, Depraved Perfumer, Grave Warden Duelist, Azula Beastman,
+Omen, Banished Knight) landed 11-15x per seed each, a mid-band sat ~7x,
+and a ~30-chr tail sat below 1x/seed with nothing to rescue it. The
+"miniboss tier feels small" complaint was a distribution problem, not a
+pool-size one.
+
+### The change
+
+In load_data(), after the exclude sets and prior cap blocks are
+finalized: every eligible miniboss-tier chr (tier='miniboss', not
+excluded) gets `V3_RESERVATION_FLOORS` = 1, and every previously-
+uncapped miniboss gets `V3_UNIQUE_TARGET_CAPS` = 6. Existing caps are
+left alone — the hand-tuned 1/2 on singular bosses + archetype giants
+and the 6/8 values are preserved; only the 44 uncapped chrs get cap=6.
+Implemented as a computed loop (idempotent — re-running load_data is a
+no-op) rather than 120 dict literals, matching the v0.24.65 auto-cap
+pattern. Floor=1 added to 76 chrs, cap=6 added to 44.
+
+Slot budget checked first: ~360 boss-strength slots per seed (357 with a
+boss-strength vanilla source, 361 catalogued) vs 100 floored chrs total
+(24 pre-existing night_boss/nightlord + 76 miniboss) — ~3.6x headroom.
+Capping the top-8 also frees ~60 slots, so the change nets more variety,
+not a slot crunch.
+
+### Validation
+
+12-seed run (seeds 400001-400012): the formerly-uncapped top-8 now sit
+at 5.75-6.00 mean (cap binding); Aged Albinauric went 0.00 -> 6.00 in
+every seed (floor working). Of the 76 floored minibosses, 16 still miss
+at least one seed and 14 of those are XL+/XXL/GIGA — see caveat.
+
+### Caveat — XL+ floors and the demotion bug
+
+26 of the 76 floored minibosses are XL+/XXL/GIGA and exposed to the
+reservation-floor-demotion bug (docs/OPEN_ISSUES.md): the BIG_PROXIMITY
+/ DENSITY post-passes evict reserved big chrs. Their floors do NOT
+reliably hold yet — the 12-seed check shows 14 of them still missing
+seeds. The floor is fully effective for the ~50 S/M/L minibosses
+immediately. Fixing the demotion bug is the natural follow-up to make
+the tier-wide floor land for the big chrs too; v0.27.3 substantially
+raises that bug's priority since it now governs 76 floors, not ~10.
+
+### Notes
+
+- Engine fingerprint bumped to v0.27.3.
+- Survey + slot-budget detail: dev/SESSION_NOTES_2026-05-26.md.
+
+## v0.27.2
+
+98-seed placement-budget audit and four pool-gap / mis-tag fixes. Run
+against the full set of decompressed vanilla MSBs with the production
+config (multiplayer_safe=False, MMV pack loaded, prefer-canonical OFF).
+
+### The audit
+
+98 seeds simulated through the real `cmd_shuffle_v3` (seeds
+200001-200098). ~3,708 swaps/seed, very stable. Two clean results and
+two problem classes:
+
+- Unique caps: zero violations. No `V3_UNIQUE_TARGET_CAPS` ceiling was
+  exceeded in any seed. The reservation pre-bump + exhaustion gate hold.
+- Global cap (`V3_TARGET_PLACEMENT_CAP=50`): soft, behaving as designed.
+  58 grunt/trash c-prefixes brushed 51-54 in their hottest seed (the
+  `if capped_pool` fallback firing when every under-cap candidate is
+  exhausted). Means sit 45-49. Not changed.
+- Reservation floors missed (DEFERRED — see docs/OPEN_ISSUES.md): 10
+  floor=1 chrs come back below floor in a chunk of seeds despite the
+  pre-pass reserving a slot — Smelter Demon 50%, Dancer 40%, the four
+  MMV night bosses 15-23%. Likely the BIG_PROXIMITY / DENSITY_CAP
+  post-passes demoting the reserved chr out of its slot. Not fixed this
+  revision; logged as an open issue with the measured rates.
+- Pool gaps / mis-tags: fixed below.
+
+### Fix 1 — MMV nightlord pool gap
+
+c4720 Godfrey, c4721 Hoarah Loux, c4730 Starscourge Radahn, c5230
+Scadutree Avatar, c8500 Manus placed 0x across all 98 seeds. Root cause:
+they are tagged `expects_boss_arena=true` in mmv_imports.json, so
+load_data folds them into `V3_ARENA_ONLY_TARGETS`; v0.27.1's whole-MSB
+night-boss arena preservation then left them with zero eligible slots.
+New `V3_ARENA_ONLY_FORCE_LIFT` set, subtracted from
+`V3_ARENA_ONLY_TARGETS` at the end of the load_data auto-extend block
+(mirrors the M-humanoid lift). The `expects_boss_arena` tag is left
+intact (still feeds the +10 placement score); only the hard arena-lock
+is lifted. Post-fix 12-seed check: Godfrey / Scadutree / Manus now place;
+Hoarah Loux and Radahn are low-frequency and need the full sweep to
+confirm rate.
+
+### Fix 2 — Storm King + Ancestor Spirit re-enabled
+
+c4670 Ancestor Spirit and c7910 Storm King (both `_source='nr_placed'`,
+night_boss tier) also placed 0x — same mechanism, but their arena-lock
+came through `V3_DEDICATED_ARENA_BOSS_CHRS`. Both lifted from that set
+and given `cap=1` in `V3_UNIQUE_TARGET_CAPS` so they read as singular
+encounters at night_boss-tier world slots. c7900 Nameless King — the
+vanilla pair-partner of c7910 — was deliberately left in
+`V3_DEDICATED_ARENA_BOSS_CHRS`; revisit if the pair should move together.
+
+### Fix 3 — Aged Albinauric placeable again
+
+c3670 Aged Albinauric placed 0x. Its only named/canonical variant
+(36708100, 'Aged Albinauric (Scholar Remembrance)', sample_maps
+['m10_00_00_00']) was in `V3_AVOID_VARIANT_NPC_IDS` from a v0.23.24
+'team=26 cinematic' attribution; the other three c3670 ids are empty-name
+placeholders culled upstream anyway. With the only named variant
+avoid-listed, `pick_variant_for_tier` returned None every time and the
+slot fell back to vanilla. 36708100 removed from the avoid-list. CAVEAT
+noted inline: the roster entry carries think_param_id=0 — if playtest
+shows the placed chr is AI-inert outside m10, the avoid-add was right
+and the line should be restored. Post-fix: c3670 places ~7/seed, every
+seed.
+
+### Fix 4 — playable-character models excluded
+
+c52309 Priestess (Duchess), c52312 Witch of the Wheel (Recluse), c52313
+Executor are NR playable Nightfarer class models that post_dlc_dump
+scraped into the target pool as tier='grunt' enemies. Added to
+`V3_EXCLUDE_TARGET_PREFIXES`. (Alaric named Duchess + Executor; c52312
+Recluse was excluded on the same grounds — same class family. Flag if
+that read is wrong.)
+
+### Notes
+
+- Engine fingerprint bumped to v0.27.2.
+- Full audit methodology and per-chr numbers: dev/SESSION_NOTES_2026-05-26.md.
+
 ## v0.26.15
 
 Mount/rider pair tracking — cut 1 (detection foundation). Adds an

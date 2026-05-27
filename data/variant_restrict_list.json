@@ -14,6 +14,10 @@
       56510098,
       56510100,
       56510150
+    ],
+    "c5840": [
+      58401000
     ]
-  }
+  },
+  "_v0_27_13_c5840": "c5840 Black Knight: oops-all found hammer-side working (possibly only in wakeup slots), twinblade stands up on approach but does not attack. The 584000_battle script is GOAL_RoamKnightDLCLargeShield (hammer/shield), 584010_battle is GOAL_RoamKnightDLCDoubleEdgedSword (twinblade). SHAKEDOWN PIN, bisecting: testing one hammer row at a time. 58401000 = explicitly-named Black Knight Hammer GH Castle North. NOT a ship config -- temp pin to get a clean single-variant oops-all read. TODO: after both hammer rows are tested, decide real fix (variant restriction vs wakeup-slot classification)."
 }

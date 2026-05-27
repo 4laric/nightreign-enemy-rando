@@ -1,0 +1,19 @@
+{
+  "_comment": "Per-c-prefix variant ALLOWLIST. When a c-prefix appears here, the random variant pick in pick_variant_for_tier is restricted to ONLY the listed npc_param_ids. Distinct from variant_prune_list.json, which is a blacklist of redundant duplicates. This is for pinning a chr to a known-good subset when other variants are broken in-game. Allowlist semantics deliberately: a future re-import that adds new c5651 variants stays pinned to the tested-good set rather than silently admitting untested rows.",
+  "_v0_27_13_c5651": "c5651 Messmer Foot Soldier is a heritage ride-along on host c5650. Oops-all shakedown found the one-handed (fire-dagger) Foot Soldier works in-game; the two-handed and other-weapon variants are AI-broken (load + idle, no attacks). A long static investigation (params, scripts, behbnd, anibnd, aicommon) found c5651 byte-identical to vanilla ER and structurally identical to the working c5192/c5193 ride-along on every inspectable layer -- the root cause is in the Havok behavior-graph internals or runtime RetargetReferenceChrId resolution, which static file analysis cannot reach. STOPGAP per Alaric direction: pin c5651 to the OneHand family so every placement uses the variant verified working. c5651 still places and randomizes normally; it just always draws a one-handed Foot Soldier. NOT a bench. TODO: when the Havok-graph diagnosis is done (DSAnimStudio / Smithbox behavior editor, diff c5651.hkx vs c5192.hkx), delete the c5651 entry here to restore the full variant set.",
+  "_c5651_onehand_basis": "OneHand family = NpcParam rows where (npc_param_id // 100) % 100 in {0,1} -- think family 565100x/565101x, goal 565000 RoamCommonSoldiersOneHand. The 10 rows below. 56510150 'Messmer Foot Soldier (NB Prelude) Messmer' is a Nightreign-authored NB-Prelude row in the OneHand block; kept in the allowlist because it shares the OneHand moveset, but flagged here in case it warrants separate handling.",
+  "restrict_by_c_prefix": {
+    "c5651": [
+      56510000,
+      56510080,
+      56510081,
+      56510082,
+      56510090,
+      56510093,
+      56510095,
+      56510098,
+      56510100,
+      56510150
+    ]
+  }
+}

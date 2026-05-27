@@ -467,8 +467,22 @@ V3_EXCLUDE_PREFIXES = {
     'c3160',  # Funeral Steed (Night's Cavalry mount)
     'c3170',  # Albinauric Archer (rider)
     'c3180',  # Albinauric Archer's Wolf (mount)
-    'c4050',  # Kaiden Sellsword (rider)
-    'c4060',  # Kaiden Sellsword's Horse (mount)
+    # v0.27.13: c3170/c3180 Albinauric Archer + Wolf KEPT excluded
+    # (both ways) — deliberate. The mount-role pool feature (see
+    # V3_RIDER_PREFIXES) lets rider/mount slots randomize within their
+    # role, and its correctness rests on every eligible mount being a
+    # horse. The Wolf is the one non-horse mount: a knight on a wolf
+    # has no mounted-combat moveset and would mismatch destructively.
+    # Excluding the Albinauric pair removes that case entirely, so the
+    # mount pool is horses-only. Alaric direction.
+    #
+    # v0.27.13: c4050/c4060 Kaiden Sellsword + Horse, and c5890 Black
+    # Knight Horse, LIFTED from this both-ways exclude. They are now
+    # mount_role-tagged (rider/mount) and participate in randomization
+    # via the role-restricted pool in pick_target_cp. They are NOT
+    # added to any other exclude set — the role pool is what bounds
+    # them now. c4363 Lordsworn's Horse stays excluded (NB-arena mount,
+    # its own preservation reasons, untagged).
     'c4363',  # Lordsworn Knight's Horse (NB-variant mount)
     'c3610',  # Oracle Envoy -- Maris cluster member; floats frozen off-cluster
     'c4450',  # Walking Mausoleum -- 59m tall, clips everything; keep at home
@@ -2085,6 +2099,68 @@ OOPS_ALL_NB_MARKER_SCOPE = 'broad'  # 'strict' | 'broad' | 'extended'
 OOPS_ALL_NB_USE_STRICT_MARKERS = (OOPS_ALL_NB_MARKER_SCOPE == 'strict')
 
 
+# v0.27.13: ALL-SOTE MODE
+# ----------------------
+# When V3_SOTE_MODE is True, pick_target_cp intersects every swap
+# target pool with V3_SOTE_PREFIXES — the set of chrs whose tag carries
+# origin_game == 'SoTE'. Every placement becomes a Shadow-of-the-
+# Erdtree enemy; the tier-preserve filter still runs, so SOTE bosses
+# land at boss slots and SOTE field enemies at field slots, with the
+# usual empty-pool fallthrough leaving a slot vanilla only when no
+# SOTE chr survives the downstream gates (e.g. flier-required slots
+# with no SOTE flier).
+#
+# The SOTE set is small (~26 chrs: 10 MMV boss ports + 16 heritage
+# field enemies), so a run repeats the same chrs heavily. That is the
+# intended feel — per Alaric, SOTE mode runs with NO caps: the
+# reservation early-return and the cap-exhaustion filter in
+# pick_target_cp are both bypassed when V3_SOTE_MODE is set, so a SOTE
+# chr can fill any number of slots. V3_UNIQUE_TARGET_CAPS /
+# V3_RESERVATION_FLOORS are left intact (untouched) — the picker just
+# ignores them for the duration of a SOTE run.
+#
+# HARD DEPENDENCY: the SOTE bosses are MMV imports and the SOTE field
+# enemies are heritage chrs — both need their chr/anibnd (and MMV its
+# regulation) assets staged. An all-SOTE run on a base install will
+# CTD. Treat this like multiplayer_safe: only enable when the asset
+# packs are confirmed present.
+#
+# V3_SOTE_PREFIXES is populated at the end of load_data() from the
+# fully-merged tag DB; it stays empty until load_data() runs.
+V3_SOTE_MODE = False
+V3_SOTE_PREFIXES = set()
+
+
+# v0.27.13: RIDER / MOUNT pool restriction.
+# ----------------------------------------
+# A rider+mount encounter (Kaiden Sellsword on his Horse) is two
+# proximate Parts. Rather than the full cross-slot-atomicity feature
+# (see dev/PAIR_SWAP_SCOPING.md), this is the lightweight approach
+# Alaric chose: tag each chr's role and restrict the per-slot pool by
+# role. A slot whose vanilla occupant is a `rider` only draws riders;
+# a `mount` slot only draws mounts. Same mechanism as V3_SOTE_PREFIXES
+# — a pool intersection in pick_target_cp, no new pre-pass.
+#
+# This does NOT enforce that the rider's pick and the mount's pick
+# agree (true cross-slot atomicity). It does not need to *right now*:
+# with the SOTE filter active the mount pool is exactly {c5890} Black
+# Knight Horse — a one-element pool cannot produce a mismatched draw.
+# The only base-ER pair that could mismatch destructively is the
+# Albinauric Archer + Wolf (a non-horse mount); c3170/c3180 are hard-
+# excluded below so that case is removed entirely. Every remaining
+# mount is a horse, so a non-SOTE mismatch is at worst "knight on a
+# different horse" — cosmetic, no broken moveset.
+#
+# !! FUTURE HAZARD !!  This correctness argument holds ONLY while the
+# SOTE mount pool has <=1 member. The day a second SOTE rider+mount
+# pair is imported, an independent draw CAN mismatch them, and the
+# full pair-swap atomicity work (PAIR_SWAP_SCOPING.md) becomes
+# necessary. Populated at the end of load_data() from the mount_role
+# tag.
+V3_RIDER_PREFIXES = set()
+V3_MOUNT_PREFIXES = set()
+
+
 # Variant-level filter: drop event-triggered variants from per-prefix variant lists.
 V3_VARIANT_TRIGGER_MARKERS = [
     'Night Horde','Prelude','Sparring','Dummy','Unlock Fight',
@@ -2541,6 +2617,54 @@ V3_APPLY_VARIANT_PRUNE_LIST = True
 _V3_VARIANT_PRUNE_IDS = None  # lazily-loaded cache; None = not yet loaded
 
 
+# v0.27.13: data/variant_restrict_list.json — per-c-prefix variant
+# ALLOWLIST. Distinct from the prune list above: the prune list is a
+# blacklist of redundant duplicates that applies globally; this is an
+# allowlist that, when a c-prefix is present, restricts that c-prefix's
+# random variant pick to ONLY the listed npc_param_ids. Used to pin a
+# chr to a known-good variant subset when its other variants are broken
+# in-game (the c5651 Messmer Foot Soldier OneHand pin — see the file's
+# own _v0_27_13_c5651 note). Allowlist, not blacklist, on purpose: a
+# later re-import that adds new variants stays pinned to the tested set
+# rather than silently admitting untested rows.
+#
+# Applied ONLY in pick_variant_for_tier (the random variant-pick path),
+# same as the prune list — explicitly-targeted placements reference
+# specific npc_param_ids via other paths and are unaffected. SOFT: if
+# the restriction would empty a pool the original pool is kept (a
+# misconfigured allowlist must never zero out a c-prefix).
+#
+# Disable by setting this False or deleting the file (absent file =
+# empty map = no-op).
+V3_APPLY_VARIANT_RESTRICT_LIST = True
+
+_V3_VARIANT_RESTRICT_MAP = None  # lazily-loaded cache; None = not yet loaded
+
+
+def _variant_restrict_map():
+    """Lazily load + cache the per-c-prefix variant allowlist.
+
+    Returns {c_prefix: set(npc_param_id int)}. Empty when the feature is
+    off, the file is missing, or the file is malformed (fail-open: a bad
+    restrict file must never crash a run, only forgo the restriction).
+    """
+    global _V3_VARIANT_RESTRICT_MAP
+    if _V3_VARIANT_RESTRICT_MAP is None:
+        out = {}
+        if V3_APPLY_VARIANT_RESTRICT_LIST:
+            path = _data_path('variant_restrict_list.json')
+            if os.path.exists(path):
+                try:
+                    with open(path, encoding='utf-8') as f:
+                        data = json.load(f)
+                    for cp, ids in data.get('restrict_by_c_prefix', {}).items():
+                        out[cp] = {int(x) for x in ids}
+                except (json.JSONDecodeError, OSError, ValueError, TypeError):
+                    out = {}
+        _V3_VARIANT_RESTRICT_MAP = out
+    return _V3_VARIANT_RESTRICT_MAP
+
+
 def _variant_prune_ids():
     """Lazily load + cache the redundant-variant prune set.
 
@@ -2597,6 +2721,115 @@ def _roster_subtypes():
                 subtypes = {}
         _V3_ROSTER_SUBTYPES = subtypes
     return _V3_ROSTER_SUBTYPES
+
+
+# v0.27.13: VARIANT GROUPS — the consuming layer the roster-subtype
+# groundwork above anticipated ("A later stage will let a subtype carry
+# its own attributes (flier flag, cap, ...)"). Where _roster_subtypes()
+# is descriptive data only, variant_groups.json carries the cap / floor
+# attributes and IS consumed: by pick_variant_for_tier (per-group cap
+# exhaustion) and _compute_unique_reservations (per-group floors).
+#
+# A "variant group" promotes a named loadout family inside one c-prefix
+# (e.g. c5250's Divine Bird Warrior) to a first-class identity for the
+# cap / floor / diversity machinery, which is otherwise keyed strictly
+# on c-prefix. The group KEY used everywhere downstream is the tuple
+# (c_prefix, group_name) — a string c-prefix can never collide with it,
+# so existing c-prefix-keyed dict logic stays correct for ungrouped
+# chrs.
+#
+# Three lazily-built, cached structures (all keyed off the same file):
+#   _V3_VARIANT_GROUP_OF   : npc_param_id(int) -> (c_prefix, group_name)
+#   _V3_VARIANT_GROUP_CAPS : (c_prefix, group_name) -> cap(int)
+#   _V3_VARIANT_GROUP_FLOORS: (c_prefix, group_name) -> floor(int)
+# Fail-open: a missing or malformed file yields three empty dicts and
+# the engine behaves exactly as it did pre-feature.
+_V3_VARIANT_GROUP_OF = None
+_V3_VARIANT_GROUP_CAPS = None
+_V3_VARIANT_GROUP_FLOORS = None
+
+
+def _load_variant_groups():
+    """Lazily load + cache the variant-group structures.
+
+    Returns (group_of, caps, floors). group_of maps npc_param_id ->
+    (c_prefix, group_name); caps / floors map (c_prefix, group_name) ->
+    int. Built by joining variant_groups.json's variant_name lists
+    against the roster so the cheap, stable npc_param_id is the runtime
+    key (variant_name is display text and not guaranteed unique).
+
+    Fail-open on every error class — a bad groups file forgoes the
+    feature, never crashes a run.
+    """
+    global _V3_VARIANT_GROUP_OF, _V3_VARIANT_GROUP_CAPS, _V3_VARIANT_GROUP_FLOORS
+    if _V3_VARIANT_GROUP_OF is not None:
+        return _V3_VARIANT_GROUP_OF, _V3_VARIANT_GROUP_CAPS, _V3_VARIANT_GROUP_FLOORS
+
+    group_of, caps, floors = {}, {}, {}
+    path = _data_path('variant_groups.json')
+    if os.path.exists(path):
+        try:
+            with open(path, encoding='utf-8') as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            data = {}
+        # roster join: variant_name -> npc_param_ids, per c-prefix
+        roster = {'all_variants': []}
+        try:
+            with open(_data_path('nr_enemy_roster.json'), encoding='utf-8') as f:
+                roster = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            pass
+        name_ids = {}  # (c_prefix, variant_name) -> [npc_param_id]
+        for v in roster.get('all_variants', []):
+            cp = v.get('c_prefix')
+            nm = (v.get('variant_name') or '').strip()
+            npc = v.get('npc_param_id')
+            if cp and nm and isinstance(npc, int):
+                name_ids.setdefault((cp, nm), []).append(npc)
+        for cp, entry in data.items():
+            if cp.startswith('_') or not isinstance(entry, dict):
+                continue
+            for grp in entry.get('groups', []):
+                if not isinstance(grp, dict):
+                    continue
+                gname = grp.get('name')
+                if not gname:
+                    continue
+                key = (cp, gname)
+                for vn in grp.get('variant_names', []):
+                    for npc in name_ids.get((cp, vn.strip()), []):
+                        group_of[npc] = key
+                if isinstance(grp.get('cap'), int):
+                    caps[key] = grp['cap']
+                if isinstance(grp.get('floor'), int):
+                    floors[key] = grp['floor']
+
+    _V3_VARIANT_GROUP_OF = group_of
+    _V3_VARIANT_GROUP_CAPS = caps
+    _V3_VARIANT_GROUP_FLOORS = floors
+    # v0.27.13: caps enforced in pick_variant_for_tier; floors enforced
+    # by the variant-group floor pass in _compute_unique_reservations
+    # (reserves on the (cp,group) key) + the pinned_group path in
+    # pick_target / pick_variant_for_tier. Both halves of Option B live.
+    if caps or floors:
+        print(f"_load_variant_groups: {len(caps)} group cap(s) + "
+              f"{len(floors)} group floor(s) active "
+              f"({sorted(set(caps) | set(floors))})")
+    return group_of, caps, floors
+
+
+def _variant_group_key(npc_param_id, c_prefix):
+    """Resolve the cap/floor accounting key for one placement.
+
+    Returns (c_prefix, group_name) when this npc_param_id belongs to a
+    declared variant group, else the bare c_prefix string. Callers use
+    the result directly as a dict key — grouped placements land in a
+    tuple bucket, ungrouped ones in the existing string bucket, so the
+    two never collide and pre-feature accounting is untouched.
+    """
+    group_of, _caps, _floors = _load_variant_groups()
+    return group_of.get(npc_param_id, c_prefix)
 
 
 def _filter_canonical_variants(variants):
@@ -3372,14 +3605,34 @@ def load_data():
         print(f"v0.27.3/.6: miniboss tier — floor=1 added to {_mb_floored} "
               f"chrs, cap=4 set on {_mb_capped} chrs")
 
-    # v0.27.8: grunt tier (grunt + the now-collapsed trash) — floor=4,
-    # plus a tier-wide cap. Alaric direction. The 20-seed sim
-    # (dev/simulate_engine.py) showed the tier saturating: 52 of 105
-    # eligible chrs flatlined at the old implicit global cap of 50 — 74%
-    # of all grunt placements — with no shaping below it, while ~14 chrs
-    # sat at <=2/seed. floor=4 guarantees every grunt appears >=4x,
-    # eliminating the cameo tail. Mirrors the v0.27.3/.6 miniboss block;
-    # applied across the board, overriding any prior hand-tuned cap.
+    # v0.27.13: mount-role cap exemption. The miniboss block above sets
+    # cap=4 on every miniboss, including c4050 Kaiden and c5840 Black
+    # Knight (both bumped to miniboss for the rider/mount feature). But
+    # the rider pool under the SOTE filter is {c5840} ALONE — a cap of
+    # 4 would leave 20 of the 24 Kaiden rider slots vanilla, defeating
+    # the whole point of the swap. Mount-role chrs get a cap sized to
+    # their slot population instead: 24 rider slots + 12 mount slots in
+    # the inventory, so cap=30 gives comfortable headroom for either
+    # role to fill every slot of its type. Overrides the miniboss cap=4
+    # for these chrs specifically. (A role chr that is also reservation-
+    # floored keeps its floor — floor and cap are independent.)
+    _role_capped = 0
+    for _cp, _t in tags.items():
+        if not isinstance(_t, dict):
+            continue
+        if _t.get('mount_role') in ('rider', 'mount'):
+            if V3_UNIQUE_TARGET_CAPS.get(_cp) != 30:
+                V3_UNIQUE_TARGET_CAPS[_cp] = 30
+                _role_capped += 1
+    if _role_capped:
+        print(f"v0.27.13: mount-role chrs — cap=30 set on {_role_capped} "
+              f"chrs (overrides miniboss cap=4 so role slots can fill)")
+
+    # v0.27.8: grunt tier (grunt + the now-collapsed trash) — tier-wide
+    # cap=40. Alaric direction. The 20-seed sim showed the tier
+    # saturating: 52 of 105 eligible chrs flatlined at the old implicit
+    # global cap of 50 — 74% of all grunt placements — with no shaping
+    # below it. cap=40 reshapes the top end.
     #
     # v0.27.9: cap raised 32 -> 40. cap=32 was leaving ~10% of grunt
     # slots vanilla (no-target) — 104 grunts x 32 = 3,328 capacity vs
@@ -3388,24 +3641,70 @@ def load_data():
     # value: the durable fix is enlarging the grunt pool by importing
     # more ER grunt assets (each new eligible grunt = +40 capacity),
     # after which the cap can come back down.
+    #
+    # v0.27.13: grunt floor=4 REMOVED — tier-collapse regression. The
+    # v0.27.8 floor put all ~103 grunt chrs into V3_RESERVATION_FLOORS,
+    # so the reservation pre-pass started reserving slots for them. But
+    # _score_slot_for_unique is tier-blind — it scores boss-catalog
+    # membership (+10), NB markers (+5) and size, never tier match — so
+    # grunt reservations landed *preferentially* on boss-strength slots,
+    # and the reservation early-return in pick_target_cp commits them,
+    # bypassing the tier-preserve filter entirely. dev/sim_tier_transitions.py
+    # (25 seeds, v0.27.12) measured 16.1% of miniboss-source placements
+    # downgraded to a grunt enemy — ~37/seed, every seed — 100% via the
+    # reservation path, 0 via the organic picker. Dropping the grunt
+    # floor removes grunts from the pre-pass; they place organically
+    # (tier-preserve keeps them in grunt slots) and cap=40 still shapes
+    # the top end. Cost: the ~14-chr rare-grunt tail loses its >=4x
+    # guarantee. The tier-respecting fix (gate _score_slot_for_unique on
+    # tier bucket) would let the floor return safely and is the better
+    # long-term option — see docs/OPEN_ISSUES.md — but per Alaric only
+    # the miniboss/night_boss floors are load-bearing, so the grunt
+    # floor is simply dropped here.
     _gr_exclude = (V3_EXCLUDE_PREFIXES | V3_EXCLUDE_TARGET_PREFIXES
                    | V3_GHOST_EXCLUDE_TARGET_PREFIXES)
-    _gr_floored = 0
     _gr_capped = 0
     for _cp, _t in tags.items():
         if not isinstance(_t, dict) or _t.get('tier') != 'grunt':
             continue
         if _cp in _gr_exclude:
             continue
-        if V3_RESERVATION_FLOORS.get(_cp) != 4:
-            V3_RESERVATION_FLOORS[_cp] = 4
-            _gr_floored += 1
         if V3_UNIQUE_TARGET_CAPS.get(_cp) != 40:
             V3_UNIQUE_TARGET_CAPS[_cp] = 40
             _gr_capped += 1
-    if _gr_floored or _gr_capped:
-        print(f"v0.27.8/.9: grunt tier — floor=4 set on {_gr_floored} "
-              f"chrs, cap=40 set on {_gr_capped} chrs")
+    if _gr_capped:
+        print(f"v0.27.8/.9: grunt tier — cap=40 set on {_gr_capped} chrs "
+              f"(floor removed v0.27.13 — tier-collapse fix)")
+
+    # v0.27.13: build the all-SOTE target set from the fully-merged tag
+    # DB. origin_game lands here two ways: the MMV boss ports carry it
+    # via the mmv_imports.json merge above, and the heritage SOTE field
+    # enemies carry it directly in nr_enemy_tags.json (stamped by
+    # dev/tag_sote_origin.py). Computed every load_data() so it tracks
+    # tag edits with no separate data file to keep in sync. Drives
+    # V3_SOTE_MODE in pick_target_cp.
+    global V3_SOTE_PREFIXES
+    V3_SOTE_PREFIXES = {_cp for _cp, _t in tags.items()
+                        if isinstance(_t, dict)
+                        and _t.get('origin_game') == 'SoTE'}
+
+    # v0.27.13: rider/mount pools from the mount_role tag.
+    global V3_RIDER_PREFIXES, V3_MOUNT_PREFIXES
+    V3_RIDER_PREFIXES = {_cp for _cp, _t in tags.items()
+                         if isinstance(_t, dict)
+                         and _t.get('mount_role') == 'rider'}
+    V3_MOUNT_PREFIXES = {_cp for _cp, _t in tags.items()
+                         if isinstance(_t, dict)
+                         and _t.get('mount_role') == 'mount'}
+    if V3_RIDER_PREFIXES or V3_MOUNT_PREFIXES:
+        print(f"v0.27.13: mount-role pools — rider={sorted(V3_RIDER_PREFIXES)}, "
+              f"mount={sorted(V3_MOUNT_PREFIXES)}")
+    if V3_SOTE_MODE:
+        print(f"*** ALL-SOTE MODE: target pool restricted to "
+              f"{len(V3_SOTE_PREFIXES)} Shadow-of-the-Erdtree chrs ***")
+        print(f"***   {', '.join(sorted(V3_SOTE_PREFIXES))} ***")
+        print(f"***   caps/floors bypassed — expect heavy repeats. "
+              f"Requires MMV + heritage assets staged. ***")
 
     return roster, tags
 
@@ -4816,7 +5115,7 @@ def _pick_by_identity(variants, rng):
 
 
 def pick_variant_for_tier(target_cp, recipient_is_boss, prefix_variants, rng,
-                          tags=None):
+                          tags=None, run_ctx=None, pinned_group=None):
     """Pick a variant of target_cp whose tier matches the recipient slot's tier.
 
     Priority for boss-tier slots:
@@ -4867,16 +5166,76 @@ def pick_variant_for_tier(target_cp, recipient_is_boss, prefix_variants, rng,
     # the pool. SOFT: if pruning somehow empties the pool the original
     # is restored (defensive — by construction every c-prefix retains
     # >=1 row, so this fallback should not trigger).
+    #
+    # v0.27.13: variant-group-aware. The prune list's dedup key is
+    # (behaviorVariationId, think_param_id // 1000) and does NOT include
+    # variant_name (audit_genuine_variants.py: has_reward_in_key=false,
+    # no name term). For a multi-loadout c-prefix that is wrong: c5250's
+    # Divine Bird Warrior and Divine Beast Warrior share the Horned
+    # Warrior behaviorVariationId, so the auditor clustered all three
+    # loadouts together and the prune list kept only 2 of 18 rows — both
+    # Horned Warrior — silently deleting Divine Bird/Beast Warrior from
+    # the pool entirely. That defeats the whole variant-group feature
+    # (a group with no surviving row can never be picked) and is a
+    # latent bug even without it. Fix: after the normal prune, restore
+    # one representative row for any variant group that the prune wiped
+    # out completely. Picks the lowest npc_param_id for determinism.
     _prune = _variant_prune_ids()
     if _prune:
         _kept = [v for v in pool if v.get('npc_param_id') not in _prune]
         if _kept:
+            _group_of = _load_variant_groups()[0]
+            if _group_of:
+                _surviving_groups = {
+                    _group_of.get(v.get('npc_param_id')) for v in _kept}
+                _pruned_groups = {}
+                for v in pool:
+                    _gk = _group_of.get(v.get('npc_param_id'))
+                    if _gk is not None and _gk not in _surviving_groups:
+                        _pruned_groups.setdefault(_gk, []).append(v)
+                for _gk, _rows in _pruned_groups.items():
+                    _kept.append(min(
+                        _rows, key=lambda r: r.get('npc_param_id', 0)))
             pool = _kept
+
+    # v0.27.13: variant-restriction allowlist. When target_cp is pinned
+    # in data/variant_restrict_list.json, drop every variant whose
+    # npc_param_id is not in the allowed set. Runs AFTER the prune step
+    # so it composes with it (prune removes dup rows; restrict pins to a
+    # known-good subset). SOFT: if the restriction empties the pool the
+    # pre-restriction pool is kept — a misconfigured allowlist forgoes
+    # the pin rather than zeroing the c-prefix. Currently pins c5651
+    # Messmer Foot Soldier to its OneHand family (the variant verified
+    # working in the oops-all shakedown); see the data file's notes.
+    _restrict = _variant_restrict_map().get(target_cp)
+    if _restrict:
+        _allowed = [v for v in pool
+                    if v.get('npc_param_id') in _restrict]
+        if _allowed:
+            pool = _allowed
     variants = filter_emerge_variants(pool)
     # v0.23.04.1: drop empty-name variants (phantom/summon placeholders).
     variants = [v for v in variants if (v.get('variant_name') or '').strip()]
     if not variants:
         return None
+
+    # v0.27.13: variant-group floor pin. When a slot was reserved for a
+    # specific (cp, group) by the group-floor pass in
+    # _compute_unique_reservations, pinned_group carries that group name
+    # and the pick is restricted to that group's variants — the
+    # reservation guaranteed a *group*, not just a c-prefix, so the
+    # variant pick must honor it. HARD when the group has surviving
+    # rows; SOFT fallback to the unrestricted pool only if pruning /
+    # emerge / empty-name filtering wiped the group out entirely (which
+    # the v0.27.13 group-aware prune restore is designed to prevent —
+    # this fallback is defensive).
+    if pinned_group is not None:
+        _group_of = _load_variant_groups()[0]
+        _pinned = [v for v in variants
+                   if _group_of.get(v.get('npc_param_id'))
+                   == (target_cp, pinned_group)]
+        if _pinned:
+            variants = _pinned
 
     # v0.23.21: apply V3_AVOID_VARIANT_NPC_IDS filter ONCE globally, BEFORE
     # tier filtering. The previous design applied _filter_avoid_npc at each
@@ -4926,23 +5285,81 @@ def pick_variant_for_tier(target_cp, recipient_is_boss, prefix_variants, rng,
         # No early-return: filter is soft, returns input on no-canonical,
         # never empty when input was non-empty.
 
+    # v0.27.13: VARIANT-GROUP cap exhaustion (Option B — the cap half).
+    # The c-prefix-level cap machinery in pick_target_cp can't see
+    # variant groups: the c-prefix is chosen before the variant is, so
+    # a group cap can't gate pick_target_cp. It belongs here instead —
+    # one level down, where the variant (hence its group) is known.
+    # Drop any variant whose (c_prefix, group) bucket has hit its cap;
+    # remaining variants stay eligible. Group counts live in the SAME
+    # run_ctx.unique_placed_counts dict as c-prefix counts — tuple keys
+    # vs string keys never collide, so this needs no new structure.
+    #
+    # SOFT (deliberate): if EVERY variant is group-exhausted, the pool
+    # is restored rather than emptied. Rationale — emptying would make
+    # the slot vanilla (or trigger a re-pick), but a variant group is a
+    # cosmetic/loadout distinction within one chr asset, not a
+    # placement-safety constraint like tier or the avoid-list. Letting
+    # the cap "leak" slightly past its target is the lesser evil vs.
+    # silently dropping the slot. The cap still does its shaping job in
+    # the common case where other groups of the same c-prefix remain.
+    _grp_caps = _load_variant_groups()[1]
+    if _grp_caps and run_ctx is not None and len(variants) > 1:
+        _counts = run_ctx.unique_placed_counts
+        _grp_ok = []
+        for v in variants:
+            _gk = _variant_group_key(v.get('npc_param_id'), target_cp)
+            _cap = _grp_caps.get(_gk) if isinstance(_gk, tuple) else None
+            if _cap is None or _counts.get(_gk, 0) < _cap:
+                _grp_ok.append(v)
+        if _grp_ok:
+            variants = _grp_ok
+        # else: all groups exhausted — keep `variants` as-is (soft).
+
     if recipient_is_boss:
         # Tier-1: reward AND boss-marked
         best = [v for v in variants if v.get('has_reward') and is_boss_tier_variant(v)]
-        if best: return _pick_by_identity(best, rng)
-        # Tier-2: any reward-bearing variant (covers cases where regulation
-        # has reward but no Boss-name marker, e.g. some Field Bosses)
-        reward_only = [v for v in variants if v.get('has_reward')]
-        if reward_only: return _pick_by_identity(reward_only, rng)
-        # Tier-3: boss-name-marked variant (no reward, but at least the boss intro)
-        boss_only = [v for v in variants if is_boss_tier_variant(v)]
-        if boss_only: return _pick_by_identity(boss_only, rng)
-        # Tier-4: anything (silent reward loss)
-        return _pick_by_identity(variants, rng)
+        if best:
+            _chosen = _pick_by_identity(best, rng)
+        else:
+            # Tier-2: any reward-bearing variant (covers cases where
+            # regulation has reward but no Boss-name marker)
+            reward_only = [v for v in variants if v.get('has_reward')]
+            if reward_only:
+                _chosen = _pick_by_identity(reward_only, rng)
+            else:
+                # Tier-3: boss-name-marked variant (no reward, boss intro)
+                boss_only = [v for v in variants if is_boss_tier_variant(v)]
+                if boss_only:
+                    _chosen = _pick_by_identity(boss_only, rng)
+                else:
+                    # Tier-4: anything (silent reward loss)
+                    _chosen = _pick_by_identity(variants, rng)
     else:
         field_variants = [v for v in variants if not is_boss_tier_variant(v)]
-        if field_variants: variants = field_variants
-        return _pick_by_identity(variants, rng)
+        if field_variants:
+            variants = field_variants
+        _chosen = _pick_by_identity(variants, rng)
+
+    # v0.27.13: bump the variant-group placement count for the chosen
+    # variant. Only bumps when the chosen variant resolves to a real
+    # group key (a tuple) — ungrouped variants leave run_ctx untouched,
+    # exactly as before the feature. This is the single accounting
+    # point feeding the group-cap filter above and is intentionally
+    # AFTER all tier branches so every return path is counted once.
+    #
+    # Skipped when pinned_group is set: a pinned pick came from a
+    # group-floor reservation, and _compute_unique_reservations already
+    # pre-bumped the group count at reservation time (same rationale as
+    # the c-prefix path's "don't double-bump here"). Bumping again would
+    # over-count the reserved placement against the group cap.
+    if (_chosen is not None and run_ctx is not None
+            and pinned_group is None):
+        _gk = _variant_group_key(_chosen.get('npc_param_id'), target_cp)
+        if isinstance(_gk, tuple):
+            run_ctx.unique_placed_counts[_gk] = (
+                run_ctx.unique_placed_counts.get(_gk, 0) + 1)
+    return _chosen
 
 
 def pick_target(recipient_cp, tags,
@@ -4985,8 +5402,22 @@ def pick_target(recipient_cp, tags,
         run_ctx=run_ctx)
     if target_cp is None:
         return None, None
+    # v0.27.13: if this slot was reserved for a specific variant group
+    # (group-floor pass in _compute_unique_reservations), read that
+    # group back out of the reservation dict and pin the variant pick
+    # to it. The reservation value is a (cp, group) tuple for grouped
+    # reservations, a bare cp string otherwise. run_ctx.unique_reservations
+    # is the same dict pick_target_cp's early-return consults.
+    _pinned_group = None
+    if (run_ctx is not None and slot_msb_name is not None
+            and slot_pi is not None):
+        _rv = run_ctx.unique_reservations.get((slot_msb_name, slot_pi))
+        if isinstance(_rv, tuple) and _rv[0] == target_cp:
+            _pinned_group = _rv[1]
     target_variant = pick_variant_for_tier(target_cp, recipient_is_boss,
-                                            prefix_variants, rng, tags=tags)
+                                            prefix_variants, rng, tags=tags,
+                                            run_ctx=run_ctx,
+                                            pinned_group=_pinned_group)
     if target_variant is None:
         # v0.23.04.1: All variants for this c-prefix were filtered out
         # (e.g., empty-name phantom-only variants). Return (None, None)
@@ -8354,6 +8785,17 @@ V3_ARENA_ONLY_FORCE_LIFT = frozenset({
     'c4730',  # Starscourge Radahn         (GIGA quadruped_large, nightlord, MMV)
     'c5230',  # Scadutree Avatar           (GIGA quadruped_large, nightlord, MMV)
     'c8500',  # Manus, Father of the Abyss (XL humanoid, nightlord, MMV)
+    # v0.27.13: c5200 Metyr, Mother of Fingers. XL nightlord. Was
+    # arena-locked via the v0.23.72 expects_boss_arena auto-extend (not
+    # the M-humanoid auto-lift's reach — Metyr is XL). The all-SOTE
+    # mode sims (dev/sim_tier_transitions.py --sote) repeatedly showed
+    # c5200 as the lone non-placing SOTE chr: 0/12 seeds at 31-chr
+    # coverage. Same pool-gap reasoning as the five above — Alaric
+    # direction, lift the hard arena-lock. expects_boss_arena stays in
+    # the source tag (still feeds the +10 placement-preference score),
+    # so Metyr still prefers real arenas but is no longer locked out of
+    # boss-tier world slots.
+    'c5200',  # Metyr, Mother of Fingers   (XL, nightlord, MMV→heritage-adjacent)
 })
 
 
@@ -9741,6 +10183,72 @@ V3_BOSS_STRENGTH_TIERS = {'night_boss', 'field_boss', 'miniboss', 'nightlord'}
 V3_FIELD_STRENGTH_TIERS = {'grunt', 'trash', 'cluster_member',
                             'mount_component', 'non_combat'}
 
+# v0.27.13 FIELD-SLOT TIER ROLL
+# ------------------------------
+# A non-catalogued slot — no (msb, pi) entry in V3_BOSS_SLOT_CATALOG,
+# i.e. catalog_tier=None in the spoiler — is the generic field-grunt
+# population (~3400 of ~3760 placements/seed). Pre-v0.27.13 the picker
+# tier-preserved off the *vanilla occupant's* tag tier, so a field
+# position whose vanilla enemy happened to be a beefy-but-not-boss chr
+# tagged 'miniboss' (Fingercreeper Large, Land Octopus, ...) opened the
+# full boss-strength pool — the leak that put c6200 Slave Knight Gael
+# P2 (NB2) and c5130 Messmer (NB2) onto open-field slots and CTD'd on
+# hawk-traversal tile streaming.
+#
+# Now: a non-catalogued slot ignores its occupant's tier and rolls
+# grunt-base, with a small configurable chance to upgrade. One uniform
+# draw per slot, seeded off (run seed, msb, pi) so it is reproducible
+# and processing-order-independent. x + y must be <= 1.0. Realized
+# upgrade counts run BELOW these probabilities — the fallback ladder in
+# pick_target_cp degrades a roll back toward grunt when the rolled tier
+# has no compat-fitting candidate.
+#
+# ~3400 field slots, so expected upgrades ~= pct * 3400. Defaults are
+# deliberately low: 1.5% miniboss (~50/seed), 0.2% night_boss (~7/seed,
+# on top of the 23 dedicated NB-arena slots). Tune by direct module
+# edit — same workflow as the OOPS_ALL_NB_* knobs.
+#
+# Excludes still apply: pick_target_cp subtracts V3_EXCLUDE_TARGET_
+# PREFIXES from the pool BEFORE this tier filter, so dropping a chr
+# (e.g. c6200 while its MMV import is incomplete) into that set keeps
+# it out of every roll outcome — no separate field-pool plumbing needed.
+V3_FIELD_UPGRADE_MINIBOSS_PCT = 0.015
+V3_FIELD_UPGRADE_NIGHTBOSS_PCT = 0.002
+
+# Set at shuffle start (see cmd_shuffle_v3_impl). Module global rather
+# than a threaded param to keep pick_target_cp's signature stable; the
+# field roll is a pure function of (seed, msb, pi).
+_V3_RUN_SEED = 0
+
+def _field_slot_roll(slot_msb_name, slot_pi):
+    """Uniform [0,1) roll for a field slot, stable per (run seed, msb, pi).
+
+    Uses a SHA-1 digest of the slot identity rather than the builtin
+    hash() — builtin string hashing is per-process salted (PYTHONHASHSEED)
+    and would not reproduce across runs. Uses a dedicated Random rather
+    than the shared shuffle rng stream, so adding/removing slots
+    elsewhere never shifts an unrelated slot's roll."""
+    import hashlib
+    key = f"{_V3_RUN_SEED}|{slot_msb_name}|{slot_pi}".encode()
+    h = int.from_bytes(hashlib.sha1(key).digest()[:8], 'big')
+    return random.Random(h).random()
+
+def field_roll_tier_for(slot_msb_name, slot_pi):
+    """Rolled effective tier ('grunt'|'miniboss'|'night_boss') for a
+    non-catalogued field slot, or None if the slot IS catalogued (a
+    boss/terrain/POI slot — left to its own catalog handling). Shared by
+    pick_target_cp and the spoiler writer so both agree on the outcome."""
+    if slot_msb_name is None or slot_pi is None:
+        return None
+    if (slot_msb_name, slot_pi) in V3_BOSS_SLOT_CATALOG:
+        return None
+    r = _field_slot_roll(slot_msb_name, slot_pi)
+    if r < V3_FIELD_UPGRADE_NIGHTBOSS_PCT:
+        return 'night_boss'
+    if r < V3_FIELD_UPGRADE_NIGHTBOSS_PCT + V3_FIELD_UPGRADE_MINIBOSS_PCT:
+        return 'miniboss'
+    return 'grunt'
+
 # v0.20.8: Arena-only target c-prefixes. These enemies need flat boss-arena
 # terrain to function (XXL grounded with locomotion=0 — too many feet, no
 # pathfinding tolerance for outdoor uneven ground). Only placed at slots
@@ -10049,7 +10557,19 @@ V3_GETSOUL_TIER_FLOORS = {
     'nightlord':  4375,
     'night_boss': 3750,
     'field_boss': 2500,
-    'miniboss':    475,
+    # v0.27.13: miniboss 475 -> 450. Re-derived (placement-weighted
+    # vanilla median per tier — see test_getsoul_overrides.py) after
+    # c4050 Kaiden Sellsword and c5840 Black Knight were bumped into
+    # the miniboss tier for the rider/mount-role feature. Kaiden in
+    # particular is heavily placement-weighted (24 inventory slots) and
+    # has a low vanilla rune value, pulling the weighted median down a
+    # bucket. NOTE: these two were retiered for MECHANICAL reasons
+    # (role-pool + cap compatibility), not because they are miniboss-
+    # strength rewards — so they mildly skew this floor. Acceptable at
+    # one bucket; if more mount-role chrs are added and the skew grows,
+    # the right fix is to exclude mount_role-tagged chrs from the
+    # derivation (see docs/OPEN_ISSUES.md).
+    'miniboss':    450,
     'grunt':       100,
 }
 
@@ -10267,6 +10787,15 @@ V3_UNIQUE_TARGET_CAPS = {
     # singular encounter. Alaric direction, 98-seed sim 2026-05-26.
     'c4670': 1,  # Ancestor Spirit — night_boss, was dedicated-arena only.
     'c7910': 1,  # Storm King — night_boss, was dedicated-arena only.
+    # v0.27.13: Slave Knight Gael (DS3 MMV) — uncapped pre-v0.27.13, so
+    # seed 333724 placed the c6200 "P2 (NB2)" asset 4x, three of them on
+    # non-catalogued field slots — one on m60_44_39_20, the hawk-route
+    # CTD. cap=1 makes Gael a singular encounter and routes the one
+    # placement through the reservation pre-pass (quality night_boss-tier
+    # slot). NB the asset audit still flags c6200 INCOMPLETE pending the
+    # MMV bulk-import re-run; if it CTDs before then, the one-line bridge
+    # is adding 'c6200' to V3_EXCLUDE_TARGET_PREFIXES (zero placements).
+    'c6200': 1,  # Slave Knight Gael (DS3 MMV) — singular night_boss.
     # Dragons being lifted from V3_EXCLUDE_TARGET_PREFIXES in this revision —
     # uniqueness cap makes them safe by limiting failure rate to one die
     # roll. Each gets reserved at a quality slot via the reservation pass.
@@ -12101,6 +12630,77 @@ def _compute_unique_reservations(input_dir, tags, prefix_variants, rng,
     print(f"  Total reservations: {n_reserved}; "
           f"skipped (no qualifying slot): {n_skipped}")
 
+    # v0.27.13: VARIANT-GROUP floor pass (Option B — the floor half).
+    # The c-prefix floor loop above reserves (msb,pi) -> cp. A group
+    # floor needs the reservation to also pin which variant GROUP lands
+    # there, so the guarantee is ">=N Divine Bird Warriors", not just
+    # ">=N c5250s". The reserved VALUE becomes a (cp, group) tuple for
+    # these; pick_target_cp strips it back to cp for its return, and
+    # pick_variant_for_tier honors the pinned group.
+    #
+    # Runs AFTER the c-prefix pass so group floors compete for whatever
+    # slots the chr-level reservations didn't take (reserved_slot_keys
+    # is shared). Slot scoring reuses _score_slot_for_unique on the bare
+    # c-prefix — group is a variant-loadout distinction, so the same
+    # chr-asset slot-fit scoring applies; the group only constrains the
+    # downstream variant pick, not which slots qualify.
+    #
+    # Caps still bound the ceiling: a group floor of 1 plus a group cap
+    # of 18 means "between 1 and 18". The floor reservation pre-bumps
+    # the group count (same pre-bump rationale as the c-prefix path) so
+    # the cap filter in pick_variant_for_tier sees the reserved
+    # placement.
+    _grp_floors = _load_variant_groups()[2]
+    if _grp_floors:
+        _grp_items = list(_grp_floors.items())
+        rng.shuffle(_grp_items)
+        _grp_reserved = 0
+        for (gcp, gname), gfloor in _grp_items:
+            if gcp in runtime_target_excludes:
+                continue
+            for _ in range(gfloor):
+                scored = []
+                for s in slots:
+                    key = (s['msb'], s['pi'])
+                    if key in reserved_slot_keys:
+                        continue
+                    score = _score_slot_for_unique(s, gcp, tags)
+                    if score is None:
+                        continue
+                    scored.append((score, s))
+                if not scored:
+                    _unplaced_log.append({
+                        'cp': gcp, 'group': gname, 'cap': gfloor,
+                        'reason': 'no_qualifying_slots_for_group',
+                        'best_attempt': None})
+                    continue
+                scored.sort(key=lambda sx: (-sx[0], rng.random()))
+                _best = scored[0][0]
+                _band = [(s, sl) for s, sl in scored if s >= _best - 5]
+                if len(_band) == 1:
+                    _gs, _gslot = _band[0]
+                else:
+                    import math as _m
+                    _w = [_m.exp(s - _best) for s, _ in _band]
+                    _gi = rng.choices(range(len(_band)), weights=_w, k=1)[0]
+                    _gs, _gslot = _band[_gi]
+                _gkey = (_gslot['msb'], _gslot['pi'])
+                # reserved value is the (cp, group) tuple — the signal
+                # that pick_variant_for_tier must pin the group.
+                _reservations[_gkey] = (gcp, gname)
+                reserved_slot_keys.add(_gkey)
+                # pre-bump BOTH the c-prefix count (cap-exhaustion gate
+                # in pick_target_cp) and the group count (cap filter in
+                # pick_variant_for_tier) — the reservation occupies one
+                # of each budget.
+                _placed_counts[gcp] = _placed_counts.get(gcp, 0) + 1
+                _placed_counts[(gcp, gname)] = (
+                    _placed_counts.get((gcp, gname), 0) + 1)
+                _grp_reserved += 1
+                print(f"  {gcp}/{gname} (floor={gfloor}): reserved at "
+                      f"{_gslot['msb']} pi={_gslot['pi']} (score={_gs})")
+        print(f"  Variant-group floor reservations: {_grp_reserved}")
+
 
 def pick_target_cp(recipient_cp, tags,
                     prefix_variants, prefix_count, recipient_is_boss, rng,
@@ -12249,10 +12849,25 @@ def pick_target_cp(recipient_cp, tags,
     # already bumped _V3_UNIQUE_PLACED_COUNTS at reservation time so the
     # cap-exhausted gate sees this cp as filled before any per-MSB
     # processing — don't double-bump here.
-    if slot_msb_name is not None and slot_pi is not None:
+    #
+    # v0.27.13: skipped under V3_SOTE_MODE. The pre-pass is origin-blind,
+    # so a reservation may name a non-SOTE cp; committing it here would
+    # bypass the SOTE pool intersection below and leak a non-SOTE enemy
+    # into a SOTE run. SOTE mode runs uncapped anyway, so dropping the
+    # reservation shortcut costs nothing.
+    #
+    # v0.27.13: a reservation value is either a cp string (c-prefix
+    # floor) or a (cp, group) tuple (variant-group floor). pick_target_cp
+    # only deals in c-prefixes, so strip the tuple to its cp here. The
+    # group half of the tuple is re-read independently by pick_target
+    # (via _reserved_variant_group) to pin the variant pick — keeping
+    # this function's contract unchanged (it still returns a bare cp).
+    if (slot_msb_name is not None and slot_pi is not None
+            and not V3_SOTE_MODE):
         _res_key = (slot_msb_name, slot_pi)
         if _res_key in _reservations:
-            return _reservations[_res_key]
+            _rv = _reservations[_res_key]
+            return _rv[0] if isinstance(_rv, tuple) else _rv
 
     pool = compatible_pool(recipient_cp, tags)
     pool = pool - _exclude - _exclude_target - _ghost_exclude
@@ -12260,7 +12875,10 @@ def pick_target_cp(recipient_cp, tags,
     # that has already hit its V3_UNIQUE_TARGET_CAPS limit can't be
     # picked at non-reserved slots. Reserved slots already early-returned
     # above. Cheap set-comprehension so the per-slot overhead is minimal.
-    if _placed_counts:
+    #
+    # v0.27.13: skipped under V3_SOTE_MODE — SOTE runs are uncapped (the
+    # SOTE set is small and meant to repeat freely).
+    if _placed_counts and not V3_SOTE_MODE:
         _exhausted = {cp for cp, n in _placed_counts.items()
                       if n >= V3_UNIQUE_TARGET_CAPS.get(cp, 0)}
         if _exhausted:
@@ -12273,6 +12891,31 @@ def pick_target_cp(recipient_cp, tags,
             if slot_msb_name.startswith(_mp_prefix):
                 pool = pool - _excl
     pool = {cp for cp in pool if cp in prefix_variants and prefix_variants[cp]}
+    # v0.27.13: ALL-SOTE MODE — intersect the target pool with the
+    # Shadow-of-the-Erdtree set. Runs AFTER the hard excludes, so a
+    # CTD-blacklisted / asset-missing SOTE chr stays out (its exclude
+    # wins). The tier-preserve filter below still narrows per slot; if
+    # the intersection empties the pool the slot falls through to the
+    # `not pool` return and stays vanilla — acceptable for the thin
+    # tails (e.g. a flier-required slot with no SOTE flier).
+    if V3_SOTE_MODE and V3_SOTE_PREFIXES:
+        pool = pool & V3_SOTE_PREFIXES
+
+    # v0.27.13: RIDER / MOUNT pool restriction. If the slot's vanilla
+    # occupant is a rider, the pool is restricted to riders; if a
+    # mount, to mounts. Keeps a rider slot from drawing a mount and
+    # vice versa. Runs after the SOTE intersection so under all-SOTE
+    # mode the pool is (SOTE ∩ role) — e.g. a mount slot becomes
+    # {c5890} alone, which is the whole reason this lightweight
+    # approach is correct without cross-slot atomicity (see the
+    # V3_RIDER_PREFIXES block comment). HARD: if the intersection
+    # empties the pool the slot falls through to the `not pool` return
+    # and stays vanilla — correct, a rider slot with no eligible rider
+    # should not receive a non-rider.
+    if recipient_cp in V3_RIDER_PREFIXES:
+        pool = pool & V3_RIDER_PREFIXES
+    elif recipient_cp in V3_MOUNT_PREFIXES:
+        pool = pool & V3_MOUNT_PREFIXES
     if not pool:
         return None
 
@@ -12283,7 +12926,50 @@ def pick_target_cp(recipient_cp, tags,
     # set a more specific filter and skip this block; now the filter
     # always runs.
     src_tier = tags.get(recipient_cp, {}).get('tier')
-    if src_tier in V3_BOSS_STRENGTH_TIERS:
+    # v0.27.13: field-slot tier roll. A non-catalogued slot is decoupled
+    # from its vanilla occupant's tier — it rolls grunt-base with a small
+    # configurable upgrade chance (V3_FIELD_UPGRADE_*_PCT). Closes the
+    # leak where a beefy-but-not-boss occupant tagged 'miniboss' opened
+    # the boss-strength pool on an open-field position. recipient_is_boss
+    # slots (real boss Parts in non-catalogued MSBs, e.g. add-randomize
+    # arenas) keep occupant-tier-preserve.
+    _field_roll_tier = (field_roll_tier_for(slot_msb_name, slot_pi)
+                        if not recipient_is_boss else None)
+    if _field_roll_tier is not None:
+        # src_tier carries the rolled value downstream (the v0.25.6
+        # remembrance size gate keys on it; rolled values never match
+        # 'remembrance' so that gate is unaffected).
+        src_tier = _field_roll_tier
+        # Match the rolled tier EXACTLY — a miniboss roll must not yield
+        # a night_boss — with a fallback ladder so a roll with no compat-
+        # fitting candidate degrades toward grunt instead of leaving the
+        # slot vanilla. 'grunt' resolves to the whole field-strength
+        # bucket (grunt/trash/cluster_member/...).
+        #
+        # Exact-match deliberately excludes tier='nightlord' from every
+        # field roll: the heaviest tier (true Nightlords + arena-bound
+        # MMV boss imports — c6200 Gael, c5130 Messmer, c5300 Rellana,
+        # all tagged 'nightlord') is never field-eligible. The night_boss
+        # roll draws only from the 39 'night_boss'-tagged chrs. This is
+        # what makes the c6200 hawk-route CTD structurally impossible
+        # rather than merely improbable — no field slot, of any roll
+        # outcome, can admit it.
+        _ladder = {'night_boss': ('night_boss', 'miniboss', 'grunt'),
+                   'miniboss':   ('miniboss', 'grunt'),
+                   'grunt':      ('grunt',)}[_field_roll_tier]
+        tier_pool = pool
+        for _tname in _ladder:
+            if _tname == 'grunt':
+                _cand = {cp for cp in pool
+                         if tags.get(cp, {}).get('tier')
+                         in V3_FIELD_STRENGTH_TIERS}
+            else:
+                _cand = {cp for cp in pool
+                         if tags.get(cp, {}).get('tier') == _tname}
+            if _cand:
+                tier_pool = _cand
+                break
+    elif src_tier in V3_BOSS_STRENGTH_TIERS:
         tier_pool = {cp for cp in pool
                      if tags.get(cp, {}).get('tier') in V3_BOSS_STRENGTH_TIERS}
     elif src_tier in V3_FIELD_STRENGTH_TIERS:
@@ -12963,7 +13649,28 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
         else:
             run_ctx.begin_msb(V3_DENSITY_CAP_XL_PLUS,
                               V3_DENSITY_CAP_L_PLUS)
-    for pi, po in enumerate(parts['entry_offsets']):
+    # v0.27.13: per-MSB random slot order. The swap loop previously
+    # iterated parts in strict ascending pi. That gave low-pi slots a
+    # systematic advantage in any order-sensitive per-MSB accounting —
+    # most notably the density caps (run_ctx.register_big /
+    # V3_DENSITY_CAP_*), which accumulate as the loop runs: a big chr at
+    # a low pi always got first crack at the density budget, a big chr
+    # at a high pi was more often density-blocked, purely by Part index.
+    # Shuffling the (pi, po) PAIRS per MSB removes that positional bias —
+    # every slot has equal expected position in the processing order.
+    #
+    # Scope is within-MSB only: MSBs themselves stay in their original
+    # order, because begin_msb/end_msb scopes the density caps per MSB
+    # and a cross-MSB shuffle would interleave that accounting. pi stays
+    # paired with its po (pi is an identity key downstream — catalog
+    # lookups, spoiler entries, swap_plan); only the visit order changes.
+    # swap_plan is applied in a separate pass that re-derives po from pi,
+    # so the output is identical regardless of visit order — this shifts
+    # only the order in which order-sensitive runtime state is touched.
+    # Uses the shared seeded rng, so it is reproducible per seed.
+    _slot_order = list(enumerate(parts['entry_offsets']))
+    rng.shuffle(_slot_order)
+    for pi, po in _slot_order:
         # v0.24.109 binary-search vanilla pins. For diagnostic A/B testing
         # of specific (msb, pi) slots — pinned slots skip the picker
         # entirely and remain vanilla in the output MSB. Used to bisect
@@ -13130,7 +13837,8 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
             # cluster-vanilla-preserve and solo-pick_target paths below.
             target_cp = _eff_nb_target
             target_variant = pick_variant_for_tier(
-                target_cp, True, prefix_variants, rng, tags=tags)
+                target_cp, True, prefix_variants, rng, tags=tags,
+                run_ctx=run_ctx)
             if target_variant is None:
                 # Target c-prefix not loaded (e.g., MMV-only target with
                 # MMV disabled). Log and fall through to standard handling.
@@ -13361,7 +14069,7 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
             target_cp = oops_all_nb_target_cp
             target_variant = pick_variant_for_tier(
                 target_cp, recipient_is_boss, prefix_variants, rng,
-                tags=tags)
+                tags=tags, run_ctx=run_ctx)
             if target_variant is None:
                 n_skipped_compat += 1
                 _log_unaccounted('variant_for_tier_none',
@@ -13390,7 +14098,7 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
                 target_cp = terrain_test_targets['on_mesh']
             target_variant = pick_variant_for_tier(
                 target_cp, recipient_is_boss, prefix_variants, rng,
-                tags=tags)
+                tags=tags, run_ctx=run_ctx)
             if target_variant is None:
                 n_skipped_compat += 1
                 _log_unaccounted('variant_for_tier_none',
@@ -13402,7 +14110,7 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
             target_cp = oops_all_target_cp
             target_variant = pick_variant_for_tier(
                 target_cp, recipient_is_boss, prefix_variants, rng,
-                tags=tags)
+                tags=tags, run_ctx=run_ctx)
             if target_variant is None:
                 n_skipped_compat += 1
                 _log_unaccounted('variant_for_tier_none',
@@ -13461,7 +14169,8 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
             # Non-matching slots fall through to the normal pick_target path.
             target_cp = _effective_nb_target_cp
             target_variant = pick_variant_for_tier(
-                target_cp, True, prefix_variants, rng, tags=tags)
+                target_cp, True, prefix_variants, rng, tags=tags,
+                run_ctx=run_ctx)
             if target_variant is None:
                 n_skipped_compat += 1
                 _log_unaccounted('variant_for_tier_none',
@@ -13660,6 +14369,19 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
             _cat_entry = V3_BOSS_SLOT_CATALOG.get((map_name, pi))
             from_catalog_tier = _cat_entry.get('tier') if _cat_entry else None
             from_catalog_scope = _cat_entry.get('scope') if _cat_entry else None
+            # v0.27.13: rolled field-slot tier. Mirrors the roll
+            # pick_target_cp made for this slot (same pure function), so
+            # the spoiler shows which non-catalogued slots were upgraded.
+            # Annotated only on actual upgrades — base grunt rolls and
+            # catalogued/boss slots omit the field (None) to keep the
+            # spoiler lean, matching the in_starting_encampment pattern.
+            # NOTE (merge): the uploaded oops_v3.py used `recipient_is_boss`
+            # here, which is NOT in scope in the spoiler writer — a latent
+            # NameError. `is_boss` (computed just above from the actual
+            # placed variant) is the correct in-scope value and is what
+            # the field-roll exclusion wants anyway.
+            _field_roll = (field_roll_tier_for(map_name, pi)
+                           if not is_boss else None)
             _entry = {
                 'map':         map_name,
                 'part_index':  pi,
@@ -13669,6 +14391,8 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
                 'is_boss':     is_boss,
                 'catalog_tier':  from_catalog_tier,
                 'catalog_scope': from_catalog_scope,
+                **({'field_roll': _field_roll}
+                   if _field_roll in ('miniboss', 'night_boss') else {}),
                 # v0.24.28: starting-encampment annotation. True when this
                 # placement is inside an MSB tagged as a starting encampment
                 # in data/nr_starting_encampments.json. Helps post-run
@@ -14323,6 +15047,10 @@ def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
     # 'spawn_pool_*' before calling us — preserve those.
     V3_PIPELINE_METADATA.setdefault('vanilla_dir', input_dir)
     rng = random.Random(seed)
+    # v0.27.13: expose the run seed for field-slot tier rolls (a pure
+    # function of seed + slot identity — see field_roll_tier_for).
+    global _V3_RUN_SEED
+    _V3_RUN_SEED = seed
     roster, tags = load_data()
     # v0.26.x: pool/cap overrides MUST be applied here — AFTER the impl's
     # own load_data() — not in the cmd_shuffle_v3-level apply_run_overrides
@@ -14779,10 +15507,25 @@ def write_spoiler_logs(output_dir, entries, seed,
             #   couldn't get a reservation, with the reason (so the user
             #   can decide whether to relax criteria for those cps).
             'unique_caps': dict(V3_UNIQUE_TARGET_CAPS),
-            'unique_placed_counts': dict(_V3_UNIQUE_PLACED_COUNTS),
+            # v0.27.13: _V3_UNIQUE_PLACED_COUNTS now contains both string
+            # c-prefix keys AND (c_prefix, group_name) tuple keys from the
+            # variant-group accounting. JSON keys must be strings, so a
+            # tuple key is rendered "c_prefix/group_name" (the same
+            # display form used in the reservation-pass log lines). String
+            # c-prefix keys pass through unchanged.
+            'unique_placed_counts': {
+                (f'{k[0]}/{k[1]}' if isinstance(k, tuple) else k): v
+                for k, v in _V3_UNIQUE_PLACED_COUNTS.items()
+            },
             'unique_unplaced': list(_V3_UNIQUE_UNPLACED_LOG),
+            # v0.27.13: a reservation VALUE is either a cp string
+            # (c-prefix floor) or a (cp, group) tuple (variant-group
+            # floor). Emit cp always, plus group when the reservation
+            # was group-scoped, so the spoiler distinguishes the two.
             'unique_reservations': [
-                {'msb': k[0], 'pi': k[1], 'cp': v}
+                {'msb': k[0], 'pi': k[1],
+                 'cp': (v[0] if isinstance(v, tuple) else v),
+                 **({'group': v[1]} if isinstance(v, tuple) else {})}
                 for k, v in sorted(_V3_UNIQUE_RESERVATIONS.items())
             ],
             'entry_count': len(entries),

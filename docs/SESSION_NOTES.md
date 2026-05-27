@@ -660,3 +660,130 @@ Notable outputs:
     produces tautological gold
 
 All 34 tests still green.
+
+
+# Session notes — 2026-05-27
+
+Root-caused the Spider Scorpion failure, found it was an 11-chr class,
+shipped the fix, and cleared the c3360 Ancestral Follower of the same
+suspicion. No engine fingerprint bump this session — work is a data fix
+plus a new dev audit tool.
+
+## The bug — heritage SpEffect-ID gate mismatch
+
+The Spider Scorpion (c5190) spawns, aggros, circles, and never attacks.
+Prior sessions had ruled out the missing-script bug (c5190 always had
+`519000_battle.luabnd`). Root cause this session:
+
+`519000_battle.lua` `Goal.Activate` picks attacks by populating a
+`probabilities` table gated behind `ai:HasSpecialEffectId(TARGET_SELF,
+<literal id>)` checks on the chr's variant-discriminator SpEffect tags.
+Those tags are applied permanently via NpcParam `spEffectID*` slots.
+
+The MMV importer copies SpEffect *contents* faithfully but remaps their
+IDs from ER's literal range into NR-range `60000-69999` — including on
+the `spEffectID*` slots that carry those discriminator tags. So the chr
+ends up carrying `61400` where the script asks for `20011000`. Every
+gate fails, `probabilities` stays empty, the scorpion never acts.
+
+The bug lives in the seam between two internally-correct layers: a
+literal magic number in the script vs. a remapped ID on the chr. That
+is why per-layer diffs never caught it.
+
+Severity depends on script structure:
+
+- TOTAL — every `probabilities` populate path is behind a broken gate,
+  no positional fallback. Empty table -> never attacks. The scorpion.
+- DEGRADED — a positional/distance `if/elseif/else` chain populates
+  `probabilities` independently; the broken gate only adds/removes
+  entries afterward. The chr still fights, but silently loses its gated
+  moves. The Fire Knight (c5160): hand-graded as losing Act04, Act11
+  (its weight-1000 long-range engage), and the `20011748`-gated combo
+  extensions on ~8 attacks — stuck in its base moveset.
+
+## The sweep — 11 chrs
+
+Built `audit_speffect_id_gate_mismatch.py` (see dev tool note below).
+Per-row/per-slot diff of mod NpcParam vs vanilla-ER NpcParam: flag a
+slot when vanilla held a script-referenced ID and the mod replaced it
+with a `60000-69999` id. Script resolution via NpcThinkParam
+`battleGoalID` so shared-script variants resolve. Validated against
+c5190 as a known-positive control before trusting any output.
+
+Detection requires DECOMPILED Lua — HKS bytecode stores numeric
+constants as 8-byte doubles, not greppable ASCII; a `strings` scan
+finds nothing and silently reads "clean" (false-negative trap, hit
+twice during tool development).
+
+Flagged — 11 heritage chrs, all confirmed by per-row mismatch:
+
+- c5190 / c5192 / c5193  Spider Scorpion family — TOTAL
+- c5040  Curseblade          | c5080  Bloodfiend
+- c5081  Chief Bloodfiend     | c5090  Gravebird
+- c5160  Fire Knight          | c5250  Horned Warrior
+- c5311  Inquisitor (Candle)  | c5312  Inquisitor (Staff)
+
+The 8 non-scorpion chrs were shipping unflagged — degraded AI nobody
+had caught. The Imp (c5870) carries remap-range SpEffects too but is
+NOT flagged: its remaps are not in script-gated slots. Clean by this
+bug class.
+
+Severity grading was NOT automated. Two attempts failed their controls
+(line-based Lua block tracking cannot distinguish a variant-sibling's
+dead branch from a real fallback). Abandoned as a blocker — the fix is
+identical regardless of severity, so severity only ever affected triage
+order, not the deliverable.
+
+## The fix — shipped
+
+`regulation_fixes/heritage_speffect_fix_npcparam.csv` — full Smithbox
+NpcParam-export format (356-column header + 93 complete rows), one row
+per affected variant across all 11 chrs. Every remap-range `spEffectID*`
+cell on those rows reverted to its original ID.
+
+Correctness notes:
+
+- All 26 original SpEffect IDs verified to exist in mod `SpEffectParam`
+  — every revert points at a real row.
+- Reverts ALL 206 remap-range cells on the affected rows, not just the
+  107 script-gated ones — a full-row import writes every cell, so a
+  half-reverted row would import wrong values.
+- One inferred cell: `61685 -> 20013250` on c5311 rows `53110020 /
+  53110120 / 53111020` (rando-added rows, no vanilla counterpart;
+  derived from sibling rows — every other c5311 row uses `20013250` in
+  `spEffectID25`).
+
+Application: re-randomize FIRST, then apply the CSV to the *output*
+regulation. The rando regenerates regulation each run and reinstates
+the `614xx` remap.
+
+## c3360 Ancestral Follower — cleared
+
+Investigated as a suspected same-class case (closed gate chain in
+`336000_battle.lua`, structural resemblance to the scorpion).
+DISPROVEN: the `131xx` discriminator tags are intact and unremapped on
+every c3360 NpcParam row, the combat branches populate `probabilities`,
+the Lua is clean. The resemblance was coincidence.
+
+The real c3360 issue is unrelated and already correctly handled: a
+v0.27.0 variant-level ban (`oops_v3.py`) — playtest found only 2 of 34
+variants (`33600010` Axe-BGB, `33600510` Archer-BGB) render and fight.
+All 34 variants are `_source=post_dlc_dump` with empty `sample_maps`,
+so the automatic ghost-variant filter is blind for c3360, hence the
+manual playtest-seeded ban. The ban sits in an `oops_v3.py` block whose
+own comment states this break class's ground truth lives in the chr's
+anibnd/behbnd (TAE animation events, behavior trees) — uninspectable
+with current tooling. The 2-variant ban is correct; the cause is
+asset-layer, not params or scripts. Nothing to fix in the Lua.
+
+## Open / next
+
+- Bake the SpEffect-ID reverts into the MMV import data source so every
+  run applies them automatically (dev/TODO.md).
+- Add an importer guard: SpEffect IDs a heritage chr's battle/logic Lua
+  references by literal (`HasSpecialEffectId(<literal>)`) must import
+  as-is, never remapped (dev/TODO.md).
+- New dev tool: `audit_speffect_id_gate_mismatch.py` — promote from the
+  scratch sweep into `dev/` so future heritage imports are checked
+  pre-ship, not after a playtest. c5190-validated; requires decompiled
+  Lua as input.

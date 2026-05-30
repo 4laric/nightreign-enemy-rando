@@ -229,7 +229,7 @@
       "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
     },
     "c5240": {
-      "name": "Commoner (Pot)",
+      "name": "Shadowpot",
       "_inferred_source": "four_set_diff_v0_27_0 (orig _source=nr_placed)"
     },
     "c5241": {
@@ -335,6 +335,54 @@
     "c5260": {
       "name": "Golem Smith",
       "_inferred_source": "manual_register_v0.27.12 (orig _source=er_heritage_port_v0_27_0)"
+    },
+    "c5450": {
+      "name": "Ram",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5500": {
+      "name": "Living Magma",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5511": {
+      "name": "Shade",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5512": {
+      "name": "Shade",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5513": {
+      "name": "Cemetery Shade",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5600": {
+      "name": "Catacomb Skeleton",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5651": {
+      "name": "Messmer Foot Soldier",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5890": {
+      "name": "Black Knight Horse",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5060": {
+      "name": "Lamprey",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5061": {
+      "name": "Lamprey (Large)",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5270": {
+      "name": "Jar Innards",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c5271": {
+      "name": "Jar Innards (Large)",
+      "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
     }
   }
 }

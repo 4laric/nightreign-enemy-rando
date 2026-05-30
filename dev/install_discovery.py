@@ -152,14 +152,20 @@ def find_steam_libraries() -> list:
         return [root]
     paths = _parse_library_paths(vdf)
     # Dedupe while preserving order. Some setups list the main Steam
-    # install inside libraryfolders.vdf, some don't.
+    # install inside libraryfolders.vdf, some don't. Dedupe by a
+    # case-folded key on Windows (filesystem is case-insensitive but
+    # normpath isn't) — the registry returns the path lowercased while
+    # the vdf typically uses the cased form, so a single library would
+    # otherwise appear twice (observed in v0.27.19 diagnostic output).
     seen = set()
     libraries = []
+    case_fold = (lambda s: s.lower()) if sys.platform == 'win32' else (lambda s: s)
     for p in [root] + paths:
         norm = os.path.normpath(p)
-        if norm in seen or not os.path.isdir(norm):
+        key = case_fold(norm)
+        if key in seen or not os.path.isdir(norm):
             continue
-        seen.add(norm)
+        seen.add(key)
         libraries.append(norm)
     return libraries
 
@@ -234,14 +240,16 @@ _OODLE_SOURCE_GAMES = ('nightreign', 'elden_ring')
 _OODLE_DLL_GLOB = 'oo2core_*_win64.dll'
 
 
-def find_oodle_dll() -> Optional[str]:
+def find_oodle_dll(repo_root: Optional[str] = None) -> Optional[str]:
     """Locate an oo2core_*_win64.dll on this machine.
 
     Search order:
       1. OODLE_DLL env var (explicit override; never auto-clobbered)
-      2. Any oo2core_*.dll alongside install_discovery.py / dcx.py
-         (the rando repo root — what the user manually copied, or what
-         a previous `copy_oodle_dll_local` call cached)
+      2. Any oo2core_*.dll in `repo_root` (the rando repo root — what
+         the user manually copied, or what a previous
+         `copy_oodle_dll_local` call cached). `repo_root` defaults to
+         the actual repo root; callers/tests may pass an explicit
+         directory to control which "local cache" location is checked.
       3. Steam-installed source games via find_steam_libraries() →
          <library>/steamapps/common/<game>/Game/oo2core_*.dll
       4. None — caller is expected to surface an actionable error.
@@ -260,7 +268,9 @@ def find_oodle_dll() -> Optional[str]:
         return env
 
     # 2. Local-to-repo copy (dcx.py / dev/ sibling — same dir as engine)
-    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if repo_root is None:
+        repo_root = os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__)))
     local_matches = sorted(
         glob.glob(os.path.join(repo_root, _OODLE_DLL_GLOB)), reverse=True)
     if local_matches:
@@ -299,8 +309,10 @@ def copy_oodle_dll_local(dest_dir: Optional[str] = None) -> Optional[str]:
         glob.glob(os.path.join(dest_dir, _OODLE_DLL_GLOB)), reverse=True)
     if existing:
         return existing[0]
-    # Find one to copy
-    src = find_oodle_dll()
+    # Find one to copy. Pass dest_dir as repo_root so find_oodle_dll's
+    # step-2 "local cache" check looks at the same directory we cache
+    # into — otherwise the two can diverge (and tests can't isolate it).
+    src = find_oodle_dll(repo_root=dest_dir)
     if not src:
         return None
     # Don't copy onto itself

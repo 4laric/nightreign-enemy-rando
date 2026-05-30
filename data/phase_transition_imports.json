@@ -1,0 +1,21 @@
+{
+  "_comment": "SINGLE SOURCE OF TRUTH for imported single-entity bosses that disable their own AI during a phase-transition buff and depend on an external (home-arena) re-enable that is absent when the rando relocates them. Maps c_prefix -> the phase-2 marker SpEffect id the boss's AI reads (via HasSpecialEffectId) but never sets. Two consumers derive from this file so they cannot drift: (1) emevd_patch.py builds the marker-gated re-enable WaitFor (_AT_RISK_PHASE_MARKERS = the marker values here) AND derives which entity-bearing slots to register it at; (2) oops_v3.py gates these c_prefixes to entity-bearing slots only (eid != 0), since the EMEVD re-enable addresses the boss by entity and cannot reach name-marker slots (entity_id == 0). To cover a future import: add one {c_prefix: marker} line here and BOTH systems pick it up. Identities verified from the AI scripts (see nb_phase_reenable in emevd_patch.py).",
+  "_provenance": "Diagnosed 2026-05; c8300 traced end-to-end (TAE grant of 11300 + missing re-enable). Markers read from decompiled battle.lua per boss; c5230 read from bytecode constant table (slightly lower confidence, flagged in emevd_patch.py).",
+  "_excluded": {
+    "two_entity_swaps": "Rennala c2030->c2031 and Godfrey c4720->Hoarah Loux c4721 use a different mechanism (second chr warped in) and need second-entity placement handling, NOT this re-enable.",
+    "single_phase": "Manus c8500, c8200, Romina c5030 have no phase transition; no re-enable needed, free to take name-marker terrain slots.",
+    "unclassified": "Fortissax c4511, c8400 had no battle.lua available to fingerprint."
+  },
+  "markers": {
+    "c8300": 11300,
+    "c2120": 18000,
+    "c6200": 20050004,
+    "c5230": 20011050,
+    "c5051": 20010262,
+    "c5130": 20010612,
+    "c5200": 20010890,
+    "c5300": 20012001,
+    "c4730": 13926,
+    "c2110": 15299
+  }
+}

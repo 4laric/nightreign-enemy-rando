@@ -1,3 +1,853 @@
+## v0.27.36
+
+Three SOTE-mode roster additions (Alaric direction).
+
+- Spider Scorpion (c5190 / c5192 / c5193) — removed from V3_HERITAGE_ALL_PREFIXES,
+  which was feeding them into the target-exclude set. Now un-excluded and placing
+  (verified: ~265-280 picks each per 6000 grunt-slot draws). All three are
+  origin=SoTE so they were already in the SOTE pool list; the exclude was the
+  only thing keeping them out.
+- Kindred of Rot (MMV variant, c5740) — sote_eligible=true added in
+  data/mmv_imports.json. origin_game stays 'ER'. 36 drawable variants.
+- Catacombs Sorcerer (c5880) — sote_eligible=true added in
+  data/mmv_imports.json. origin_game stays 'DS3'. 20 drawable variants.
+
+VERIFIED: all five IN_SOTE=True and excluded=False; Scorpions place at grunt
+slots; c5740/c5880 place at miniboss slots (594/585 per 10000 draws at a
+non-reward miniboss source). c5740/c5880 carry has_reward=None (no MMV reward
+data), so the has_reward preservation gate correctly filters them out at
+*rewarded* source slots only — expected behavior, same as every no-reward MMV
+chr. SOTE pool grew 53 -> 55. Standing regression green, fingerprint v0.27.36,
+all core .py compile, mmv_imports.json valid.
+
+## v0.27.35
+
+Fixed the m49_43 castle Crucible Knight room shipping all-vanilla, and made
+it randomize in both normal and all-SOTE mode.
+
+SYMPTOM: seed 435226 (all-SOTE) fought 10 vanilla Crucible Knights in the
+m49_43 castle interior — the whole MSB shipped ZERO_CHANGE_PASSTHROUGH, no
+swaps. m49_43 is a Roundtable-style room of 10 c2500 Crucible Knight (Castle)
+Parts, not catalogued as boss slots.
+
+ROOT CAUSE (chain of three): (1) c2500 is tagged tier='night_boss' +
+has_reward=True; the non-catalogued m49_43 slots field-rolled 'grunt', then
+the has_reward preservation gate restricted targets to grunt-tier chrs that
+also have has_reward — effectively zero — so the pool emptied and
+pick_target_cp returned None on all 10. (2) In all-SOTE the target pool is
+the ~53 SOTE chrs. (3) m49_43 is a genuine stub-nav tile (absent from
+slot_terrain.json slot_roughness, like all m49 castle interiors — confirmed
+real: sibling m49_41/42 are stub-nav too and only accepted nav-independent
+SOTE chrs (Lamprey, Golden Hippo) this seed), and the
+nav_required_at_stub_nav_slot gate rejected every nav-dependent SOTE chr.
+
+FIX, two parts:
+1. New per-slot field-tier pin map V3_FIELD_SLOT_TIER_PIN, checked in
+   field_roll_tier_for() before the random roll. The 10 m49_43 slots are
+   pinned 'miniboss' (Alaric direction — tougher-than-grunt mobs, not 10
+   boss-caliber enemies, and not cataloguing them as boss slots which would
+   trigger NB-arena promotion). The miniboss pool has 73 has_reward-bearing
+   eligible targets, so the has_reward gate is satisfied; the miniboss
+   tier-ladder ('miniboss','grunt') still degrades to grunt if needed, so the
+   slot never re-strands. This fixes normal mode (verified: all 10 draw
+   miniboss-tier — Bloodhound Knight, Crystalian, Perfumer, etc.).
+2. Added 15 SOTE miniboss-tier chrs to V3_NAV_INDEPENDENT_TARGETS (Curseblade,
+   Death Knight, Chief Bloodfiend, Fire Knight, Horned Warrior, Golem Smith,
+   Inquisitor Candles/Staff, Fat Inquisitor, Giant Beast Skeleton, Ram, Shade
+   x2, Great Red Bear, Imp Large) so the stub-nav gate admits them, unblocking
+   m49_43 in all-SOTE (verified: all 10 draw these in SOTE mode).
+
+CAVEAT (important): the 15 SOTE chrs added to V3_NAV_INDEPENDENT_TARGETS are
+NOT playtest-confirmed nav-safe. Most are ground-walking melee pursuers
+(move_type=3) that query navmesh to chase — the exact failure mode that gate
+guards against (spawn ok -> aggro -> nav query returns nothing -> pursuit AI
+stalls -> freeze). Per Alaric: add all 15 and playtest, reporting freezes. If
+any T-pose/idle in a stub-nav cave/castle tile, remove it from the set with a
+(seed, msb, pi) citation. This is a speculative expansion of an
+empirically-derived list; treat the m49_43 castle room as the test case.
+
+VERIFIED: load_data clean, fingerprint v0.27.35; m49_43 fills both normal and
+SOTE modes (0/10 None each, all miniboss-tier); field_roll_tier_for pins
+m49_43->miniboss while an unpinned control (m41_00)->grunt; standing
+regression green; all core .py compile.
+
+## v0.27.34
+
+Added a seed CTD-risk checker that runs on every generated seed.
+
+WHAT: a post-generation static audit (run_seed_ctd_checks) that scans the
+finished seed's spoiler_entries against known crash/freeze signatures and
+writes findings to _ctd_risk.json next to _spoilers.json, plus a console
+summary. Wired into cmd_shuffle_v3 immediately after the spoilers are
+written, so it fires on every seed with no opt-in. Non-fatal by design: a
+flagged seed is still written (the user decides whether to reroll) — the
+point is to surface the risk at generation time instead of in-game. The
+checker is a registry of independent check functions (_SEED_CTD_CHECKS); new
+checks append to the list without touching the call site, and a check that
+raises is caught and downgraded to a 'warn' finding rather than aborting the
+build.
+
+CHECK #1 (the only check so far) — mount_target_at_non_mount_source: flags
+any placement where new.c_prefix is a mount-role chr (V3_MOUNT_PREFIXES =
+c4060 / c5890, the horses) but original.c_prefix is not a mount. A riderless
+mount has no standalone AI brain — it spawns frozen / floats in place (same
+failure the c3160 / c3180 mount-source exclusions guard against). The
+rider/mount pool feature is supposed to keep mounts landing only on mount
+slots; a hit here means that invariant broke for this seed. severity='ctd'.
+
+Finding shape: {check, severity, map, part_index, entity_id, detail}.
+
+VERIFIED: unit-tested on synthetic entries — fires exactly once on a mount at
+a non-mount source, stays silent on (a) mount at a mount source, (b) a normal
+grunt swap, and (c) a RIDER at a non-mount source (riders self-animate and
+are correctly not flagged); clean seed returns empty. Standing regression set
+green, fingerprint v0.27.34, all core .py compile.
+
+## v0.27.33
+
+Roster archaeology: brought the small/large Living Jars back into the target
+pool and demoted Jar Innards from miniboss to grunt.
+
+LIVING JARS (c5750 Living Jar Warrior [L], c5751 Living Jar [S, the small
+exploding one]): lifted the v0.25.0 proactive_ban that had been excluding
+both. The ban lived in data/nr_missing_chr_files.json under
+broken_runtime_chrs with symptom 'no_ai_brain' — but it was proactive and
+unconfirmed; the entry's own reason field flagged it as "pending a real-
+install audit confirming whether chrbnd exists or this is a true phantom."
+The no_ai_brain symptom was never empirically observed for these two — it was
+inferred from luabnd-archive absence (no per-chr battle/logic script found in
+nr/er/mmv archives, not in IMPORT_PLAN). User reports having fought the small
+exploding Living Jar (c5751) as a randomized enemy in an earlier build, which
+is direct evidence the assets are present and functional. Same speculative-
+ban-later-vindicated pattern as c8300 / c4720 / c5840 / c8500. The two
+entries were REMOVED from broken_runtime_chrs (the loader adds every entry
+there to V3_EXCLUDE_TARGET_PREFIXES unconditionally, ignoring the
+proactive_ban flag, so flipping the flag would not have lifted the
+exclusion) and archived with full rationale to
+_meta.history.jar_proactive_ban_lifted_v0_27_33. Re-add ONLY on a CONFIRMED
+in-game freeze/T-pose with a (seed, msb, pi) citation.
+
+JAR INNARDS (c5270 Jar Innards [L], c5271 Jar Innards Large [XL]): dropped
+tier miniboss -> grunt in data/nr_enemy_tags.json. They are trash-tier adds,
+not minibosses. Loader stats confirm the move: miniboss cap-4 count 86->84,
+grunt cap-40 count 107->111.
+
+CAVEAT: the Living Jar chrbnd/luabnd presence still cannot be verified from
+the sandbox (no access to the deploy's script archives). Lifting the ban is
+justified by the firsthand sighting but remains unconfirmed; if c5751/c5750
+freeze or T-pose in playtest, re-add to broken_runtime_chrs.
+
+VERIFIED: load_data() clean, fingerprint v0.27.33; c5750/c5751 now
+in_exclude=False and both draw as targets (41 / 42 hits over 4000 grunt-slot
+picks); c5270/c5271 now tier=grunt and draw (39 / 34 hits); standing
+regression set green.
+
+## v0.27.32
+
+Consolidated the v0.27.29 / v0.27.30 / v0.27.31 boss-slot classification
+fixes into one rule, and closed the remaining gaps of the same shape.
+
+CONTEXT: three releases in a row patched the same underlying issue — a
+catalogued boss-arena slot whose variant name fails to match
+V3_NIGHT_BOSS_NAME_MARKERS (which excludes 'Evergaol'/'Encampment'/bare
+'Boss'/POI-interior names like '(Castle)'), so the arena/NB classification
+diverges from the recipient_is_boss promotion the v0.24.98 catalog override
+already applied. At nav-constrained slots in all-SOTE the NIGHT_BOSS_ONLY
+subtraction then strips the only nav-viable targets → empty pool → vanilla
+boss. v0.27.29 fixed castle rotation tiles (spawn-pool), v0.27.31 fixed
+evergaols (named_boss) — both one-slot-shape-at-a-time.
+
+CHANGE: replaced the two ad-hoc helpers (_is_catalogued_spawn_pool_boss,
+_is_catalogued_named_boss) with one `_is_catalogued_boss_arena`, driven by a
+new module-level frozenset V3_CATALOG_BOSS_ARENA_TIERS. A slot whose
+V3_BOSS_SLOT_CATALOG tier is in that set is promoted to both _slot_is_arena
+and _slot_is_night_boss. The tier set is the 12 genuine boss-arena tiers:
+named_boss, nightboss, fieldboss, ruins_boss, fort_boss, fort_suffix,
+boss_suffix, castle_interior, cathedral, crater, noklateo, mountaintop.
+
+DELIBERATELY EXCLUDED (kept on strict marker-based gating): terrain (147
+non-boss anchors), encampment (field camp groups), remembrance (scholar
+trash). These must NOT admit NB-only chrs.
+
+Verified:
+  - Strict superset: all three prior fixes still swap 30/30 in all-SOTE
+    (castle BBH m46_87, castle Red Wolf m46_82, evergaol Banished Knights
+    m46_50 + m46_60).
+  - Incidentally fixed the latent gaps that shared the shape but were never
+    individually patched: cathedral (Guardian Golem), fort_suffix (Lordsworn
+    Captain), mountaintop (Lordsworn Captain), crater (Fire Prelate),
+    noklateo (Black Knife Assassin) — all now swap 30/30 in all-SOTE.
+  - Exclusion integrity: encampment / remembrance / uncatalogued grunt slots
+    show 0/40 NB-only leak — strict tiers stay strict, no nightlord leakage.
+  - Including the already-marker-correct tiers (nightboss/fieldboss/etc.) is
+    a no-op (True OR True); only the marker-missing tiers gain new promotion.
+
+OUT OF SCOPE (correctly NOT fixed): boss_suffix Mountaintop Ice Dragon
+(c4503) still ships vanilla — but it ALSO fails in normal mode, so this is a
+genuine nav/fragile geometric constraint at that slot, not a classification
+bug. The consolidation made its classification correct (now recognized as a
+boss arena) without forcing an unsafe placement the nav gate legitimately
+rejects. Same for nightboss Tibia Mariner (c4950) — fragile_locomotion,
+fails in normal mode too; pre-existing nav scarcity, not this bug class.
+
+The `_is_spawn_pool_rotation_source` function is unchanged and still backs
+the v0.24.97 swap-loop exemption; only its role inside the classification
+gate was folded into the catalog-tier check.
+
+---
+
+## v0.27.31
+
+Fixed: ALL evergaol boss arenas shipped vanilla in all-SOTE mode — including
+the three-Banished-Knight evergaol, Nox duo, Alabaster/Onyx Lords,
+Crystalians, Crucible Knight, and Dragonkin Soldier.
+
+WHY: Alaric fought three vanilla Banished Knights in an evergaol (seed
+230261, all-SOTE). The sweep found 19/19 evergaol catalog slots absent from
+the swap output. Two (the eid…800 anchors at m46_50 pi20, m46_60 pi16) are
+intentionally preserved (HP-bar-ref auto-preserve, working as designed). The
+other 17 are NOT preserved and SHOULD swap — diagnostic_trace showed m46_60
+and m46_70 hitting ZERO_CHANGE_PASSTHROUGH (shuffle_msb_v3 found nothing to
+swap and byte-copied them vanilla).
+
+ROOT CAUSE (traced via sys.settrace on pick_target_cp, pool-size by line):
+the evergaol boss pool emptied at the `pool - _absolute_rejected` step. But
+the rejection tallies were IDENTICAL to the working castle Red Wolf slot
+(both: 19 nav-rejected, 7 geometry-clip, 6 survivors) — so the rejection
+predicate wasn't the differentiator. The difference was UPSTREAM: the pool
+reaching the reject loop. Evergaol slots match the BROAD arena marker
+('Evergaol' ∈ V3_BOSS_NAME_MARKERS) so _slot_is_arena=True, but 'Evergaol'
+is deliberately EXCLUDED from V3_NIGHT_BOSS_NAME_MARKERS, so
+_slot_is_night_boss=False → the NIGHT_BOSS_ONLY subtraction fired and removed
+c5810 (Demi-Human Swordmaster) and c5011 — which at these nav-constrained
+arena slots are the ONLY targets that survive the slot's nav/geometry gate.
+Net: castle slot kept c5810 (its forced NB=True from v0.27.29 skips the
+subtraction), evergaol slot lost it → empty pool → vanilla.
+
+This is the same CLASS as the v0.27.29 castle fix (a catalogued boss slot
+whose name-marker classification strips its viable SOTE targets), but a
+distinct slot family: in-place evergaol/gaol arenas, not spawn-pool rotation
+sources.
+
+FIX: added `_is_catalogued_named_boss` (slot is in V3_BOSS_SLOT_CATALOG with
+tier='named_boss') and OR'd it into both _slot_is_arena and
+_slot_is_night_boss, mirroring the v0.27.29 _is_catalogued_spawn_pool_boss
+promotion and consistent with the v0.24.98 recipient_is_boss catalog
+override. Narrow: only fires for slots already catalogued named_boss, so it
+cannot loosen gating at field/grunt slots. Verified: all 9 tested evergaol
+slots now swap 30/30 in all-SOTE; castle Red Wolf (v0.27.30) + BBH (v0.27.29)
+still swap; NB-only c5810 still does NOT leak to grunt field slots (0/40).
+
+Note on the 2 preserved evergaol anchors (m46_50 pi20, m46_60 pi16): these
+stay vanilla by design (eid…800 boss-event-tracker; swapping breaks the
+spawn chain — see _is_hp_bar_ref_eid). So a randomized evergaol may still
+show its FIRST boss vanilla while the rest of the cell's bosses randomize.
+Acceptable trade (vanilla boss but working arena), same as Night Boss arenas.
+
+---
+
+## v0.27.30
+
+Three fixes this round: (1) the castle spawn-pool 0-swap fix extended to
+two more MSBs, (2) the heritage importer's anim-source detection rewritten,
+(3) c5661 Shadow Militia tag corrections.
+
+### 1. Castle spawn-pool 0-swap — m46_81 + m46_82 (extends v0.27.29)
+
+Fixed: Black Knife Assassin (m46_81) and Red Wolf of Radagon (m46_82)
+castle-variant bosses never randomized — shipped vanilla every seed.
+
+WHY: in all-SOTE seed 230261 Alaric fought a vanilla Red Wolf in the
+castle. The spoiler's spawn-pool table listed m46_82 pi=1 (Red Wolf,
+eid 46820800, pos 0,0,0) as a rotation source, but it produced zero swap
+entries — exactly the v0.27.29 castle bug, on MSBs that fix didn't cover.
+c3181 Red Wolf was placed as a target 0 times and the only 2 vanilla Red
+Wolf MSB slots both swapped away, so the one Alaric fought could only have
+come from an unswapped spawn-pool slot.
+
+ROOT CAUSE: v0.27.29 fixed the castle MSBs failing in seed 670313
+(m46_86/87/88/90/91/95) but the curated V3_SPAWN_POOL_MSBS list never
+included m46_80/81/82 — even though all three are in V3_BOSS_SLOT_CATALOG
+and the spawn-pool detector flags them in spoilers. Because
+_is_spawn_pool_rotation_source() is just `msb_base in V3_SPAWN_POOL_MSBS
+and pi==1`, it returned False for them, so the v0.27.29
+_is_catalogued_spawn_pool_boss gate (which ANDs on it) could never fire.
+
+FIX: added m46_81 + m46_82 to V3_SPAWN_POOL_MSBS. Structure verified by
+parsing the uncompressed MSBs — byte-identical to m46_87 (pi=0 c1000
+marker eid…500 / pi=1 boss eid…800 npc==think pos 0,0,0 / pi=2 AEG asset).
+Verified: both now swap 30/30 in all-SOTE mode to SOTE targets; the
+v0.27.29 castle MSBs (m46_86/87) still swap (no regression).
+
+NOT FIXED HERE — m46_80 (The Oldest Gaol): deliberately excluded. Parsing
+shows it is a 4-BOSS arena (pi=1..4 = Godskin Apostle / Godskin Noble /
+Ancient Dragon / Death Rite Bird at distinct real positions), not a
+single rotation source. The pi=1-is-the-boss spawn-pool model would only
+swap pi=1 and mishandle the rest. m46_80 needs the multi-slot arena path;
+tracked as a separate open item.
+
+### 2. Heritage importer — authoritative anim-source (carrier) detection
+
+Fixed: imported chrs that retarget their animations from a separate source
+chr T-posed in-game when the importer silently dropped that source.
+
+WHY: c5661 Shadow Militia (and, longstanding, c6031 Bear) T-posed. Root
+cause is NpcParam.RetargetReferenceChrId — c5661 animates by retargeting
+from c5660, an animation-only chr (no NpcParam, no ChrModelParam) that ER
+ships but the importer didn't stage into the deploy. No anim source → T-pose.
+The importer already had carrier-expansion logic, but build_carrier_map()
+detected carriers with a FILENAME-FAMILY heuristic (group by c-prefix minus
+last digit) that (a) cannot see cross-family retargets (c5701→c4100,
+c5751→c4490, c1432→c4320) and (b) depended on the carrier being scanned.
+
+FIX: build_carrier_map() now takes an optional regulation_csv and, when
+given, reads RetargetReferenceChrId directly (authoritative — catches same-
+AND cross-family retargets, fooled by nothing), falling back to the legacy
+heuristic only when no regulation is available. heritage_chr_import.py gains
+--regulation; it warns loudly when omitted. Verified against the regulation:
+all 8 sampled retargets resolve correctly incl. the 3 cross-family cases the
+old heuristic structurally missed.
+
+SWEEP (roster chrs whose retarget source is an anim-only base — the c5660
+class): c4321→c4320 (nr_placed, works — proves NR stages some bases),
+c5661→c5660 (CONFIRMED broken), c5651→c5650, c6031→c6030 (CONFIRMED broken),
+c6072→c6071. "Source is model-less" is necessary but not sufficient to
+predict a T-pose; the real predictor is "source anibnd absent from the
+deploy," which is deploy-side. c5661 + c6031 confirmed by Alaric; the other
+three are candidates to check. Deploy-side action still required: stage the
+missing source anibnds (e.g. c5660.anibnd.dcx) — re-running the fixed
+importer with --regulation now auto-pulls them.
+
+### 3. c5661 Shadow Militia tag corrections
+
+Corrected promotion-time errors to match the regulation: size_class M→S,
+hit_height 1.7→1.2, hit_radius 0.4→0.3, weight 80→130 (same dims as c4321
+Vulgar Militia, which Shadow Militia is the SOTE reskin of). anim_bank
+566100→56610 (the 6-digit value was a stray-zero typo; convention is
+model×10). NOTE: anim_bank is descriptive-only metadata — never read by live
+engine code — so this corrects the record but does not itself fix the T-pose;
+the T-pose fix is staging c5660's anibnd (see §2).
+
+---
+
+## v0.27.29
+
+Fixed: castle-variant spawn-pool bosses never randomized (shipped vanilla).
+
+WHY: in a real all-SOTE run (seed 670313), Alaric fought a vanilla Bell
+Bearing Hunter in the Castle Basement and a vanilla Crucible Knight in the
+castle. The spoiler's spawn_pool_results showed every CASTLE-variant
+rotation MSB (m46_86/87/88/90/91/95) reporting n_swaps=0 with status:ok,
+while their FIELD-boss twins (m46_52..m46_74) reported n_swaps=1. The
+castle bosses — and the trolls/Red Wolf in those same tiles — shipped
+unrandomized. Same gap as the earlier "Crucible Knight castle getting
+missed" report.
+
+ROOT CAUSE (confirmed by reading the uncompressed castle MSBs Alaric
+provided + bisecting pick_target_cp inputs): a NAME-MARKER classification
+gap, not any of the initially-suspected filters. Several stale comments
+pointed at a near-origin spawn-marker filter, a cluster builder, and a
+shared-position placeholder filter — all of which had been REMOVED in
+earlier versions (near-origin v0.23.72, clustering v0.26.13). Those were
+red herrings. The emerge-marker-skip and 2-vs-3-Part theories were also
+wrong: the castle tiles are structurally identical to the field twins
+(3 Parts: c1000 marker + pi=1 boss + AEG asset; pi=1 carries a real
+variant_name and npc; eid %10000==800).
+
+The actual divergence: pick_target_cp's arena / night-boss pool gates
+(the _arena_only and NIGHT_BOSS_ONLY subtractions) classify a slot as a
+boss arena from slot_variant_name matching the BROAD name markers
+("Field Boss"/"Night Boss") plus the catalog `arena` flag. The FIELD
+tiles are named "... (Field Boss)" → match → keep the boss pool → swap.
+The CASTLE tiles use POI-interior names ("(Castle Basement)", "(Castle)")
+that match only the EXTENDED marker set, and their catalog entries carry
+arena:False + scope:extended. So they read as non-arena/non-NB, both pool
+subtractions fired, and in all-SOTE mode — where the boss-tier SOTE pool
+is tiny (7 night_boss) — the pool emptied after those subtractions plus
+geometry rejects, so pick_target_cp returned None and the slot stayed
+vanilla. (With the full roster the non-arena fallback still had boss-tier
+chrs, so the bug was less visible in normal runs but still present.)
+
+FIX (in pick_target_cp): a catalogued spawn-pool rotation source
+(_is_spawn_pool_rotation_source AND in V3_BOSS_SLOT_CATALOG at any scope)
+now counts as arena + night-boss for those gates, regardless of name
+marker. This mirrors the v0.24.98 catalog-membership override that already
+promotes the same slot's recipient_is_boss to True — the bug was simply
+that the arena/NB classification used a different, name-only signal than
+the boss-tier promotion did. Narrow: only the enumerated V3_SPAWN_POOL_MSBS
+pi=1 slots qualify, so gating elsewhere is untouched; boss-tier preserve
+still holds (verified: castle BBH draws only miniboss/night_boss, no grunt
+leak). Verified field twins still swap and all standing regressions pass.
+
+Also cleaned the three stale comment blocks (the spawn-pool "KNOWN BUG"
+header, the V3_BOSS_TIER_PINNED_SLOTS comment, and the OOPS_ALL_NB
+intercept comment) to state the removed filters as removed-with-version
+and to document the real root cause + fix rather than the wrong leads.
+
+## v0.27.28
+
+anim_class field fully expunged from the project; flying-vs-ground
+constraint removed entirely.
+
+WHY: anim_class was ~95% vestigial — 490 descriptive data-file fields plus
+dozens of comments — and the ~5% that was live only ever stood in for two
+real properties. Worse, the dead references actively mislead: a reader
+debugging a CTD greps anim_class, sees it referenced, and chases a field
+that does nothing. Per Alaric: "I don't want a future Claude going 'the code
+references an anim_class but I don't see it, maybe that's causing the CTD'."
+
+WHAT THE LIVE READS ACTUALLY ENCODED, and where each went:
+  1. Flying-vs-ground (is_flier = loco==2 OR anim_class=='flying_dragon').
+     14 of 16 fliers were detected ONLY by the anim_class half (all dragons
+     are loco 5/0/None, not loco=2), so this could not migrate to a pure
+     locomotion check. Per Alaric the constraint isn't real — dragons start
+     grounded, any enemy is fine at a former dragon slot, and the seed-552688
+     "Astel at a Flying Dragon slot → CTD" was an unconfirmed best-guess.
+     So the WHOLE flying apparatus was removed, not migrated:
+       - swap_compat: is_flier def + both flier-vs-ground symmetry checks
+         (is_compatible, size-rescue path).
+       - oops_v3: Gate 5 (flying_required_slots), the aerial-target scoring
+         block in _score_slot_for_unique, the V3_FLYING_REQUIRED_SLOTS /
+         _META / _FILE_META / V3_FLYING_ELIGIBLE_TARGETS globals, and the
+         _load_flying_required_slots() loader.
+       - deleted data/nr_flying_required_slots.json.
+  2. Quadruped-unsafe navmesh freeze (the gate read
+     anim_class.startswith('quadruped')). This caught fragile-locomotion
+     chrs across ALL locomotion values — including the Bear (c6031, loco=0)
+     and Radahn/Gaius/Scadutree (loco=None) that a pure loco==3 check
+     misses. Migrated to an explicit fragile_locomotion:true tag on the 70
+     former quadruped/quadruped_large chrs (67 in nr_enemy_tags.json + 3 in
+     mmv_imports.json). Gate now reads `fragile_locomotion OR loco==3` (the
+     loco==3 half retained — it independently covers 4 non-quadruped loco=3
+     bipeds: c3560/c3570/c4000/c4490). The 7 per-slot
+     reject_anim_classes=['quadruped'] entries in nr_quadruped_unsafe_slots.json
+     migrated to reject_fragile_locomotion:true.
+  3. Source-anim forbidden gate (Gate 3, read source anim_class against
+     V3_FORBIDDEN_BY_SOURCE_ANIM). The table had been empty ({}) since
+     v0.24.75, so the gate never fired — removed as pure dead weight along
+     with the empty global.
+  4. M-humanoid SOTE arena-lift (size_class=='M' AND anim_class=='humanoid').
+     Per Alaric, extended to EVERY M-size chr — the humanoid condition was
+     dropped, keeping only size_class=='M'.
+
+VERIFIED (no test suite ships in the package; checked via direct
+regression): load_data OK; the fragile_locomotion gate still rejects the
+Bear (c6031, loco=0) and the Rat (c4080, loco=3) at quadruped-unsafe slots
+while passing a non-fragile humanoid (Banished Knight); Horned Shaman, Land
+Squirt, and the Kaiden→Black-Knight pairing still place; the global
+zero-drawable-dead-think guarantee holds; all modules import cleanly with no
+dangling references to removed symbols.
+
+REMAINING anim_class mentions are intentional: removal tombstones ("REMOVED
+in vX because Y") in the code, and accurate dated history in CHANGELOG.md.
+Both tell a future reader the field existed and was removed — the opposite
+of the phantom-reference confusion this change eliminates.
+
+Also removed: _build_anim_class_fallback_pool — unreferenced dead code (a
+size-drift pool helper with no call sites; its anim_class filter was already
+stripped in v0.24.100). Reconstruct from git history if ever needed.
+## v0.27.27
+
+c4442 Giant Rotten Land Squirt — capped at 4 (rare-novelty).
+
+Follow-up to the v0.27.26 fix. Once un-benched, c4442 placed ~11 times per
+seed (measured across grunt slots) — it competes as a normal grunt at the
+tier-wide cap=40. That is too frequent for a creature FromSoft never spawns
+in vanilla NR (it exists only in the post_dlc_dump regulation data; the
+rando is its sole source). Per Alaric, capped at 4 so it's a rare surprise
+rather than wallpaper.
+
+Implementation: a new _RARE_NOVELTY_CAPS override applied AFTER the
+load-time grunt cap=40 sweep (which would otherwise clobber it back to 40).
+Currently { c4442: 4 }. Verified the cap sticks through load and that
+simulated placement drops from ~11.4/seed to ~2/seed, never exceeding 4.
+The slot is a clean grunt cap — the chr stays fully functional (v0.27.26
+think fix intact), just rarer. Other rare post_dlc_dump novelties can be
+added to the same dict if they prove similarly over-frequent.
+## v0.27.26
+
+c4442 Land Squirt fixed — think-param repointed to the Giant Land Squirt
+row. Promoted from the v0.27.23 bench (was thought unfixable).
+
+v0.27.23 benched c4442 as fully no-target: both its variants pointed at
+think 44420000, which is absent from the regulation, and without a reg dump
+there was no visible same-family think row to repoint to (the conclusion at
+the time was "needs a think row authored, out of scope").
+
+The full reg dump resolved it. c4442 is not a missing creature — it is the
+Giant Rotten Land Squirt, the rot variant of the Giant Land Squirt (c4441):
+  - identical HP (1429, vs the base Land Squirt's 366),
+  - same family / behaviorVariationId class (44420), with a complete 14-row
+    BehaviorParam set — the same count as base (44400) and Giant (44410),
+  - the named NpcParam row 44420040 is literally "Giant Rotten Land Squirt".
+Its only gap was the missing own think row. The Giant Land Squirt think
+44410000 (logicId=10000, battleGoalID=444100) is the correct same-size,
+same-family AI — so both c4442 roster variants were repointed 44420000 ->
+44410000 in nr_enemy_roster.json.
+
+Removed the v0.27.23 static avoid-list entries for c4442 (44420000 /
+44420010). With a valid think it now passes the v0.27.24 guard on its own;
+the guard's fully-no-target list drops from 31 to 30 c-prefixes and c4442
+places normally (verified: draws think 44410000, picked at a real m60 grunt
+slot). Confirmed 44410000 is present in data/valid_think_param_ids.json.
+
+Same fix pattern as the c5251 Horned Shaman (v0.27.22) — a roster think
+pointer corrected to an existing regulation row — just with the right
+target identifiable now that the full NpcThinkParam table is available.
+
+Regression: Horned Shaman, the Kaiden->Black-Knight pairing, and the
+global "zero drawable dead-think variants" guarantee all still hold.
+## v0.27.25
+
+All-SOTE mode reachable from the GUI + DCX pipeline — the v0.27.21 wiring
+only reached the CLI.
+
+THE BUG: a user reported "SOTE mode isn't working" (seed 505991, v0.27.23).
+The spoiler confirmed it — generic caps active, non-SOTE enemies (Margit,
+Crucible Knight, Banished Knight, Godrick, ...) placed throughout. SOTE mode
+was not on. Root cause: v0.27.21 added the engine sote_mode kwarg and the
+CLI --sote flag, but NOT the GUI toggle or the DCX-pipeline pass-through —
+and essentially every real run goes GUI -> rando_pipeline (DCX), not the raw
+CLI. So sote_mode was structurally unreachable for normal use: the same
+class of gap as the original "V3_SOTE_MODE hardcoded False," one layer up.
+
+FIX — wired sote_mode through every layer it was missing from:
+  - dcx_batch.rando_pipeline: added the sote_mode parameter and forwarded
+    it to cmd_shuffle_v3 (the DCX path previously dropped it).
+  - GUI: added self.sote_mode_var, an "All-SOTE mode" checkbox in the
+    Heritage tab's section (with tooltip + info icon spelling out the MMV +
+    heritage asset dependency and the caps/floors bypass), threaded it into
+    the generate_run config dict and into engine_kwargs.
+
+Verified end-to-end: with sote_mode=True, V3_SOTE_MODE is True for the
+duration of the run (SOTE set = 53) and restored to False afterward; the
+negative path (sote_mode=False) leaves it off. Confirmed sote_mode is now a
+parameter on both rando_pipeline and cmd_shuffle_v3.
+
+SELF-DIAGNOSING SPOILER: write_spoiler_logs now emits "All-SOTE mode: **ON**"
+in the header when the run used it (sourced from V3_SOTE_MODE at write time,
+mirroring the existing Multiplayer-safe line). The seed-505991 ambiguity —
+no way to tell from the spoiler whether SOTE mode was active — is closed:
+future SOTE runs say so on line 5, and its absence means it was off.
+
+NOTE: this is purely the reachability fix. The SOTE roster/placement logic
+itself (v0.27.21–24: the 53-chr set, the Kaiden->Black-Knight pairing, the
+think-param guard) was already correct and unchanged — it just couldn't be
+switched on outside the CLI.
+## v0.27.24
+
+Think-param validation guard — the durable, automatic backstop for the
+c5251 / v0.27.23 AI-inert failure class.
+
+THE STRUCTURAL HOLE: the engine writes a variant's roster think_param_id
+straight into the MSB Part at swap time with NO validation against the
+regulation. A variant pointing at a think id that doesn't exist in the
+regulation's NpcThinkParam spawns AI-inert (loads, may aggro, never runs
+battle logic). Both c5251 (v0.27.22) and the six chrs swept by hand in
+v0.27.23 shipped to players because nothing checked this at load time. The
+manual sweep fixed the known cases but couldn't catch the NEXT bad import.
+
+THE GUARD: load_data() now validates every roster think_param_id against
+data/valid_think_param_ids.json — the set of NpcThinkParam IDs present in
+the regulation (3005 ids, ~37KB), regenerable via
+dev/extract_think_param_ids.py from a regulation NpcThinkParam.csv dump.
+Any variant whose think id is absent is auto-added to
+V3_AVOID_VARIANT_NPC_IDS (keyed on npc_param_id — the same HARD filter
+_filter_avoid_npc already enforces on the pick path). The whole failure
+class becomes "the dead variant is silently skipped" instead of "the dead
+variant spawns inert in someone's game":
+  - a chr with SOME valid-think variants keeps them; the picker draws only
+    those.
+  - a chr whose variants are ALL dead-think fully no-targets (its slots
+    stay vanilla) — correct, better than an AI-inert placement.
+
+Properties: fail-open (a missing/malformed manifest skips the guard and
+falls back to the static v0.27.23 avoid-list entries); idempotent (a set
+union — repeated in-process load_data() calls converge); logged (reports
+the dead-variant count and which c-prefixes fully no-target).
+
+VERIFIED: the guard reproduces the v0.27.23 sweep automatically (all 12
+hand-found dead variant ids re-flagged) and catches 147 more across 41
+c-prefixes — almost all cinematic/system/already-excluded, so redundant
+there, but the net is now complete. A full-roster scan confirms ZERO
+drawable dead-think variants remain. Regression-checked: the Black Knight
+(c5840, 38 think-valid variants — none culled), the Kaiden->Black-Knight +
+Horse pairing, the Horned Shaman fix, and all 53 SOTE-roster chrs remain
+placeable. The only PLACEABLE chr the guard fully benches is c4442 Land
+Squirt — correct, it has no valid think row anywhere (confirmed v0.27.23).
+
+This supersedes the need to hand-maintain the v0.27.23 dead-variant block,
+though those static entries are kept as the fail-open safety net. Future
+heritage imports with an unauthored think row are now caught on the next
+run with no manual sweep. Regenerate the manifest whenever the regulation's
+NpcThinkParam table changes.
+## v0.27.23
+
+Roster-wide dead-think-param sweep (follow-up to the c5251 fix) — 6
+placeable chrs found with think ids absent from the regulation; broken
+variants avoid-listed.
+
+Swept every roster think_param_id against the shipped regulation's
+NpcThinkParam (the c5251 signature: the engine writes the roster think id
+into the MSB with no runtime validation, so a think id absent from the
+regulation = AI-inert when placed). 40 raw hits; after filtering out
+cinematic/system/excluded/non-combat prefixes, 6 placeable chrs remained:
+
+  c4442 Land Squirt   — BOTH variants dead (think 44420000 absent)
+  c4071 White Wolf    — base variant dead (40710000)
+  c4181 Maris' Jellyfish — 2 of 5 variants dead (41810000)
+  c4911 Great Wyrm Theodorix — base dead (49110000)
+  c5512 Shade         — 2 scaled variants dead (55120098 / 55120198)
+  c5890 Black Knight Horse — 4 variants dead (58900001/090/093/190)
+
+These differ from c5251 in a way that rules out the same fix: c5251 had a
+correctly-authored "Horned Shaman (ADDED)" think row to repoint to, but the
+band around each id here holds only OTHER creatures' rows (c4071's band is
+"Rat", c4181's "Large Scarab", c4442's "Walking Mausoleum"). A repoint
+would graft the wrong AI; authoring a think row would mean inventing
+behavior data. So the broken variants are avoid-listed (V3_AVOID_VARIANT_NPC_IDS,
+the established handling) — the HARD _filter_avoid_npc routes the picker
+around them.
+
+Outcome per chr (verified): c4071 / c4181 / c4911 / c5512 / c5890 each keep
+their working variant(s) and now draw ONLY valid-think variants. c4442 has
+no working variant, so it fully no-targets (slot stays vanilla — correct;
+better than a brain-dead Land Squirt). The Kaiden->Black-Knight-Horse mount
+pairing was re-verified to always draw the working c5890 variant (58900000).
+
+NOT a code-path change — the engine still trusts the roster think id; this
+just removes the variants that point nowhere. A durable fix (engine-side
+validation of think_param_id against the loaded regulation at load_data,
+auto-avoid-listing any miss) is the better long-term guard but is out of
+scope here; noted for dev/OPEN_ISSUES. c4442 and the other dead base
+variants can be promoted to placeable if/when real NpcThinkParam rows are
+authored for them.
+## v0.27.22
+
+Horned Shaman (c5251) AI fix — roster think-param repointed to the
+authored rows.
+
+SYMPTOM: placed Horned Shamans spawned but stood inert (no AI). Reported
+after the v0.27.21 SOTE-roster pass added c5251.
+
+ROOT CAUSE: a data desync between the regulation and the roster. The
+heritage think-param pass DID author working Horned Shaman NpcThinkParam
+rows in the NR regulation — 52512000/52512010/52512020 "Horned Shaman
+(ADDED)" and 52512030 "Horned Shaman (NB)", all logicId=10000,
+battleGoalID=525020 — but nr_enemy_roster.json was never updated to point
+at them. All four c5251 variants still carried think_param_id=52510000, an
+ID that exists in NEITHER the NR regulation NOR vanilla ER. The engine
+writes the roster's think_param_id straight into the MSB Part at swap time
+(no runtime remap), so the Shaman got a dangling think reference: no
+logicId/battleGoalID resolved, AI never activated. The chr's NpcParam rows
+(body/stats, behaviorVariationId=52500 — shared with the working c5250
+Horned Warrior) were all present and correct; only the think pointer was
+dead. This is distinct from the c5190 Spider Scorpion SpEffect-gate class
+of failure — nothing was remapped wrong, a data file was simply left stale.
+
+FIX: repointed c5251's four roster think_param_ids to the authored rows
+(verified present in the shipped regulation):
+
+  npc 52510000  think 52510000 -> 52512000   Horned Shaman (ADDED)
+  npc 52510001  think 52510000 -> 52512010   Horned Shaman (ADDED)
+  npc 52510089  think 52510000 -> 52512020   Horned Shaman (ADDED)
+  npc 52510100  think 52510000 -> 52512030   Horned Shaman (NB)
+
+Verified against the regulation that every c5251 variant's npc_param_id AND
+think_param_id now resolve, and pick_variant_for_tier(c5251) emits a live
+think id. Only the think_param_id field on c5251 roster rows changed; the
+npc_param_id 52510000 row and its references (NpcParam.csv,
+npcparam_getsoul_overrides.csv, variant_prune_list.json) were left intact.
+
+FOLLOW-UP worth a roster-wide sweep: c5251 got the regulation half of the
+think pass but not the roster half, which means other v0.27.12-era heritage
+imports may have the same desync. dev/audit candidate: flag any roster
+think_param_id that is absent from the regulation's NpcThinkParam (the
+c5251 signature). Not done here — this fix is scoped to the reported chr.
+## v0.27.21
+
+All-SOTE mode wired up + roster completed.
+
+SOTE MODE IS NOW REACHABLE. V3_SOTE_MODE existed since v0.27.13 with the
+full pool-intersection machinery (V3_SOTE_PREFIXES, the rider/mount role
+restriction, the cap/floor bypass) but was hardcoded False with no way to
+turn it on — no CLI flag, no GUI toggle. Added the `--sote` shuffle flag,
+threaded a `sote_mode` kwarg through cmd_shuffle_v3 with save/restore in
+try/finally so the flag can't leak into a subsequent in-process run.
+
+  oops_v3.py shuffle <in> <out> --sote
+
+KAIDEN -> BLACK KNIGHT ON HORSE. The marquee SOTE-mode swap. Three data
+gaps were blocking it, none of which the v0.27.13 code comments had caught:
+
+  1. The Black Knight (c5840) and its Horse (c5890) were tagged
+     origin_game='DS3' in mmv_imports.json (the authoritative late-merge
+     layer overwrote the base SoTE tag), so they fell out of the SOTE set.
+  2. Neither carried a mount_role, so the rider/mount pools resolved to
+     {c4050}/{c4060} — Kaiden pairing with himself.
+  3. c5890 was caught by the blanket mount-component target ban, so it
+     could never be placed even as the intended partner.
+
+Fixes: c5840/c5890 get mount_role rider/mount + sote_eligible=true (see
+the data-model note below); the mount-component ban now EXEMPTS
+mount_role=='mount' chrs, since pick_target_cp's role intersection already
+confines them to mount-role slots only. Verified: all 24 vanilla Kaiden
+rider Parts resolve to c5840 and all 12 mount Parts to c5890 under --sote.
+
+SOTE ROSTER COMPLETED — 18 missing imports added. The er_heritage_port_v0_27_0
+round brought working chrs into the SoTE numeric block but never stamped
+their origin_game, so all-SOTE mode couldn't see them. Added sote_eligible
+to all 18: c5011 Golden Hippopotamus (Golden Wings), c5020 Putrescent
+Knight, c5060/c5061 Lamprey, c5110 Maris' Tendril, c5170 Furnace Golem,
+c5210 Divine Beast Dancing Lion, c5240 Shadowpot, c5241 Commoner, c5260
+Golem Smith, c5270/c5271 Jar Innards, c5360 Giant Beast Skeleton, c5661
+Shadow Militia, c5700/c5701 Demi-Human (SOTE), c5810 Demi-Human Swordmaster
+Onze, c5872 Imp (Large). None are in the nr_missing_chr_files broken set —
+all 18 confirmed placeable through the full picker at tier-appropriate m60
+slots. The SOTE set grows 35 -> 53.
+
+  NOTE on the still-excluded heritage imports: the v0.27.12 round also
+  brought c5190/c5192/c5193 Spider Scorpion + c5522/c5523 Stray +
+  c5750/c5751 Living Jar, but those remain in broken_runtime_chrs (Spider
+  Scorpion = the heritage-import SpEffect-ID gate mismatch; Stray/Living
+  Jar = no battle/logic luabnd). They are NOT added to SOTE mode — they'd
+  spawn and not attack. The SpEffect fix (regulation_fixes/
+  heritage_speffect_fix_npcparam.csv) is not in this build.
+
+DATA MODEL: SOTE-mode eligibility decoupled from provenance. V3_SOTE_PREFIXES
+is now the UNION of origin_game=='SoTE' (unchanged) and a new explicit
+sote_eligible==True flag. This keeps origin_game honest — the Black Knight
+stays 'DS3' (its real lineage) while still opting into SOTE mode, and the
+unstamped heritage imports opt in without a provenance claim. dev/
+tag_sote_origin.py and any provenance audit stay correct.
+## v0.27.20
+
+First-launch wizard now sees autodetected install paths. On a fresh
+machine where install_discovery would happily find NR, ER, and the me3
+launcher in seconds, the wizard was nonetheless opening with EMPTY install
+fields and telling the user it couldn't find their games. The bug:
+FirstLaunchWizard received the raw saved dict (always empty on first run)
+and never consulted install_discovery itself; autodetect only ran later
+during RandoGUI.__init__, far too late to affect what the wizard showed.
+
+Fix: extracted RandoGUI._apply_install_autodetect's body into a module-
+level _autodetect_paths(saved) helper, and call it BEFORE constructing
+the wizard so the wizard's initial_config is pre-populated. The user now
+sees their actual install paths in the wizard fields and just confirms,
+instead of being told to browse manually. RandoGUI's method delegates to
+the same helper — single implementation.
+
+Companion fix: find_steam_libraries() was returning the same library
+twice with different case (`c:\program files` from the registry,
+`C:\Program Files` from libraryfolders.vdf), since os.path.normpath
+doesn't case-fold on Windows. The dedupe now case-folds on win32. Doesn't
+affect discovery results, but the per-game probe was scanning every
+library twice.
+
+Regression guards: tests/test_wizard_autodetect.py pins the contract that
+the startup block must pre-populate the wizard's initial_config (a
+structural assertion plus behavioral tests of the helper itself). The
+v0.27.19 bug would now fail red instead of shipping silently.
+
+## v0.27.19
+
+Build-manifest fix — every run crashed on v0.27.18. dcx_batch's Step 1b
+(slot repositioning) imports relocate_one_msb from dev/apply_slot_repositions,
+but that module wasn't in the build manifest, so a fresh install died with
+ModuleNotFoundError at the start of every randomize. Added it (plus
+dev/chr_asset_resolver, a transitive dep of the already-shipped
+heritage_chr_import that had the same latent problem).
+
+Root-cause guard: added tests/test_release_manifest.py, which statically
+scans every shipped runtime file for imports of dev/ modules and fails if any
+isn't in INCLUDE_FROM_DEV. This closes the whole class of bug (it would have
+caught the pools_caps_panel gap in v0.27.17 and this one) so a manifest
+omission is now a red test, not a crash on the user's machine.
+
+## v0.27.18
+
+Seed defaults to random. The Seed field now starts BLANK instead of a fixed
+"42", and a blank seed auto-rolls a fresh random seed at run time. Previously
+a user who never touched the field got the same shuffle as everyone else who
+left the default — defeating the point of randomization. Now every run is
+unique unless the user pins a seed. The rolled seed is written back into the
+field and logged ("rolled a random seed: N — reuse this to reproduce or
+share"), so reproducibility/sharing is intact. Typing a seed still honors it
+verbatim (0 included), and non-numeric text is still hashed. A "(blank =
+random)" hint sits next to the field and the tooltip explains the behavior.
+Seed resolution was extracted into RandoGUI._resolve_seed (pure, unit-tested
+in tests/test_seed_resolution.py).
+
+## v0.27.17
+
+Visual polish pass (from an outside-eyes GUI review).
+
+- Active-tab indicator strengthened. Unselected tabs now sit recessed
+  (page-dark bg, faint text); the selected tab lifts to a lighter fill with
+  a BOLD amber label and extra raise. The current tab is unmistakable at a
+  glance — previously the selected/unselected contrast was too subtle.
+- Vertical spacing normalized. The two scrollable tabs (Generate, Heritage)
+  gained uniform inner padding (16/12/16/16), and the Paths + Spoiler tabs'
+  header/body margins were aligned to a consistent 16px left edge, so every
+  tab now shares one vertical rhythm instead of some feeling crowded and
+  others empty.
+- Empty states softened. The Spoiler Run-info + Swaps panels and the Import
+  Elden Ring output log now show brief guiding placeholders ("after a run,
+  swaps appear here…") instead of blank dark voids on a cold open.
+
+## v0.27.16
+
+Decompressed-overlay support + GUI polish.
+
+EMEVD OVERLAY GAP CLOSED. The patched_emevd/ overlay matcher
+(dcx_batch.emevd_decompress_dir) now accepts overlay files shipped as
+decompressed .emevd, not just compressed .emevd.dcx. A raw .emevd is the
+form the pipeline emits anyway, so it's copied straight through — no oodle
+needed for the overlay. This lets the project bundle patched_emevd/ as
+plain .emevd (git-friendly, smaller, no Windows-only recompress step) and
+still have all 111 boss-encounter-fix patches apply on the user's machine.
+Vanilla fall-through for non-overlay files is unchanged.
+
+GUI polish:
+- Import Elden Ring tab: header text synced to the renamed tab (was still
+  "Elden Ring Assets — import to me3").
+- "Replace everything with" (Oops! All) picker: filtered to combat enemies
+  only — skips cinematic/non_combat/mount_component tiers and hard-excluded
+  prefixes, matching the Pools & Caps membership list. Prevents the default
+  landing on junk like an excluded duplicate.
+
+## v0.27.15
+
+Bundled vanilla event — zero-config after unzip. The rando now ships
+vanilla_event/ (197 .emevd.dcx + eventflag/, ~924K) alongside the existing
+vanilla_msbs/, and the GUI defaults the Vanilla event/ field to it (saved or
+derived paths still win). Previously the in-pipeline EMEVD step required the
+user to point at their NR install's event/ dir, so a fresh unzip skipped it
+silently. With the bundle, the EMEVD step (boss-reward + healthbar-name
+patching, gated on emevd_vanilla_dir + emevd_out_dir) runs automatically once
+the me3 output profile is set — restoring the "unzip and it runs, no extra
+config" goal. The sparse patched_emevd/ overlay (when present as .emevd.dcx)
+layers on top of this bundle as before; the bundle is what makes the overlay
+reachable, since the pipeline iterates the vanilla file list.
+
+## v0.27.14
+
+Runtime tier overrides dumped to data. The v0.27.8 trash->grunt tier
+collapse was a load-time mutation applied on every run (load_data rewrote
+every tier=='trash' entry to 'grunt' in memory) but never persisted. The
+JSON still carried 'trash' for 49 nr_enemy_tags.json entries + 1 in
+mmv_imports.json (c6201 Scarab), so the source data didn't match what the
+engine actually used. dev/dump_runtime_tier_overrides.py bakes the collapse
+into both files (each collapsed entry stamped _tier_collapse_v0_27_8 with
+its pre-collapse value, matching the _tier_override_v0_26_x convention) and
+verifies via the engine that 0 'trash' tiers survive load_data afterward.
+The load_data loop is downgraded to a guard (expected to retag 0; warns if
+a future data edit reintroduces 'trash'). Regenerated downstream:
+npcparam_getsoul_overrides.csv (tier-floor keyed — the collapse shifted 475
+NpcParam rows from the trash floor to the grunt floor) and the
+load_data_lock fixture. Closes the "is tier from JSON or Python?" ambiguity
+for the last remaining runtime tier rewrite.
+
 ## v0.27.12
 
 Heritage registration — c5840 Black Knight enters the placement pool,

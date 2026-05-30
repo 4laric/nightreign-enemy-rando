@@ -347,38 +347,52 @@ def emevd_decompress_dir(in_dir, out_dir, oodle=None, overlay_dir=None):
     patches survive across rando re-rolls instead of being clobbered
     when the pipeline writes its healthbar-patched output back.
 
-    The overlay must contain .emevd.dcx files with the same names as
-    vanilla. Files in overlay_dir that don't have a vanilla counterpart
-    are ignored (the file list comes from in_dir). Files NOT in overlay
-    fall through to vanilla — overlay is sparse, not exhaustive."""
+    The overlay may contain EITHER pre-compressed .emevd.dcx files OR
+    already-decompressed .emevd files (same basename as vanilla, minus the
+    .dcx). A decompressed overlay file is the raw form this function emits
+    anyway, so it's copied straight through — no oodle needed for it. This
+    lets the project ship patched_emevd/ as plain .emevd (git-friendly,
+    smaller, no Windows-only recompress step) and still have the overlay
+    apply on the user's machine. Files in overlay_dir without a vanilla
+    counterpart are ignored (the file list comes from in_dir). Files NOT in
+    overlay fall through to vanilla — overlay is sparse, not exhaustive."""
+    import shutil
     from concurrent.futures import ThreadPoolExecutor
     os.makedirs(out_dir, exist_ok=True)
     if oodle is None: oodle = _Oodle.get()
     files = sorted(f for f in os.listdir(in_dir) if f.endswith('.emevd.dcx'))
     n_workers = _worker_count()
-    # v0.24.61: count how many files come from overlay vs vanilla for
-    # informative log line.
-    overlay_files = set()
+    # v0.24.61 / v0.27.x: map each vanilla .emevd.dcx -> overlay source, if
+    # any. The overlay file may be .emevd.dcx (compressed) or .emevd (raw).
+    # Value is (src_path, is_raw).
+    overlay_src = {}
     if overlay_dir and os.path.isdir(overlay_dir):
-        overlay_files = {f for f in os.listdir(overlay_dir)
-                         if f.endswith('.emevd.dcx') and f in set(files)}
-    if overlay_files:
+        present = set(os.listdir(overlay_dir))
+        for f in files:                      # f ends with .emevd.dcx
+            if f in present:                 # compressed overlay
+                overlay_src[f] = (os.path.join(overlay_dir, f), False)
+            elif f[:-4] in present:          # decompressed overlay (.emevd)
+                overlay_src[f] = (os.path.join(overlay_dir, f[:-4]), True)
+    if overlay_src:
         print(f"Decompressing {len(files)} .emevd.dcx files "
-              f"({len(overlay_files)} from overlay {overlay_dir}, "
-              f"{len(files) - len(overlay_files)} from vanilla; "
+              f"({len(overlay_src)} from overlay {overlay_dir}, "
+              f"{len(files) - len(overlay_src)} from vanilla; "
               f"workers={n_workers})...")
     else:
         print(f"Decompressing {len(files)} .emevd.dcx files (workers={n_workers})...")
     t0 = time.time()
 
     def _one(f):
-        # Pick source: overlay wins when both exist.
-        if f in overlay_files:
-            src = os.path.join(overlay_dir, f)
-        else:
-            src = os.path.join(in_dir, f)
-        dst = os.path.join(out_dir, f[:-4])  # strip .dcx
+        dst = os.path.join(out_dir, f[:-4])  # strip .dcx -> .emevd
         try:
+            if f in overlay_src:
+                src, is_raw = overlay_src[f]
+                if is_raw:
+                    # overlay file is already decompressed — copy as-is.
+                    shutil.copyfile(src, dst)
+                    return (f, None)
+            else:
+                src = os.path.join(in_dir, f)
             raw = DCX.decompress_file(src, oodle=oodle)
             with open(dst, 'wb') as fp:
                 fp.write(raw)
@@ -526,6 +540,7 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     force_include_targets=None,
                     chaos_mode=False,
                     mount_rider_swap=False,
+                    sote_mode=False,
                     oops_all_nb_target_cp=None,
                     oops_all_nb_marker_scope=None,
                     unique_cap_overrides=None,
@@ -776,6 +791,7 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                                 force_include_targets=force_include_targets,
                                 chaos_mode=chaos_mode,
                                 mount_rider_swap=mount_rider_swap,
+                                sote_mode=sote_mode,
                                 oops_all_nb_target_cp=oops_all_nb_target_cp,
                                 oops_all_nb_marker_scope=oops_all_nb_marker_scope,
                                 unique_cap_overrides=unique_cap_overrides,

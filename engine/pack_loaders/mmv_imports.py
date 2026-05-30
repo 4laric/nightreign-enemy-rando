@@ -50,6 +50,18 @@ consume each loader's stats rather than reaching into raw pack dicts.
 from typing import Any, Dict
 
 
+# Cross-engine guard constants — DEPRECATED, retained empty.
+# The DS1/BB origin auto-ban was deprecated to a no-op in
+# v0.25.0-patch3 and fully excised in v0.26.x (see the cross-engine
+# bullet in the module docstring). These two names are kept as empty
+# frozensets purely so the back-compat signature tests in
+# tests/test_pick_target.py (TestManusUnBanned) can still import them
+# and assert "deprecated == empty". They have NO live consumers; a
+# future cleanup pass can drop them along with those tests.
+MMV_INCOMPATIBLE_ORIGINS = frozenset()
+MMV_ORIGIN_ALLOWLIST_OVERRIDE = frozenset()
+
+
 def apply_mmv_imports(pack_data: Dict[str, Any], *,
                       tags: Dict[str, Any],
                       roster: Dict[str, Any]) -> Dict[str, Any]:
@@ -132,14 +144,34 @@ def apply_mmv_imports(pack_data: Dict[str, Any], *,
     blacklist_ctd = set(bl.get('ctd_unidentified', []))
     blacklist_dlc = set(bl.get('dlc_assets_missing_in_mmv', []))
     blacklist_ai = set(bl.get('ai_broken', []))
-    blacklist = blacklist_ctd | blacklist_dlc | blacklist_ai
+    # v0.27.41: phase_transition_broken — characterized phase-transition
+    # resume freezes (c8300 Dragonslayer Armor). Distinct from ai_broken:
+    # the AI works, the transition fires from outside the editable layers
+    # and the post-transition combat resume fails when relocated. See the
+    # _note_phase_transition_broken entry in mmv_imports.json.
+    blacklist_phase = set(bl.get('phase_transition_broken', []))
+    blacklist = (blacklist_ctd | blacklist_dlc | blacklist_ai
+                 | blacklist_phase)
 
     # ---- Mount-component guard (tier=='mount_component') ----
     # Order dependency: depends on blacklist (avoids double-counting
     # cps already excluded there).
+    #
+    # v0.27.21: a mount_role=='mount' chr is EXEMPT from this ban. The
+    # ban exists to keep a riderless mount (e.g. a bare horse) from being
+    # drawn into an arbitrary slot, where it would stand around with no
+    # rider. But a chr explicitly tagged mount_role=='mount' is a
+    # pairing partner: pick_target_cp's rider/mount role intersection
+    # restricts it to mount-role slots ONLY (a slot whose vanilla
+    # occupant was itself a mount). It can never land anywhere else, so
+    # the ban is both unnecessary and actively wrong for it — banning it
+    # leaves the paired rider's mount slot vanilla and breaks the pairing
+    # (the all-SOTE Kaiden->Black-Knight + horse->Black-Knight-Horse swap
+    # depends on c5890 being placeable at the Kaiden-horse mount slot).
     mount_component_bans = set()
     for cp, t in pack_tags.items():
         if (t.get('tier') == 'mount_component'
+                and t.get('mount_role') != 'mount'
                 and cp not in blacklist):
             mount_component_bans.add(cp)
 
@@ -155,6 +187,7 @@ def apply_mmv_imports(pack_data: Dict[str, Any], *,
             'ctd_unidentified': blacklist_ctd,
             'dlc_assets_missing_in_mmv': blacklist_dlc,
             'ai_broken': blacklist_ai,
+            'phase_transition_broken': blacklist_phase,
         },
         'mount_component_bans': mount_component_bans,
         # Phase 12: standardized exclude_target_adds — union of the
@@ -185,6 +218,7 @@ def _empty_stats(*, enabled: bool) -> Dict[str, Any]:
             'ctd_unidentified': set(),
             'dlc_assets_missing_in_mmv': set(),
             'ai_broken': set(),
+            'phase_transition_broken': set(),
         },
         'mount_component_bans': set(),
         'exclude_target_adds': set(),

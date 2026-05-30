@@ -313,6 +313,13 @@ def main():
     ap.add_argument('--source', help="Source chr/ folder (e.g., unpacked ER chr/).")
     ap.add_argument('--target', required=True,
                      help="Target chr/ folder (typically your me3 profile's chr/).")
+    ap.add_argument('--regulation',
+                     help="Path to NpcParam.csv (dumped from regulation.bin). When given, "
+                          "anim-carrier detection reads RetargetReferenceChrId authoritatively, "
+                          "catching cross-family retargets (c5701->c4100) and same-family ones "
+                          "(c5661->c5660) that the filename heuristic misses. STRONGLY recommended: "
+                          "without it the importer falls back to the c[:-1] family guess and can "
+                          "silently drop an anim source, T-posing the dependent in-game.")
     ap.add_argument('--prefixes', help="Comma-separated c-prefixes to copy (e.g., c5040,c5080).")
     ap.add_argument('--from-spoiler',
                      help="Auto-derive needed prefixes from this spoiler JSON (target c-prefixes "
@@ -377,11 +384,21 @@ def main():
         return 1
 
     # Anim-carrier expansion. A dependent chr (e.g. c5661 Shadow Militia)
-    # whose family has an anim carrier T-poses unless the carrier's
-    # anibnd-class files ship alongside it. Pull carriers into the copy
-    # set; if a carrier isn't in source, the import is incomplete.
+    # whose animations live in a separate carrier bundle (c5660) T-poses
+    # unless that carrier's anibnd-class files ship alongside it. With
+    # --regulation, carriers are read from RetargetReferenceChrId (catches
+    # cross-family retargets); without it, a filename-family heuristic is
+    # used (same-family only — can miss sources and T-pose the dependent).
     from chr_asset_resolver import build_carrier_map  # noqa: E402
-    carrier_map = build_carrier_map(args.source)
+    if args.regulation and os.path.isfile(args.regulation):
+        carrier_map = build_carrier_map(args.source, regulation_csv=args.regulation)
+        print(f"  anim-carrier detection: authoritative (RetargetReferenceChrId "
+              f"from {os.path.basename(args.regulation)})")
+    else:
+        carrier_map = build_carrier_map(args.source)
+        print("  ⚠ anim-carrier detection: filename-heuristic fallback "
+              "(no --regulation). Cross-family retargets may be missed; "
+              "pass --regulation NpcParam.csv to catch all anim sources.")
     carrier_adds = {}      # carrier prefix -> [dependents needing it]
     carrier_missing = {}   # dependent -> carrier prefix absent from source
     for cp in list(in_source):

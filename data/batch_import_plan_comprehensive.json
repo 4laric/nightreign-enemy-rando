@@ -4,376 +4,329 @@
     "name": "Mohg- the Omen",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 2592,
-    "anim_class": "misc"
+    "hp_max": 2592
   },
   {
     "c_prefix": "c4220",
     "name": "Giant Land Octopus",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 2327,
-    "anim_class": "quadruped"
+    "hp_max": 2327
   },
   {
     "c_prefix": "c5210",
     "name": "Divine Beast Dancing Lion",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 2240,
-    "anim_class": "large_boss_ground"
+    "hp_max": 2240
   },
   {
     "c_prefix": "c3800",
     "name": "Cleanrot Knight",
     "locomotion": 5,
     "status": "COMPLETE",
-    "hp_max": 1757,
-    "anim_class": "humanoid"
+    "hp_max": 1757
   },
   {
     "c_prefix": "c4420",
     "name": "Giant Crayfish",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 1567,
-    "anim_class": "aquatic"
+    "hp_max": 1567
   },
   {
     "c_prefix": "c5070",
     "name": "Death Knight",
     "locomotion": 5,
     "status": "COMPLETE",
-    "hp_max": 1536,
-    "anim_class": "humanoid"
+    "hp_max": 1536
   },
   {
     "c_prefix": "c5860",
     "name": "Ghostflame Dragon",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 1493,
-    "anim_class": "flying_dragon"
+    "hp_max": 1493
   },
   {
     "c_prefix": "c5320",
     "name": "Fat Inquisitor",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 1348,
-    "anim_class": "misc"
+    "hp_max": 1348
   },
   {
     "c_prefix": "c5081",
     "name": "Chief Bloodfiend",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 1094,
-    "anim_class": "misc"
+    "hp_max": 1094
   },
   {
     "c_prefix": "c4820",
     "name": "Omenkiller",
     "locomotion": 5,
     "status": "COMPLETE",
-    "hp_max": 986,
-    "anim_class": "humanoid"
+    "hp_max": 986
   },
   {
     "c_prefix": "c5160",
     "name": "Fire Knight",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 768,
-    "anim_class": "misc"
+    "hp_max": 768
   },
   {
     "c_prefix": "c3061",
     "name": "Giant Beast Skeleton",
     "locomotion": 5,
     "status": "COMPLETE",
-    "hp_max": 671,
-    "anim_class": "humanoid"
+    "hp_max": 671
   },
   {
     "c_prefix": "c3730",
     "name": "Graven School",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 593,
-    "anim_class": "misc"
+    "hp_max": 593
   },
   {
     "c_prefix": "c3330",
     "name": "Giant Silver Tear (Unscaled)",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 552,
-    "anim_class": "quadruped_large"
+    "hp_max": 552
   },
   {
     "c_prefix": "c4210",
     "name": "Warhawk",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 302,
-    "anim_class": "quadruped_large"
+    "hp_max": 302
   },
   {
     "c_prefix": "c3510",
     "name": "Skeleton (Sword and Shield)",
     "locomotion": 5,
     "status": "COMPLETE",
-    "hp_max": 281,
-    "anim_class": "humanoid"
+    "hp_max": 281
   },
   {
     "c_prefix": "c3750",
     "name": "Clayman - Spear",
     "locomotion": 5,
     "status": "COMPLETE",
-    "hp_max": 262,
-    "anim_class": "humanoid"
+    "hp_max": 262
   },
   {
     "c_prefix": "c3070",
     "name": "Dominula Celebrant",
     "locomotion": 5,
     "status": "COMPLETE",
-    "hp_max": 233,
-    "anim_class": "humanoid"
+    "hp_max": 233
   },
   {
     "c_prefix": "c5830",
     "name": "Messmer Soldier",
     "locomotion": 5,
     "status": "COMPLETE",
-    "hp_max": 192,
-    "anim_class": "humanoid"
+    "hp_max": 192
   },
   {
     "c_prefix": "c5900",
     "name": "Man-Fly",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 192,
-    "anim_class": "aquatic"
+    "hp_max": 192
   },
   {
     "c_prefix": "c3860",
     "name": "Avionette",
     "locomotion": 5,
     "status": "COMPLETE",
-    "hp_max": 173,
-    "anim_class": "humanoid"
+    "hp_max": 173
   },
   {
     "c_prefix": "c5240",
-    "name": "Commoner (Pot)",
+    "name": "Shadowpot",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 163,
-    "anim_class": "misc"
+    "hp_max": 163
   },
   {
     "c_prefix": "c4385",
     "name": "Disciple of Rot",
     "locomotion": 5,
     "status": "COMPLETE",
-    "hp_max": 162,
-    "anim_class": "humanoid"
+    "hp_max": 162
   },
   {
     "c_prefix": "c5090",
     "name": "Gravebird",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 143,
-    "anim_class": "quadruped"
+    "hp_max": 143
   },
   {
     "c_prefix": "c5870",
     "name": "Imp (Lion Head)",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 115,
-    "anim_class": "misc"
+    "hp_max": 115
   },
   {
     "c_prefix": "c6060",
     "name": "Goat",
     "locomotion": 0,
     "status": "COMPLETE",
-    "hp_max": 82,
-    "anim_class": "aquatic"
+    "hp_max": 82
   },
   {
     "c_prefix": "c5010",
     "name": "Golden Hippopotamus",
     "locomotion": 0,
     "status": "PARTIAL_ATK",
-    "hp_max": 2957,
-    "anim_class": "misc"
+    "hp_max": 2957
   },
   {
     "c_prefix": "c5820",
     "name": "Great Red Bear",
     "locomotion": 0,
     "status": "PARTIAL_ATK",
-    "hp_max": 2240,
-    "anim_class": "misc"
+    "hp_max": 2240
   },
   {
     "c_prefix": "c5040",
     "name": "Curseblade",
     "locomotion": 0,
     "status": "PARTIAL_ATK",
-    "hp_max": 2048,
-    "anim_class": "misc"
+    "hp_max": 2048
   },
   {
     "c_prefix": "c5250",
     "name": "Horned Warrior",
     "locomotion": 0,
     "status": "ASSETS_PENDING",
-    "hp_max": 1190,
-    "anim_class": "misc"
+    "hp_max": 1190
   },
   {
     "c_prefix": "c4341",
     "name": "Thin Mad Pumpkin Head",
     "locomotion": 0,
     "status": "PARTIAL_ATK",
-    "hp_max": 582,
-    "anim_class": "misc"
+    "hp_max": 582
   },
   {
     "c_prefix": "c5080",
     "name": "Bloodfiend",
     "locomotion": 0,
     "status": "PARTIAL_ATK",
-    "hp_max": 550,
-    "anim_class": "misc"
+    "hp_max": 550
   },
   {
     "c_prefix": "c5241",
     "name": "Commoner",
     "locomotion": 0,
     "status": "PARTIAL_ATK",
-    "hp_max": 371,
-    "anim_class": "misc"
+    "hp_max": 371
   },
   {
     "c_prefix": "c5190",
     "name": "Spider Scorpion",
     "locomotion": 0,
     "status": "ASSETS_PENDING",
-    "hp_max": 168,
-    "anim_class": "misc"
+    "hp_max": 168
   },
   {
     "c_prefix": "c5312",
     "name": "Inquisitor (Staff)",
     "locomotion": 0,
     "status": "PARTIAL_BHV",
-    "hp_max": 1722,
-    "anim_class": "misc"
+    "hp_max": 1722
   },
   {
     "c_prefix": "c4603",
     "name": "Stonedigger Troll",
     "locomotion": 0,
     "status": "PARTIAL_BHV",
-    "hp_max": 1135,
-    "anim_class": "misc"
+    "hp_max": 1135
   },
   {
     "c_prefix": "c4561",
     "name": "Bloodbane Giant Crow",
     "locomotion": 0,
     "status": "PARTIAL_BHV",
-    "hp_max": 767,
-    "anim_class": "misc"
+    "hp_max": 767
   },
   {
     "c_prefix": "c5750",
     "name": "Living Jar Warrior",
     "locomotion": 0,
     "status": "ASSETS_PENDING",
-    "hp_max": 449,
-    "anim_class": "misc"
+    "hp_max": 449
   },
   {
     "c_prefix": "c5192",
     "name": "Spider Scorpion",
     "locomotion": 0,
     "status": "ASSETS_PENDING",
-    "hp_max": 422,
-    "anim_class": "misc"
+    "hp_max": 422
   },
   {
     "c_prefix": "c2272",
     "name": "Giant Black Crab",
     "locomotion": 0,
     "status": "PARTIAL_BHV",
-    "hp_max": 357,
-    "anim_class": "misc"
+    "hp_max": 357
   },
   {
     "c_prefix": "c5522",
     "name": "Stray",
     "locomotion": 0,
     "status": "ASSETS_PENDING",
-    "hp_max": 338,
-    "anim_class": "misc"
+    "hp_max": 338
   },
   {
     "c_prefix": "c5311",
     "name": "Inquisitor (Candles)",
     "locomotion": 0,
     "status": "PARTIAL_BHV",
-    "hp_max": 173,
-    "anim_class": "misc"
+    "hp_max": 173
   },
   {
     "c_prefix": "c5523",
     "name": "Stray",
     "locomotion": 0,
     "status": "ASSETS_PENDING",
-    "hp_max": 162,
-    "anim_class": "misc"
+    "hp_max": 162
   },
   {
     "c_prefix": "c5751",
     "name": "Living Jar",
     "locomotion": 0,
     "status": "ASSETS_PENDING",
-    "hp_max": 150,
-    "anim_class": "misc"
+    "hp_max": 150
   },
   {
     "c_prefix": "c5193",
     "name": "Spider Scorpion",
     "locomotion": 0,
     "status": "ASSETS_PENDING",
-    "hp_max": 58,
-    "anim_class": "misc"
+    "hp_max": 58
   },
   {
     "c_prefix": "c6031",
     "name": "Bear",
     "locomotion": 0,
     "status": "PARTIAL_THINK",
-    "hp_max": 681,
-    "anim_class": "misc"
+    "hp_max": 681
   },
   {
     "c_prefix": "c2040",
     "name": "Juvenile Scholar",
     "locomotion": 0,
     "status": "PARTIAL_THINK",
-    "hp_max": 85,
-    "anim_class": "misc"
+    "hp_max": 85
   },
   {
     "c_prefix": "c5020",
@@ -381,7 +334,6 @@
     "locomotion": 0,
     "status": "PENDING",
     "hp_max": 1700,
-    "anim_class": "humanoid",
     "_notes": "SotE remembrance boss. Spectral horse is part of c5020's chr (no separate c-prefix). Pattern resembles Nameless King + Storm King but combined into one chr \u2014 simpler import."
   },
   {
@@ -389,15 +341,97 @@
     "name": "Black Knight",
     "locomotion": 0,
     "status": "ASSETS_PENDING",
-    "hp_max": 1212,
-    "anim_class": "humanoid"
+    "hp_max": 1212
   },
   {
     "c_prefix": "c5260",
     "name": "Golem Smith",
     "locomotion": 0,
     "status": "ASSETS_PENDING",
-    "hp_max": 778,
-    "anim_class": "humanoid"
+    "hp_max": 778
+  },
+  {
+    "c_prefix": "c5450",
+    "name": "Ram",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 82
+  },
+  {
+    "c_prefix": "c5500",
+    "name": "Living Magma",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 111
+  },
+  {
+    "c_prefix": "c5511",
+    "name": "Shade",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 376
+  },
+  {
+    "c_prefix": "c5512",
+    "name": "Shade",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 626
+  },
+  {
+    "c_prefix": "c5513",
+    "name": "Cemetery Shade",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 305
+  },
+  {
+    "c_prefix": "c5600",
+    "name": "Catacomb Skeleton",
+    "locomotion": 5,
+    "status": "ASSETS_PENDING",
+    "hp_max": 281
+  },
+  {
+    "c_prefix": "c5651",
+    "name": "Messmer Foot Soldier",
+    "locomotion": 5,
+    "status": "ASSETS_PENDING",
+    "hp_max": 147
+  },
+  {
+    "c_prefix": "c5890",
+    "name": "Black Knight Horse",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 448
+  },
+  {
+    "c_prefix": "c5060",
+    "name": "Lamprey",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 159
+  },
+  {
+    "c_prefix": "c5061",
+    "name": "Lamprey (Large)",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 210
+  },
+  {
+    "c_prefix": "c5270",
+    "name": "Jar Innards",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 397
+  },
+  {
+    "c_prefix": "c5271",
+    "name": "Jar Innards (Large)",
+    "locomotion": 0,
+    "status": "ASSETS_PENDING",
+    "hp_max": 666
   }
 ]

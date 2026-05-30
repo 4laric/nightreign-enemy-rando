@@ -1,447 +1,429 @@
 {
- "_meta": {
-  "schema_version": "v2",
-  "description": "C-prefixes that should NOT be picked as randomizer targets. Each entry has a distinct failure mode in-game when picked.",
-  "categories": {
-   "missing_chrs": "Chrs whose .chrbnd files are absent from NR's installed assets AND from every From game install the asset-import tool can find. NPCParam entries exist in NR's regulation data dump (so they appear in the roster with _source=post_dlc_dump), but no actual chr files exist anywhere. Placing them yields an invisible enemy / missing boss.",
-   "broken_runtime_chrs": "Chrs that may or may not have valid files but show (or are predicted to show) in-game freeze, invisible, or other broken-runtime symptoms. Reasons vary: _cluster_only chrs placed standalone (Oracle Envoy class), post_dlc_dump chrs with zero runtime characterization (no anim_class/locomotion/size_class), or specific playtest-confirmed failures."
+  "_meta": {
+    "schema_version": "v2",
+    "description": "C-prefixes that should NOT be picked as randomizer targets. Each entry has a distinct failure mode in-game when picked.",
+    "categories": {
+      "missing_chrs": "Chrs whose .chrbnd files are absent from NR's installed assets AND from every From game install the asset-import tool can find. NPCParam entries exist in NR's regulation data dump (so they appear in the roster with _source=post_dlc_dump), but no actual chr files exist anywhere. Placing them yields an invisible enemy / missing boss.",
+      "broken_runtime_chrs": "Chrs that may or may not have valid files but show (or are predicted to show) in-game freeze, invisible, or other broken-runtime symptoms. Reasons vary: _cluster_only chrs placed standalone (Oracle Envoy class), post_dlc_dump chrs with zero runtime characterization (no locomotion/size_class), or specific playtest-confirmed failures."
+    },
+    "rationale": "These chrs cannot reliably function as targets. Hard-excluded from being picked. The MP-safe blocklist already covers most when MP-safe is ON; this additional hard-exclude blocks them ALWAYS.",
+    "discovery_method": {
+      "missing_chrs": "The chr-asset-import tool ('Missing: N; in source: 0; not in source: N') flags these.",
+      "broken_runtime_chrs": "Two paths: (a) user playtest reports of frozen / invisible enemies → entry tagged with observed_seed + observed_version; (b) PROACTIVE bans of chrs sharing a known-broken profile (e.g. post_dlc_dump with locomotion/size_class all None) → entry tagged with proactive_ban=true."
+    },
+    "user_visible_bug_examples": [
+      "Seed 271328 (v0.24.33, MP-safe off): c7930 'Demon in Pain' placed at m46_82 pi=1 (castle_interior boss anchor) — no chr file → 'no health bar, no guy there' missing-boss report.",
+      "Seed 798229 (v0.24.37, MP-safe off): small Oracle Envoy (c3610) placed at m45_01 pi=4 / m43_41 pi=7 in starting encampments — _cluster_only chr placed standalone → 'floating frozen'. Same seed: c3360 Ancestral Follower at m45_01 pi=1 OR c4430 Abnormal Stone Cluster at m45_01 pi=3 → invisible enemy report (both had locomotion/size_class all None — no runtime characterization)."
+    ],
+    "since_version": "v0.24.36 (initially hard-coded missing_chrs); v0.24.37 (migrated to data file, schema v1); v0.24.39 (schema v2: broken_runtime_chrs category with c3610/c3360/c4430 from playtest reports); v0.24.40 (proactive ban: all 26 remaining real-name post_dlc_dump/mmv_import chrs with no locomotion/size_class data, matching the c3360/c4430 broken-runtime profile); v0.24.41 (UN-BANNED c2274 Giant Sleep Crab — confirmed working in playtest. The 3 regular-size crab siblings c2273/c2275/c2277 remain banned as low-value 'set dressing' per Alaric — kept for the safety net even though they likely render fine); v0.24.44 (added c7800 Duke's Dear Freja to missing_chrs — chr-asset-import tool flagged it as missing, no chrbnd in any source install); v0.24.49 (c5930 Giant Skeleton + c6220 Fire Demon added to broken_runtime_chrs — partial-tag profile escaped v0.24.40 all-three-None sweep; user playtest seed 460401 reported invisible enemy in central-south area, these are the two most likely culprits).; v0.24.65: LIFTED entire broken_runtime_chrs (30 entries) after user playtest confirmed MMV SFX + material deploy makes the full MMV roster work (proof case: Romina). The 30 lifted entries are preserved at _meta.history.broken_runtime_chrs_lifted_v0_24_65 for reference. Cap=1 applied to all lifted chrs via auto-cap in oops_v3 load_data (safety net: if any are still broken, cap limits to at most 1 placement per seed).; v0.25.0 (4 entries added to broken_runtime_chrs: c3471 Large Albinauric (Ruins) + c4281 Giant Ant (Skull Plate) — phantom-shaped post_dlc_dump variants with vanilla map placements but no per-chr script visible in script/nr/script/er/script/mmv archives; c5192 + c5193 Spider Scorpion variants — heritage imports already in IMPORT_PLAN parent-share to c5190 but cap=1 added as belt-and-suspenders pending playtest confirmation. All 4 are user-reported runtime breakage from v0.24.x playtest. Lift to placeable via _meta.history if playtest confirms working).; v0.25.0 audit pass: 8 more entries added to broken_runtime_chrs (c2272 Giant Black Crab, c3061 Giant Beast Skeleton, c4561 Bloodbane Giant Crow, c5522 + c5523 Stray, c5750 Living Jar Warrior, c5751 Living Jar, c6031 Bear). These are heritage-imported chrs that were not in import_heritage_ai_scripts.IMPORT_PLAN AND have no per-chr battle/logic luabnd in any of the ER, NR, or MMV script archives. Distinct from Category A of the same audit (c2040 Juvenile Scholar, c3510 Skeleton SwordShield, c3860 Avionette, c4220 Giant Land Octopus, c4341 Thin Mad Pumpkin Head) which had ER scripts and were added to IMPORT_PLAN instead. proactive_ban=True since no playtest incident yet — surfaced by the v0.25.0 roster audit during the investigation that resolved the c3471/c4281/c5192/c5193 cap-1 entries. v0.26.x (REMOVED c7800 Duke's Dear Freja from missing_chrs -- Alaric playtest review confirmed it works; the v0.24.44 asset-import-tool 'no chrbnd' flag was a false positive. c7800 is _source=script_spawn so it stays target-only via the script_spawn filter.) v0.27.0 (LIFTED c5192 + c5193 Spider Scorpion variants from broken_runtime_chrs — the cp[1:5] script-key bug that blocked their c5190 parent-share was fixed; 519000_battle.luabnd now imports. Entries preserved at _meta.history.broken_runtime_chrs_lifted_v0_27_0. Static verification only — playtest still pending.) v0.27.0-late (Spider Scorpion family RE-BANNED in full — c5190 base added to broken_runtime_chrs alongside c5192/c5193. The v0.27.0 lift of c5192/c5193 was reverted: a playtest showed c5190 itself does not attack despite always having had 519000_battle.luabnd, proving the Spider Scorpion failure is not the missing-script bug. Root cause still unknown.) v0.27.x (Spider Scorpion ROOT CAUSE IDENTIFIED — the 'unknown' above is resolved. The failure is a heritage-import SpEffect-ID gate mismatch: the MMV importer faithfully copies SpEffect *contents* but remaps their IDs from ER's literal range into NR-range 60000-69999, including on NpcParam spEffectID* slots that carry a chr's variant-discriminator tags. 519000_battle.lua selects attacks in Goal.Activate by populating a probabilities table gated behind ai:HasSpecialEffectId(TARGET_SELF, <literal id>) checks. With the tag remapped (e.g. 20011000 -> 61400) the chr no longer carries the literal the script asks for, every gate fails, probabilities stays empty, and the scorpion spawns/aggros but never attacks. Not the missing-script bug, not the AI logic — a literal-magic-number-vs-remapped-slot seam, invisible to per-layer diffs because each layer is internally correct. A roster-wide sweep (c5190-validated, per-row/per-slot vanilla-vs-mod mismatch detection) found the SAME class on 11 heritage chrs: c5190 / c5192 / c5193 (Spider Scorpion family, total failure — closed gate chain, no positional fallback) plus c5040 Curseblade, c5080 Bloodfiend, c5081 Chief Bloodfiend, c5090 Gravebird, c5160 Fire Knight, c5250 Horned Warrior, c5311 Inquisitor (Candle), c5312 Inquisitor (Staff) — these 8 DEGRADED rather than total (a positional/distance fallback keeps them fighting while they silently lose gated moves), which is why they shipped unflagged. Fix: revert the script-gated spEffectID* slots from their 60000-69999 remap back to the literal IDs the Lua references — see regulation_fixes/heritage_speffect_fix_npcparam.csv (93 NpcParam rows across all 11 chrs; apply to the OUTPUT regulation after randomizing, since the rando regenerates regulation each run). Two permanent fixes pending (dev/TODO.md): (1) bake the reverts into the MMV import data source so every run applies them automatically; (2) add an importer guard so SpEffect IDs a heritage chr's battle/logic Lua references by literal import as-is and are never remapped. Detection tool: dev/audit_speffect_id_gate_mismatch.py.)",
+    "history": {
+      "broken_runtime_chrs_lifted_v0_24_65": {
+        "lift_rationale": "User playtest seed (post-v0.24.64) confirmed that the deploy formula (chr files + per-chr battle/logic scripts + bundled aicommon + MMV sfx/ dir + MMV material/ dir) restores cross-game and proactive-banned chrs to working state. Specific datapoint: Romina (Saint of the Bud, SoTE final boss) functions correctly after the full deploy. User directive: \"the ENTIRE MMV roster is back on the table. lift it dude\". The 30 lifted entries comprise 3 playtest-confirmed bans (c3610, c3360, c4430), 25 proactive bans from v0.24.40 all-None-tag sweep, and 2 mmv_import bans (c5930, c6220) from v0.24.49. All are now eligible as targets again, capped at 1 placement each.",
+        "lifted_entries": [
+          {
+            "c_prefix": "c3610",
+            "name": "Oracle Envoy",
+            "_source": "nr_placed",
+            "symptom": "floating_frozen",
+            "reason": "_cluster_only chr placed at standalone slots — engine spawns the chr but AI/animation doesn't activate without the expected cluster handshake. The Large Oracle Envoy (c3620) has the same _cluster_only tag but no in-game freeze reports yet, so it remains placeable.",
+            "observed_seed": "798229",
+            "observed_version": "v0.24.37",
+            "proactive_ban": false
+          },
+          {
+            "c_prefix": "c3360",
+            "name": "Ancestral Follower",
+            "_source": "post_dlc_dump",
+            "symptom": "invisible",
+            "reason": "Roster has no locomotion/size_class. Engine has insufficient data to render. One of two candidates for the seed 798229 invisible-enemy report.",
+            "observed_seed": "798229",
+            "observed_version": "v0.24.37",
+            "proactive_ban": false
+          },
+          {
+            "c_prefix": "c4430",
+            "name": "Abnormal Stone Cluster",
+            "_source": "post_dlc_dump",
+            "symptom": "invisible",
+            "reason": "Roster has no locomotion/size_class. Name suggests this might be a static-object chr rather than a real enemy. One of two candidates for the seed 798229 invisible-enemy report.",
+            "observed_seed": "798229",
+            "observed_version": "v0.24.37",
+            "proactive_ban": false
+          },
+          {
+            "c_prefix": "c2273",
+            "name": "Crab (Maggots)",
+            "_source": "post_dlc_dump",
+            "symptom": "set_dressing_filler",
+            "reason": "No locomotion/size_class data, but seed 798229 placed it 21 times without freeze reports — likely renders fine via fallback to c2271-base behavior. Kept banned per Alaric: regular crab variants are 'set dressing', not interesting placements, and the safety net is more valuable than the diversity. c2274 (Giant Sleep Crab) was UN-BANNED in v0.24.41 — confirmed working in playtest and is a more interesting placement.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c2275",
+            "name": "Crab (Clean)",
+            "_source": "post_dlc_dump",
+            "symptom": "set_dressing_filler",
+            "reason": "Same rationale as c2273 — regular-size crab, 11 placements in seed 798229 without freeze reports, kept banned as 'set dressing'.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c2277",
+            "name": "Crab (Golden Tufts)",
+            "_source": "post_dlc_dump",
+            "symptom": "set_dressing_filler",
+            "reason": "Same rationale as c2273 — regular-size crab, 21 placements in seed 798229 without freeze reports, kept banned as 'set dressing'.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c3370",
+            "name": "Ancestral Follower Shaman",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Sibling of c3360 (Ancestral Follower) which was confirmed invisible in seed 798229.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4140",
+            "name": "Spiritcaller Snail (Great Church Boss)",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Boss-tier chr but no runtime characterization — would manifest as an invisible boss if placed.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4162",
+            "name": "Large Braided Dog",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Braided Dog family — c4162/c4163.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4163",
+            "name": "Braided Dog",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Sibling of c4162.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4167",
+            "name": "Mushroom Dog",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Same family pattern as c4162/c4163.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4190",
+            "name": "Large Scarab",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Scarab family — c4190/c4192.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4192",
+            "name": "Large Scarab (variant)",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Sibling of c4190.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4312",
+            "name": "Raya Lucaria Soldier",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. ER 'soldier from specific area' family that shares a chrbnd pattern likely missing in NR. Banning the cluster (c4312/c4316/c4356/c4376) together.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4316",
+            "name": "Haligtree Soldier",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. ER soldier family. Banned with c4312/c4356/c4376.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4356",
+            "name": "Haligtree Knight",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. ER Haligtree faction family.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4361",
+            "name": "Godrick Knight's Horse",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Mount type — would need its rider for proper spawn; standalone placement unlikely to work.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4376",
+            "name": "Haligtree Foot Soldier",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. ER soldier family.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4441",
+            "name": "Land Squirt (Boss)",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Caligo-Miasma-adjacent boss phase chr. Sibling of c4442.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4442",
+            "name": "Land Squirt Variant",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Sibling of c4441.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4482",
+            "name": "Giant Fading Miranda Sprout",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Miranda Sprout family — likely needs cluster setup like c4481 (which is _cluster_only).",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4483",
+            "name": "Fading Miranda Sprout",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Sibling of c4482.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4601",
+            "name": "Troll Knight",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c4811",
+            "name": "Erdtree Avatar Variant",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Variant of c4810 (Erdtree Avatar) which IS in nr_placed with proper tags.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c52309",
+            "name": "Priestess (Duchess Remembrance)",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Remembrance variant of the Duchess (Roundtable NPC c52104, which is already hard-excluded as a system template). These remembrance versions likely don't have proper enemy chr files at all.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c52312",
+            "name": "Witch of the Wheel (Recluse Remembrance)",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Same DLC Remembrance pattern as c52309.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c52313",
+            "name": "Executor (Remembrance)",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Same DLC Remembrance pattern as c52309.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c6001",
+            "name": "Eagle",
+            "_source": "post_dlc_dump",
+            "symptom": "predicted_invisible",
+            "reason": "No locomotion/size_class. Solo entry in the c60xx Eagle family.",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c5930",
+            "name": "Giant Skeleton",
+            "_source": "mmv_import",
+            "symptom": "predicted_invisible",
+            "reason": "Partial tag profile: size_class=XL is set but locomotion=None and size_class=None. Same broken-runtime profile as c3360 / c4430 (v0.24.39) and the 26 chrs banned in v0.24.40. Escaped the v0.24.40 sweep because that sweep required ALL THREE of locomotion/size_class to be None — c5930 has size_class set. v0.24.49: user playtest seed 460401 reported invisible enemy in central-south map area; c5930 has 2 placements in that seed (m49_28 pi=8 origin, m60_43_38_50 pi=38 at Y=161 elevated). Missing missing characterization will fail animation preload regardless of size. Adding to broken_runtime_chrs as the most likely culprit.",
+            "proactive_ban": true,
+            "observed_seed": 460401,
+            "observed_version": "v0.24.45"
+          },
+          {
+            "c_prefix": "c6220",
+            "name": "Fire Demon",
+            "_source": "mmv_import",
+            "symptom": "predicted_invisible",
+            "reason": "Same partial-tag profile as c5930. size_class=L set, locomotion=None, size_class=None. Escaped v0.24.40's all-three-None criterion. v0.24.49 paired ban: c5930 + c6220 are the two partial-tag mmv_import chrs that show up regularly in current seeds (c6220 has 6 placements in seed 460401 across m34/m46/m49/m60_44 maps). The 'invisible enemy' from user's playtest is most likely one of these.",
+            "proactive_ban": true,
+            "observed_seed": 460401,
+            "observed_version": "v0.24.45"
+          }
+        ]
+      },
+      "jar_proactive_ban_lifted_v0_27_33": {
+        "lifted": [
+          "c5750",
+          "c5751"
+        ],
+        "reason": "v0.27.33: lifted the v0.25.0 proactive_ban on c5750 Living Jar Warrior and c5751 Living Jar (small). The ban was proactive/unconfirmed — the reason field itself flagged it as 'pending a real-install audit confirming whether chrbnd exists or this is a true phantom'. User reports having fought the exploding small Living Jar (c5751) as a randomized enemy in an earlier build, which is direct evidence the assets are present and functional — the no_ai_brain symptom was never empirically observed for these two, only inferred from luabnd-archive absence. Same speculative-ban-later-vindicated pattern as c8300/c4720/c5840/c8500. Re-add to broken_runtime_chrs ONLY on a CONFIRMED in-game freeze/T-pose with a (seed, msb, pi) citation.",
+        "archived_entries": [
+          {
+            "c_prefix": "c5750",
+            "name": "Living Jar Warrior",
+            "_source": "post_dlc_dump",
+            "symptom": "no_ai_brain",
+            "reason": "Heritage chr (2 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
+            "observed_version": "v0.25.0",
+            "proactive_ban": true
+          },
+          {
+            "c_prefix": "c5751",
+            "name": "Living Jar",
+            "_source": "post_dlc_dump",
+            "symptom": "no_ai_brain",
+            "reason": "Heritage chr (10 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
+            "observed_version": "v0.25.0",
+            "proactive_ban": true
+          }
+        ]
+      }
+    },
+    "last_updated_version": "v0.27.x"
   },
-  "rationale": "These chrs cannot reliably function as targets. Hard-excluded from being picked. The MP-safe blocklist already covers most when MP-safe is ON; this additional hard-exclude blocks them ALWAYS.",
-  "discovery_method": {
-   "missing_chrs": "The chr-asset-import tool ('Missing: N; in source: 0; not in source: N') flags these.",
-   "broken_runtime_chrs": "Two paths: (a) user playtest reports of frozen / invisible enemies → entry tagged with observed_seed + observed_version; (b) PROACTIVE bans of chrs sharing a known-broken profile (e.g. post_dlc_dump with anim_class/locomotion/size_class all None) → entry tagged with proactive_ban=true."
-  },
-  "user_visible_bug_examples": [
-   "Seed 271328 (v0.24.33, MP-safe off): c7930 'Demon in Pain' placed at m46_82 pi=1 (castle_interior boss anchor) — no chr file → 'no health bar, no guy there' missing-boss report.",
-   "Seed 798229 (v0.24.37, MP-safe off): small Oracle Envoy (c3610) placed at m45_01 pi=4 / m43_41 pi=7 in starting encampments — _cluster_only chr placed standalone → 'floating frozen'. Same seed: c3360 Ancestral Follower at m45_01 pi=1 OR c4430 Abnormal Stone Cluster at m45_01 pi=3 → invisible enemy report (both had anim_class/locomotion/size_class all None — no runtime characterization)."
+  "missing_chrs": [
+    {
+      "c_prefix": "c4358",
+      "name": "Castle Knight Variant",
+      "tier": "grunt",
+      "_source": "post_dlc_dump"
+    },
+    {
+      "c_prefix": "c4801",
+      "name": "Lord of Blood Spear",
+      "tier": "miniboss",
+      "_source": "post_dlc_dump"
+    },
+    {
+      "c_prefix": "c7610",
+      "name": "Traitorous Straghess",
+      "tier": "field_boss",
+      "_source": "post_dlc_dump"
+    },
+    {
+      "c_prefix": "c7650",
+      "name": "Dreg Corpse",
+      "tier": "grunt",
+      "_source": "post_dlc_dump"
+    },
+    {
+      "c_prefix": "c7651",
+      "name": "Large Dreg Corpse",
+      "tier": "miniboss",
+      "_source": "post_dlc_dump"
+    },
+    {
+      "c_prefix": "c7660",
+      "name": "Dreg Wormface",
+      "tier": "field_boss",
+      "_source": "post_dlc_dump"
+    },
+    {
+      "c_prefix": "c7720",
+      "name": "Knight Artorias",
+      "tier": "night_boss",
+      "_source": "post_dlc_dump"
+    },
+    {
+      "c_prefix": "c7930",
+      "name": "Demon from Below",
+      "tier": "night_boss",
+      "_source": "post_dlc_dump"
+    }
   ],
-  "since_version": "v0.24.36 (initially hard-coded missing_chrs); v0.24.37 (migrated to data file, schema v1); v0.24.39 (schema v2: broken_runtime_chrs category with c3610/c3360/c4430 from playtest reports); v0.24.40 (proactive ban: all 26 remaining real-name post_dlc_dump/mmv_import chrs with no anim_class/locomotion/size_class data, matching the c3360/c4430 broken-runtime profile); v0.24.41 (UN-BANNED c2274 Giant Sleep Crab — confirmed working in playtest. The 3 regular-size crab siblings c2273/c2275/c2277 remain banned as low-value 'set dressing' per Alaric — kept for the safety net even though they likely render fine); v0.24.44 (added c7800 Duke's Dear Freja to missing_chrs — chr-asset-import tool flagged it as missing, no chrbnd in any source install); v0.24.49 (c5930 Giant Skeleton + c6220 Fire Demon added to broken_runtime_chrs — partial-tag profile escaped v0.24.40 all-three-None sweep; user playtest seed 460401 reported invisible enemy in central-south area, these are the two most likely culprits).; v0.24.65: LIFTED entire broken_runtime_chrs (30 entries) after user playtest confirmed MMV SFX + material deploy makes the full MMV roster work (proof case: Romina). The 30 lifted entries are preserved at _meta.history.broken_runtime_chrs_lifted_v0_24_65 for reference. Cap=1 applied to all lifted chrs via auto-cap in oops_v3 load_data (safety net: if any are still broken, cap limits to at most 1 placement per seed).; v0.25.0 (4 entries added to broken_runtime_chrs: c3471 Large Albinauric (Ruins) + c4281 Giant Ant (Skull Plate) — phantom-shaped post_dlc_dump variants with vanilla map placements but no per-chr script visible in script/nr/script/er/script/mmv archives; c5192 + c5193 Spider Scorpion variants — heritage imports already in IMPORT_PLAN parent-share to c5190 but cap=1 added as belt-and-suspenders pending playtest confirmation. All 4 are user-reported runtime breakage from v0.24.x playtest. Lift to placeable via _meta.history if playtest confirms working).; v0.25.0 audit pass: 8 more entries added to broken_runtime_chrs (c2272 Giant Black Crab, c3061 Giant Beast Skeleton, c4561 Bloodbane Giant Crow, c5522 + c5523 Stray, c5750 Living Jar Warrior, c5751 Living Jar, c6031 Bear). These are heritage-imported chrs that were not in import_heritage_ai_scripts.IMPORT_PLAN AND have no per-chr battle/logic luabnd in any of the ER, NR, or MMV script archives. Distinct from Category A of the same audit (c2040 Juvenile Scholar, c3510 Skeleton SwordShield, c3860 Avionette, c4220 Giant Land Octopus, c4341 Thin Mad Pumpkin Head) which had ER scripts and were added to IMPORT_PLAN instead. proactive_ban=True since no playtest incident yet — surfaced by the v0.25.0 roster audit during the investigation that resolved the c3471/c4281/c5192/c5193 cap-1 entries. v0.26.x (REMOVED c7800 Duke's Dear Freja from missing_chrs -- Alaric playtest review confirmed it works; the v0.24.44 asset-import-tool 'no chrbnd' flag was a false positive. c7800 is _source=script_spawn so it stays target-only via the script_spawn filter.) v0.27.0 (LIFTED c5192 + c5193 Spider Scorpion variants from broken_runtime_chrs — the cp[1:5] script-key bug that blocked their c5190 parent-share was fixed; 519000_battle.luabnd now imports. Entries preserved at _meta.history.broken_runtime_chrs_lifted_v0_27_0. Static verification only — playtest still pending.) v0.27.0-late (Spider Scorpion family RE-BANNED in full — c5190 base added to broken_runtime_chrs alongside c5192/c5193. The v0.27.0 lift of c5192/c5193 was reverted: a playtest showed c5190 itself does not attack despite always having had 519000_battle.luabnd, proving the Spider Scorpion failure is not the missing-script bug. Root cause still unknown.) v0.27.x (Spider Scorpion ROOT CAUSE IDENTIFIED — the 'unknown' above is resolved. The failure is a heritage-import SpEffect-ID gate mismatch: the MMV importer faithfully copies SpEffect *contents* but remaps their IDs from ER's literal range into NR-range 60000-69999, including on NpcParam spEffectID* slots that carry a chr's variant-discriminator tags. 519000_battle.lua selects attacks in Goal.Activate by populating a probabilities table gated behind ai:HasSpecialEffectId(TARGET_SELF, <literal id>) checks. With the tag remapped (e.g. 20011000 -> 61400) the chr no longer carries the literal the script asks for, every gate fails, probabilities stays empty, and the scorpion spawns/aggros but never attacks. Not the missing-script bug, not the AI logic — a literal-magic-number-vs-remapped-slot seam, invisible to per-layer diffs because each layer is internally correct. A roster-wide sweep (c5190-validated, per-row/per-slot vanilla-vs-mod mismatch detection) found the SAME class on 11 heritage chrs: c5190 / c5192 / c5193 (Spider Scorpion family, total failure — closed gate chain, no positional fallback) plus c5040 Curseblade, c5080 Bloodfiend, c5081 Chief Bloodfiend, c5090 Gravebird, c5160 Fire Knight, c5250 Horned Warrior, c5311 Inquisitor (Candle), c5312 Inquisitor (Staff) — these 8 DEGRADED rather than total (a positional/distance fallback keeps them fighting while they silently lose gated moves), which is why they shipped unflagged. Fix: revert the script-gated spEffectID* slots from their 60000-69999 remap back to the literal IDs the Lua references — see regulation_fixes/heritage_speffect_fix_npcparam.csv (93 NpcParam rows across all 11 chrs; apply to the OUTPUT regulation after randomizing, since the rando regenerates regulation each run). Two permanent fixes pending (dev/TODO.md): (1) bake the reverts into the MMV import data source so every run applies them automatically; (2) add an importer guard so SpEffect IDs a heritage chr's battle/logic Lua references by literal import as-is and are never remapped. Detection tool: dev/audit_speffect_id_gate_mismatch.py.)",
-  "history": {
-   "broken_runtime_chrs_lifted_v0_24_65": {
-    "lift_rationale": "User playtest seed (post-v0.24.64) confirmed that the deploy formula (chr files + per-chr battle/logic scripts + bundled aicommon + MMV sfx/ dir + MMV material/ dir) restores cross-game and proactive-banned chrs to working state. Specific datapoint: Romina (Saint of the Bud, SoTE final boss) functions correctly after the full deploy. User directive: \"the ENTIRE MMV roster is back on the table. lift it dude\". The 30 lifted entries comprise 3 playtest-confirmed bans (c3610, c3360, c4430), 25 proactive bans from v0.24.40 all-None-tag sweep, and 2 mmv_import bans (c5930, c6220) from v0.24.49. All are now eligible as targets again, capped at 1 placement each.",
-    "lifted_entries": [
-     {
-      "c_prefix": "c3610",
-      "name": "Oracle Envoy",
-      "_source": "nr_placed",
-      "symptom": "floating_frozen",
-      "reason": "_cluster_only chr placed at standalone slots — engine spawns the chr but AI/animation doesn't activate without the expected cluster handshake. The Large Oracle Envoy (c3620) has the same _cluster_only tag but no in-game freeze reports yet, so it remains placeable.",
-      "observed_seed": "798229",
-      "observed_version": "v0.24.37",
+  "broken_runtime_chrs": [
+    {
+      "c_prefix": "c3471",
+      "name": "Large Albinauric (Ruins)",
+      "_source": "post_dlc_dump",
+      "symptom": "no_ai_brain",
+      "reason": "12 NpcParam variants (several with vanilla NR map placements, e.g., m34_00_00_00). No per-chr battle/logic script bundle visible in any of script/nr, script/er, script/mmv. Distinct chr from c3470 Albinauric (which has scripts for 6 of 9 ER variants) — may parent-share c3470 at the chrbnd level or be a genuine NR phantom. User-reported runtime breakage motivates the cap=1 safety net.",
+      "observed_version": "v0.25.0",
       "proactive_ban": false
-     },
-     {
-      "c_prefix": "c3360",
-      "name": "Ancestral Follower",
+    },
+    {
+      "c_prefix": "c4281",
+      "name": "Giant Ant (Skull Plate)",
       "_source": "post_dlc_dump",
-      "symptom": "invisible",
-      "reason": "Roster has no anim_class/locomotion/size_class. Engine has insufficient data to render. One of two candidates for the seed 798229 invisible-enemy report.",
-      "observed_seed": "798229",
-      "observed_version": "v0.24.37",
-      "proactive_ban": false
-     },
-     {
-      "c_prefix": "c4430",
-      "name": "Abnormal Stone Cluster",
-      "_source": "post_dlc_dump",
-      "symptom": "invisible",
-      "reason": "Roster has no anim_class/locomotion/size_class. Name suggests this might be a static-object chr rather than a real enemy. One of two candidates for the seed 798229 invisible-enemy report.",
-      "observed_seed": "798229",
-      "observed_version": "v0.24.37",
-      "proactive_ban": false
-     },
-     {
-      "c_prefix": "c2273",
-      "name": "Crab (Maggots)",
-      "_source": "post_dlc_dump",
-      "symptom": "set_dressing_filler",
-      "reason": "No anim_class/locomotion/size_class data, but seed 798229 placed it 21 times without freeze reports — likely renders fine via fallback to c2271-base behavior. Kept banned per Alaric: regular crab variants are 'set dressing', not interesting placements, and the safety net is more valuable than the diversity. c2274 (Giant Sleep Crab) was UN-BANNED in v0.24.41 — confirmed working in playtest and is a more interesting placement.",
+      "symptom": "no_ai_brain",
+      "reason": "2 NpcParam variants; vanilla placement at m46_02_00_00 (Limveld). No per-chr battle script in any of script/nr, script/er, script/mmv. c4280 Giant Ant has a script — c4281 may parent-share, or may be a phantom. User-reported runtime breakage motivates the cap=1 safety net.",
+      "observed_version": "v0.25.0",
       "proactive_ban": true
-     },
-     {
-      "c_prefix": "c2275",
-      "name": "Crab (Clean)",
+    },
+    {
+      "c_prefix": "c2272",
+      "name": "Giant Black Crab",
       "_source": "post_dlc_dump",
-      "symptom": "set_dressing_filler",
-      "reason": "Same rationale as c2273 — regular-size crab, 11 placements in seed 798229 without freeze reports, kept banned as 'set dressing'.",
+      "symptom": "no_ai_brain",
+      "reason": "Heritage chr (2 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
+      "observed_version": "v0.25.0",
       "proactive_ban": true
-     },
-     {
-      "c_prefix": "c2277",
-      "name": "Crab (Golden Tufts)",
+    },
+    {
+      "c_prefix": "c3061",
+      "name": "Giant Beast Skeleton",
       "_source": "post_dlc_dump",
-      "symptom": "set_dressing_filler",
-      "reason": "Same rationale as c2273 — regular-size crab, 21 placements in seed 798229 without freeze reports, kept banned as 'set dressing'.",
+      "symptom": "no_ai_brain",
+      "reason": "Heritage chr (2 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
+      "observed_version": "v0.25.0",
       "proactive_ban": true
-     },
-     {
-      "c_prefix": "c3370",
-      "name": "Ancestral Follower Shaman",
+    },
+    {
+      "c_prefix": "c4561",
+      "name": "Bloodbane Giant Crow",
       "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Sibling of c3360 (Ancestral Follower) which was confirmed invisible in seed 798229.",
+      "symptom": "no_ai_brain",
+      "reason": "Heritage chr (2 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
+      "observed_version": "v0.25.0",
       "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4140",
-      "name": "Spiritcaller Snail (Great Church Boss)",
+    },
+    {
+      "c_prefix": "c5522",
+      "name": "Stray",
       "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Boss-tier chr but no runtime characterization — would manifest as an invisible boss if placed.",
+      "symptom": "no_ai_brain",
+      "reason": "Heritage chr (1 NpcParam variant, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
+      "observed_version": "v0.25.0",
       "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4162",
-      "name": "Large Braided Dog",
+    },
+    {
+      "c_prefix": "c5523",
+      "name": "Stray",
       "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Braided Dog family — c4162/c4163.",
+      "symptom": "no_ai_brain",
+      "reason": "Heritage chr (2 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
+      "observed_version": "v0.25.0",
       "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4163",
-      "name": "Braided Dog",
+    },
+    {
+      "c_prefix": "c6031",
+      "name": "Bear",
       "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Sibling of c4162.",
+      "symptom": "no_ai_brain",
+      "reason": "Heritage chr (1 NpcParam variant, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
+      "observed_version": "v0.25.0",
       "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4167",
-      "name": "Mushroom Dog",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Same family pattern as c4162/c4163.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4190",
-      "name": "Large Scarab",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Scarab family — c4190/c4192.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4192",
-      "name": "Large Scarab (variant)",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Sibling of c4190.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4312",
-      "name": "Raya Lucaria Soldier",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. ER 'soldier from specific area' family that shares a chrbnd pattern likely missing in NR. Banning the cluster (c4312/c4316/c4356/c4376) together.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4316",
-      "name": "Haligtree Soldier",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. ER soldier family. Banned with c4312/c4356/c4376.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4356",
-      "name": "Haligtree Knight",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. ER Haligtree faction family.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4361",
-      "name": "Godrick Knight's Horse",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Mount type — would need its rider for proper spawn; standalone placement unlikely to work.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4376",
-      "name": "Haligtree Foot Soldier",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. ER soldier family.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4441",
-      "name": "Land Squirt (Boss)",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Caligo-Miasma-adjacent boss phase chr. Sibling of c4442.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4442",
-      "name": "Land Squirt Variant",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Sibling of c4441.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4482",
-      "name": "Giant Fading Miranda Sprout",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Miranda Sprout family — likely needs cluster setup like c4481 (which is _cluster_only).",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4483",
-      "name": "Fading Miranda Sprout",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Sibling of c4482.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4601",
-      "name": "Troll Knight",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c4811",
-      "name": "Erdtree Avatar Variant",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Variant of c4810 (Erdtree Avatar) which IS in nr_placed with proper tags.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c52309",
-      "name": "Priestess (Duchess Remembrance)",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Remembrance variant of the Duchess (Roundtable NPC c52104, which is already hard-excluded as a system template). These remembrance versions likely don't have proper enemy chr files at all.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c52312",
-      "name": "Witch of the Wheel (Recluse Remembrance)",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Same DLC Remembrance pattern as c52309.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c52313",
-      "name": "Executor (Remembrance)",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Same DLC Remembrance pattern as c52309.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c6001",
-      "name": "Eagle",
-      "_source": "post_dlc_dump",
-      "symptom": "predicted_invisible",
-      "reason": "No anim_class/locomotion/size_class. Solo entry in the c60xx Eagle family.",
-      "proactive_ban": true
-     },
-     {
-      "c_prefix": "c5930",
-      "name": "Giant Skeleton",
-      "_source": "mmv_import",
-      "symptom": "predicted_invisible",
-      "reason": "Partial tag profile: size_class=XL is set but anim_class=None and locomotion=None. Same broken-runtime profile as c3360 / c4430 (v0.24.39) and the 26 chrs banned in v0.24.40. Escaped the v0.24.40 sweep because that sweep required ALL THREE of anim_class/locomotion/size_class to be None — c5930 has size_class set. v0.24.49: user playtest seed 460401 reported invisible enemy in central-south map area; c5930 has 2 placements in that seed (m49_28 pi=8 origin, m60_43_38_50 pi=38 at Y=161 elevated). Missing anim_class will fail animation preload regardless of size. Adding to broken_runtime_chrs as the most likely culprit.",
-      "proactive_ban": true,
-      "observed_seed": 460401,
-      "observed_version": "v0.24.45"
-     },
-     {
-      "c_prefix": "c6220",
-      "name": "Fire Demon",
-      "_source": "mmv_import",
-      "symptom": "predicted_invisible",
-      "reason": "Same partial-tag profile as c5930. size_class=L set, anim_class=None, locomotion=None. Escaped v0.24.40's all-three-None criterion. v0.24.49 paired ban: c5930 + c6220 are the two partial-tag mmv_import chrs that show up regularly in current seeds (c6220 has 6 placements in seed 460401 across m34/m46/m49/m60_44 maps). The 'invisible enemy' from user's playtest is most likely one of these.",
-      "proactive_ban": true,
-      "observed_seed": 460401,
-      "observed_version": "v0.24.45"
-     }
-    ]
-   }
-  },
-  "last_updated_version": "v0.27.x"
- },
- "missing_chrs": [
-  {
-   "c_prefix": "c4358",
-   "name": "Castle Knight Variant",
-   "tier": "grunt",
-   "_source": "post_dlc_dump"
-  },
-  {
-   "c_prefix": "c4801",
-   "name": "Lord of Blood Spear",
-   "tier": "miniboss",
-   "_source": "post_dlc_dump"
-  },
-  {
-   "c_prefix": "c7610",
-   "name": "Traitorous Straghess",
-   "tier": "field_boss",
-   "_source": "post_dlc_dump"
-  },
-  {
-   "c_prefix": "c7650",
-   "name": "Dreg Corpse",
-   "tier": "grunt",
-   "_source": "post_dlc_dump"
-  },
-  {
-   "c_prefix": "c7651",
-   "name": "Large Dreg Corpse",
-   "tier": "miniboss",
-   "_source": "post_dlc_dump"
-  },
-  {
-   "c_prefix": "c7660",
-   "name": "Dreg Wormface",
-   "tier": "field_boss",
-   "_source": "post_dlc_dump"
-  },
-  {
-   "c_prefix": "c7720",
-   "name": "Knight Artorias",
-   "tier": "night_boss",
-   "_source": "post_dlc_dump"
-  },
-  {
-   "c_prefix": "c7930",
-   "name": "Demon from Below",
-   "tier": "night_boss",
-   "_source": "post_dlc_dump"
-  }
- ],
- "broken_runtime_chrs": [
-  {
-   "c_prefix": "c3471",
-   "name": "Large Albinauric (Ruins)",
-   "_source": "post_dlc_dump",
-   "symptom": "no_ai_brain",
-   "reason": "12 NpcParam variants (several with vanilla NR map placements, e.g., m34_00_00_00). No per-chr battle/logic script bundle visible in any of script/nr, script/er, script/mmv. Distinct chr from c3470 Albinauric (which has scripts for 6 of 9 ER variants) — may parent-share c3470 at the chrbnd level or be a genuine NR phantom. User-reported runtime breakage motivates the cap=1 safety net.",
-   "observed_version": "v0.25.0",
-   "proactive_ban": false
-  },
-  {
-   "c_prefix": "c4281",
-   "name": "Giant Ant (Skull Plate)",
-   "_source": "post_dlc_dump",
-   "symptom": "no_ai_brain",
-   "reason": "2 NpcParam variants; vanilla placement at m46_02_00_00 (Limveld). No per-chr battle script in any of script/nr, script/er, script/mmv. c4280 Giant Ant has a script — c4281 may parent-share, or may be a phantom. User-reported runtime breakage motivates the cap=1 safety net.",
-   "observed_version": "v0.25.0",
-   "proactive_ban": true
-  },
-  {
-   "c_prefix": "c2272",
-   "name": "Giant Black Crab",
-   "_source": "post_dlc_dump",
-   "symptom": "no_ai_brain",
-   "reason": "Heritage chr (2 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
-   "observed_version": "v0.25.0",
-   "proactive_ban": true
-  },
-  {
-   "c_prefix": "c3061",
-   "name": "Giant Beast Skeleton",
-   "_source": "post_dlc_dump",
-   "symptom": "no_ai_brain",
-   "reason": "Heritage chr (2 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
-   "observed_version": "v0.25.0",
-   "proactive_ban": true
-  },
-  {
-   "c_prefix": "c4561",
-   "name": "Bloodbane Giant Crow",
-   "_source": "post_dlc_dump",
-   "symptom": "no_ai_brain",
-   "reason": "Heritage chr (2 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
-   "observed_version": "v0.25.0",
-   "proactive_ban": true
-  },
-  {
-   "c_prefix": "c5522",
-   "name": "Stray",
-   "_source": "post_dlc_dump",
-   "symptom": "no_ai_brain",
-   "reason": "Heritage chr (1 NpcParam variant, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
-   "observed_version": "v0.25.0",
-   "proactive_ban": true
-  },
-  {
-   "c_prefix": "c5523",
-   "name": "Stray",
-   "_source": "post_dlc_dump",
-   "symptom": "no_ai_brain",
-   "reason": "Heritage chr (2 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
-   "observed_version": "v0.25.0",
-   "proactive_ban": true
-  },
-  {
-   "c_prefix": "c5750",
-   "name": "Living Jar Warrior",
-   "_source": "post_dlc_dump",
-   "symptom": "no_ai_brain",
-   "reason": "Heritage chr (2 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
-   "observed_version": "v0.25.0",
-   "proactive_ban": true
-  },
-  {
-   "c_prefix": "c5751",
-   "name": "Living Jar",
-   "_source": "post_dlc_dump",
-   "symptom": "no_ai_brain",
-   "reason": "Heritage chr (10 NpcParam variants, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
-   "observed_version": "v0.25.0",
-   "proactive_ban": true
-  },
-  {
-   "c_prefix": "c6031",
-   "name": "Bear",
-   "_source": "post_dlc_dump",
-   "symptom": "no_ai_brain",
-   "reason": "Heritage chr (1 NpcParam variant, _heritage_imported=True) not in IMPORT_PLAN and no per-chr battle/logic luabnd in any of script/nr, script/er, or script/mmv archives. No path to import — different from Category A chrs (c2040/c3510/c3860/c4220/c4341) which have ER scripts and got added to IMPORT_PLAN. Cap=1 limits placement to one per seed pending a real-install audit confirming whether chrbnd exists or this is a true phantom.",
-   "observed_version": "v0.25.0",
-   "proactive_ban": true
-  },
-  {
-   "c_prefix": "c5192",
-   "name": "Spider Scorpion (variant)",
-   "_source": "post_dlc_dump",
-   "symptom": "no_attack_with_script_present",
-   "reason": "Spider Scorpion family. v0.27.0 playtest finding: c5190 (the base model) does NOT attack in-game EVEN WITH 519000_battle.luabnd confirmed present. c5190 never had the cp[1:5] script-key bug — its literal key '5190' always matched '519000' — so it has always shipped with its script, yet still fails to fight. Therefore the Spider Scorpion failure is NOT a missing-AI-script problem; the v0.27.0 cp[1:5] fix (which does correctly resolve c5192/c5193's parent-share) does not address it. Root cause unknown — candidate: anim_class=aquatic mis-tag, or a chr-asset / behbnd issue affecting the whole c519x family. Whole family banned (c5190 base + c5192/c5193 variants) pending a real root-cause investigation. User-confirmed via v0.27.0 playtest.",
-   "observed_version": "v0.27.0",
-   "proactive_ban": false
-  },
-  {
-   "c_prefix": "c5193",
-   "name": "Spider Scorpion (variant)",
-   "_source": "post_dlc_dump",
-   "symptom": "no_attack_with_script_present",
-   "reason": "Spider Scorpion family. v0.27.0 playtest finding: c5190 (the base model) does NOT attack in-game EVEN WITH 519000_battle.luabnd confirmed present. c5190 never had the cp[1:5] script-key bug — its literal key '5190' always matched '519000' — so it has always shipped with its script, yet still fails to fight. Therefore the Spider Scorpion failure is NOT a missing-AI-script problem; the v0.27.0 cp[1:5] fix (which does correctly resolve c5192/c5193's parent-share) does not address it. Root cause unknown — candidate: anim_class=aquatic mis-tag, or a chr-asset / behbnd issue affecting the whole c519x family. Whole family banned (c5190 base + c5192/c5193 variants) pending a real root-cause investigation. User-confirmed via v0.27.0 playtest.",
-   "observed_version": "v0.27.0",
-   "proactive_ban": false
-  },
-  {
-   "c_prefix": "c5190",
-   "name": "Spider Scorpion",
-   "_source": "manual_retier_v0.24.100",
-   "symptom": "no_attack_with_script_present",
-   "reason": "Spider Scorpion family. v0.27.0 playtest finding: c5190 (the base model) does NOT attack in-game EVEN WITH 519000_battle.luabnd confirmed present. c5190 never had the cp[1:5] script-key bug — its literal key '5190' always matched '519000' — so it has always shipped with its script, yet still fails to fight. Therefore the Spider Scorpion failure is NOT a missing-AI-script problem; the v0.27.0 cp[1:5] fix (which does correctly resolve c5192/c5193's parent-share) does not address it. Root cause unknown — candidate: anim_class=aquatic mis-tag, or a chr-asset / behbnd issue affecting the whole c519x family. Whole family banned (c5190 base + c5192/c5193 variants) pending a real root-cause investigation. User-confirmed via v0.27.0 playtest.",
-   "observed_version": "v0.27.0",
-   "proactive_ban": false
-  }
- ]
+    }
+  ]
 }

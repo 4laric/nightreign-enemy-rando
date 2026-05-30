@@ -35,6 +35,9 @@ def _load_inventory():
 def simulate(seed, inventory, roster, tags, pv, pc):
     """Run one MSB-free shuffle for `seed`. Returns a result dict."""
     rng = random.Random(seed)
+    o._V3_RUN_SEED = seed  # v0.28: propagate seed to the per-slot hashed rolls
+                           # (_field_slot_roll / _slot_decision_rng) so the
+                           # sim's hashed decisions match the engine's.
     run_ctx = o.RunContext.fresh()
 
     # --- reservation pre-pass (inventory-fed; no MSBs) ---
@@ -139,6 +142,7 @@ def simulate(seed, inventory, roster, tags, pv, pc):
         'n_reservations': len(run_ctx.unique_reservations),
         'placed_counts': dict(placed),
         'unique_placed_counts': dict(run_ctx.unique_placed_counts),
+        'swap_plan': swap_plan,  # v0.28: (msb, pi, target_cp) per slot
     }
 
 

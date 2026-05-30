@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.27.13'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.42'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -131,7 +131,9 @@ def _log_mmv_imports(stats):
               f"({len(bl_bd['ctd_unidentified'])} CTD + "
               f"{len(bl_bd['dlc_assets_missing_in_mmv'])} "
               f"DLC-asset-missing"
-              f" + {len(bl_bd['ai_broken'])} AI-broken)")
+              f" + {len(bl_bd['ai_broken'])} AI-broken"
+              f" + {len(bl_bd.get('phase_transition_broken', ()))} "
+              f"phase-transition-broken)")
 
 
 _PACK_LOADERS = [
@@ -143,7 +145,7 @@ _PACK_LOADERS = [
                _log_mmv_imports),
 ]
 
-# swap_compat — anim_class / boss-arena / drop-preservation rules.
+# swap_compat — boss-arena / drop-preservation rules.
 # Layered on top of the existing anim_bank+size+loco compat for finer-grained
 # rejection (Margit-into-Royal-Revenant, Dragonkin-into-Guardian-Golem, etc).
 # Optional — falls through to a no-op if the module or tag fields are missing.
@@ -399,7 +401,7 @@ V3_HUB_MAPS = {
 #                       regulation. Authored from ER convention. Empirical
 #                       anchor: c2160 Astel confirmed working in playtest.
 #                       Removable as a unit by deleting the JSON file.
-V3_TARGET_ONLY_SOURCES = frozenset({'script_spawn', 'er_heritage_v1'})
+V3_TARGET_ONLY_SOURCES = frozenset({'er_heritage_v1'})  # v0.27.x: dropped 'script_spawn' — no chr carries that _source after the v0.26.x reclassification to nr_placed (dead arm). NOTE: verify 'er_heritage_v1' still matches a live _source; static tags now use 'er_heritage_port_v0_27_0'.
 
 # C-prefixes to never use as a swap source (slot stays vanilla) or target.
 V3_EXCLUDE_PREFIXES = {
@@ -801,7 +803,7 @@ V3_EXCLUDE_SOURCE_NPC_PARAMS = {
     # NARROWED. The two Tree Sentinel boss-chr Parts at m48_50 (DTS) and
     # m48_60 (TS) are lifted from the exclude — empirical reframing from
     # user playtest: Tree Sentinel and Draconic Tree Sentinel are
-    # self-contained big quadrupeds (anim_class=quadruped_large, tier=
+    # self-contained big quadrupeds (fragile-locomotion (large), tier=
     # night_boss), taxonomically more like c5210 Divine Beast Dancing
     # Lion than like a true rider+horse pair. The "rider + mount"
     # framing in the original v0.19.13 / v0.23.50 comment block was
@@ -1155,6 +1157,34 @@ def _collapse_rider_mount_pairs(data, parts, midx_to_cp):
 # correctly when paired with a rider in a cluster — placed standalone, they
 # behave like inert objects with no combat AI.
 V3_EXCLUDE_TARGET_PREFIXES = {
+    'c4060',  # Kaiden's Horse — same mount-component failure mode as c3180 Albinauric Wolf; paired with c4050 Kaiden Sellsword
+    'c5090',
+    # v0.27.13: DLC SHADER GAP CLASS. Heritage chrs whose matbins'
+    # ShaderPath fields reference DLC-only `.spx` shaders not in NR's
+    # `shaderbdle.shaderbdlebnd.dcx`. Symptom: chr loads correctly but
+    # renders invisible (matbin's ShaderPath fails to resolve) or
+    # partially invisible (some matbins point at NR-resident shaders,
+    # some don't). Class-level doc: dev/DLC_SHADER_GAP_CLASS.md.
+    # NOTE: fix shape is *matbin ShaderPath rewrite*, NOT FLVER MTD
+    # rewrite as the class doc originally stated (FLVER→matbin
+    # resolves fine; matbin→.spx is the broken layer). PK precedent
+    # was the same shape; the class doc was inverted on this point.
+    #
+    # v0.27.14: matbin ShaderPath patches shipped for c5500 / c5511 /
+    # c5512 — un-excluded and rendering. c5513 also confirmed visually
+    # functional WITHOUT patches (FLVER parse showed 2 of its 7 matbins
+    # already reference NR-resident Glow[Int] shaders, and the other 5
+    # apparently bind acceptably too — never DLC-broken to begin with).
+    # Kept excluded anyway: c5513 Cemetery Shade is a near-duplicate of
+    # the existing vanilla NR Cemetery Shade — admitting it just splits
+    # the pool weight between two functionally identical chrs. Same
+    # "redundant archetype" rule as the v0.26.x c4910 Magma Wyrm cap
+    # removal. NOTE: c5513's textures (c5513_Body_em.dds emissive +
+    # full a/m/n set, c5513_Crab_em.dds, c5513_Fur a/m/n, c5513_Wepon
+    # a/m/n) look visually distinctive — candidate texture donor for
+    # the patched-but-plain c5511/c5512 Shades and possibly the
+    # lampreys. See dev/DLC_SHADER_GAP_CLASS.md "Texture donor opportunities".
+    'c5513',  # Cemetery Shade — visually fine but functionally duplicate of vanilla Cemetery Shade; pool kept clean
     # v0.27.2: playable-character (Nightfarer class) models. The c523xx
     # range scraped by post_dlc_dump includes three NR PLAYABLE class
     # models that were sitting in the target pool as tier='grunt'
@@ -1297,6 +1327,18 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # v0.26.x: c4500/c4505 moved here from V3_EXCLUDE_PREFIXES — they
     # were wrongly SOURCE-excluded. Target-excluded only now; vanilla
     # dragon slots stay source-eligible and still randomize.
+    #
+    # Ban rationale ("no sauce"): c4500 (Agheel-class base) and c4505
+    # (small variant) are flying dragons with no element or status —
+    # plain bite/tail/fire-breath movesets. Every dragon swap should
+    # land on something visually or mechanically interesting, so the
+    # bland variants are kept out of the target pool while the saucy
+    # ones stay in: c4501/c4502 Ekzykes (scarlet rot), c4503 Borealis
+    # (ice), c4510 Ancient (lightning), c5860 Ghostflame (death), c7700
+    # Gaping Dragon (bile). This SHRINKS the pool; the plan to also
+    # WIDEN it is the "ER dragon heritage imports" item in dev/TODO.md
+    # (Smarag, Adula, Glintstone Dragon — magic-element dragons). See
+    # that TODO before lifting these bans.
     'c4500',  # Flying Dragon (Agheel-class, "no sauce" base dragon)
     # 'c4501',  # Decaying Ekzykes (Unscaled) — lifted v0.23.07; cap=1
     # 'c4503',  # Borealis the Freezing Fog — lifted v0.23.07; cap=1
@@ -1366,7 +1408,7 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     #
     # These appear in vanilla NR only as cluster members or as non-enemy
     # entities (projectiles, NPCs, item-drop critters). They have no
-    # anim_class/size_class because they aren't independent combatants.
+    # size_class because they aren't independent combatants.
     #
     # Selective inclusion as of v0.11 — the four cluster-member prefixes
     # (c4181 Maris' Jellyfish, c5110 Maris' Tendril, c3610 Oracle Envoy,
@@ -1374,7 +1416,7 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # as swap targets per user feedback: "i've seen it work in a lot of
     # slots already, including the like giant rat in small castle
     # basement that doesn't have a ton of candidates." Their absence of
-    # anim_class tags means they bypass the swap_compat filter (the
+    # family tags means they bypass the swap_compat filter (the
     # "untagged candidate bypass" path in pick_target_cp), so they appear
     # broadly via anim_bank pool matching. If a specific placement
     # produces a broken-looking standalone Tendril (rooted in midair
@@ -1398,7 +1440,7 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     'c3330',  # Giant Silver Tear (Unscaled)   — same family, same failure
     # c7580 — _unknown=True scanner flag, name='c7580' (no human name),
     # tier=nightlord (highest boss strength, so passes every tier filter),
-    # anim_class=misc, expects_boss_arena=False, hp_max=0, 3 unnamed
+    # misc-family, expects_boss_arena=False, hp_max=0, 3 unnamed
     # variants. User report: replaced Bell Bearing Hunter NB anchor in
     # playtest, didn't aggro, died in 1 hit, looked like Two Fingers /
     # Metyr (decorative NPC chr). Almost certainly a NR companion-NPC /
@@ -1535,6 +1577,34 @@ V3_EXCLUDE_TARGET_PREFIXES = {
               #   armor; the NB Tree Sentinel pair has more attacks in
               #   NR (per Alaric), so collapsing to those two is a
               #   net quality improvement.
+    # Small Oracle Envoy. c3610 is a _cluster_only chr: placed standalone
+    # at a generic slot it floats frozen on the entrance animation, off
+    # its Maris cluster. v0.24.65 lifted the ban speculatively ("maybe the
+    # bug self-fixed") with a defensive cap=1 as a safety net.
+    # v0.24.86-patch2-followup RE-EXCLUDED it: seed 923630 (m49_43_00_00
+    # pi=7) reproduced the freeze, identical to the original v0.24.65 ban
+    # motivation. Cap=1 wasn't enough — one placement bricks the seed. The
+    # exclude wins over the cap; the dead cap entry was dropped from the
+    # `_LIFTED_V0_24_65` set (see the c3610 note in that set's comment,
+    # which cross-references this entry — keep the two in sync). Distinct
+    # from c3620 Oracle Envoy (Large; Cathedral), which stays placeable.
+    'c3610',  # small Oracle Envoy — cluster_only standalone freeze
+    # Walking Mausoleum. c4450 carried a residual tier='field_boss' that
+    # the v0.26.x tier collapse missed (it was tagged field_boss by its
+    # post_dlc_dump source manifest, not via the old V3_TAG_OVERRIDES
+    # dict, so the flatten never touched it). Rather than re-tier it to
+    # miniboss/night_boss, it is parked here as a target exclusion: it is
+    # an XXL (~59m tall) ambient crawling structure with has_boss_reward=
+    # false and has_drops=false — not a combatant. Placed at any generic
+    # slot it clips through geometry. Already excluded as a SOURCE (and
+    # target) via V3_EXCLUDE_PREFIXES ("keep at home"); this entry makes
+    # the target exclusion explicit in the canonical set. Companion
+    # cleanup: c4450 dropped from V3_NIGHT_BOSS_CALIBER_TARGETS in the
+    # same change (a target-excluded chr can't be an NB-arena pick, so
+    # the caliber entry would be dead — would surface in
+    # dev/audit_placement_budget_consistency.py). Surfaced by
+    # test_pick_target::test_field_boss_tier_eliminated.
+    'c4450',  # Walking Mausoleum — ~59m ambient structure, not a target
 }
 
 
@@ -1556,7 +1626,7 @@ def _load_missing_chr_files():
         invisible symptoms (per playtest reports). Includes specific
         _cluster_only chrs that froze (e.g., small Oracle Envoy c3610
         at standalone slots) and post_dlc_dump chrs with no runtime
-        characterization (no anim_class/locomotion/size_class).
+        characterization (no locomotion/size_class).
 
     The hard-coded missing_chrs entries inside V3_EXCLUDE_TARGET_PREFIXES
     above seed the set at import time so pre-load_data() queries see
@@ -1731,8 +1801,8 @@ V3_MAP_PREFIX_TARGET_EXCLUDES = {
     #
     # Future candidates to audit and potentially add here: heritage flying
     # chrs in tunnels (c4210 Warhawk, c3860 Avionette, c5090 Gravebird).
-    # Their tag anim_class is 'humanoid' or 'quadruped_large' (mis-tagged
-    # — they DO fly in-game), so the anim_class filter below doesn't
+    # Their tag family is 'humanoid' or 'quadruped_large' (mis-tagged
+    # — they DO fly in-game), so the size filter below doesn't
     # catch them. If hangs or stuck-in-ceiling reports appear, add their
     # c-prefixes explicitly.
     'm32_': {
@@ -1853,9 +1923,8 @@ V3_HERITAGE_ALL_PREFIXES = {
     'c5081',  # Chief Bloodfiend
     'c5090',  # Gravebird
     'c5160',  # Fire Knight
-    'c5190',  # Spider Scorpion
-    'c5192',  # Spider Scorpion
-    'c5193',  # Spider Scorpion
+    # c5190/c5192/c5193 Spider Scorpion — removed from V3_HERITAGE_ALL_PREFIXES
+    #   v0.27.36 (Alaric direction). Re-enabled for SOTE-mode placement.
     'c5210',  # Divine Beast Dancing Lion
     'c5240',  # Commoner (Pot)
     'c5241',  # Commoner
@@ -1921,17 +1990,19 @@ V3_HERITAGE_ALL_PREFIXES = {
 # `_source` (the pack loaders already do this by convention) and the gate
 # auto-extends.
 #
-# Strict policy: nr_placed + script_spawn. Base game MSB-placed chrs plus
-# the 12 scripted-spawn chrs whose chrbnds ship with base NR but aren't
-# referenced by vanilla MSBs (c4670 Ancestor Spirit, c7700-c7920 DS-ports,
-# etc.). DLC chrs (`_source: post_dlc_dump`) are NOT included — strict mode
+# Strict policy: nr_placed only. (Historically nr_placed + script_spawn, but
+# the v0.26.x reclassification pass moved every script_spawn chr to nr_placed
+# after a byte-level MSB audit confirmed real MSB placements — the 12
+# ex-script_spawn chrs c4670/c4690 + c7700-c7920 DS-ports are all nr_placed
+# now — so the script_spawn arm matched nothing and was dropped in v0.27.x.)
+# DLC chrs (`_source: post_dlc_dump`) are NOT included — strict mode
 # treats Forsaken Hollows as not-everyone-has-it for coop safety.
 #
 # V3_HERITAGE_ALL_PREFIXES is kept for its other semantic uses (the
 # boss-tier detector at line ~3761 uses it to identify heritage_pack
 # mid-bosses by hp_median, which is a heritage-specific signal — not the
 # same as the broader MP-safe gate).
-V3_VANILLA_NR_SOURCES = frozenset({'nr_placed', 'script_spawn'})
+V3_VANILLA_NR_SOURCES = frozenset({'nr_placed'})
 V3_MP_SAFE_BLOCKLIST = set()  # populated at end of load_data()
 
 
@@ -2505,6 +2576,51 @@ V3_AVOID_VARIANT_NPC_IDS = {
     33601310, 33602000, 33602010, 33602100, 33602200, 33602300,
     33605000, 33605200, 33605500, 33605700, 33606000, 33606200,
     33607000, 33607200,
+
+    # v0.27.23: dead-think-param variants — found by a roster-wide sweep
+    # (dev/audit_think_param_vs_regulation.py concept) of every roster
+    # think_param_id against the shipped regulation's NpcThinkParam after
+    # the c5251 Horned Shaman fix (v0.27.22). The engine writes the
+    # roster's think_param_id straight into the MSB Part with NO runtime
+    # validation, so a variant pointing at a think id absent from the
+    # regulation spawns AI-inert (the c5251 signature). Unlike c5251,
+    # these have NO correctly-authored same-creature think row to repoint
+    # to — the band around each missing id holds only OTHER creatures'
+    # rows (e.g. c4071's band is "Rat", c4181's is "Large Scarab", c4442's
+    # is "Walking Mausoleum"), so a repoint would graft the wrong AI.
+    # Fabricating a think row would mean inventing AI behavior data, which
+    # is out of scope for a data fix. Avoid-listing the specific dead
+    # variants is the safe, established handling — each affected c-prefix
+    # keeps its working variant(s) and the picker (HARD _filter_avoid_npc)
+    # routes around the dead ones.
+    #
+    # c4442 Giant Rotten Land Squirt — FIXED in v0.27.26, no longer listed.
+    # Was thought to be unfixable (both variants pointed at the absent think
+    # 44420000, and v0.27.23 had no reg dump to find a repoint target). The
+    # full reg dump showed c4442 is the Giant Land Squirt's rot variant —
+    # identical HP (1429), same family, same 14-row behavior set — so its
+    # roster think was repointed to 44410000 (Giant Land Squirt, valid
+    # logicId=10000 / battleGoalID=444100) in nr_enemy_roster.json. With a
+    # valid think it now passes the v0.27.24 guard and places normally; the
+    # static entries here were removed so it is no longer benched.
+    # c4071 White Wolf — base variant dead (40710000 absent); working
+    # variant 40710010 uses real think 40700000.
+    40710000,
+    # c4181 Maris' Jellyfish — two variants dead (41810000 absent); three
+    # working variants use 41808000.
+    41810000, 41810100,
+    # c4911 Great Wyrm Theodorix — base dead (49110000 absent; no think
+    # row anywhere in the 4911 band); NB variant 49110010 uses 49100010.
+    49110000,
+    # c5512 Shade — two scaled variants dead (55120098 / 55120198 absent);
+    # working variants 55120000 / 55120100 use authored "Shade (ADDED)".
+    55120098, 55120198,
+    # c5890 Black Knight Horse — four variants dead (58900001 / 090 / 093 /
+    # 190 absent); working 58900000 uses authored "Black Knight Horse
+    # (ADDED)". A mount has no independent combat AI, so this is lowest-
+    # impact, but the dead variants are avoid-listed for consistency so the
+    # Kaiden->Black-Knight mount pairing always draws the working variant.
+    58900001, 58900090, 58900093, 58900190,
 }
 
 
@@ -2617,6 +2733,21 @@ V3_APPLY_VARIANT_PRUNE_LIST = True
 _V3_VARIANT_PRUNE_IDS = None  # lazily-loaded cache; None = not yet loaded
 
 
+# v0.27.13: SECOND prune-id source — data/variant_prune_empirical.json.
+# Hand-curated; merged into the same prune set as the audit-generated
+# variant_prune_list.json above. Reason for two files: the audit file is
+# REGENERATED by dev/audit_genuine_variants.py, so hand-edits there are
+# clobbered on the next audit run. Empirical prunes (found by in-game
+# observation, not by the genuine-identity audit) need a separate
+# never-auto-generated home. v0.27.13 initial use: the 11 wildlife-ghost
+# render rows (sheep/ram/goat + ambient fauna) where the chr is
+# rendered translucent + non-interactable -- see the file's own
+# _v0_27_13_wildlife_ghost_render note for the triple-marker signature
+# (SpEffect 13648/11405 + teamType=5 + navmesh=5).
+# Same load + apply mechanism as the audit file; both contribute to the
+# single merged prune set consumed in pick_variant_for_tier.
+
+
 # v0.27.13: data/variant_restrict_list.json — per-c-prefix variant
 # ALLOWLIST. Distinct from the prune list above: the prune list is a
 # blacklist of redundant duplicates that applies globally; this is an
@@ -2684,6 +2815,19 @@ def _variant_prune_ids():
                     ids = {int(x) for x in data.get('prune_npc_param_ids', [])}
                 except (json.JSONDecodeError, OSError, ValueError, TypeError):
                     ids = set()
+            # v0.27.13: merge the empirical (hand-curated) prune file into
+            # the same id set. Two separate files because the audit file
+            # above is auto-regenerated; the empirical one must survive
+            # audit runs untouched. Fail-open: a missing/malformed
+            # empirical file just skips its contribution.
+            emp_path = _data_path('variant_prune_empirical.json')
+            if os.path.exists(emp_path):
+                try:
+                    with open(emp_path, encoding='utf-8') as f:
+                        emp = json.load(f)
+                    ids |= {int(x) for x in emp.get('prune_npc_param_ids', [])}
+                except (json.JSONDecodeError, OSError, ValueError, TypeError):
+                    pass
         _V3_VARIANT_PRUNE_IDS = ids
     return _V3_VARIANT_PRUNE_IDS
 
@@ -2866,18 +3010,12 @@ def _classify_variant_source(target_cp, target_npc, prefix_variants, tags):
                          post_dlc_dump at the chr level). The whole chr
                          isn't in vanilla NR's placement pool, not just
                          the variant. Wholesale-import case.
-      'script_spawn'   — chr only appears via EMEVD script spawns in
-                         vanilla NR, not static MSB placements. Risky as
-                         a randomizer target — engine may not expect it
-                         in arbitrary slots.
       'unknown'        — fallback when classification fails (shouldn't
                          happen but defensive).
     """
     chr_source = (tags.get(target_cp) or {}).get('_source', '')
     if chr_source in ('heritage', 'mmv_import', 'post_dlc_dump'):
         return 'imported_chr'
-    if chr_source == 'script_spawn':
-        return 'script_spawn'
     variants = prefix_variants.get(target_cp) or []
     for v in variants:
         if v.get('npc_param_id') == target_npc:
@@ -2936,7 +3074,7 @@ V3_NIGHT_OR_FIELD_BOSS_NAME_MARKERS = [
 # Remembrance arenas. Only the 22 dedicated Night Boss anchor slots have
 # the geometric volume to host them without terrain collision.
 #
-# First user: c4510 Ancient (Lightning) Dragon — GIGA giga_boss anim_class.
+# First user: c4510 Ancient (Lightning) Dragon — GIGA giga_boss tier.
 # Confirmed unplayable at Miranda Blossom (Field Boss) slot in seed 711300:
 # the Field Boss arena geometry can't accommodate the Ancient Dragon's
 # wingspan + tail, leading to terrain collision and AI breakage.
@@ -3279,19 +3417,14 @@ def load_data():
     # is different: those chrs genuinely need EMEVD scaffolding and the
     # tag was authored as a hard constraint when the v0.23.72-late
     # consolidation moved them out of manual_promotions.json.
-    # v0.26.x: explicitly merge V3_DEDICATED_ARENA_BOSS_CHRS. After
-    # the v0.26.x reclassification pass these chrs are _source=
-    # 'nr_placed', so the script_spawn loop below no longer picks
-    # them up. Their arena-only constraint is real (dedicated arena
-    # MSB residents — overworld placement → CTD), so we union the
-    # explicit set in.
+    # Arena-only auto-adds for the dedicated-arena boss chrs. These are
+    # _source='nr_placed' (reclassified v0.26.x) but carry a real
+    # arena-only constraint (dedicated arena MSB residents — overworld
+    # placement → CTD), tracked explicitly in V3_DEDICATED_ARENA_BOSS_CHRS.
+    # (A legacy `_source == 'script_spawn'` loop used to live here too; it
+    # was removed in v0.27.x because no chr carries that _source anymore.)
     for cp in V3_DEDICATED_ARENA_BOSS_CHRS:
         if cp not in V3_ARENA_ONLY_TARGETS:
-            _arena_auto_adds.add(cp)
-    for cp, t in tags.items():
-        if (t.get('_source') == 'script_spawn'
-                and t.get('expects_boss_arena')
-                and cp not in V3_ARENA_ONLY_TARGETS):
             _arena_auto_adds.add(cp)
     # v0.24.22 (Phase 11): consume pack-loader stats instead of reaching
     # into raw pack dicts via `try: except NameError:`. Each loader
@@ -3310,27 +3443,31 @@ def load_data():
               f"from expects_boss_arena tags "
               f"({sorted(_arena_auto_adds)})")
 
-    # v0.26.x: lift arena_only for M-humanoid chrs. Sim
+    # v0.26.x: lift arena_only for M-size chrs. Sim
     # (dev/sim_reservation_health.py) surfaced that several NB-caliber
     # MMV imports (Midra, Romina, etc.) score 0/5136 slots in the
     # reservation pre-pass because of the combined arena_only +
     # NB-strict + size constraints. Arena-only was inherited via
-    # expects_boss_arena=True in MMV pack tags, but for M-humanoid
-    # chrs the constraint is unnecessary — they don't have the
-    # geometric footprint problems that motivated arena_only for
-    # XL+ chrs (sunken trolls, ground-clipping dragons). User
-    # direction: lift arena_only for any M-humanoid; their slot
-    # pool widens dramatically and they can reserve at regular
-    # NB-marker slots.
-    _m_humanoid_lift = set()
+    # expects_boss_arena=True in MMV pack tags, but for M-size chrs
+    # the constraint is unnecessary — they don't have the geometric
+    # footprint problems that motivated arena_only for XL+ chrs
+    # (sunken trolls, ground-clipping dragons).
+    #
+    # v0.27.28: was restricted to M-size AND anim_class=='humanoid'; now
+    # lifts every M-size chr regardless of rig. anim_class is expunged, and
+    # per Alaric the rig distinction was never load-bearing here — an M
+    # enemy fits an M slot whether it's humanoid, quadruped, or anything
+    # else. Their slot pool widens and they can reserve at regular NB-marker
+    # slots.
+    _m_size_lift = set()
     for cp in list(V3_ARENA_ONLY_TARGETS):
         t = tags.get(cp, {})
-        if t.get('size_class') == 'M' and t.get('anim_class') == 'humanoid':
-            _m_humanoid_lift.add(cp)
-    if _m_humanoid_lift:
-        V3_ARENA_ONLY_TARGETS = V3_ARENA_ONLY_TARGETS - _m_humanoid_lift
-        print(f"V3_ARENA_ONLY_TARGETS: lifted -{len(_m_humanoid_lift)} "
-              f"M-humanoid chrs ({sorted(_m_humanoid_lift)})")
+        if t.get('size_class') == 'M':
+            _m_size_lift.add(cp)
+    if _m_size_lift:
+        V3_ARENA_ONLY_TARGETS = V3_ARENA_ONLY_TARGETS - _m_size_lift
+        print(f"V3_ARENA_ONLY_TARGETS: lifted -{len(_m_size_lift)} "
+              f"M-size chrs ({sorted(_m_size_lift)})")
 
     # v0.27.2: explicit arena_only lift for the five MMV nightlord imports
     # (see V3_ARENA_ONLY_FORCE_LIFT docstring). 98-seed sim (2026-05-26)
@@ -3540,19 +3677,22 @@ def load_data():
     # cannot place a variantless chr, so it only ever wasted a pool slot.
     V3_EXCLUDE_TARGET_PREFIXES.add('c6201')
 
-    # v0.27.8: collapse the 'trash' tier into 'grunt'. Alaric direction —
-    # the grunt/trash distinction carries no design weight; retagging
-    # every trash chr to grunt here makes the whole engine (caps, floors,
-    # the boss-bar gate, target pools) treat them as one tier. Done
-    # before the grunt cap/floor block below so that block covers both.
+    # v0.27.8: 'trash' tier collapsed into 'grunt'. As of v0.27.13 this is
+    # baked into the source data (dev/dump_runtime_tier_overrides.py wrote
+    # the collapse into nr_enemy_tags.json / mmv_imports.json, marked
+    # _tier_collapse_v0_27_8). The runtime rewrite is therefore redundant —
+    # kept only as a guard so a future data edit that reintroduces 'trash'
+    # is caught and normalized rather than silently flowing through with an
+    # unknown tier. Expected to retag 0 in normal operation.
     _retagged = 0
     for _t in tags.values():
         if isinstance(_t, dict) and _t.get('tier') == 'trash':
             _t['tier'] = 'grunt'
             _retagged += 1
     if _retagged:
-        print(f"v0.27.8: collapsed 'trash' tier into 'grunt' "
-              f"({_retagged} chrs retagged)")
+        print(f"v0.27.8 guard: collapsed {_retagged} stray 'trash' tier(s) "
+              f"into 'grunt' — these should be dumped to data via "
+              f"dev/dump_runtime_tier_overrides.py")
 
     # v0.27.3: miniboss tier — reservation floor + cap normalization.
     # The 98-seed audit (dev/SESSION_NOTES_2026-05-26.md) showed the
@@ -3676,17 +3816,61 @@ def load_data():
         print(f"v0.27.8/.9: grunt tier — cap=40 set on {_gr_capped} chrs "
               f"(floor removed v0.27.13 — tier-collapse fix)")
 
+    # v0.27.27: rare-novelty cap overrides — applied AFTER the grunt sweep
+    # above so they aren't clobbered back to 40. These are grunt-tier chrs
+    # that FromSoft never spawns in vanilla NR (they exist only in the
+    # post_dlc_dump regulation data) and that the rando is the sole source
+    # of. Left uncapped they fill ~11 grunt slots/seed (measured), which is
+    # too frequent for an easter-egg creature. A low cap makes each one a
+    # rare surprise rather than wallpaper while keeping it in the pool.
+    #   c4442 Giant Rotten Land Squirt — the rot variant of the Giant Land
+    #   Squirt, fixed/un-benched in v0.27.26 (think repointed to 44410000).
+    #   Zero vanilla source Parts; cap=4 (matching the miniboss-tier rarity
+    #   tier) per Alaric — a couple of sightings/seed, not a dozen.
+    _RARE_NOVELTY_CAPS = {
+        'c4442': 4,
+    }
+    _rn_capped = 0
+    for _cp, _cap in _RARE_NOVELTY_CAPS.items():
+        if _cp in _gr_exclude:
+            continue
+        if V3_UNIQUE_TARGET_CAPS.get(_cp) != _cap:
+            V3_UNIQUE_TARGET_CAPS[_cp] = _cap
+            _rn_capped += 1
+    if _rn_capped:
+        print(f"v0.27.27: rare-novelty caps — {_rn_capped} chr(s) capped "
+              f"below grunt-40 ({', '.join(f'{k}={v}' for k, v in _RARE_NOVELTY_CAPS.items())})")
+
     # v0.27.13: build the all-SOTE target set from the fully-merged tag
-    # DB. origin_game lands here two ways: the MMV boss ports carry it
-    # via the mmv_imports.json merge above, and the heritage SOTE field
-    # enemies carry it directly in nr_enemy_tags.json (stamped by
-    # dev/tag_sote_origin.py). Computed every load_data() so it tracks
-    # tag edits with no separate data file to keep in sync. Drives
-    # V3_SOTE_MODE in pick_target_cp.
+    # DB. Computed every load_data() so it tracks tag edits with no
+    # separate data file to keep in sync. Drives V3_SOTE_MODE in
+    # pick_target_cp.
+    #
+    # v0.27.21: membership is the UNION of two signals, so the SOTE-mode
+    # roster is decoupled from the origin_game provenance field:
+    #
+    #   (a) origin_game == 'SoTE' — the historical signal. The MMV boss
+    #       ports carry it via the mmv_imports.json merge above, and the
+    #       heritage SOTE field enemies carry it directly in
+    #       nr_enemy_tags.json.
+    #
+    #   (b) sote_eligible == True — an explicit opt-in flag. Added so a
+    #       chr can be SOTE-mode-eligible WITHOUT lying about its
+    #       provenance. Two cases need this: (1) genuinely-SoTE imports
+    #       whose origin_game was never stamped (the er_heritage_port_v0_27_0
+    #       round — Putrescent Knight, Furnace Golem, Divine Beast Dancing
+    #       Lion, the SoTE Demi-Humans, etc.), and (2) cross-lineage models
+    #       that ship as SoTE encounters but originate elsewhere (the
+    #       Black Knight + Horse are DS3-lineage; flagging them sote_eligible
+    #       is honest where flipping origin_game to 'SoTE' was not). Keeping
+    #       origin_game accurate means dev/tag_sote_origin.py and any
+    #       provenance audit stay correct; this flag is purely a
+    #       SOTE-mode-roster switch.
     global V3_SOTE_PREFIXES
     V3_SOTE_PREFIXES = {_cp for _cp, _t in tags.items()
                         if isinstance(_t, dict)
-                        and _t.get('origin_game') == 'SoTE'}
+                        and (_t.get('origin_game') == 'SoTE'
+                             or _t.get('sote_eligible') is True)}
 
     # v0.27.13: rider/mount pools from the mount_role tag.
     global V3_RIDER_PREFIXES, V3_MOUNT_PREFIXES
@@ -3705,6 +3889,82 @@ def load_data():
         print(f"***   {', '.join(sorted(V3_SOTE_PREFIXES))} ***")
         print(f"***   caps/floors bypassed — expect heavy repeats. "
               f"Requires MMV + heritage assets staged. ***")
+
+    # v0.27.24: think-param validation guard. The durable backstop for the
+    # c5251 / v0.27.23 AI-inert failure class. The engine writes a variant's
+    # roster think_param_id straight into the MSB Part at swap time with NO
+    # runtime validation against the regulation, so any variant pointing at
+    # a think id that doesn't exist in the regulation's NpcThinkParam table
+    # spawns a chr with no AI (loads, may aggro, never runs battle logic).
+    # Both c5251 (manually fixed in v0.27.22) and the six chrs swept in
+    # v0.27.23 reached players because nothing checked this at load time.
+    #
+    # The guard validates every roster think_param_id against the bundled
+    # data/valid_think_param_ids.json manifest (the set of IDs present in
+    # the regulation's NpcThinkParam, regenerated by
+    # dev/extract_think_param_ids.py) and auto-adds any variant whose think
+    # id is absent to V3_AVOID_VARIANT_NPC_IDS — keyed on npc_param_id, the
+    # same hard filter _filter_avoid_npc already enforces. This turns the
+    # whole failure class into "the dead variant is silently skipped"
+    # instead of "the dead variant spawns inert in someone's game":
+    #   - a chr with SOME valid-think variants keeps them; the picker routes
+    #     around the dead ones.
+    #   - a chr whose variants are ALL dead-think no-targets (the slot stays
+    #     vanilla) — correct, better than an AI-inert placement.
+    #
+    # Fail-open: a missing/malformed manifest skips the guard entirely (the
+    # static V3_AVOID_VARIANT_NPC_IDS entries from v0.27.23 still cover the
+    # known cases). Idempotent: a set union, so repeated load_data() calls
+    # in one process converge to the same set. The manifest only needs
+    # regenerating when the regulation's NpcThinkParam table changes; the
+    # static entries are the safety net in the interim.
+    _think_manifest_path = _data_path('valid_think_param_ids.json')
+    if os.path.isfile(_think_manifest_path):
+        try:
+            with open(_think_manifest_path, encoding='utf-8') as _f:
+                _valid_think = set(json.load(_f).get('valid_think_param_ids', []))
+        except Exception as _e:
+            print(f"v0.27.24: think-param guard SKIPPED — manifest load "
+                  f"failed ({_e!r}); relying on static avoid-list.")
+            _valid_think = None
+        if _valid_think:
+            _dead_think_npc = set()
+            _dead_by_cp = {}
+            for _v in roster.get('all_variants', []):
+                if not isinstance(_v, dict):
+                    continue
+                _th = _v.get('think_param_id')
+                _npc = _v.get('npc_param_id')
+                if _th is None or _npc is None:
+                    continue
+                if int(_th) not in _valid_think:
+                    _dead_think_npc.add(int(_npc))
+                    _dead_by_cp.setdefault(_v.get('c_prefix'), set()).add(int(_th))
+            _newly = _dead_think_npc - V3_AVOID_VARIANT_NPC_IDS
+            if _dead_think_npc:
+                V3_AVOID_VARIANT_NPC_IDS = (
+                    V3_AVOID_VARIANT_NPC_IDS | _dead_think_npc)
+                # Report c-prefixes that LOSE EVERY variant to the guard —
+                # those fully no-target (slot stays vanilla). Compute against
+                # the post-trigger-filter variant view so the warning matches
+                # what the picker can actually draw.
+                _pv_chk, _ = build_per_prefix_data(roster)
+                _fully_dead = []
+                for _cp, _ths in sorted(_dead_by_cp.items()):
+                    _cp_variants = _pv_chk.get(_cp, [])
+                    if _cp_variants and all(
+                            int(_vv.get('npc_param_id')) in V3_AVOID_VARIANT_NPC_IDS
+                            for _vv in _cp_variants
+                            if _vv.get('npc_param_id') is not None):
+                        _fully_dead.append(_cp)
+                print(f"v0.27.24: think-param guard — {len(_dead_think_npc)} "
+                      f"variant(s) across {len(_dead_by_cp)} c-prefix(es) point "
+                      f"at think ids absent from the regulation; avoid-listed "
+                      f"({len(_newly)} not already static).")
+                if _fully_dead:
+                    print(f"v0.27.24: think-param guard — fully no-target "
+                          f"c-prefixes (all variants dead-think, stay vanilla): "
+                          f"{', '.join(_fully_dead)}")
 
     return roster, tags
 
@@ -4915,7 +5175,7 @@ def night_boss_pool(prefix_variants):
 
 def compatible_pool(recipient_cp, tags):
     """v0.20.0: Universal pool. Returns ALL c-prefixes from tags. We no
-    longer pre-filter by anim_class / size / loco / team. The three filters
+    longer pre-filter by size / loco / team. The three filters
     that matter — tier-preserve (boss vs field, tag-driven), fragile-slot
     detection, per-c-prefix exclusions — handle "is this a sane swap"
     decisions downstream.
@@ -5368,6 +5628,7 @@ def pick_target(recipient_cp, tags,
                 slot_y=None,
                 slot_msb_name=None, slot_pi=None, slot_variant_name=None,
                 slot_pos=None,
+                slot_eid=None,
                 slot_require_boss_reward=False,
                 disable_resilient_filter=False,
                 non_fragile_baseline_cp=None,
@@ -5393,6 +5654,7 @@ def pick_target(recipient_cp, tags,
         slot_msb_name=slot_msb_name, slot_pi=slot_pi,
         slot_variant_name=slot_variant_name,
         slot_pos=slot_pos,
+        slot_eid=slot_eid,
         slot_require_boss_reward=slot_require_boss_reward,
         disable_resilient_filter=disable_resilient_filter,
         non_fragile_baseline_cp=non_fragile_baseline_cp,
@@ -5643,8 +5905,8 @@ V3_DENSITY_DEMOTE_FALLBACK_CPS = (
 )
 
 # v0.14: compat black hole rescue. Targeted fix for c-prefixes whose loose
-# tuple (anim_class, size, locomotion, team) is shared by zero or one
-# other variant — and whose anim_class+size doesn't have many peers
+# tuple (size, locomotion, team) is shared by zero or one
+# other variant — and whose size/family doesn't have many peers
 # either. These never get picked by stage-1 strict matching from any
 # slot, AND stage-2 fallback only fires when stage-1 is empty (rare for
 # typical slots). Result: huge under-targeting in the actual rando.
@@ -5655,11 +5917,11 @@ V3_DENSITY_DEMOTE_FALLBACK_CPS = (
 #   c4385 Disciple of Rot (hum S loco=5):  11 placements / 0 source slots
 #   c3860 Avionette       (hum S loco=5):  12 placements / 0 source slots
 #
-# Fix: when ANY slot's stage-2 fallback (anim_class+size, ignore loco/team)
+# Fix: when ANY slot's stage-2 fallback (size/family, ignore loco/team)
 # would include one of these c-prefixes, force-add them to that slot's
 # stage-1 pool. Stays additive — doesn't replace stage-1, just augments.
 # Effect: these c-prefixes become reachable from the broad set of slots
-# matching their anim_class+size, not just the rare slots that share
+# matching their size/family, not just the rare slots that share
 # their exact loose tuple.
 #
 # v0.20.0: V3_COMPAT_BLACK_HOLE_PREFIXES retired (universal pool obsoletes).
@@ -5843,7 +6105,7 @@ V3_RESILIENT_BIPEDS = set()
 # Direct additions (never were in RESILIENT):
 #   c4570 Wormface                 — v0.20.30 (playtest freeze report)
 #   c4230 Small Land Octopus       — v0.20.32 (playtest freeze report).
-#                                    anim_class=aquatic — fundamental
+#                                    aquatic-family — fundamental
 #                                    incompatibility with most slot
 #                                    contexts (slow/no movement on land).
 #                                    See also Giant Land Octopus c4220
@@ -6022,7 +6284,10 @@ V3_FRAGILE_SENSITIVE_TARGETS = {
     'c4510',  # Ancient Dragon — v0.23.07
     'c4910',  # Magma Wyrm — v0.23.07
     'c4911',  # Great Wyrm Theodorix — v0.23.07
-    'c5193',  # Spider Scorpion (small) — v0.20.38
+    # c5193 Spider Scorpion (small) — was here from v0.20.38. LIFTED
+    #   v0.27.36 (Alaric direction: "lift fully"). Re-enabled for SOTE-mode
+    #   placement alongside c5190/c5192. The original v0.20.38 entry cited a
+    #   CTD; if it recurs, re-add with a (seed, msb, pi) cite.
     'c5210',  # Divine Beast Dancing Lion — v0.20.33 (Miranda Blossom freeze)
     'c5522',  # Stray                  — v0.20.36
     'c5523',  # Stray                  — v0.20.36
@@ -6075,15 +6340,10 @@ V3_FRAGILE_SENSITIVE_TARGETS = {
               #   anim that's tied to specific arena geometry.
     # c5110 Maris' Tendril — was here from v0.20.55; PROMOTED in v0.20.69
     #   to V3_EXCLUDE_TARGET_PREFIXES (boss-component breaks-everywhere).
-    'c5190',  # Spider Scorpion (L aquatic mt=4) — v0.20.55 (user:
-              #   "c5190 CTD"). Same chr family as c5193 (already
-              #   SENSITIVE). The "aquatic" anim_class on a land enemy
-              #   is the c5193-style failure mode — the chr's idle/walk
-              #   anims expect water surface or substrate that
-              #   non-vanilla slots don't provide.
-    'c5192',  # Spider Scorpion (L aquatic mt=4) — v0.20.55 (user:
-              #   "c5192 CTD"). Same family as c5190 and c5193, same
-              #   failure mode.
+    # c5190 + c5192 Spider Scorpion (L) — were here from v0.20.55 (user
+    #   reported "c5190 CTD" / "c5192 CTD"). LIFTED v0.27.36 (Alaric
+    #   direction: "lift fully"). Re-enabled for SOTE-mode placement with
+    #   c5193. If the CTD recurs, re-add with a (seed, msb, pi) cite.
     'c4650',  # Dragonkin Soldier (Ice Lightning) (XXL large_boss_ground
               #   mt=12) — v0.20.56 (user: "c4650 CTD"). Confirms the
               #   mt=12 100%-broken predictor (Dancing Lion was the
@@ -6126,7 +6386,7 @@ V3_FRAGILE_SENSITIVE_TARGETS = {
     'c2271',  # Crab (S aquatic mt=None) — v0.20.56 (user: "small crab
               #   also sensitive"). Confirms small-aquatic-on-land
               #   broken pattern (cf c4080 Rat, c5193 Spider Scorpion
-              #   small, c4230 Small Land Octopus). The aquatic anim_class
+              #   small, c4230 Small Land Octopus). The aquatic family
               #   on land doesn't render correctly; the chr's idle/walk
               #   anims expect water surface they can't find.
     'c4280',  # Giant Ant (L quadruped mt=4) — v0.20.76 (user: "encampment
@@ -6277,10 +6537,10 @@ V3_FRAGILE_SAFE_CONFIRMED = {
     #
     # v0.20.49 confirmation: user playtested post-bulk-add and reported
     # "kindred of rot works great" — c3810 Kindred of Rot was the
-    # crucial test case. anim_class=quadruped (tagger over-classified
+    # crucial test case. fragile-locomotion (tagger over-classified
     # the leg config) but move_type=3 (actually bipedal-walking). The
     # bulk-add caught it correctly. This is the same Misbegotten/Wolf
-    # pattern: move_type beats anim_class as the predictor. Strong
+    # pattern: move_type beats family as the predictor. Strong
     # signal that the rule generalizes.
     'c2130',  # Margit (XL night_boss humanoid heritage)
     'c2140',  # Omen (L miniboss humanoid)
@@ -6473,7 +6733,7 @@ V3_FRAGILE_SAFE_CONFIRMED = {
               #                          for the broken Lion case.
     'c4980',  # Death Bird (Deathrite) — v0.20.45 (user: "deathrite bird
               #                          safe"). XXL night_boss
-              #                          large_boss_ground — same anim_class
+              #                          large_boss_ground — same family
               #                          as Dancing Lion (c5210, SENSITIVE)
               #                          but works fine. Mobile/swooping,
               #                          not arena-locked.
@@ -6615,7 +6875,7 @@ V3_FRAGILE_SAFE_CONFIRMED = {
     #   * S/M canine-rodent-body-plan mt=4: BROKEN (rats, wolves c4070/
     #     c4071, basilisk, strays c4160-c4166, c5522/c5523, dogs,
     #     bloodhound knight c4290, goat c6060)
-    #   * L+ mt=4 (any anim_class): SAFE (Red Wolf of Radagon L,
+    #   * L+ mt=4 (any family): SAFE (Red Wolf of Radagon L,
     #     Royal Revenant L, Giant Ant L, Crayfish XXL, Hippo XXL, all
     #     three giant crabs c2270/c2272/c2276 XL/XL/XXL)
     # The breaking mechanism for small mt=4 appears to be specific to
@@ -7498,6 +7758,28 @@ V3_NAV_INDEPENDENT_TARGETS = frozenset({
     'c5300',  # MMV SoTE   M    Rellana, Twin Moon Knight
     'c6200',  # MMV DS3    M    Slave Knight Gael
     'c8300',  # MMV DS3    L    Dragonslayer Armor
+    # v0.27.35: SOTE miniboss-tier chrs added to unblock the m49_43 castle
+    # Crucible room in all-SOTE mode (10 c2500 slots pinned miniboss; the
+    # stub-nav gate was rejecting every SOTE miniboss as nav-dependent, so
+    # the room shipped vanilla — observed seed 435226). Alaric direction:
+    # add all 15 and playtest, reporting any that freeze. NOT yet
+    # playtest-confirmed nav-safe; if any of these T-pose/idle in a stub-nav
+    # cave/castle tile, remove it from this set with a (seed, msb, pi) cite.
+    'c5040',  # SoTE   M    Curseblade
+    'c5070',  # SoTE   M    Death Knight
+    'c5081',  # SoTE   XL   Chief Bloodfiend
+    'c5160',  # SoTE   M    Fire Knight
+    'c5250',  # SoTE   M    Horned Warrior
+    'c5260',  # SoTE   L    Golem Smith
+    'c5311',  # SoTE   M    Inquisitor (Candles)
+    'c5312',  # SoTE   M    Inquisitor (Staff)
+    'c5320',  # SoTE   XL   Fat Inquisitor
+    'c5360',  # SoTE   L    Giant Beast Skeleton
+    'c5450',  # SoTE   L    Ram
+    'c5511',  # SoTE   M    Shade
+    'c5512',  # SoTE   M    Shade
+    'c5820',  # SoTE   XXL  Great Red Bear
+    'c5872',  # SoTE   L    Imp (Large)
 })
 
 
@@ -7719,36 +8001,35 @@ V3_BOSS_TIER_PINNED_SLOTS = {
     ('m60_44_36_50.msb', 16): 'cathedral rooftop Crystalian Remembrance (Y=102)',
     # v0.23.70 / v0.23.71: SPAWN-POOL ROTATION SOURCES.
     # The Day 2 field-boss / castle rooftop / castle basement rotation
-    # system pulls from m46_xx template MSBs that pack pi=0 c1000 (player
-    # marker) + pi=1 boss + pi=2 AEG asset all at world origin. Without
-    # pin-bypass, pi=1 of these tiles silently never swaps because of a
-    # chain of filters all targeting the [0,0,0] coordinate:
+    # system pulls from m46_xx template MSBs. The FIELD-boss tiles pack
+    # pi=0 c1000 (player marker) + pi=1 boss + pi=2 AEG asset; the CASTLE
+    # tiles pack pi=0 marker + pi=1 boss (no asset). pi=1 is the rotation
+    # chr, teleported into the live arena at runtime.
     #
-    #   - With cluster_aware=True: cluster builder pairs pi=0 + pi=1.
-    #     Main loop skips clusters when randomize_clusters=False.
-    #   - With cluster_aware=False (v0.23.71 default): no cluster
-    #     management. All 3 Parts contribute to placeholder_pos_counts.
-    #     Threshold of 3 fires; position_cluster filter drops pi=1.
+    # These slots are pinned so the swap loop treats them as AUTHORITATIVE
+    # boss slots rather than running them through the placeholder/position
+    # heuristics that the origin-stacked Part layout would otherwise trip.
+    # (Historical note: earlier engines had a near-origin spawn-marker
+    # filter and a cluster builder that silently dropped pi=1; both were
+    # removed — near-origin in v0.23.72, clustering in v0.26.13 — so the
+    # pin is now about boss-tier classification + the placeholder-position
+    # intercept, not bypassing those deleted filters.)
     #
-    # v0.23.71 fix: pinned slots bypass ALL the early-exit filters
-    # (near-origin, position_cluster, cluster check). Pins are user
-    # intent and AUTHORITATIVE; filters are heuristics. See the
-    # `_is_pinned`-guarded skips at filter sites in shuffle_msb_v3.
+    # KNOWN-OPEN history (FIXED v0.27.29): the CASTLE-variant tiles
+    # (m46_86/87/88/90/91/95) used to report n_swaps=0 in normal/all-SOTE
+    # runs while their FIELD twins swapped. Root cause was NOT the pin —
+    # it was a name-marker classification gap in pick_target_cp (the
+    # arena/night-boss pool gates keyed on broad name markers the castle
+    # POI-interior names don't carry). Fixed there by treating catalogued
+    # spawn-pool rotation sources as arena/NB regardless of name. See the
+    # "castle-variant spawn-pool MSBs now swap" block below.
     #
-    # Result: Day 2 field bosses (Death Rite Bird, Tree Sentinel, Royal
-    # Carian Knight, Bell Bearing Hunter, etc.) and Castle rooftop /
-    # basement rotations get swapped to whatever the main pool picks.
-    # In OOPS_ALL_NB mode (boss probe campaigns), these become extra
-    # opportunities for the chosen target (Dragonslayer Armor, Ancient
-    # Hero, etc.) to land — exactly the slots most worth pinning.
-    #
-    # Caveat: the live arenas these rotations teleport into (m48_50,
-    # m48_60, Castle proper, etc.) preload chrbnds based on vanilla
-    # rotation expectations. A swap target whose chrbnd ISN'T in the
-    # live arena's preload set may CTD on encounter approach. Test on
+    # Caveat (unchanged): the live arenas these rotations teleport into
+    # (m48_50, m48_60, Castle proper, etc.) preload chrbnds based on
+    # vanilla rotation expectations. A swap target whose chrbnd ISN'T in
+    # the live arena's preload set may CTD on encounter approach. Test on
     # safe seeds first; if a specific target reliably CTDs at a specific
-    # arena, file it as V3_PROBLEM_SLOTS or extend the chrbnd-preload
-    # awareness in chaos-mode (separate workstream).
+    # arena, file it as V3_PROBLEM_SLOTS or extend chrbnd-preload awareness.
     ('m46_52_00_00.msb',  1): 'spawn-pool rotation: Draconic Tree Sentinel',
     ('m46_53_00_00.msb',  1): 'spawn-pool rotation: Tree Sentinel',
     ('m46_54_00_00.msb',  1): 'spawn-pool rotation: Royal Carian Knight',
@@ -7966,6 +8247,32 @@ def _load_boss_slot_catalog():
 
 
 V3_BOSS_SLOT_CATALOG, V3_BOSS_SLOT_CATALOG_META = _load_boss_slot_catalog()
+
+
+# v0.27.32: the set of V3_BOSS_SLOT_CATALOG `tier` values that denote a
+# GENUINE sealed/scripted boss arena — used by pick_target_cp to trust the
+# catalog over name markers when classifying a slot as arena / night-boss
+# (see _is_catalogued_boss_arena). These are the tiers where a vanilla boss
+# fight happens behind a fog gate / in an evergaol / in a sealed interior,
+# so night-boss-tier targets must stay eligible and the _arena_only /
+# NIGHT_BOSS_ONLY subtractions must NOT fire.
+#
+# DELIBERATELY EXCLUDED (kept on strict marker-based gating):
+#   'terrain'     — non-boss terrain anchors (147 slots)
+#   'encampment'  — field camp groups (Elder Lion / Mad Pumpkin etc.); field
+#                   encounters, not sealed arenas
+#   'remembrance' — scholar/remembrance trash (Wandering Noble, Cuckoo
+#                   Knight, ...); classify correctly via markers already and
+#                   must NOT admit NB-only chrs
+# This frozenset is the slot-CATALOG tier vocabulary (named_boss /
+# castle_interior / ...), which is distinct from the chr-TAG tier vocabulary
+# (miniboss / field_boss / night_boss / ...) used by the _BOSS_ARENA_TIERS
+# set in is_compatible's size-up filter. Don't conflate them.
+V3_CATALOG_BOSS_ARENA_TIERS = frozenset({
+    'named_boss', 'nightboss', 'fieldboss', 'ruins_boss', 'fort_boss',
+    'fort_suffix', 'boss_suffix', 'castle_interior', 'cathedral',
+    'crater', 'noklateo', 'mountaintop',
+})
 
 
 # v0.25.0-patch3: auto-extend V3_PRESERVE_SLOTS with HP-bar-ref pattern
@@ -8273,7 +8580,7 @@ V3_RANDOMIZE_SAFE_NB_ARENAS = False
 # class — XXL large_boss_ground bosses (Ulcerated Tree Spirit, Golden
 # Hippo, Death Bird) land on arenas whose scripted intro expects a
 # different anim class and lack the matching wake-up anim bank
-# (confirmed seeds 677311, 740664). Until the anim_class compat fix
+# (confirmed seeds 677311, 740664). Until the swap compat fix
 # lands, NB arenas are held vanilla: with both V3_RANDOMIZE_*_NB_ARENAS
 # False, _force_rando_nb is never True and the whole-MSB preservation
 # gate holds all 25 arenas byte-vanilla. Field / grunt / non-NB-boss
@@ -8436,86 +8743,19 @@ def _load_quadruped_unsafe_slots():
 
 
 # ---------------------------------------------------------------------------
-# v0.24.45: Flying-required slots catalog.
+# v0.27.28: Flying-required slots catalog REMOVED.
 #
-# Some vanilla NR slots have anim_class='flying_dragon' chrs and are
-# positioned mid-air at elevation Y=100+. Examples: m60_43_36_50 pi=23
-# (vanilla c4500 Flying Dragon at Y=106 over the castle); m60_42_38_10
-# pi=N (similar). These slots are designed for AERIAL spawn — the chr
-# floats at altitude and uses flying anims.
-#
-# When the picker swaps in a ground-anim chr (anim=giga_boss, humanoid,
-# quadruped_large, etc.) at such a slot, the result is CTD on cell-load:
-#   - The cell's preload was budgeted for the vanilla chr's asset bundle.
-#     Astel (giga_boss, remembrance) has a much heavier bundle than
-#     Flying Dragon. Memory budget exceeded.
-#   - The anim bank doesn't match what the slot expects; runtime can't
-#     resolve the spawn → crash.
-#
-# Discovered v0.24.45 via seed 552688 (Alaric playtest):
-# m60_43_36_50 pi=23 vanilla c4500 Flying Dragon → rando picked c4620
-# Astel (GIGA, giga_boss, loco=5). CTD when walking out castle front door
-# (cell-load of m60_43_36_50 from the castle interior side).
-#
-# Reject filter: if (msb_base, pi) ∈ V3_FLYING_REQUIRED_SLOTS, the picker
-# only accepts targets with anim_class='flying_dragon'. Eligible target
-# chrs: c4500/c4501/c4502/c4503/c4504/c4505/c4511/c4680/c4911/c5860/c6260/
-# c7510/c7511/c7530 (14 chrs).
-#
-# Like V3_QUADRUPED_UNSAFE_SLOTS, this is data-driven from a JSON catalog
-# in data/nr_flying_required_slots.json. The catalog is auto-built once
-# from nr_all_slots.json + nr_enemy_tags.json (any slot whose vanilla cp
-# has anim_class=flying_dragon), so it's stable until vanilla NR is
-# patched or the tag data is corrected.
-V3_FLYING_REQUIRED_SLOTS = frozenset()  # set of (msb_filename, pi_int)
-V3_FLYING_REQUIRED_SLOTS_META = {}
-V3_FLYING_REQUIRED_SLOTS_FILE_META = {}
-V3_FLYING_ELIGIBLE_TARGETS = frozenset()  # cps with anim_class=flying_dragon
-
-
-def _load_flying_required_slots():
-    """Load data/nr_flying_required_slots.json.
-
-    Returns: (slot_set, slot_meta, file_meta, eligible_targets).
-      slot_set         — frozenset of (msb_filename, pi_int) tuples
-      slot_meta        — dict mapping (msb, pi) to the entry dict
-      file_meta        — _meta block from the JSON file
-      eligible_targets — frozenset of cps the picker can pick at these slots
-    Returns empty values on missing/malformed file.
-    """
-    path = _data_path('nr_flying_required_slots.json')
-    if not os.path.isfile(path):
-        return frozenset(), {}, {}, frozenset()
-    try:
-        with open(path, encoding='utf-8') as f:
-            raw = json.load(f)
-    except (json.JSONDecodeError, OSError):
-        return frozenset(), {}, {}, frozenset()
-    file_meta = raw.get('_meta', {})
-    eligible = frozenset(file_meta.get('eligible_target_chrs', []))
-    slots = raw.get('slots', [])
-    if not isinstance(slots, list):
-        return frozenset(), {}, file_meta, eligible
-    slot_set = set()
-    slot_meta = {}
-    for entry in slots:
-        if not isinstance(entry, dict): continue
-        msb = entry.get('map')
-        pi = entry.get('part_index')
-        if not msb or pi is None: continue
-        try:
-            pi_int = int(pi)
-        except (ValueError, TypeError):
-            continue
-        slot_set.add((msb, pi_int))
-        slot_meta[(msb, pi_int)] = entry
-    return frozenset(slot_set), slot_meta, file_meta, eligible
-
-
-(V3_FLYING_REQUIRED_SLOTS,
- V3_FLYING_REQUIRED_SLOTS_META,
- V3_FLYING_REQUIRED_SLOTS_FILE_META,
- V3_FLYING_ELIGIBLE_TARGETS) = _load_flying_required_slots()
+# This whole apparatus (V3_FLYING_REQUIRED_SLOTS + _META + _FILE_META +
+# V3_FLYING_ELIGIBLE_TARGETS, the _load_flying_required_slots() loader, and
+# data/nr_flying_required_slots.json) enforced that catalogued vanilla
+# dragon slots could only receive flier targets — the seed-552688
+# "Astel at a Flying Dragon slot → CTD" gate. Per Alaric that constraint
+# isn't real (dragons start grounded; any enemy is fine at any former
+# dragon slot) and the CTD was never confirmed to be flying-related. With
+# Gate 5 and the swap_compat is_flier checks gone, none of this is read
+# anymore, so it's all removed. This was also the last reader of the
+# anim_class tag field, which is now fully expunged.
+# ---------------------------------------------------------------------------
 
 
 # v0.24.79: entrance-animation classification (Option B step 1).
@@ -8796,7 +9036,57 @@ V3_ARENA_ONLY_FORCE_LIFT = frozenset({
     # so Metyr still prefers real arenas but is no longer locked out of
     # boss-tier world slots.
     'c5200',  # Metyr, Mother of Fingers   (XL, nightlord, MMV→heritage-adjacent)
+    # v0.27.37: c5030 Romina, Saint of the Bud. XL nightlord, arena-locked
+    # via the v0.23.72 expects_boss_arena auto-extend (XL, so not reached
+    # by the M-size auto-lift). Same pool-gap reasoning as the entries
+    # above — Alaric direction, lift it. Footprint-clip concern checked
+    # against the catalog: 20 of 49 fieldboss slots hold an XL+ enemy in
+    # vanilla (Draconic Tree Sentinel XL, Ulcerated Tree Spirit XXL, Flying
+    # Dragon/Magma Wyrm GIGA, …), so the boss-tier world slots demonstrably
+    # fit her size class. expects_boss_arena stays in the source tag (still
+    # feeds the +10 arena-preference score), so she prefers real arenas but
+    # is no longer locked out of boss-tier world slots.
+    'c5030',  # Romina, Saint of the Bud   (XL, nightlord, MMV)
 })
+
+
+# ============================================================================
+# v0.27.40: FREEZE-PRONE IMPORTS — placement gate (single source of truth)
+# ----------------------------------------------------------------------------
+# Imported single-entity bosses that disable their own AI during a phase-
+# transition buff and rely on an external (home-arena) re-enable that is gone
+# when the rando relocates them. emevd_patch.py's nb_phase_reenable injects
+# the re-enable, but it addresses the boss by ENTITY id and so can only reach
+# ENTITY-BEARING slots (entity_id != 0); name-marker slots (entity_id == 0,
+# where the rando binds by Part identity, not entity) are unreachable by any
+# EMEVD patch. So these imports must be gated to entity-bearing slots, or they
+# freeze post-transition with no possible remedy at the slot.
+#
+# The set is loaded from data/phase_transition_imports.json — THE SAME FILE
+# emevd_patch.py derives _AT_RISK_PHASE_MARKERS from. One file, two consumers:
+# the markers drive the re-enable WaitFor; the c_prefixes drive this gate. Add
+# a future import to that JSON and both the re-enable AND this gate pick it up
+# with no second list to maintain (the override-drift hazard this avoids).
+#
+# Size-compat sanity (verified 2026-05 against nr_boss_slots + nr_slot_
+# inventory): the gate is cheap. M-size imports keep ~328 of 495 size-
+# compatible slots; GIGA imports (Scadutree/Radahn) keep 74 of 80 (giant
+# bosses fit only large slots, which are entity-bearing boss arenas anyway).
+# Far from the force-lift "0 placements" failure mode.
+def _load_freeze_prone_imports():
+    """Return frozenset of c_prefixes from data/phase_transition_imports.json
+    that need EMEVD re-enable (and so must be gated to entity-bearing slots).
+    Empty on failure -> gate is a no-op (safe: worst case is the pre-existing
+    behavior where these could land at name-marker slots and freeze)."""
+    try:
+        with open(_data_path('phase_transition_imports.json'), encoding='utf-8') as f:
+            data = json.load(f)
+        return frozenset((data.get('markers', {}) or {}).keys())
+    except (OSError, ValueError, TypeError):
+        return frozenset()
+
+
+V3_FREEZE_PRONE_IMPORTS = _load_freeze_prone_imports()
 
 
 # ============================================================================
@@ -8951,53 +9241,44 @@ def _reset_pipeline_metadata():
 # and written to the output. The user can then deploy them into me3.
 #
 # ──────────────────────────────────────────────────────────────────────
-# KNOWN BUG: spawn-pool pi=1 silently filtered by near-origin placeholder
+# FIXED v0.27.29: castle-variant spawn-pool MSBs now swap
 # ──────────────────────────────────────────────────────────────────────
-# Each spawn-pool MSB contains 3 Parts: pi=0 c1000 (player marker),
-# pi=1 the rotation chr (boss to be teleported into the live arena),
-# and pi=2 AEG099_060 (asset). The chr at pi=1 is positioned at
-# (0.0, 0.0, 0.0) — origin — because the engine SmallBaseAttached
-# system teleports it to the arena attachPoint at runtime; its static
-# position in the source MSB is irrelevant.
+# Spawn-pool MSBs are m46 template tiles whose pi=1 boss is teleported into
+# a live arena at runtime (SmallBaseAttached). They come in two shapes:
+#   - FIELD-boss rotations (m46_52..m46_74): named "... (Field Boss)".
+#   - CASTLE-variant rotations (m46_86/87/88/90/91/95): named with POI-
+#     interior conventions — "(Castle Basement)", "(Castle)".
+# Both shapes list pi=1 in V3_SPAWN_POOL_MSBS, pin it via
+# V3_BOSS_TIER_PINNED_SLOTS (msb, 1), and have a V3_BOSS_SLOT_CATALOG entry.
 #
-# Confirmed via MSB_PART_INVENTORY diagnostic on seed 108304:
-#   m46_52: pi=1 c3250 npc=32500090 pos=[0,0,0]
-#   m46_53: pi=1 c3251 npc=32510020 pos=[0,0,0]
-#   (all 24 inventoried spawn-pool MSBs follow the same pattern)
+# BUG (seen seed 670313 v0.27.28): every FIELD twin swapped (n_swaps=1)
+# while every CASTLE variant shipped vanilla (n_swaps=0). Players met a
+# vanilla Bell Bearing Hunter in the Castle Basement (m46_87) and vanilla
+# Crucible Knight in the castle (m46_95), worst in all-SOTE mode.
 #
-# CONFLICT: the near-origin spawn-marker filter (see _V3_SPAWN_MARKER_
-# SKIP_BREAKDOWN, 'near_origin' class) drops every Part with
-# |x|<2 ∧ |y|<2 ∧ |z|<2. This filter exists to skip script-spawn
-# templates that the engine instantiates elsewhere — but it can't
-# distinguish "template that should be left alone" from "rotation chr
-# that should be swapped." Result: pi=1 of every V3_SPAWN_POOL_MSBS
-# member is silently filtered out before reaching the swap pipeline.
-# The spawn-pool rotation never gets randomized in practice.
+# ROOT CAUSE (confirmed by reading the uncompressed castle MSBs + bisecting
+# pick_target_cp): NOT a near-origin/cluster/placeholder/emerge-marker
+# issue — those were all red herrings from stale comments. The castle
+# tiles are structurally identical to the field twins (3 Parts: c1000
+# marker + pi=1 boss + AEG asset, pi=1 named + real npc, eid %10000==800).
+# The divergence was pure NAME-MARKER CLASSIFICATION in pick_target_cp:
+# the arena / night-boss gates (the _arena_only and NIGHT_BOSS_ONLY pool
+# subtractions) keyed on slot_variant_name matching the BROAD markers
+# ("Field Boss"/"Night Boss") plus the catalog `arena` flag. The castle
+# names match neither broad marker, and these entries carry arena:False
+# + scope:extended, so the slot read as non-arena/non-NB, both subtractions
+# fired, and in all-SOTE mode the small boss-tier SOTE pool emptied →
+# pick_target_cp returned None → vanilla. (With the full roster the
+# non-arena fallback pool still had boss-tier chrs, so the bug was less
+# visible but still present.)
 #
-# Symptom: user sees vanilla Tree Sentinels at Castle Roof, vanilla
-# BBH at Castle Basement, etc., even with spawn_pool_source_dir set
-# and the auto-inclusion path firing correctly. SCRIPT_SPAWN_SKIP_
-# BREAKDOWN.near_origin in the spoiler trace counts these (66 in the
-# 108304 seed) but doesn't say which ones could have been valid swaps.
-#
-# Fix path (NOT YET IMPLEMENTED — design notes only):
-#   - When processing pi=1 of an MSB whose basename is in
-#     V3_SPAWN_POOL_MSBS, bypass the near-origin filter. The
-#     V3_SPAWN_POOL_MSBS membership is the trustworthy signal that
-#     "this origin-positioned chr is a real rotation source, not a
-#     script-spawn template."
-#   - Verify in playtest that the engine respects the swap (i.e., the
-#     teleported chr at the live arena reflects the new c-prefix).
-#     There's residual risk that the engine caches the original chr's
-#     chrbnd at preload time and CTDs when the swapped chr's bundle
-#     isn't loaded; if so, we'd need to extend the chrbnd-preload set
-#     for the live arena map (m48_50, m48_60, etc.) to cover the full
-#     pool of valid swap targets.
-#   - Two-pass approach worth considering: keep the near-origin filter
-#     active in the main swap loop, but add a second pass specifically
-#     for V3_SPAWN_POOL_MSBS pi=1 that uses a different code path
-#     bypassing the filter. Cleaner separation of "general MSB Parts
-#     processing" from "rotation-source pi=1 swap."
+# FIX (v0.27.29, in pick_target_cp): a catalogued spawn-pool rotation
+# source (V3_SPAWN_POOL_MSBS pi=1 AND in V3_BOSS_SLOT_CATALOG at any
+# scope) now counts as arena + night-boss for those gates, regardless of
+# name marker — mirroring the v0.24.98 catalog-membership override that
+# already promotes the same slot's recipient_is_boss. Narrow: only the
+# enumerated spawn-pool pi=1 slots qualify, so gating elsewhere is
+# untouched, and boss-tier preserve still holds (no grunt leak — verified).
 # ──────────────────────────────────────────────────────────────────────
 #
 # Format: { 'msb_basename_without_ext': 'description' }
@@ -9025,12 +9306,25 @@ V3_SPAWN_POOL_MSBS = {
     'm46_72_00_00': 'c5011 [unknown] (Field Boss rotation)',
     'm46_74_00_00': 'c4980 Death Rite Bird (Field Boss rotation)',
     # Castle-variant rotation chrs (m46_8x — extended scope)
+    'm46_81_00_00': 'c2100 Black Knife Assassin (Castle-variant rotation)',
+    'm46_82_00_00': 'c3181 Red Wolf of Radagon (Castle-variant rotation)',
     'm46_86_00_00': 'c3460 Leonine Misbegotten (Castle-variant rotation)',
     'm46_87_00_00': 'c3100 Bell Bearing Hunter (Castle Basement rotation)',
     'm46_88_00_00': 'c4021 Royal Revenant (Castle-variant rotation)',
     'm46_90_00_00': 'c4670 Ancestor Spirit (Castle-variant rotation, script_spawn)',
     'm46_91_00_00': 'c4690 Grafted Scion (Castle-variant rotation, script_spawn)',  # was: "Putrid Avatar"
     'm46_95_00_00': 'c7100 Crucible Knight Ordovis (Castle-variant rotation)',
+    # v0.27.30: m46_81 + m46_82 added. They were in V3_BOSS_SLOT_CATALOG and
+    # the spawn-pool detector flagged them in spoilers, but were absent from
+    # this curated list, so _is_spawn_pool_rotation_source returned False and
+    # the v0.27.29 _is_catalogued_spawn_pool_boss gate (which ANDs on it) could
+    # not fire — Black Knife Assassin (m46_81) and Red Wolf (m46_82) shipped
+    # vanilla every seed (Alaric seed 230261 Red Wolf repro). MSB structure
+    # verified byte-identical to m46_87: pi=0 c1000 marker / pi=1 boss eid…800
+    # pos (0,0,0) / pi=2 AEG asset. m46_80 (The Oldest Gaol) deliberately NOT
+    # added here — it is a 4-boss arena (pi=1..4 at distinct real positions),
+    # not a single rotation source; the pi=1-is-the-boss model would mishandle
+    # it. m46_80 needs the multi-slot arena path, tracked separately.
     # NOTE: m48_20_00_00 is NOT in this list. It contains c7910 at (0,0,0)
     # which superficially matches the spawn-pool pattern, but the MSB also
     # has c3970, c4505, and c7900 at real positions — it's a Night Boss
@@ -9469,7 +9763,7 @@ V3_POSITION_SHIFTS = {
 #
 # CALIBRATION: every value below is a playtest-derived guess. Only c4680
 # has an observation behind it (and that is a coarse +1.0 eyeball — refine
-# it). The rest are 0.0 placeholders, grouped by anim_class, so the table
+# it). The rest are 0.0 placeholders, grouped by family, so the table
 # structure exists and a playtest only needs to fill a number. A 0.0 entry
 # ships nothing — it is a no-op until measured. Do NOT bulk-fill these.
 V3_MODEL_Y_OFFSET = {
@@ -9586,7 +9880,7 @@ def lookup_position_shift(slot_msb_name, slot_pi):
 # source). v0.20.69 confirmed c4620 Astel froze here and added the slot
 # to V3_PROBLEM_SLOTS. v0.23.62 confirms c5010/c5011 Hippo also freeze
 # here, despite being in V3_FRAGILE_SAFE_CONFIRMED. Both Astel and Hippo
-# are XXL/GIGA large_boss_ground anim_class — the hypothesis is that
+# are XXL/GIGA large_boss_ground family — the hypothesis is that
 # the Guardian Golem wake-up EMEVD event triggers anim bank 46600 which
 # only c4660 owns; large_boss_ground chrs without the right anim entry
 # stay in standby pose forever.
@@ -9609,11 +9903,11 @@ V3_PROBLEM_SLOT_EXTRA_BANS = {
     ('m38_00_00_00.msb', 51): {
         'c5010',  # Golden Hippopotamus — large_boss_ground GIGA, freezes
                   #   at Cathedral interior pi=51 (v0.23.62 playtest).
-                  #   Same anim_class+size profile as c4620 Astel which
+                  #   Same size/family profile as c4620 Astel which
                   #   was the v0.20.69 case for adding this slot to
                   #   V3_PROBLEM_SLOTS originally.
         'c5011',  # Golden Hippopotamus (Golden Wings) — same family,
-                  #   same anim_class+size, defensive add. Not directly
+                  #   same size/family, defensive add. Not directly
                   #   observed frozen at this slot but high probability
                   #   given c5010 result. Cheap to ban.
     },
@@ -9682,7 +9976,7 @@ V3_PROBLEM_SLOT_EXTRA_BANS = {
     # c3970 Azula Beastman to pi=11/12/13/14 respectively. Three worked
     # fine in-game; c3970 froze at pi=14. All four chrs are in
     # V3_FRAGILE_SAFE_CONFIRMED and all four have locomotion=0 — the
-    # differentiator appears to be anim_class+size:
+    # differentiator appears to be size/family:
     #   c4340 humanoid XL — works (large footprint, different nav)
     #   c4420 aquatic XXL — works (aquatic anim class)
     #   c5090 quadruped L — works (quadruped nav)
@@ -9693,7 +9987,7 @@ V3_PROBLEM_SLOT_EXTRA_BANS = {
     # consistent with stuck-in-spawn-anim rather than terrain-trap.
     # Banning c3970 specifically across all 4 cluster slots; if more
     # humanoid-M-loco=0 chrs report freezes here, add them or escalate
-    # to a wider anim_class+size+loco-based ban heuristic.
+    # to a wider size+loco-based ban heuristic.
     ('m38_00_00_00.msb', 11): {
         'c3970',  # Azula Beastman — humanoid M loco=0 freezes here
     },
@@ -9771,15 +10065,15 @@ V3_PROBLEM_SLOT_EXTRA_ALLOWS = {
     # which locked the pool to SAFE_CONFIRMED only. EXTRA_ALLOWS lets
     # specific c-prefixes bypass that restriction at this slot.
     #
-    # With v0.24.75's removal of anim_class restrictions globally
+    # With v0.24.75's removal of rig-compat restrictions globally
     # (xxl_giga_anim_drift dropped, V3_FORBIDDEN_BY_SOURCE_ANIM emptied,
-    # base swap_compat._compat_anim_class neutered), the big-dragon
+    # base swap_compat._compat_rig neutered), the big-dragon
     # family becomes geometrically eligible at this slot. EXTRA_ALLOWS
     # below gets them past the remaining SAFE_CONFIRMED restriction.
     #
     # Note: c4510 Ancient Dragon and c4580 Giant Wormface are NOT
     # in this list — they're blocked by Gate 1 (nb_strict), which is
-    # NB-tier-based not anim_class-based, and remains in effect.
+    # NB-tier-based not family-based, and remains in effect.
     ('m38_00_00_00.msb', 51): {
         'c4910',  # Magma Wyrm — grounded big dragon (quadruped_large GIGA)
         'c4911',  # Great Wyrm Theodorix (flying_dragon GIGA)
@@ -10055,7 +10349,7 @@ def is_fragile_slot(slot_msb_name, slot_pi, slot_variant_name, slot_pos=None,
 # freezes.
 #
 # If the recipient slot's chosen_pool intersects the alternatives at all
-# (after anim_class compat, size, etc.), pick from the intersection. If
+# (after compat, size, etc.), pick from the intersection. If
 # it's empty (e.g. no aerial-capable enemy passes the strict pool
 # filters), fall back to skipping the swap (keep vanilla bat) — same
 # semantics as the old V3_AERIAL_SOURCE_SKIP.
@@ -10215,6 +10509,34 @@ V3_FIELD_STRENGTH_TIERS = {'grunt', 'trash', 'cluster_member',
 V3_FIELD_UPGRADE_MINIBOSS_PCT = 0.015
 V3_FIELD_UPGRADE_NIGHTBOSS_PCT = 0.002
 
+# v0.27.35: per-slot field-tier PINS. A non-catalogued field slot listed
+# here skips the random field roll and is assigned the pinned effective
+# tier deterministically (every seed, every roll). Use for known slot
+# GROUPS that need a fixed tier the random roll can't reliably deliver and
+# that shouldn't be promoted into the boss catalog (which would route them
+# through the boss pool / NB-arena promotion).
+#
+# Seed motivation — the m49_43 castle Crucible Knight room:
+#   m49_43 is a castle-interior room of 10 c2500 Crucible Knight (Castle)
+#   Parts (a Roundtable-style mob room, NOT a single set-piece boss). It is
+#   not in V3_BOSS_SLOT_CATALOG, so its slots take the field roll, which
+#   returns 'grunt' ~98.3% of the time. But c2500 is tagged
+#   tier='night_boss' + has_reward=True, so the field roll sets
+#   src_tier='grunt' and then the has_reward preservation gate restricts the
+#   target pool to grunt-tier chrs that ALSO have has_reward — of which
+#   there are effectively zero (only c5240, itself unusable here). The pool
+#   empties and pick_target_cp returns None for all 10 slots, so the whole
+#   MSB ships ZERO_CHANGE_PASSTHROUGH (observed seed 435226 v0.27.33: all 10
+#   castle Crucibles vanilla). Pinning these slots to 'miniboss' routes them
+#   to the miniboss pool, which has 73 has_reward-bearing eligible targets,
+#   so the gate is satisfied and the room randomizes into tougher-than-grunt
+#   mobs (Alaric direction — middle ground, not 10 boss-caliber enemies).
+#   The miniboss tier-ladder ('miniboss','grunt') still degrades to grunt if
+#   a miniboss candidate can't be found, so the slot never re-strands.
+V3_FIELD_SLOT_TIER_PIN = {
+    ('m49_43_00_00.msb', pi): 'miniboss' for pi in range(10)
+}
+
 # Set at shuffle start (see cmd_shuffle_v3_impl). Module global rather
 # than a threaded param to keep pick_target_cp's signature stable; the
 # field roll is a pure function of (seed, msb, pi).
@@ -10233,6 +10555,20 @@ def _field_slot_roll(slot_msb_name, slot_pi):
     h = int.from_bytes(hashlib.sha1(key).digest()[:8], 'big')
     return random.Random(h).random()
 
+def _slot_decision_rng(slot_msb_name, slot_pi):
+    """Per-slot Random for the target-cp decision, stable per (run seed,
+    msb, pi) and independent of the shared shuffle stream — same rationale
+    and SHA-1 keying as _field_slot_roll, with a distinct 'decision'
+    namespace so it never collides with the field-tier roll for the same
+    slot. Making the cp pick a pure function of slot identity is what
+    removes the input-ordering dependence (a contaminated/reordered base
+    no longer cascades into a different world) and lets
+    simulate_engine.py reproduce the cp decision exactly."""
+    import hashlib
+    key = f"{_V3_RUN_SEED}|decision|{slot_msb_name}|{slot_pi}".encode()
+    h = int.from_bytes(hashlib.sha1(key).digest()[:8], 'big')
+    return random.Random(h)
+
 def field_roll_tier_for(slot_msb_name, slot_pi):
     """Rolled effective tier ('grunt'|'miniboss'|'night_boss') for a
     non-catalogued field slot, or None if the slot IS catalogued (a
@@ -10242,6 +10578,10 @@ def field_roll_tier_for(slot_msb_name, slot_pi):
         return None
     if (slot_msb_name, slot_pi) in V3_BOSS_SLOT_CATALOG:
         return None
+    # v0.27.35: deterministic per-slot tier pin (skips the random roll).
+    _pin = V3_FIELD_SLOT_TIER_PIN.get((slot_msb_name, slot_pi))
+    if _pin is not None:
+        return _pin
     r = _field_slot_roll(slot_msb_name, slot_pi)
     if r < V3_FIELD_UPGRADE_NIGHTBOSS_PCT:
         return 'night_boss'
@@ -10447,65 +10787,18 @@ V3_NIGHT_OR_FIELD_BOSS_ONLY_TARGETS = {
 # qualifying reservation slots at 65-81% rates. Per user direction:
 # "I want night bosses at field boss slots, as long as they can traverse"
 # — traversal IS the concern, and traversal is what arena_only /
-# fragile_sensitive / anim_class compat handle. Empty set retained so
+# fragile_sensitive / swap compat handle. Empty set retained so
 # downstream code that reads this constant doesn't crash; population
 # sites in load_data() were also removed.
 V3_NIGHT_BOSS_STRICT_TARGETS: set = set()
 
 
-# v0.24.18: Source-anim-class-aware target exclusions. When the source
-# slot's vanilla chr has anim_class X, exclude target c-prefixes Y from
-# the pool. Orthogonal to the slot-variant-name gates (V3_ARENA_ONLY etc.)
-# which read the recipient slot's variant name marker — this gates on
-# the actual anim_class of what was AT the slot in vanilla.
-#
-# Use case: c4660 Guardian Golem at Flying Dragon (Field Boss) slots.
-# V3_ARENA_ONLY_TARGETS lets c4660 through because the slot variant name
-# carries 'Field Boss' marker, but the slot is geometrically an AERIAL
-# boss arena (spawn Y-offset for a flying entity, surrounding cliff
-# geometry sized for flyovers). Ground GIGA classes don't fit. Observed
-# seed 538711 m60_43_36_50 pi=23: Flying Dragon (Field Boss) → Guardian
-# Golem (Fort). Per user: "let's not swap him in for fliers".
-#
-# v0.24.24: added 'giga_boss': frozenset({...flier c-prefixes...}) as
-# REVERSE direction after seed 738357 m30_30 pi=45 fort-roof CTD
-# (c6260 Death Rite Bird at Guardian Golem-source slot, y=42.83).
-# v0.24.24 hypothesis: "flier takeoff EMEVD assumes ground spawn —
-# pathing hits fort geometry on entity trigger".
-#
-# v0.24.66: REMOVED the giga_boss reverse rule. Post-v0.24.65 playtest
-# (full chr+script+aicommon+sfx+material deploy) showed dragons DO work
-# in Guardian Golem slots — per user: "their entrance animation is
-# extremely cool". The original c6260 CTD was almost certainly an
-# MMV-asset-deploy gap (same pattern as c8300's Roundtable error,
-# resolved by v0.24.64 bundled aicommon + v0.24.65 sfx/material), not
-# a slot-geometry incompatibility. Misdiagnosis: the v0.24.23 spoiler
-# made the placement look like a geometry mismatch because that was
-# visible; the actual breakage was upstream at chr-asset load time.
-# Restoring the 14 fliers to giga_boss-source slots unlocks meaningful
-# placement variety. If a specific flier-at-grounded-slot CTD resurfaces
-# post-v0.24.65, re-add the specific c-prefix to a tighter rule with
-# seed+version evidence rather than blanket-ban.
-#
-# The v0.24.18 forward direction (flying_dragon source → exclude c4660)
-# remains in effect. It's playtest-confirmed: c4660 Guardian Golem at
-# vanilla Flying Dragon slots sinks into the geometry, distinct failure
-# mode from the c6260 case.
-#
-# Pool subtraction is in pick_target_cp alongside the other gate
-# subtractions. Extensible: if future bug reports surface "target X
-# breaks at source-anim Y" patterns, add the entry here.
-V3_FORBIDDEN_BY_SOURCE_ANIM = {
-    # v0.24.75: ALL entries cleared per user directive. The anim_class-
-    # based CTD theories that motivated this dict (v0.24.18 flying_dragon
-    # source → c4660 ban) were misattributing crashes that had other
-    # root causes (missing chr assets, AI script issues). Dict kept as
-    # an empty symbol so the Gate 3 check in _reject_target_for_slot
-    # is a no-op without removing the gate code (preserves call sites
-    # that test the symbol). Add entries back if a future bug report
-    # surfaces an actual playtest-confirmed source-anim → target-cp
-    # CTD pattern.
-}
+# v0.27.28: V3_FORBIDDEN_BY_SOURCE_ANIM REMOVED. This dict keyed forbidden
+# target c-prefixes off the SOURCE chr's family; it had been empty ({})
+# since v0.24.75 (its CTD theories were misattributed asset-load gaps), so
+# the Gate 3 that consulted it was a no-op. Removed wholesale along with the
+# family field it depended on. If a real playtest-confirmed source→target
+# CTD pattern ever resurfaces, gate it on a concrete property with evidence.
 
 
 # v0.24.19 / rewritten v0.26.x: getSoul floor overrides. Vanilla NR has
@@ -10556,7 +10849,17 @@ V3_FORBIDDEN_BY_SOURCE_ANIM = {
 V3_GETSOUL_TIER_FLOORS = {
     'nightlord':  4375,
     'night_boss': 3750,
-    'field_boss': 2500,
+    # v0.27.13: field_boss 2500 -> 1605. Re-derived (placement-weighted
+    # vanilla median per tier) after the field_boss tier collapse pulled
+    # c4021 Royal Revenant (-> miniboss) and c5170 Furnace Golem (->
+    # night_boss) out of the tier. The only field_boss-tagged chr left
+    # in nr_enemy_tags.json is c4450 Walking Mausoleum (target-excluded),
+    # so the derived median is now just c4450's placement-weighted value.
+    # field_boss is effectively a dead tier post-collapse — see
+    # docs/OPEN_ISSUES.md for the question of dropping it from the floor
+    # system entirely. Surfaced by
+    # test_getsoul_overrides::test_floors_match_placement_weighted_medians.
+    'field_boss': 1605,
     # v0.27.13: miniboss 475 -> 450. Re-derived (placement-weighted
     # vanilla median per tier — see test_getsoul_overrides.py) after
     # c4050 Kaiden Sellsword and c5840 Black Knight were bumped into
@@ -10636,13 +10939,18 @@ V3_NIGHT_BOSS_CALIBER_TARGETS = {
     'c3181',  # Red Wolf of Radagon (heritage)
     'c3252',  # Loretta Tree Sentinel
     # v0.23.08: c4220 Giant Land Octopus + c4420 Giant Crayfish removed from
-    # caliber. anim_class=aquatic doesn't navigate NR's humanoid-anchored NB
+    # caliber. aquatic-family doesn't navigate NR's humanoid-anchored NB
     # arenas — they get picked, fail to spawn, leave the arena empty.
     # Confirmed on seed 821747 at m48_40 Morgott NB arena: c4220 picked, no
     # spawn. Both chrs remain valid targets at non-NB slots (their compat
     # range still includes plenty of field encounters).
     'c4241',  # Giant Fingercreeper (GIGA)
-    'c4450',  # Walking Mausoleum
+    # v0.27.13: c4450 Walking Mausoleum REMOVED from caliber. It is now
+    # in V3_EXCLUDE_TARGET_PREFIXES (residual field_boss-tier cleanup),
+    # so it can never be picked as an NB-arena target — this caliber
+    # entry would be dead code and surface as a HIGH-severity finding in
+    # dev/audit_placement_budget_consistency.py. Same dead-entry rule as
+    # the v0.26.x c4910/c5010 cap removals.
     'c4460',  # Flame Chariot
     'c4500',  # Flying Dragon
     'c4501',  # Decaying Ekzykes
@@ -10748,7 +11056,7 @@ V3_NIGHT_BOSS_EXCLUDE_TARGETS = {
 # a given c-prefix have been committed across the run, that c-prefix is
 # removed from the candidate pool for all subsequent slots. Implementation:
 # a pre-pass computes which slots get reserved (one slot per cap unit),
-# scoring candidate slots by quality (anim_class compat, terrain, MSB
+# scoring candidate slots by quality (compat, terrain, MSB
 # class). Reserved slots commit their c-prefix directly; all other slots
 # subtract exhausted-cap c-prefixes from their pool.
 #
@@ -10802,7 +11110,11 @@ V3_UNIQUE_TARGET_CAPS = {
     'c4503': 1,  # Borealis the Freezing Fog — vanilla mountain-peak only;
                  # reservation pass picks high-altitude flat slot.
     'c4501': 1,  # Decaying Ekzykes — same Flying Dragon rig as c4500.
-    'c4500': 1,  # Flying Dragon (Unscaled) — neutral baseline.
+    # v0.27.13: c4500 cap removed. c4500 is in V3_EXCLUDE_TARGET_PREFIXES
+    # (the "no sauce" flying-dragon ban), so this cap could never fire —
+    # a cap on a target-excluded chr is a dead entry and surfaces as a
+    # HIGH-severity finding in dev/audit_placement_budget_consistency.py.
+    # Same dead-cap rule as the v0.26.x c4910/c5010 cap removals.
     # v0.26.x: c4910 Magma Wyrm cap removed — chr excluded from target
     # pool as a redundant archetype (c4911 Great Wyrm Theodorix is the
     # NB-tier same-shape variant). See V3_EXCLUDE_TARGET_PREFIXES
@@ -10875,14 +11187,17 @@ V3_UNIQUE_TARGET_CAPS = {
     # gets divorced from a rider.
     'c7700': 2,  # Gaping Dragon (DS1) — v0.25.3: 1→2
     'c7710': 2,  # Centipede Demon (DS1) — v0.25.3: 1→2
-    # v0.26.x cleanup: c7800 cap REMOVED — dead code. The v0.25.3 1→2 raise
-    # was applied uniformly across the heritage NB roster, but c7800 Duke's
-    # Dear Freja has no chrbnd on disk (post_dlc_dump entry only) and is
-    # hard-excluded at module load by `_load_missing_chr_files()` from
-    # `data/nr_missing_chr_files.json`. The exclude wins; the cap never
-    # fired. Surfaced by `dev/audit_placement_budget_consistency.py`.
-    # If chr files ship for c7800 in a future heritage pack, restore the
-    # cap entry alongside the missing_chrs lift.
+    # v0.26.x cleanup: c7800 cap REMOVED — dead code. The v0.25.3 1→2
+    # raise was applied uniformly across the heritage NB roster, but
+    # c7800 Duke's Dear Freja does not take a per-chr cap: it is a
+    # vanilla nr_placed night_boss (reclassified from post_dlc_dump in
+    # the v0.26.x byte-level MSB audit, which confirmed it IS real
+    # vanilla content). It was also LIFTED from nr_missing_chr_files.json
+    # that revision — the v0.24.44 asset-import 'no chrbnd' flag was a
+    # false positive. c7800 is now a placeable night_boss, arena-gated
+    # via V3_DEDICATED_ARENA_BOSS_CHRS / V3_ARENA_ONLY_TARGETS, and is
+    # NOT in any exclude set. No cap needed (NB-tier vanilla chrs aren't
+    # capped). Surfaced by `dev/audit_placement_budget_consistency.py`.
     # v0.26.x: heritage DS NB ceilings normalized to 2 alongside the
     # floor/ceiling cap split landing in this revision. The earlier
     # cap=2→3 bump (intended to compensate for cap=2 reservation
@@ -10910,9 +11225,13 @@ V3_UNIQUE_TARGET_CAPS = {
     # or escalate to a heuristic auto-cap based on parent's paired-only
     # flag in nr_enemy_tags.json.
     # ----------------- cap = 2 (unnamed archetype) -----------------
-    # Smaller dragon variant — vanilla uses in catacombs, less iconic
-    # than the full-size dragons, so cap=2 lets it appear in two places.
-    'c4505': 2,  # Flying Dragon (Small) — vanilla indoor-capable.
+    # v0.27.13: c4505 cap removed. c4505 is in V3_EXCLUDE_TARGET_PREFIXES
+    # (the "no sauce" small flying-dragon ban) — a cap on a target-
+    # excluded chr is dead code and surfaces as a HIGH-severity finding
+    # in dev/audit_placement_budget_consistency.py. Same dead-cap rule
+    # as the v0.26.x c4910/c5010 removals. (Former comment: "Smaller
+    # dragon variant — vanilla uses in catacombs, cap=2 lets it appear
+    # in two places" — moot now that c4505 is never a target.)
     # Frequency-driven caps from seed 394059 baseline (8-17 placements
     # per run before cap). Cap=2 normalizes "you might see one in the
     # north and one in the south" without becoming swarm.
@@ -10949,7 +11268,7 @@ V3_UNIQUE_TARGET_CAPS = {
     # (size=L, anim=quadruped, loco=5); same archetype as Runebear
     # (c4630 cap=2). Multiple Red Wolves per seed felt over-frequent
     # in user playtest. Combined with the v0.24.54 m46_77 pi=8 Gate-4
-    # anim_class rejection, this slot/chr pair now gets routed through
+    # fragile-locomotion rejection, this slot/chr pair now gets routed through
     # quality-slot reservation instead of organic random placement.
     'c3181': 2,  # Red Wolf of Radagon
     # v0.24.18: Red Bear cap=2. User req: "haunts my nightmares". Same
@@ -11413,37 +11732,12 @@ def lookup_slot_terrain(msb_name, pi):
 
 
 
-def _build_anim_class_fallback_pool(slot_tag, tags, prefix_variants, max_drift=1):
-    """Build a wider candidate pool by size_class drift, ignoring locomotion,
-    team, and (post-v0.24.100) anim_class.
-
-    Used when the standard loose-tuple pool is empty after strict compat
-    filtering. v0.24.100 dropped the anim_class equality filter — the
-    fallback pool is now size-drift-only (within ±max_drift size tiers).
-
-    Strict compat (arena gating, has_reward preservation, flier-vs-ground
-    via is_compatible) still applies on top of this wider pool. Locomotion
-    mismatch in the result is smoothed by NPCParam patching at swap time —
-    the rando overwrites the recipient's locomotion field with the
-    target's, so the target's anims play correctly.
-    """
-    SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'GIGA']
-    slot_sz = slot_tag.get('size_class', 'M')
-
-    if slot_sz in SIZE_ORDER:
-        i = SIZE_ORDER.index(slot_sz)
-        ok_sizes = set(SIZE_ORDER[max(0, i - max_drift):i + max_drift + 1])
-    else:
-        ok_sizes = {slot_sz}
-
-    pool = set()
-    for cp, t in tags.items():
-        if cp not in prefix_variants or not prefix_variants[cp]: continue
-        # v0.24.100: anim_class match filter REMOVED (was
-        # `if t.get('anim_class') != slot_ac: continue`).
-        if t.get('size_class') not in ok_sizes: continue
-        pool.add(cp)
-    return pool
+# v0.27.28: _build_size_drift_fallback_pool (formerly
+# _build_anim_class_fallback_pool) REMOVED — it was unreferenced dead code.
+# A size-drift candidate-pool helper that nothing called; its family
+# filter had already been stripped in v0.24.100, leaving a size-only pool
+# with no call sites. Reconstruct from git history if a fallback pool is
+# ever needed again.
 
 
 # ============================================================================
@@ -11545,7 +11839,7 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
     NOT a complete picker gate set. Only the gates with mirror
     semantics are here. Picker-only gates (V3_ARENA_ONLY_TARGETS,
     V3_NIGHT_BOSS_ONLY_TARGETS, V3_NIGHT_OR_FIELD_BOSS_ONLY_TARGETS,
-    V3_NIGHT_BOSS_EXCLUDE_TARGETS, anim_class compat at scripted-
+    V3_NIGHT_BOSS_EXCLUDE_TARGETS, swap compat at scripted-
     intro slots) work on slot-side variant matching and don't need
     mirroring — the reservation pre-pass either won't pick a fragile
     target for those slots, or the rejected target will fail an
@@ -11560,7 +11854,7 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
     # the real geometric concerns are covered by V3_ARENA_ONLY_TARGETS
     # (chrs needing arena geometry like Wormface), V3_FRAGILE_SENSITIVE_
     # TARGETS (chrs with rig issues on rough terrain like Ancient Dragon),
-    # and the anim_class / size_class compat checks in scoring. Per user
+    # and the size_class compat checks in scoring. Per user
     # direction: "I want night bosses at field boss slots, as long as
     # they can traverse." The string filter was too restrictive — it
     # blocked NB chrs from ~all source slots in Limveld because almost
@@ -11587,27 +11881,23 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
         if caliber_set and target_cp not in caliber_set:
             return 'nb_caliber'
 
-    # Gate 3: Source-anim forbidden (v0.24.24 / v0.24.26). When the
-    # vanilla source's anim_class is keyed in V3_FORBIDDEN_BY_SOURCE_
-    # ANIM, certain targets are disallowed regardless of slot variant
-    # markers. NOT chaos-overrideable (geometric). Example:
-    # giga_boss source (c4660 Guardian Golem) at any slot must NOT
-    # accept flying_dragon targets — the scripted intro plays a
-    # grounded-creature cinematic the flier can't satisfy.
-    src_anim = tags.get(src_cp, {}).get('anim_class')
-    if src_anim in V3_FORBIDDEN_BY_SOURCE_ANIM:
-        if target_cp in V3_FORBIDDEN_BY_SOURCE_ANIM[src_anim]:
-            return 'forbidden_source_anim'
+    # v0.27.28: Gate 3 (source-anim forbidden) REMOVED. It read the source
+    # chr's family against V3_FORBIDDEN_BY_SOURCE_ANIM, but that table
+    # has been empty ({}) since v0.24.x, so the gate never fired — it was
+    # pure dead weight reading the now-expunged anim_class field. The
+    # historical purpose (keep flying_dragon targets out of grounded-intro
+    # giga_boss slots) belonged to the flying-vs-ground machinery, also
+    # removed this version.
 
-    # Gate 4: Quadruped-unsafe slot (v0.24.31, extended v0.24.32). When
-    # the candidate target is a quadruped (locomotion=3) AND the (msb,
-    # pi) is catalogued in V3_QUADRUPED_UNSAFE_SLOTS, reject UNLESS the
-    # slot has a verified-safe reposition proposal. This catches
-    # empirically-observed spawn freezes where biped-on-mesh slots
-    # turn out to be quadruped-off-mesh at the wider sample radius
-    # quadrupeds use. NOT chaos-overrideable (geometric/engine
-    # constraint, not thematic). Skipped if msb_base or pi is None
-    # (legacy caller without slot identity).
+    # Gate 4: Locomotion-fragile-unsafe slot (v0.24.31, extended v0.24.32).
+    # When the candidate target has fragile locomotion (the fragile_locomotion
+    # tag, or locomotion=3) AND the (msb, pi) is catalogued in
+    # V3_QUADRUPED_UNSAFE_SLOTS, reject UNLESS the slot has a verified-safe
+    # reposition proposal. This catches empirically-observed spawn freezes
+    # where biped-on-mesh slots turn out to be quadruped-off-mesh at the
+    # wider sample radius these chrs use. NOT chaos-overrideable
+    # (geometric/engine constraint, not thematic). Skipped if msb_base or
+    # pi is None (legacy caller without slot identity).
     #
     # v0.24.32 release path: when an entry's reposition_proposed block
     # has playtest_verified=true, the gate is released for that slot.
@@ -11615,77 +11905,47 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
     # slot_repositions.json) and quadrupeds at the new location have
     # been confirmed to spawn correctly. Unverified repositions (the
     # default) keep the gate active — repositioned slot is still safe
-    # for bipeds, but quadrupeds remain blocked pending playtest.
+    # for bipeds, but the fragile-locomotion chrs remain blocked pending
+    # playtest.
     #
-    # v0.24.54: per-slot anim_class rejection. Some slots fail for ALL
-    # quadrupeds, not just locomotion=3. If the slot entry carries a
-    # `reject_anim_classes` field, the gate uses anim_class matching
-    # instead of the default loco=3 check. Example: m46_77 pi=8 (Demi-
-    # Human Queen anchor) was authored for humanoid bipedal AI; both
-    # loco=3 chrs (Rats) AND loco=5 chrs (c3181 Red Wolf) freeze there
-    # despite the per-chr position_shift. reject_anim_classes=['quadruped']
-    # captures both. The default loco=3 path remains for legacy slots
-    # that haven't been re-classified.
+    # v0.27.28: this gate used to read anim_class (reject_anim_classes per
+    # slot, and a default `family.startswith('quadruped')` check). With
+    # anim_class expunged, the "fragile locomotion" property it was a proxy
+    # for is now carried explicitly by the fragile_locomotion tag (set on
+    # the 70 former quadruped/quadruped_large chrs) — which crucially covers
+    # the loco-0/loco-5 quadrupeds (Bear c6031, Runebear, etc.) that a pure
+    # locomotion==3 check misses. The default branch keeps the loco==3 half
+    # because it independently covers 4 non-quadruped chrs (Godskin
+    # Apostle/Noble c3560/c3570, Revenant Follower c4000, Living Jar Warrior
+    # c4490) that freeze at the same slots. Per-slot override: an entry's
+    # `reject_fragile_locomotion: true` (migrated from the old
+    # reject_anim_classes=['quadruped']) rejects every fragile-loco target,
+    # which is the same set the default branch catches — kept as an explicit
+    # per-slot marker for the slots authored for humanoid bipedal AI (e.g.
+    # m46_77 pi=8, the Demi-Human Queen anchor).
     if msb_base is not None and pi is not None and V3_QUADRUPED_UNSAFE_SLOTS:
         if (msb_base, pi) in V3_QUADRUPED_UNSAFE_SLOTS:
             entry = V3_QUADRUPED_UNSAFE_SLOTS_META.get((msb_base, pi), {})
             repo = entry.get('reposition_proposed') or {}
             if not repo.get('playtest_verified'):
-                reject_anims = entry.get('reject_anim_classes')
-                target_anim = tags.get(target_cp, {}).get('anim_class') or ''
-                target_loco = tags.get(target_cp, {}).get('locomotion')
-                if reject_anims:
-                    # Per-slot anim_class-based rejection (v0.24.54).
-                    # Match anim_class as a prefix so 'quadruped' covers
-                    # both 'quadruped' and 'quadruped_large'.
-                    if any(target_anim.startswith(rej) for rej in reject_anims):
-                        return 'quadruped_unsafe_slot'
-                elif target_loco == 3 or target_anim.startswith('quadruped'):
-                    # Default: catches both loco=3 chrs (Rats etc.) and
-                    # anim_class=quadruped/quadruped_large chrs (Bears,
-                    # Goats, Wolves) at constrained-nav slots. Both
-                    # share the spawn-time pathfinding failure mode.
-                    # v0.24.62: broadened from the original loco=3-only
-                    # criterion after seed 923958 confirmed the Bear
-                    # (c6031, anim=quadruped_large, loco=0) freezes at
-                    # the same kind of slot the Rat (c4080, anim=
-                    # quadruped, loco=3) freezes at — see user request
-                    # "mark the regular grunt bear basically as fragile
-                    # as small rat".
+                target_tag = tags.get(target_cp, {})
+                target_fragile = target_tag.get('fragile_locomotion') is True
+                target_loco = target_tag.get('locomotion')
+                if target_fragile or target_loco == 3:
+                    # Catches fragile_locomotion chrs (former quadruped /
+                    # quadruped_large — Bears, Wolves, Goats, etc., across
+                    # all locomotion values) AND loco=3 chrs (Rats and the
+                    # handful of non-quadruped loco=3 bipeds). Both share
+                    # the spawn-time pathfinding failure mode at these
+                    # constrained-navmesh slots.
                     return 'quadruped_unsafe_slot'
 
-    # v0.24.45 Gate 5: flying-required slots.
-    # If (msb_base, pi) is catalogued as a flying-vanilla slot
-    # (vanilla NR put a flying_dragon chr there, designed for aerial
-    # spawn at high Y), reject non-flying target chrs. Asset-bundle and
-    # anim-bank mismatch CTDs the cell-load.
-    # Discovered seed 552688: m60_43_36_50 pi=23 vanilla c4500 Flying
-    # Dragon → rando picked c4620 Astel (giga_boss, not flying) → CTD
-    # walking out castle front door.
-    if msb_base is not None and pi is not None and V3_FLYING_REQUIRED_SLOTS:
-        if (msb_base, pi) in V3_FLYING_REQUIRED_SLOTS:
-            # v0.24.100: was `anim_class != 'flying_dragon'`; now uses
-            # is_flier so bat-class loco=2 chrs (Man-Bat, Operatic Bat)
-            # are also eligible targets at flier-required slots.
-            try:
-                from swap_compat import is_flier as _is_flier
-            except ImportError:
-                _is_flier = lambda t: t.get('anim_class') == 'flying_dragon'  # noqa: E731
-            # v0.27.10: also honor the data file's eligible_target_chrs
-            # whitelist (V3_FLYING_ELIGIBLE_TARGETS). is_flier covers the
-            # flying_dragon chrs + loco=2 bats; the whitelist additionally
-            # clears hand-vetted hover-capable non-fliers (jellyfish c4180/
-            # c4181, Warhawk c4210) so grunt-tier flier-required slots are
-            # not limited to the 2-bat pool. The whitelist plumbing has
-            # existed since v0.24.45 (_load_flying_required_slots) but Gate
-            # 5 was never wired to it — v0.24.100 switched to is_flier and
-            # left it dead. Asymmetric by construction: this only widens
-            # the TARGET set at catalogued flier slots; it does not make
-            # jellyfish/Warhawk slots flier-required (that is the separate
-            # V3_FLYING_REQUIRED_SLOTS catalog).
-            if (not _is_flier(tags.get(target_cp, {}))
-                    and target_cp not in V3_FLYING_ELIGIBLE_TARGETS):
-                return 'flying_required_slot'
+    # v0.27.28: Gate 5 (flying-required slots) REMOVED. Per Alaric, the
+    # flying-vs-ground constraint isn't real — dragons start grounded and a
+    # grounded enemy at a former dragon slot is fine. The seed-552688
+    # "Astel at a Flying Dragon slot → CTD" was a best-guess attribution
+    # that was never confirmed. This was the last consumer of is_flier /
+    # the V3_FLYING_REQUIRED_SLOTS catalog, both also removed.
 
     # v0.24.67 Gate 5.5: grunt/trash target at boss-healthbar slot.
     # Slots whose vanilla catalog tier indicates a boss-healthbar
@@ -11766,7 +12026,7 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
     # Discovered: seeds 756907 and 388677 both CTD when leaving
     # Stormveil Castle's southern face. Pattern: vanilla XXL/GIGA
     # boss slots in castle-area tiles (m60_4X_3Y) drift to targets
-    # with mismatched anim_class and/or much smaller size_class.
+    # with mismatched family and/or much smaller size_class.
     # When the cell streams in on transit, the chr-file load fails
     # asset/nav validation against the slot's expectations and the
     # game CTDs.
@@ -11774,7 +12034,7 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
     # User decision (v0.24.68): "enough diversity now" — go broad.
     # At any slot where the vanilla source size_class is XXL or GIGA,
     # require the target to:
-    #   (a) share the source's anim_class, AND
+    #   (a) share the source's family, AND
     #   (b) be size L or larger (i.e., not XS/S/M)
     #
     # No event-bound discrimination needed — source size XXL/GIGA is
@@ -11793,11 +12053,11 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
         tgt_tag = tags.get(target_cp, {})
         tgt_size = tgt_tag.get('size_class', '')
         # v0.24.75: anim_class drift check REMOVED. Per user directive,
-        # the anim_class CTD theories of v0.24.18/v0.24.68 were
+        # the rig-compat CTD theories of v0.24.18/v0.24.68 were
         # misattributing crashes that had other root causes (missing
         # chr assets, AI script issues). Keeping ONLY the size_drift
         # check — big sources still need big targets so body geometry
-        # fits the slot. anim_class match no longer required.
+        # fits the slot. rig match no longer required.
         #
         # v0.26.x: M lifted from the drift list per user direction —
         # "Midra should be eligible for any slot that's occupied by
@@ -12055,7 +12315,7 @@ def _score_slot_for_unique(slot_info, target_cp, tags):
       - source is in V3_EXCLUDE_SOURCE_PREFIXES (slot stays vanilla)
       - source npc_param in V3_EXCLUDE_SOURCE_NPC_PARAMS (preserved)
       - source is in a multi-Part cluster (cluster_id is not None)
-      - anim_class incompatible with target
+      - incompatible with target (size/family)
       - slot is fragile (per is_fragile_slot) AND target is in
         V3_FRAGILE_SENSITIVE_TARGETS — they don't survive together
 
@@ -12120,8 +12380,8 @@ def _score_slot_for_unique(slot_info, target_cp, tags):
         return None
 
     # v0.24.100: anim_class compat gate REMOVED. The historical block
-    # imported _compat_anim_class from swap_compat and disqualified slots
-    # whose source/target anim_class differed without a compat-pair entry.
+    # imported _compat_rig from swap_compat and disqualified slots
+    # whose source/target family differed without a compat-pair entry.
     # Since v0.24.75 the function was always-True (no-op); v0.24.100
     # deletes it outright. Flier-vs-ground separation is now enforced by
     # the flier-required slot gate above and by is_compatible at the
@@ -12204,25 +12464,11 @@ def _score_slot_for_unique(slot_info, target_cp, tags):
     if src_tag.get('size_class') in ('XL', 'XXL', 'GIGA'):
         score += 3
 
-    # Aerial-target preferences. v0.24.100: switched from
-    # anim_class=='flying_dragon' to the is_flier predicate so bat-class
-    # fliers (loco=2 Man-Bat / Operatic Bat) get the same aerial-slot
-    # scoring as dragons.
-    try:
-        from swap_compat import is_flier as _is_flier
-    except ImportError:
-        _is_flier = lambda t: t.get('anim_class') == 'flying_dragon'  # noqa: E731
-    if _is_flier(tgt_tag):
-        msb = slot_info['msb']
-        pos = slot_info.get('position') or (None, None, None)
-        y = pos[1] if pos[1] is not None else 0
-        if y > 30:
-            score += 2
-        # Interior MSBs are a hard penalty for fliers (no sky to spawn in)
-        if (msb.startswith('m32_') or  # tunnels
-            msb.startswith('m43_') or  # caves/catacombs
-            msb.startswith('m47_')):   # catacombs
-            score -= 10
+    # v0.27.28: aerial-target scoring REMOVED along with the rest of the
+    # flying-vs-ground machinery. This soft preference nudged fliers toward
+    # high-Y outdoor slots and penalized them at interior MSBs; with flying
+    # no longer a tracked class (per Alaric — dragons start grounded, any
+    # enemy is fine at any former dragon slot), there's nothing to score.
 
     return score
 
@@ -12437,6 +12683,13 @@ def _compute_unique_reservations(input_dir, tags, prefix_variants, rng,
 
     slots = _enumerate_unique_candidate_slots(input_dir, inventory=inventory)
     _populate_variant_names(slots, prefix_variants)
+    # v0.28: canonical candidate-slot order. The per-cp scoring below
+    # tiebreaks equal scores with rng.random() consumed in slot order, so
+    # without a stable order the reservations depend on how the input
+    # enumerated — the last input-ordering dependency in the pre-pass.
+    # Sorting here makes reservations a pure function of (seed, slot set),
+    # so a reordered base no longer shifts them and cascades.
+    slots.sort(key=lambda s: (s['msb'], s['pi']))
     print(f"  Enumerated {len(slots)} candidate Parts from input MSBs")
 
     # For each capped cp, score every slot
@@ -12708,6 +12961,7 @@ def pick_target_cp(recipient_cp, tags,
                     slot_y=None,
                     slot_msb_name=None, slot_pi=None, slot_variant_name=None,
                     slot_pos=None,
+                    slot_eid=None,
                     slot_require_boss_reward=False,
                     disable_resilient_filter=False,
                     non_fragile_baseline_cp=None,
@@ -12845,7 +13099,7 @@ def pick_target_cp(recipient_cp, tags,
     # v0.23.07: Unique-target reservation early-return. If this slot was
     # reserved during the pre-pass for a capped c-prefix, commit that pick
     # directly (bypasses tier/compat — the pre-pass already validated
-    # anim_class compat and source-preservation status). The pre-pass
+    # swap compat and source-preservation status). The pre-pass
     # already bumped _V3_UNIQUE_PLACED_COUNTS at reservation time so the
     # cap-exhausted gate sees this cp as filled before any per-MSB
     # processing — don't double-bump here.
@@ -13036,6 +13290,26 @@ def pick_target_cp(recipient_cp, tags,
         # else: leave pool alone, the slot will fall through other filters
         # and likely return None — better than silently losing the constraint.
 
+    # v0.27.40: freeze-prone-import addressability gate. Imports in
+    # V3_FREEZE_PRONE_IMPORTS (loaded from data/phase_transition_imports.json,
+    # the same file emevd_patch.py derives its re-enable markers from) disable
+    # their own AI during a phase transition and need the nb_phase_reenable
+    # EMEVD event to recover. That event addresses the boss by ENTITY id, so it
+    # can only reach entity-bearing slots; a name-marker slot (entity_id == 0)
+    # is unreachable and the boss would freeze post-transition with no remedy.
+    # So at a name-marker slot, drop freeze-prone imports from the pool. Single-
+    # phase imports (Manus/Romina/etc.) are NOT in the set and stay eligible at
+    # name-marker terrain slots. slot_eid is the live MSB read from the caller;
+    # only gate when we actually know it's a name-marker slot (eid is not None
+    # and <= 0) so a missing eid (older callers) never silently empties a pool.
+    if (V3_FREEZE_PRONE_IMPORTS and slot_eid is not None and slot_eid <= 0):
+        gated = pool - V3_FREEZE_PRONE_IMPORTS
+        # If gating would empty the pool, leave it: the slot falls through and
+        # likely returns None (stays vanilla) — never force a freeze-prone
+        # import onto an unreachable slot, but also never hard-crash a slot.
+        if gated:
+            pool = gated
+
     # v0.24.101: asymmetric has_reward preservation. When the recipient slot's
     # c-prefix has has_reward=True (a rewarded encounter in vanilla), restrict
     # the target pool to has_reward=True c-prefixes too. This prevents the
@@ -13057,7 +13331,38 @@ def pick_target_cp(recipient_cp, tags,
     #
     # If the filtered pool is empty the slot gets None and stays vanilla —
     # we'd rather skip the swap than break the reward.
-    if tags.get(recipient_cp, {}).get('has_reward') is True:
+    #
+    # v0.27.42: do NOT reward-preserve a slot that the field-roll has
+    # decoupled to a grunt position. The field-roll (v0.27.13,
+    # field_roll_tier_for) deliberately severs a non-catalogued field slot
+    # from its vanilla occupant — a miniboss-tagged-but-field-placed occupant
+    # is re-cast as a grunt-tier slot so it draws grunt-base enemies. But
+    # has_reward is TIER-DERIVED (miniboss-and-above => True, per
+    # dev/emit_has_reward.py), so the occupant still carries has_reward=True
+    # without dropping any real loot, and this gate then re-couples the slot
+    # to that spurious reward — contradicting the decoupling the roll just
+    # performed. The intersection it forms, (grunt-rolled pool) ∩
+    # (has_reward=True), is near-empty because grunts are tier-derived
+    # NO-reward: in the full roster it collapses to a tiny rewarded-grunt set
+    # (often emptying outright -> vanilla), and under all-SOTE it collapses
+    # to a single chr (c5240 Shadowpot) that the downstream nav gate then
+    # rejects -> empty -> vanilla. Net effect (bug): every Banished Knight
+    # (c3010), Elder Lion (c4270), and Troll (c4600) inside the castle
+    # (m49_41/42/43) shipped vanilla — in BOTH modes, but always-vanilla in
+    # all-SOTE — while the no-reward grunts beside them (c3000 Exile Soldier,
+    # c3020 Large Exile Soldier, c4490 Living Jar Warrior) randomized fine.
+    #
+    # Fix: skip the gate when _field_roll_tier is a field-strength (grunt)
+    # roll. A grunt-rolled slot has no reward expectation, so there is
+    # nothing to preserve; this restores the field-roll's intended grunt-base
+    # draw. miniboss / night_boss field-rolls and catalogued boss/arena slots
+    # (_field_roll_tier is None) are UNCHANGED — there the reward-preserve
+    # pool is healthy (miniboss+ chrs are tier-derived has_reward=True) so it
+    # never spuriously collapses, and genuine boss rewards stay protected.
+    _reward_decoupled = (_field_roll_tier is not None
+                         and _field_roll_tier not in V3_BOSS_STRENGTH_TIERS)
+    if (tags.get(recipient_cp, {}).get('has_reward') is True
+            and not _reward_decoupled):
         reward_preserve_pool = {cp for cp in pool
                                 if tags.get(cp, {}).get('has_reward') is True}
         if not reward_preserve_pool:
@@ -13105,11 +13410,76 @@ def pick_target_cp(recipient_cp, tags,
     # vanilla chr's expects_boss_arena / size_class — captures arena
     # slots whose variant names don't happen to carry marker tokens).
     # Strictly broadens the arena recognition set; never narrows.
+    # v0.27.29: catalogued-spawn-pool-boss signal. The Day-2 rotation
+    # MSBs (V3_SPAWN_POOL_MSBS pi=1) ferry a boss into a live arena at
+    # runtime. The FIELD-twin tiles are named "... (Field Boss)" and so
+    # match the markers below; the CASTLE-variant tiles (m46_86/87/88/90/
+    # 91/95) use POI-interior names — "(Castle Basement)", "(Castle)" —
+    # that only the EXTENDED marker set recognizes, and their catalog
+    # `arena` flag is False. Result (bug, found via seed 670313): the
+    # marker checks read these as non-arena / non-NB, the _arena_only and
+    # NIGHT_BOSS_ONLY subtractions fire, and in all-SOTE mode the small
+    # boss-tier SOTE pool empties → pick returns None → the castle boss
+    # ships vanilla (user fought a vanilla Bell Bearing Hunter in the
+    # Castle Basement). The slot was ALREADY promoted to recipient_is_boss
+    # by the v0.24.98 catalog-membership override in shuffle_msb_v3; this
+    # makes the arena / night-boss classification here consistent with
+    # that promotion. Catalog membership at ANY scope qualifies — same
+    # rule as the recipient_is_boss override — so the broad-vs-extended
+    # scope split that hides these from the OOPS_ALL_NB picker doesn't
+    # also strip their target pool. Narrow: only fires for the enumerated
+    # V3_SPAWN_POOL_MSBS pi=1 slots, so it cannot loosen gating elsewhere.
+    # v0.27.32: CONSOLIDATED catalogued-boss-arena signal. Replaces three
+    # ad-hoc fixes of identical shape — v0.27.29 (_is_catalogued_spawn_pool_
+    # boss: castle rotation tiles), v0.27.31 (_is_catalogued_named_boss:
+    # evergaols) — plus the latent gaps they didn't reach (cathedral,
+    # fort_suffix, mountaintop, boss_suffix, crater, noklateo,
+    # castle_interior non-rotation tiles).
+    #
+    # Root pattern: a slot can be a genuine, scripted boss arena (catalogued
+    # in V3_BOSS_SLOT_CATALOG, and already promoted to recipient_is_boss by
+    # the v0.24.98 catalog-membership override in shuffle_msb_v3) yet have a
+    # variant name whose tokens DON'T match V3_NIGHT_BOSS_NAME_MARKERS (which
+    # deliberately excludes 'Evergaol'/'Encampment'/bare 'Boss'/POI-interior
+    # names like '(Castle)'). The arena/NB classification here then diverges
+    # from the recipient_is_boss promotion: the _arena_only / NIGHT_BOSS_ONLY
+    # subtractions fire and, at nav-constrained slots in all-SOTE, strip the
+    # only targets that survive the slot's nav gate → empty pool → the boss
+    # ships vanilla. Confirmed three times in the field (seed 670313 Castle
+    # BBH, seed 230261 Castle Red Wolf + evergaol Banished Knights).
+    #
+    # Fix: trust the catalog tier over the name markers for the set of tiers
+    # that are GENUINELY sealed/scripted boss arenas (below), promoting both
+    # _slot_is_arena and _slot_is_night_boss. This makes classification
+    # consistent with the recipient_is_boss override across the whole boss-
+    # arena tier family at once, instead of patching one slot-shape per
+    # release.
+    #
+    # EXCLUDED tiers (kept on strict marker-based gating, NOT promoted):
+    #   - terrain     (147 non-boss terrain anchors)
+    #   - encampment  (7 field camp groups — Elder Lion / Mad Pumpkin camps;
+    #                  field encounters, not sealed arenas)
+    #   - remembrance (100 scholar/remembrance trash — Wandering Noble,
+    #                  Cuckoo Knight, etc.; classify correctly via markers
+    #                  already, and must NOT admit NB-only chrs)
+    # Including the already-marker-correct boss tiers (nightboss / fieldboss
+    # / ruins_boss / fort_boss) is a no-op (True OR True); the only NEW
+    # promotions are the marker-missing tiers. Narrow: catalog membership at
+    # a boss-arena tier only — cannot loosen gating at field/grunt/terrain
+    # slots, which are absent from the catalog or in the excluded tiers.
+    _slot_catalog_tier = None
+    if slot_msb_name is not None and slot_pi is not None:
+        _slot_catalog_tier = V3_BOSS_SLOT_CATALOG.get(
+            (slot_msb_name, slot_pi), {}).get('tier')
+    _is_catalogued_boss_arena = _slot_catalog_tier in V3_CATALOG_BOSS_ARENA_TIERS
+
     _slot_is_arena = bool(slot_variant_name) and any(
         m in slot_variant_name for m in V3_BOSS_NAME_MARKERS)
     if not _slot_is_arena and slot_msb_name is not None and slot_pi is not None:
         _slot_is_arena = V3_BOSS_SLOT_CATALOG.get(
             (slot_msb_name, slot_pi), {}).get('arena', False)
+    if not _slot_is_arena and _is_catalogued_boss_arena:
+        _slot_is_arena = True
     if not _slot_is_arena and not chaos_mode:
         pool = pool - _arena_only
 
@@ -13130,6 +13500,16 @@ def pick_target_cp(recipient_cp, tags,
     # boss-tier surprises.
     _slot_is_night_boss = bool(slot_variant_name) and any(
         m in slot_variant_name for m in V3_NIGHT_BOSS_NAME_MARKERS)
+    if not _slot_is_night_boss and _is_catalogued_boss_arena:
+        # v0.27.32: consolidated boss-arena promotion. See the
+        # _is_catalogued_boss_arena block above. A catalogued boss-arena
+        # slot is a real scripted arena; keep night-boss-tier targets (incl.
+        # the SOTE night_boss roster) eligible there so the NIGHT_BOSS_ONLY
+        # subtraction can't empty the pool at nav-constrained arenas.
+        # Subsumes the v0.27.29 (spawn-pool castle) and v0.27.31 (evergaol)
+        # promotions and closes the cathedral / fort_suffix / mountaintop /
+        # boss_suffix / crater / noklateo gaps that shared the same shape.
+        _slot_is_night_boss = True
     if not _slot_is_night_boss and not chaos_mode:
         pool = pool - V3_NIGHT_BOSS_ONLY_TARGETS
 
@@ -13192,13 +13572,13 @@ def pick_target_cp(recipient_cp, tags,
     if _slot_is_night_boss and V3_NIGHT_BOSS_EXCLUDE_TARGETS:
         pool = pool - V3_NIGHT_BOSS_EXCLUDE_TARGETS
 
-    # v0.23.05.2: anim_class compat at scripted-intro boss slots.
+    # v0.23.05.2: compat at scripted-intro boss slots.
     # Margit-style softlock fix. Slots whose vanilla chr has
     # expects_boss_arena=True OR carries a Night Boss name marker run
-    # scripted spawn cinematics that hardcode the source chr's anim_class
+    # scripted spawn cinematics that hardcode the source chr's family
     # — Margit's intro is a humanoid teleport-and-land, Crucible Knight's
     # is a humanoid sword-plant, Dragonkin's is a quadruped roar, etc.
-    # Substituting a chr with an incompatible anim_class (e.g., quadruped
+    # Substituting a chr with an incompatible family (e.g., quadruped
     # Demi-Human Queen at humanoid Margit slot) means the cinematic plays
     # an animation the substitute doesn't have, the cinematic stalls
     # waiting for a "complete" signal that never fires, boss UI locks,
@@ -13208,18 +13588,18 @@ def pick_target_cp(recipient_cp, tags,
     # Boss → c4130 Demi-Human Queen (humanoid → quadruped). Same swap
     # both seeds, same softlock both seeds.
     #
-    # v0.20.0 retired pool-level anim_class pre-filtering, accepting the
+    # v0.20.0 retired pool-level family pre-filtering, accepting the
     # broader cross-class swaps for variety. This fix is targeted: only
-    # scripted-intro slots get the strict anim_class filter; grunt slots
+    # scripted-intro slots get the strict compat filter; grunt slots
     # and field encounters keep the loose v0.20.0 behavior. Variety cost
     # is contained to ~50-100 boss arena slots.
     #
-    # Untagged candidates (no anim_class) bypass — preserves the cluster-
+    # Untagged candidates (no family) bypass — preserves the cluster-
     # member placements (c4181 Maris Jellyfish, c5110 Tendril, c3610
     # Oracle Envoy) that legitimately work via cluster-shape matching.
     # v0.24.100: scripted-intro anim_class compat filter REMOVED. The
     # previous block (v0.23.05.2) narrowed `pool` to candidates whose
-    # anim_class was compatible with the recipient's via _compat_anim_class.
+    # family was compatible with the recipient's via _compat_rig.
     # Function is gone; the flier-vs-ground split that mattered is now
     # enforced upstream by is_compatible / the flier-required slot gate.
     _slot_is_arena = tags.get(recipient_cp, {}).get('expects_boss_arena', False)
@@ -13370,7 +13750,17 @@ def pick_target_cp(recipient_cp, tags,
     if not chosen_pool:
         return None
 
-    result = rng.choice(chosen_pool)
+    # v0.28: per-slot hashed pick. Keying the choice on (seed, msb, pi)
+    # over a sorted pool makes the cp decision a pure function of slot
+    # identity — order-independent, so a contaminated/reordered input no
+    # longer cascades, and simulate_engine.py matches the engine. Uniform
+    # over the same pool as before; only the per-slot selection is now
+    # deterministic. Falls back to the shared rng for callers that don't
+    # supply slot identity (slot_msb_name/slot_pi).
+    if slot_msb_name is not None and slot_pi is not None:
+        result = _slot_decision_rng(slot_msb_name, slot_pi).choice(sorted(chosen_pool))
+    else:
+        result = rng.choice(chosen_pool)
     # v0.23.07: bump unique-cap counter for organic picks. Reserved picks
     # already pre-bumped during the reservation pre-pass; this catches
     # picks that landed on a capped cp via normal pool selection.
@@ -13668,8 +14058,14 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
     # so the output is identical regardless of visit order — this shifts
     # only the order in which order-sensitive runtime state is touched.
     # Uses the shared seeded rng, so it is reproducible per seed.
+    # v0.28: canonical (natural part-index) slot order. Previously this was
+    # rng.shuffle'd off the shared stream, which made the processing order —
+    # and thus the order-dependent target_count cap — input-dependent. With
+    # the per-slot hashed pick (_slot_decision_rng) the order no longer
+    # affects which enemy a slot gets, and a canonical order makes cap
+    # consumption deterministic and identical to simulate_engine.py's
+    # sorted(part_index) pass.
     _slot_order = list(enumerate(parts['entry_offsets']))
-    rng.shuffle(_slot_order)
     for pi, po in _slot_order:
         # v0.24.109 binary-search vanilla pins. For diagnostic A/B testing
         # of specific (msb, pi) slots — pinned slots skip the picker
@@ -13779,25 +14175,32 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
         # filter. Background:
         #
         # NR's spawn-pool MSBs (m46_5x_00_00 etc.) pack pi=0 c1000 +
-        # pi=1 boss + pi=2 empty all at world origin (0,0,0). In vanilla
-        # NR, c1000 has npc_param=10000000 so the cluster builder treats
-        # pi=0 and pi=1 as a 2-Part cluster, both excluded from the
-        # placeholder pre-pass count, no placeholder triggered, intercept fires.
-        # In environments where pi=0's npc_param has been changed to 0
-        # (FIA-modified spawn-pool MSBs, or other content mods that touch
-        # these maps), pi=0 falls out of cluster candidacy. Then pi=0,
-        # pi=1, pi=2 all contribute to the placeholder count at (0,0,0),
-        # threshold of 3 fires, placeholder filter at line ~7022 silently
-        # skips pi=1, the boss slot stays vanilla, the rotation chr
-        # appears in its un-randomized form in-game.
+        # pi=1 boss (+ pi=2 asset on the 3-Part FIELD tiles), all at world
+        # origin (0,0,0). The shared-position placeholder pre-pass counts
+        # how many Parts share a rounded position; >= V3_PLACEHOLDER_POSITION
+        # _THRESHOLD (3) at one position marks it a script-spawn placeholder
+        # block and the boss Part there is left vanilla. With all Parts
+        # stacked at origin a 3-Part tile can trip this; pi=1 then stays
+        # vanilla and the rotation chr appears un-randomized in-game.
+        # (Historical: a separate eid==0 + near-origin filter and a cluster
+        # builder also used to drop pi=1 here; both were removed —
+        # near-origin v0.23.72, clustering v0.26.13. The placeholder
+        # pre-pass is the one still live.)
         #
-        # Fix: catalogued boss slots (V3_BOSS_SLOT_CATALOG) and pinned
-        # slots (V3_BOSS_TIER_PINNED_SLOTS) are AUTHORITATIVE. The catalog
-        # was built from a careful inventory of NR's MSBs; if it says
-        # this is a boss slot, the rando trusts that classification over
-        # any heuristic filter. We fire the intercept BEFORE the eid /
-        # placeholder filters so structural quirks of the input MSB don't
-        # silently neutralize the user-requested OOPS_ALL_NB swap.
+        # Mitigation: catalogued boss slots (V3_BOSS_SLOT_CATALOG) and
+        # pinned slots (V3_BOSS_TIER_PINNED_SLOTS) are AUTHORITATIVE — if
+        # the catalog/pin says this is a boss slot, the rando trusts that
+        # over the placeholder heuristic and force-swaps it.
+        #
+        # Note: this force-swap intercept is gated on `_eff_nb_target`
+        # (OOPS_ALL_NB boss-probe mode), so in a normal or all-SOTE run it
+        # doesn't fire. That is BY DESIGN and was NOT the cause of the
+        # castle-variant 0-swap bug (initially suspected here, but ruled
+        # out — see the "castle-variant spawn-pool MSBs now swap" block
+        # above; the real cause was name-marker classification in
+        # pick_target_cp, fixed in v0.27.29). In normal/SOTE runs the
+        # spawn-pool slots swap through the standard pick_target_cp path
+        # like any other catalogued boss slot.
         #
         # _eff_nb_target / _eff_nb_scope hoisted to function scope above.
         _is_pinned = (msb_base, pi) in V3_BOSS_TIER_PINNED_SLOTS
@@ -14187,6 +14590,7 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
                 slot_variant_name=(recipient_variant.get('variant_name', '')
                                    if recipient_variant else ''),
                 slot_pos=slot_pos,  # v0.20.16: edge-sentinel detection
+                slot_eid=slot_eid,  # v0.27.40: freeze-prone addressability gate
                 slot_require_boss_reward=_slot_require_boss_reward,  # v0.20.22
                 disable_resilient_filter=disable_resilient_filter,  # v0.20.35
                 non_fragile_baseline_cp=non_fragile_baseline_cp,  # v0.20.38
@@ -14871,6 +15275,7 @@ def cmd_shuffle_v3(input_dir, output_dir, seed,
                     force_include_targets=None,
                     chaos_mode=False,
                     mount_rider_swap=False,
+                    sote_mode=False,
                     oops_all_nb_target_cp=None,
                     oops_all_nb_marker_scope=None,
                     oops_all_nb_pinned_slot=None,
@@ -14979,29 +15384,41 @@ def cmd_shuffle_v3(input_dir, output_dir, seed,
     # which clears the blocklist, invokes cmd_shuffle_v3 with a captured
     # impl, and asserts the picker would have seen the populated union.
     load_data()
-    with apply_run_overrides(
-            excluded_prefixes=excluded_prefixes,
-            hub_maps=hub_maps,
-            multiplayer_safe=multiplayer_safe,
-            force_include_targets=force_include_targets) as effective_gates:
-        return _cmd_shuffle_v3_impl(
-            input_dir, output_dir, seed,
-            oops_all_target_cp=oops_all_target_cp,
-            merchant_model_swap=merchant_model_swap,
-            terrain_test_targets=terrain_test_targets,
-            multiplayer_safe=multiplayer_safe,
-            disable_resilient_filter=disable_resilient_filter,
-            non_fragile_baseline_cp=non_fragile_baseline_cp,
-            diagnostic_test_targets=diagnostic_test_targets,
-            chaos_mode=chaos_mode,
-            mount_rider_swap=mount_rider_swap,
-            oops_all_nb_target_cp=oops_all_nb_target_cp,
-            oops_all_nb_marker_scope=oops_all_nb_marker_scope,
-            oops_all_nb_pinned_slot=oops_all_nb_pinned_slot,
-            unique_cap_overrides=unique_cap_overrides,
-            caliber_pool_extras=caliber_pool_extras,
-            caliber_pool_removals=caliber_pool_removals,
-            gates=effective_gates)
+    # v0.27.21: per-run V3_SOTE_MODE application. Set the module global so
+    # pick_target_cp's SOTE intersection (and the cap/floor bypass) is
+    # active for this run, then restore it in finally so the flag never
+    # leaks into a subsequent in-process run (GUI, test suite, batch CLI).
+    # Mirrors the save/restore discipline apply_run_overrides uses for the
+    # gate sets. load_data() above has already populated V3_SOTE_PREFIXES.
+    global V3_SOTE_MODE
+    _saved_sote_mode = V3_SOTE_MODE
+    V3_SOTE_MODE = sote_mode
+    try:
+        with apply_run_overrides(
+                excluded_prefixes=excluded_prefixes,
+                hub_maps=hub_maps,
+                multiplayer_safe=multiplayer_safe,
+                force_include_targets=force_include_targets) as effective_gates:
+            return _cmd_shuffle_v3_impl(
+                input_dir, output_dir, seed,
+                oops_all_target_cp=oops_all_target_cp,
+                merchant_model_swap=merchant_model_swap,
+                terrain_test_targets=terrain_test_targets,
+                multiplayer_safe=multiplayer_safe,
+                disable_resilient_filter=disable_resilient_filter,
+                non_fragile_baseline_cp=non_fragile_baseline_cp,
+                diagnostic_test_targets=diagnostic_test_targets,
+                chaos_mode=chaos_mode,
+                mount_rider_swap=mount_rider_swap,
+                oops_all_nb_target_cp=oops_all_nb_target_cp,
+                oops_all_nb_marker_scope=oops_all_nb_marker_scope,
+                oops_all_nb_pinned_slot=oops_all_nb_pinned_slot,
+                unique_cap_overrides=unique_cap_overrides,
+                caliber_pool_extras=caliber_pool_extras,
+                caliber_pool_removals=caliber_pool_removals,
+                gates=effective_gates)
+    finally:
+        V3_SOTE_MODE = _saved_sote_mode
 
 
 def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
@@ -15138,7 +15555,7 @@ def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
 
     # v0.23.07: Unique-target reservation pre-pass. Walks all input MSBs,
     # picks one or two quality slots per V3_UNIQUE_TARGET_CAPS entry. Must
-    # run AFTER tags/roster load (uses anim_class compat scoring) but
+    # run AFTER tags/roster load (uses swap compat scoring) but
     # BEFORE per-MSB shuffle loop (so reservations are visible to
     # pick_target_cp).
     #
@@ -15376,6 +15793,7 @@ def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
         _V3_UNIQUE_UNPLACED_LOG.extend(run_ctx.unique_unplaced_log)
         write_spoiler_logs(output_dir, spoiler_entries, seed,
                            multiplayer_safe=multiplayer_safe,
+                           sote_mode=V3_SOTE_MODE,
                            disable_resilient_filter=disable_resilient_filter,
                            non_fragile_baseline_cp=non_fragile_baseline_cp,
                            diagnostic_test_targets=diagnostic_test_targets,
@@ -15386,9 +15804,111 @@ def _cmd_shuffle_v3_impl(input_dir, output_dir, seed,
               f"({len(spoiler_entries)} entries)")
         print(f"             {os.path.join(output_dir, '_spoilers.md')}")
 
+        # v0.27.34: run the seed CTD-risk checker on every generated seed.
+        # Static audit of the finished placement set against known crash
+        # signatures. Findings are written to _ctd_risk.json and summarized
+        # to the console. Non-fatal: a flagged seed still gets written (the
+        # user decides whether to reroll), but the risk is surfaced now.
+        _ctd_findings = run_seed_ctd_checks(spoiler_entries, tags)
+        _ctd_path = os.path.join(output_dir, '_ctd_risk.json')
+        try:
+            with open(_ctd_path, 'w', encoding='utf-8') as _cf:
+                json.dump({'seed': seed,
+                           'engine': V3_ENGINE_FINGERPRINT,
+                           'finding_count': len(_ctd_findings),
+                           'findings': _ctd_findings}, _cf, indent=2)
+        except OSError:
+            pass
+        if _ctd_findings:
+            _n_ctd = sum(1 for f in _ctd_findings if f.get('severity') == 'ctd')
+            print(f"*** CTD RISK CHECK: {len(_ctd_findings)} finding(s) "
+                  f"({_n_ctd} ctd-severity) — see {_ctd_path} ***")
+            for f in _ctd_findings:
+                print(f"      [{f.get('severity')}] {f.get('map')} "
+                      f"pi={f.get('part_index')} eid={f.get('entity_id')}: "
+                      f"{f.get('detail')}")
+        else:
+            print(f"CTD risk check: clean ({os.path.basename(_ctd_path)})")
+
+
+# ===================================================================
+# Seed CTD-risk checker (v0.27.34)
+# ===================================================================
+# Post-generation static audit of a fully-built seed's spoiler_entries,
+# flagging placements that match known crash/freeze signatures. Runs on
+# EVERY seed (called from cmd_shuffle_v3 right before the spoilers are
+# written) so a risky placement is surfaced at generation time, not
+# discovered in-game.
+#
+# This is intentionally a registry of independent checks so more can be
+# added without touching the call site. Each check is a function
+#   check(entries, tags) -> list[finding]
+# where a finding is a dict with at minimum:
+#   {'check': <str id>, 'severity': 'ctd'|'warn', 'map', 'part_index',
+#    'entity_id', 'detail': <human string>}
+# run_seed_ctd_checks() runs them all and returns the concatenated list.
+#
+# CHECK #1 — mount_target_at_non_mount_source
+#   A mount-role chr (V3_MOUNT_PREFIXES — the horses c4060/c5890) placed
+#   into a slot whose vanilla occupant was NOT itself a mount. A riderless
+#   mount has no standalone AI brain: it spawns frozen / floats in place
+#   (see the c3160/c3180 mount-exclusion rationale near line 463). The
+#   rider/mount pool feature is supposed to keep mounts landing only on
+#   other mount slots; a mount at a non-mount source means that invariant
+#   broke for this seed and the placement is a freeze risk.
+
+def _ctd_check_mount_target_at_non_mount_source(entries, tags):
+    findings = []
+    mounts = V3_MOUNT_PREFIXES  # live set, tracks tag edits
+    if not mounts:
+        return findings
+    for e in entries:
+        new = e.get('new') or {}
+        orig = e.get('original') or {}
+        new_cp = new.get('c_prefix')
+        orig_cp = orig.get('c_prefix')
+        if new_cp in mounts and orig_cp not in mounts:
+            findings.append({
+                'check': 'mount_target_at_non_mount_source',
+                'severity': 'ctd',
+                'map': e.get('map'),
+                'part_index': e.get('part_index'),
+                'entity_id': e.get('entity_id'),
+                'detail': (f"mount-role chr {new_cp} "
+                           f"({new.get('name') or '?'}) placed at non-mount "
+                           f"source {orig_cp} ({orig.get('name') or '?'}); "
+                           f"riderless mount has no AI — freeze/float risk"),
+            })
+    return findings
+
+
+# Registry of active checks. Append new check fns here; the call site
+# does not change.
+_SEED_CTD_CHECKS = [
+    _ctd_check_mount_target_at_non_mount_source,
+]
+
+
+def run_seed_ctd_checks(entries, tags):
+    """Run every registered CTD-risk check over a seed's spoiler entries.
+    Returns a flat list of finding dicts (empty if the seed is clean)."""
+    findings = []
+    for _check in _SEED_CTD_CHECKS:
+        try:
+            findings.extend(_check(entries, tags) or [])
+        except Exception as _ex:  # a buggy check must never abort a build
+            findings.append({
+                'check': getattr(_check, '__name__', str(_check)),
+                'severity': 'warn',
+                'map': None, 'part_index': None, 'entity_id': None,
+                'detail': f"check raised {type(_ex).__name__}: {_ex}",
+            })
+    return findings
+
 
 def write_spoiler_logs(output_dir, entries, seed,
                         multiplayer_safe=False,
+                        sote_mode=False,
                         disable_resilient_filter=False,
                         non_fragile_baseline_cp=None,
                         diagnostic_test_targets=None,
@@ -15563,6 +16083,16 @@ def write_spoiler_logs(output_dir, entries, seed,
         f.write(f"Multiplayer-safe: **{'ON' if multiplayer_safe else 'OFF'}**"
                 f"{'' if multiplayer_safe else ' — heritage chrs allowed; coop partners need the heritage pack'}"
                 f"\n\n")
+        # v0.27.24: surface all-SOTE mode state so a run's spoiler makes it
+        # obvious whether the SOTE restriction was active. The seed-505991
+        # report ambiguity (was SOTE mode on or not?) is resolved by this
+        # line existing. Sourced from V3_SOTE_MODE at write time (still set
+        # — the restore happens in cmd_shuffle_v3's finally, after the impl
+        # that calls this returns).
+        if sote_mode:
+            f.write("All-SOTE mode: **ON** — targets restricted to the "
+                    "Shadow-of-the-Erdtree roster; unique-target caps/floors "
+                    "bypassed. Requires MMV + heritage SOTE assets staged.\n\n")
         # v0.23.07: unique-target cap summary. Renders cleanly even if no
         # capped cps got reservations — the unplaced list tells the user
         # which caps to relax. Order: cap=1 first, alphabetical within.
@@ -15898,6 +16428,12 @@ if __name__ == '__main__':
         print("    intact — merchants remain functional merchants with shops/dialogue,")
         print("    they just look different.")
         print()
+        print("  --sote: all-SOTE mode. Restricts every swap target to Shadow-of-the-")
+        print("    Erdtree chrs. With the always-on rider/mount role restriction, a")
+        print("    vanilla Kaiden Sellsword rider becomes the Black Knight (c5840) and")
+        print("    his horse becomes the Black Knight Horse (c5890). Requires MMV +")
+        print("    heritage SOTE assets staged; caps/floors are bypassed (heavy repeats).")
+        print()
         print("  --snapshot PATH: load a pool snapshot before running. Snapshot file")
         print("    controls which asset packs feed the swap pool (heritage_pack,")
         print("    mmv_imports, etc.) and applies any engine_kwargs the snapshot records")
@@ -15912,10 +16448,20 @@ if __name__ == '__main__':
     seed = 42
     merchant_model_swap = False
     mount_rider_swap = False
+    sote_mode = False
     snapshot_path = None
     i = 4
     while i < len(sys.argv):
         if sys.argv[i] == '--seed': seed = int(sys.argv[i+1]); i += 2
+        elif sys.argv[i] == '--sote':
+            # v0.27.21: all-SOTE mode toggle. Sets V3_SOTE_MODE so every
+            # swap target is intersected with V3_SOTE_PREFIXES in
+            # pick_target_cp. Combined with the always-on rider/mount role
+            # restriction, a vanilla Kaiden rider slot draws SOTE ∩ riders
+            # = {c5840} Black Knight and the paired mount slot draws
+            # SOTE ∩ mounts = {c5890} Black Knight Horse. Requires MMV +
+            # heritage SOTE assets staged (see the V3_SOTE_MODE block).
+            sote_mode = True; i += 1
         elif sys.argv[i] == '--mode':
             # v0.23.72-late: --mode was a no-op since v0.20.0 (universal pool).
             # Accept-and-ignore the flag for back-compat with scripts/CI that
@@ -15945,6 +16491,7 @@ if __name__ == '__main__':
         cmd_shuffle_v3(in_dir, out_dir, seed,
                         merchant_model_swap=merchant_model_swap,
                         mount_rider_swap=mount_rider_swap,
+                        sote_mode=sote_mode,
                         **snap_kwargs)
     finally:
         if snapshot_path:

@@ -261,24 +261,77 @@ def build_roster(nr_enemy_tags_path, mmv_imports_path, heritage_pack_path,
 _CHR_FILE_RE = re.compile(r'^(c\d{4,5})((?:_[a-z0-9]+)*)\.([a-z]+)\.dcx$')
 
 
-def build_carrier_map(*install_roots):
+def _read_retarget_map(regulation_csv):
+    """Parse NpcParam.csv → {dependent_c_prefix: carrier_c_prefix} from the
+    authoritative RetargetReferenceChrId column. Returns {} if the file is
+    absent or the column isn't found.
+
+    RetargetReferenceChrId is FromSoft's own "this chr animates from chr X"
+    pointer. Reading it catches every retarget — same-family (c5661→c5660)
+    AND cross-family (c5701→c4100, c5751→c4490) — which the c[:-1] filename
+    heuristic structurally cannot see. A value of 0/-1/'' means "no retarget"
+    (the chr animates from itself).
+    """
+    if not regulation_csv or not os.path.isfile(regulation_csv):
+        return {}
+    import csv as _csv
+    out = {}
+    with open(regulation_csv, encoding="utf-8", errors="replace") as fp:
+        r = _csv.reader(fp)
+        header = next(r, None)
+        if not header:
+            return {}
+        try:
+            rt = header.index("RetargetReferenceChrId")
+        except ValueError:
+            return {}
+        for row in r:
+            if not row or not row[0].strip().isdigit() or len(row) <= rt:
+                continue
+            nid = int(row[0])
+            if nid < 10_000_000:          # not an instanced NPC id
+                continue
+            dep = "c" + str(nid)[:4]      # owning chr of this NpcParam row
+            val = row[rt].strip()
+            if not val or val in ("0", "-1"):
+                continue
+            carrier = "c" + val.zfill(4)
+            if carrier == dep:            # self-retarget: not a dependency
+                continue
+            out.setdefault(dep, carrier)  # first non-zero wins; variants agree
+    return out
+
+
+def build_carrier_map(*install_roots, regulation_csv=None):
     """Scan the chr/ subdir of each install root; return
     {dependent_c_prefix: {"carrier": cXXXX, "files": [filenames]}}.
 
     An anim CARRIER ships .anibnd.dcx but neither .chrbnd.dcx nor
-    .behbnd.dcx — ER ships shared-animation bundles this way, and the
-    carrier's numbered family siblings reference it (e.g. c5661 Shadow
-    Militia references c5660). A dependent's family is its c-prefix
-    minus the last digit; if that family contains a carrier, the
-    dependent must also receive the carrier's anibnd-class files or it
-    T-poses.
+    .behbnd.dcx — ER ships shared-animation bundles this way, and a
+    dependent chr references it via NpcParam.RetargetReferenceChrId
+    (e.g. c5661 Shadow Militia → c5660; c5701 → c4100 cross-family).
+    A dependent must also receive the carrier's anibnd-class files or
+    it T-poses in-game.
 
-    Filename-only — no chr-file parsing. Conservative by design: every
-    spawnable family member of a carrier is treated as a dependent,
-    even one that ships a complete anibnd of its own. The cost of that
-    false positive is a few unreferenced anibnd files copied into chr/
-    (the engine never loads them); the cost of a miss is a T-pose.
-    Over-copy is the correct side to err on.
+    Carrier→dependent resolution, in priority order:
+      1. AUTHORITATIVE (regulation_csv given): read RetargetReferenceChrId
+         from NpcParam.csv. Catches same-family AND cross-family retargets
+         and is not fooled by naming. This is the correct path — pass the
+         deploy/source NpcParam.csv whenever available.
+      2. FALLBACK (no regulation_csv): the legacy c[:-1] family heuristic —
+         a dependent's family is its c-prefix minus the last digit; if that
+         family contains a carrier, the dependent depends on it. Only sees
+         same-family retargets (c5660↔c5661); MISSES cross-family ones
+         (this was the v0.27.28 Shadow-Militia-class bug — the importer's
+         carrier expansion silently skipped any retarget whose source lived
+         in a different c[:-1] family, and even same-family cases when the
+         carrier wasn't scanned). Kept only so the importer still does
+         *something* when run without a regulation.
+
+    In both modes a dependent is only emitted if (a) it ships its own
+    .chrbnd.dcx in the scanned dirs (it's a real spawnable chr, not the
+    carrier itself) and (b) its carrier was found in the scan as an
+    anibnd-class provider, so we know which files to copy.
     """
     chrs = {}
     for root in install_roots:
@@ -299,16 +352,26 @@ def build_carrier_map(*install_roots):
     carriers = {c: s for c, s in chrs.items()
                 if ".anibnd.dcx" in s
                 and ".chrbnd.dcx" not in s and ".behbnd.dcx" not in s}
+
+    # carrier-for-dependent lookup, by mode
+    retarget = _read_retarget_map(regulation_csv)
     fam_carrier = {}
-    for c in sorted(carriers):
-        fam_carrier.setdefault(c[:-1], c)  # first carrier in a family wins
+    if not retarget:
+        for c in sorted(carriers):
+            fam_carrier.setdefault(c[:-1], c)  # first carrier in a family wins
+
+    def carrier_for(c):
+        if retarget:
+            return retarget.get(c)            # authoritative
+        return fam_carrier.get(c[:-1])        # fallback heuristic
 
     out = {}
     for c, s in chrs.items():
-        carrier = fam_carrier.get(c[:-1])
-        # a dependent is a spawnable sibling (ships its own chrbnd) that
-        # is not itself the carrier
-        if carrier and c != carrier and ".chrbnd.dcx" in s:
+        carrier = carrier_for(c)
+        # a dependent is a spawnable chr (ships its own chrbnd) whose
+        # carrier is a known anibnd-class provider and isn't itself
+        if (carrier and c != carrier and ".chrbnd.dcx" in s
+                and carrier in carriers):
             files = sorted(f"{carrier}{suf}" for suf in carriers[carrier]
                            if suf.endswith(".anibnd.dcx"))
             out[c] = {"carrier": carrier, "files": files}

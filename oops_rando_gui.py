@@ -23,7 +23,7 @@ Workflow:
     5. Click Randomize
     6. Take the output folder + sidecar XMLs back through Yabber to repack
 """
-import os, sys, json, random, threading, queue, traceback
+import os, sys, json, random, re, threading, queue, traceback
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
 
@@ -141,6 +141,15 @@ except Exception:
 
 
 # --- The GUI itself -------------------------------------------------------
+# v0.27.13: AutocompleteCombobox is PARKED. The two consumers (the OOPS
+# ALL "Replace everything with:" picker and its NB sibling) reverted to
+# plain ttk.Combobox because the live-filter behavior was unreliable
+# (focus juggling, dropdown re-open semantics, see the _restore_focus
+# workaround below). The class is kept here, unused, as a starting
+# point for the eventual fix — the focus-restoration notes are
+# hard-won and worth preserving. Re-wire by swapping the two
+# ttk.Combobox calls in _build_main_tab back to AutocompleteCombobox
+# and re-adding .set_completion_list(self.oops_all_options).
 class AutocompleteCombobox(ttk.Combobox):
     """v0.23.05: ttk.Combobox subclass with live-lookup autocomplete.
 
@@ -478,26 +487,49 @@ def validate_path_kind(path, kind):
             # apply. Fall through to its own branch below, which treats
             # a missing file as 'warn' (the binary is auto-discovered).
             pass
+        elif kind == 'nr_install':
+            # The NR install path is a convenience for deriving the Input /
+            # Vanilla-event fields; it's not required (the bundle supplies
+            # MSBs, and inputs may be set elsewhere). A bad/empty path is a
+            # soft warn, not a fatal error.
+            return ('warn', f"Install path not found — fine if your Input / "
+                            f"Vanilla-event fields are set elsewhere or you "
+                            f"use the bundled maps. Path: {path}")
         else:
             return ('error', f"Directory does not exist: {path}")
 
     if kind == 'nr_install':
-        # Conventional UXM layout: <install>/Game/map/mapstudio/m*.msb.dcx
-        candidates = [
-            os.path.join(path, 'map', 'mapstudio'),
-            os.path.join(path, 'Game', 'map', 'mapstudio'),
-        ]
-        for d in candidates:
-            if os.path.isdir(d):
-                msbs = glob.glob(os.path.join(d, 'm*.msb*'))
-                if msbs:
-                    return ('ok', f"NR install OK ({len(msbs)} MSBs at "
-                                  f"{d.replace(path, '<install>')})")
-                return ('warn', f"map/mapstudio exists but has no .msb "
-                                f"files — looks unpopulated. Did UXM "
-                                f"finish unpacking?")
-        return ('error', "No map/mapstudio subdirectory — NR isn't "
-                         "UXM-unpacked yet, or this isn't an NR install.")
+        # The install path is only a CONVENIENCE: it auto-derives the
+        # input (map/mapstudio) and vanilla-event (event/) dirs into their
+        # own fields. The actual run reads those fields — and the bundled
+        # vanilla_msbs/ supplies MSBs even when no install is set — so a
+        # missing map/mapstudio here is NOT fatal. Only flag it green when
+        # we find content; otherwise warn (the user may have pointed the
+        # Input / Vanilla-event fields elsewhere, or rely on the bundle).
+        # Conventional UXM layout: <install>/Game/{map/mapstudio, event}/
+        found = []
+        roots = [path, os.path.join(path, 'Game')]
+        has_msb = has_evt = False
+        for r in roots:
+            md = os.path.join(r, 'map', 'mapstudio')
+            ed = os.path.join(r, 'event')
+            if os.path.isdir(md) and glob.glob(os.path.join(md, 'm*.msb*')):
+                has_msb = True
+            if os.path.isdir(ed) and glob.glob(os.path.join(ed, '*.emevd*')):
+                has_evt = True
+        if has_msb or has_evt:
+            bits = []
+            if has_msb:
+                bits.append('MSBs')
+            if has_evt:
+                bits.append('event scripts')
+            return ('ok', f"NR install OK ({' + '.join(bits)} found)")
+        # Nothing under this path — but that's fine if MSBs/events are
+        # configured elsewhere or come from the bundle. Soft warn only.
+        return ('warn', "No map/mapstudio or event/ here — that's fine if "
+                        "your MSBs / event scripts are set in the Input / "
+                        "Vanilla-event fields or you're using the bundled "
+                        "maps. Only a problem if those are also empty.")
 
     if kind == 'er_install':
         candidates = [
@@ -602,6 +634,51 @@ def _save_paths_to_disk(paths):
         return True
     except OSError:
         return False
+
+
+def _autodetect_paths(saved):
+    """Fill empty 'game_install' / 'er_install' / 'me3_launcher' entries
+    in `saved` with Steam auto-detection results from install_discovery.
+    Returns a new dict; doesn't mutate the input. Non-empty saved values
+    always win.
+
+    Module-level so the startup block can call it BEFORE the wizard runs
+    (otherwise the wizard would show empty install fields even on a fresh
+    machine where discovery would find everything). RandoGUI's
+    _apply_install_autodetect delegates here as well so both paths share
+    one implementation.
+
+    Best-effort: discovery is wrapped in try/except so any environment
+    issue (registry-read failure on a locked-down system, etc.) falls
+    back to leaving the field empty rather than crashing startup.
+    """
+    result = dict(saved or {})
+    if (result.get('game_install', '').strip()
+            and result.get('er_install', '').strip()
+            and result.get('me3_launcher', '').strip()):
+        return result, set()  # all already set; no autodetect ran
+    filled = set()
+    try:
+        sys.path.insert(0, os.path.join(HERE, 'dev'))
+        import install_discovery
+        if not result.get('game_install', '').strip():
+            p = install_discovery.find_nightreign_install()
+            if p:
+                result['game_install'] = p
+                filled.add('game_install')
+        if not result.get('er_install', '').strip():
+            p = install_discovery.find_elden_ring_install()
+            if p:
+                result['er_install'] = p
+                filled.add('er_install')
+        if not result.get('me3_launcher', '').strip():
+            p = install_discovery.find_me3_binary()
+            if p:
+                result['me3_launcher'] = p
+                filled.add('me3_launcher')
+    except Exception:
+        pass  # discovery is best-effort
+    return result, filled
 
 
 def should_run_wizard(saved_config):
@@ -1099,7 +1176,103 @@ class FirstLaunchWizard:
         self._set_validator(lambda: True)
 
 
-class RandoGUI:
+# --------------------------------------------------------------------------
+# Log-line color classifier (v0.27.13: tightened to match states, not
+# substrings). The auto-detect path in RandoGUI._log routes tagless lines
+# from subprocess stdout into theme tags. The old substring classifier
+# matched 'failed' anywhere, painting routine "0 failed" status reports
+# red — desensitizing the eye to real errors. This version anchors error
+# detection to prefixes and counted nonzero forms, so "Done: ..., 0 failed"
+# falls through to dim/success instead of error. Module-level so it's
+# testable without spinning up tkinter. See dev/GUI_LOG_COLOR_ROUTING.md.
+# --------------------------------------------------------------------------
+
+# Nonzero failure/error counters. Catches two real-world forms:
+#   - "count word":     5 failed / 5 failures / 5 parse failures / 5 errors
+#   - "word: count":    Parse failures: 4 / failed: 3 / errors: 2
+# '0' is deliberately excluded so "0 failed" / "Parse failures: 0" don't
+# trip. The optional middle word (\w+\s+) in the count-word form covers
+# "5 parse failures" without admitting "failures" buried mid-sentence.
+_LOG_ERROR_COUNT_RE = re.compile(
+    r'\b[1-9]\d*\s+(?:\w+\s+)?(?:failed|failures?|errors?)\b'
+    r'|\b(?:failed|failures?|errors?)\s*:\s*[1-9]\d*\b')
+
+_LOG_ERROR_PREFIXES = ('Traceback', 'Error:', 'ERROR', 'FAILED', 'FATAL')
+_LOG_WARN_PREFIXES = ('Warning:', 'WARN', '[WARN]')
+_LOG_WARN_PHRASES = ('cancelled', 'falling back')
+
+
+def _classify_log_line(msg):
+    """Classify a tagless log line into a theme tag, or None if no
+    specific tag applies (caller defaults None -> 'dim').
+
+    Order: most specific first. Anchored prefixes and counted-nonzero
+    regexes beat plain substring matches so "0 failed" / "Parse
+    failures: 0" don't trip the error path.
+
+    Returns one of: 'error', 'warn', 'accent', 'success', 'info', None.
+    """
+    stripped = msg.lstrip()
+    # 1) error: anchored prefix OR a nonzero failed/failures/errors count.
+    if (stripped.startswith(_LOG_ERROR_PREFIXES)
+            or _LOG_ERROR_COUNT_RE.search(msg)):
+        return 'error'
+    # 2) warn: anchored prefix OR specific phrase. Note: routine
+    #    "Skipped: N" lines are intentionally NOT warned anymore — they
+    #    fall through to dim (see v0.27.13 ticket open question).
+    low = msg.lower()
+    if (stripped.startswith(_LOG_WARN_PREFIXES)
+            or any(p in low for p in _LOG_WARN_PHRASES)):
+        return 'warn'
+    # 3) accent: phase-header dividers.
+    if stripped.startswith(('===', '---')):
+        return 'accent'
+    # 4) success: completion markers. Anything reaching this check that
+    #    starts with 'Done:' is by definition a clean done (the error
+    #    check above already caught nonzero-failed forms). '\u2713' is
+    #    the explicit success glyph (✓).
+    if stripped.startswith('Done:') or stripped.startswith('\u2713'):
+        return 'success'
+    # 5) info: indented secondary status lines (uses RAW msg, not
+    #    stripped — the leading whitespace IS the signal).
+    if msg.startswith('  '):
+        return 'info'
+    # 6) Fall through to caller's default (dim).
+    return None
+
+
+# v0.27.x: Pools & Caps panel. Self-contained module in dev/ (own widgets,
+# reads data/*.json + engine constants directly so it previews standalone).
+# Import the mixin; on any failure fall back to a no-op stub so the GUI still
+# starts and runs are byte-identical to a pre-panel run.
+try:
+    import sys as _sys
+    _dev_dir = os.path.join(HERE, 'dev')
+    if _dev_dir not in _sys.path:
+        _sys.path.insert(0, _dev_dir)
+    from pools_caps_panel import PoolsCapsPanelMixin
+    PoolsCapsPanelMixin._PC_AVAILABLE = True
+except Exception as _e:  # noqa: BLE001
+    print(f"Pools & Caps panel unavailable ({_e!r}) — tab will be hidden.")
+
+    class PoolsCapsPanelMixin:  # minimal stub — keeps RandoGUI importable
+        _PC_AVAILABLE = False
+
+        def _pc_init_state(self, *a, **k):
+            # preserve the host's existing excluded set if any
+            if not hasattr(self, 'excluded'):
+                self.excluded = set()
+
+        def _pc_excluded_set(self):
+            return set(getattr(self, 'excluded', set()))
+
+        def pools_caps_engine_config(self):
+            return {'unique_cap_overrides': None,
+                    'caliber_pool_extras': None,
+                    'caliber_pool_removals': None}
+
+
+class RandoGUI(PoolsCapsPanelMixin):
     # ------------------------------------------------------------------
     # v0.26.x: Recommended expedition guidance
     # ------------------------------------------------------------------
@@ -1150,7 +1323,12 @@ class RandoGUI:
         self.prefix_display = {}  # cp → display string for the listbox
 
         # UI state vars
-        self.seed_var = tk.StringVar(value="42")
+        # v0.27.x: seed defaults to EMPTY, not a fixed "42". A blank seed
+        # auto-rolls a fresh random one at run time (see _run_shuffle), so a
+        # user who never touches this field still gets a unique shuffle
+        # instead of the same default everyone else gets. Typing a seed (or
+        # clicking 🎲 Random) still pins it for reproducibility.
+        self.seed_var = tk.StringVar(value="")
         # Folder paths — persisted across runs in .4laric_settings.json so the
         # user only has to pick them once. Fallback defaults are folders next
         # to the GUI script (only used if those folders actually exist —
@@ -1186,8 +1364,14 @@ class RandoGUI:
         # so _run_shuffle's Step 4 wiring picks up edits without an
         # explicit "Save" step.
         _emevd_paths_init = self._load_emevd_paths()
+        # v0.27.x: default the vanilla-event dir to the bundled vanilla_event/
+        # so the EMEVD step (boss rewards + healthbar names) runs out-of-the-
+        # box with no config — same "works after unzip" goal as vanilla_msbs/.
+        # Saved/derived paths still win (the .get() below is the fallback).
+        _bundled_event = os.path.join(HERE, 'vanilla_event')
+        _default_event = _bundled_event if os.path.isdir(_bundled_event) else ''
         self.vanilla_emevd_dir_var = tk.StringVar(
-            value=_emevd_paths_init.get('vanilla_dcx', ''))
+            value=_emevd_paths_init.get('vanilla_dcx') or _default_event)
         self.output_emevd_dir_var = tk.StringVar(
             value=_emevd_paths_init.get('output_dir', ''))
         # Use trace_add to autopersist. Reads/writes the whole JSON on
@@ -1607,9 +1791,23 @@ class RandoGUI:
         # — it does NOT yet change any swap target (the coordinated swap
         # is cut 2). Default OFF.
         self.mount_rider_swap_var = tk.BooleanVar(value=False)
+        # v0.27.24: all-SOTE mode (engine sote_mode / CLI --sote). When ON,
+        # every swap target is intersected with the Shadow-of-the-Erdtree
+        # roster (V3_SOTE_PREFIXES — origin_game=='SoTE' OR sote_eligible),
+        # and unique-target caps/floors are bypassed (the SOTE set is small
+        # and meant to repeat). Requires MMV + heritage SOTE assets staged;
+        # on a base install an all-SOTE run produces mostly-empty placement.
+        # Default OFF. Threaded through generate_run -> engine_kwargs ->
+        # rando_pipeline (DCX) / cmd_shuffle_v3 (raw MSB).
+        self.sote_mode_var = tk.BooleanVar(value=False)
 
         self.excluded = set(DEFAULT_EXCLUDED)
         self.hub_maps = set(DEFAULT_HUB_MAPS)
+
+        # v0.27.x: Pools & Caps panel state (pool membership / caliber-pool /
+        # per-chr caps). Seeds self._pc_* and re-uses self.excluded as the
+        # canonical exclude set. Must run before _build_ui so the tab renders.
+        self._pc_init_state()
 
         # Worker thread state for non-blocking shuffle
         self.log_queue = queue.Queue()
@@ -1945,7 +2143,52 @@ class RandoGUI:
                 ".4laric_msg_paths.json). No 'Save' button needed.\n"
             ),
         },
+        'pools_caps': {
+            'title': 'Pools & Caps tab',
+            'body': (
+                "PURPOSE\n"
+                "  Tune the per-run enemy pool in three ways, all of which "
+                "leave a default run byte-identical if untouched.\n"
+                "\n"
+                "POOL MEMBERSHIP (first sub-tab)\n"
+                "  Include/exclude c-prefixes. Excluded chrs are removed "
+                "from the candidate pool AND their vanilla slots are kept "
+                "as-is. This replaces the old Excluded Enemies tab; Reset "
+                "restores the curated DEFAULT_EXCLUDED (crash-prone / "
+                "model-less chrs — removing them is risky).\n"
+                "\n"
+                "CALIBER (NB ANCHORS)\n"
+                "  Which c-prefixes may anchor Night-Boss arena slots. Move "
+                "chrs IN to let them headline a Night fight, OUT to keep "
+                "them at field/grunt slots. This is the all-DLC lever: SoTE "
+                "/ heritage-import bosses aren't in the base caliber set, "
+                "so they only anchor NB arenas once added here.\n"
+                "\n"
+                "CAPS\n"
+                "  Per-enemy placement ceilings. Blank = engine default "
+                "(shown in parens). Set an integer ≥ 1 to override. To "
+                "remove a chr entirely, use Pool Membership — a cap of 0 "
+                "would starve the reservation pass and is rejected.\n"
+                "\n"
+                "PRESETS\n"
+                "  • All-DLC run — unions the DLC/import boss prefixes into "
+                "the caliber pool in one click.\n"
+                "  • Reset to engine defaults — clears all three sections "
+                "(caps, caliber pool, pool membership) back to the engine "
+                "defaults. Prompts for confirmation if you've made changes.\n"
+            ),
+        },
         'excluded': {
+            'title': 'Excluded Enemies (moved)',
+            'body': (
+                "MOVED\n"
+                "This tab was merged into Pools & Caps → Pool Membership "
+                "in v0.27.x. Open the Pools & Caps tab; the include/exclude "
+                "two-pane works exactly as before, with Search and Reset to "
+                "default. self.excluded is unchanged under the hood.\n"
+            ),
+        },
+        '_excluded_legacy': {
             'title': 'Excluded Enemies tab',
             'body': (
                 "PURPOSE\n"
@@ -2353,15 +2596,22 @@ class RandoGUI:
             foreground=[('active', T['accent'])])
 
         style.configure('TNotebook', background=T['bg'], borderwidth=0,
-                        tabmargins=[2, 4, 2, 0])
+                        tabmargins=[2, 5, 2, 0])
+        # Unselected tabs sit recessed (darker than the page) with dim text;
+        # the selected tab lifts to surface_alt with a bold amber label so
+        # the current tab is unmistakable at a glance. The expand on select
+        # gives it a slight physical "raised" feel vs its neighbors.
         style.configure('TNotebook.Tab',
-            background=T['surface'], foreground=T['text_dim'],
-            bordercolor=T['border'], padding=[14, 6],
+            background=T['bg'], foreground=T['text_faint'],
+            bordercolor=T['border'], padding=[16, 7],
             font=(self.ui_font, 10))
         style.map('TNotebook.Tab',
-            background=[('selected', T['bg']), ('active', T['surface_alt'])],
-            foreground=[('selected', T['accent']), ('active', T['text'])],
-            expand=[('selected', [1, 1, 1, 0])])
+            background=[('selected', T['surface_alt']),
+                        ('active', T['surface'])],
+            foreground=[('selected', T['accent']),
+                        ('active', T['text'])],
+            font=[('selected', (self.ui_font, 10, 'bold'))],
+            expand=[('selected', [1, 2, 1, 0])])
 
         style.configure('Vertical.TScrollbar',
             background=T['surface'], troughcolor=T['bg'],
@@ -2418,6 +2668,21 @@ class RandoGUI:
             names_by_cp.setdefault(cp, set()).add(v.get('variant_name', '?'))
         for cp, names in sorted(names_by_cp.items()):
             t = self.tags.get(cp, {})
+            # v0.27.x: skip non-combat tiers in the "Replace everything
+            # with" picker — same filter as the Pools & Caps membership
+            # list. Cinematic actors, non_combat, and mount pieces are
+            # never useful oops-all targets (they'd just fall back to
+            # vanilla everywhere), and listing them let the default land
+            # on junk like an excluded duplicate.
+            if (isinstance(t, dict) and
+                    t.get('tier') in ('cinematic', 'non_combat',
+                                      'mount_component')):
+                continue
+            # Also skip hard-excluded prefixes — picking an enemy that's
+            # excluded from the pool as the "replace everything" target is
+            # contradictory (it would fall back to vanilla everywhere).
+            if cp in getattr(self, 'excluded', set()):
+                continue
             # v0.23.44: prefer the tag's authoritative `name` field for the
             # display label. Falling back to alphabetically-first variant
             # name picks the wrong one when a c-prefix has unrelated minor
@@ -2462,34 +2727,26 @@ class RandoGUI:
         self._progress_callback('Building Generate tab…')
         self._build_main_tab(tab1)
 
-        # Tab 1b (v0.24.10): individual folder pickers, moved off the
-        # Generate tab so the front page is just Game install + me3
-        # package. Anyone whose layout doesn't match the convention
-        # can override individual derived paths here.
-        tab_paths = ttk.Frame(nb)
-        nb.add(tab_paths, text='  Paths  ')
-        self._build_paths_tab(tab_paths)
+        # Tab 2: Pools & Caps (replaces the old Excluded Enemies tab —
+        # pool membership / include-exclude is now the first sub-tab here,
+        # alongside caliber-pool and per-chr cap controls). Falls back to a
+        # hidden stub if dev/pools_caps_panel failed to import.
+        if getattr(self, '_PC_AVAILABLE', False):
+            tab_pc = ttk.Frame(nb)
+            nb.add(tab_pc, text='  Pools & Caps  ')
+            self._progress_callback('Building Pools & Caps tab…')
+            self._build_pools_caps_tab(tab_pc)
 
-        # Tab 2: excluded enemies
-        tab2 = ttk.Frame(nb)
-        nb.add(tab2, text='  Excluded Enemies  ')
-        self._build_excluded_tab(tab2)
-
-        # Tab 3: hub maps (advanced)
-        tab3 = ttk.Frame(nb)
-        nb.add(tab3, text='  Hub Maps  ')
-        self._build_hub_tab(tab3)
-
-        # Tab 4: heritage / multiplayer
+        # Tab 3: heritage / multiplayer
         tab_h = ttk.Frame(nb)
         nb.add(tab_h, text='  Heritage / Multiplayer  ')
         self._progress_callback('Building Heritage tab…')
         self._build_heritage_tab(tab_h)
 
-        # Tab 5: ER asset import — heritage chr + script file import for me3 profile
+        # Tab 4: ER asset import — heritage chr + script file import for me3 profile
         tab_chr = ttk.Frame(nb)
-        nb.add(tab_chr, text='  Elden Ring Assets  ')
-        self._progress_callback('Building Elden Ring Assets tab…')
+        nb.add(tab_chr, text='  Import Elden Ring  ')
+        self._progress_callback('Building Import Elden Ring tab…')
         self._build_chr_inventory_tab(tab_chr)
 
         # v0.26.x: Tier 3 UX #11 — Spoiler viewer. Loads the engine's
@@ -2501,6 +2758,13 @@ class RandoGUI:
         tab_spoiler = ttk.Frame(nb)
         nb.add(tab_spoiler, text='  Spoiler  ')
         self._build_spoiler_tab(tab_spoiler)
+
+        # Tab 5 (v0.27.x): Paths moved to the back — individual folder
+        # pickers / derived-path overrides. Advanced; most users never
+        # need it since paths are auto-derived from the Generate tab.
+        tab_paths = ttk.Frame(nb)
+        nb.add(tab_paths, text='  Paths  ')
+        self._build_paths_tab(tab_paths)
 
         # Tab 6: about
         tab4 = ttk.Frame(nb)
@@ -2549,7 +2813,7 @@ class RandoGUI:
         vsb.pack(side='right', fill='y')
         scroll_canvas.pack(side='left', fill='both', expand=True)
 
-        scroll_frame = ttk.Frame(scroll_canvas)
+        scroll_frame = ttk.Frame(scroll_canvas, padding=(16, 12, 16, 16))
         scroll_window = scroll_canvas.create_window(
             (0, 0), window=scroll_frame, anchor='nw')
 
@@ -2635,9 +2899,12 @@ class RandoGUI:
         seed_entry = ttk.Entry(row, textvariable=self.seed_var, width=12)
         seed_entry.pack(side='left', padx=(4, 0))
         Tooltip(seed_entry,
-                "Same seed + same options = same randomized result. "
-                "Share a seed to swap runs with a friend, or fix one "
-                "for testing. Non-numeric text gets hashed to an int.")
+                "Leave blank for a fresh random seed each run (the rolled "
+                "seed is shown in the log so you can reproduce or share it). "
+                "Same seed + same options = same result — type a seed or "
+                "click 🎲 to pin one. Non-numeric text gets hashed to an int.")
+        ttk.Label(row, text="(blank = random)",
+                  style='Dim.TLabel').pack(side='left', padx=(6, 0))
         random_btn = ttk.Button(row, text="🎲 Random",
                                 command=self._random_seed)
         random_btn.pack(side='left', padx=(4, 16))
@@ -2701,17 +2968,22 @@ class RandoGUI:
         for cp, display in sorted(self.prefix_display.items()):
             self.oops_all_options.append(display)
             self.oops_all_lookup[display] = cp
-        self.oops_all_combo = AutocompleteCombobox(
+        # v0.27.13: reverted to plain ttk.Combobox (parked the
+        # AutocompleteCombobox live-filter — unreliable focus/dropdown
+        # behavior, see class header). Dropdown still works; users get
+        # Tk's built-in jump-by-first-letter when focused on the entry.
+        self.oops_all_combo = ttk.Combobox(
             self.oops_all_frame, textvariable=self.oops_all_target_var,
+            values=self.oops_all_options,
             state='normal', width=50)
-        self.oops_all_combo.set_completion_list(self.oops_all_options)
         self.oops_all_combo.pack(side='left', padx=8, fill='x', expand=True)
         Tooltip(self.oops_all_combo,
                 "Pick the enemy that replaces every slot in the world. "
-                "Type to filter — the picker shows c-prefix + display "
-                "name (e.g. 'c5070 Death Knight'). If the chosen enemy "
-                "has no variant compatible with a given slot's tier, "
-                "the engine falls back to vanilla random for that slot.")
+                "Choose from the dropdown — entries are c-prefix + "
+                "display name (e.g. 'c5070 Death Knight'). If the "
+                "chosen enemy has no variant compatible with a given "
+                "slot's tier, the engine falls back to vanilla random "
+                "for that slot.")
 
         # v0.23.39: NB-only oops-all picker — only shown when mode is
         # "Oops! All NB (boss probe) …". Lets the user pick a c-prefix to
@@ -2723,10 +2995,12 @@ class RandoGUI:
         # Reuse the same option list as the global oops-all picker — every
         # c-prefix is a valid candidate; if the picked chr has no NB-tier
         # variant, the engine falls through to vanilla random for that slot.
-        self.oops_all_nb_combo = AutocompleteCombobox(
+        # v0.27.13: reverted to plain ttk.Combobox alongside the
+        # global oops_all picker (see comment above). Same parking.
+        self.oops_all_nb_combo = ttk.Combobox(
             self.oops_all_nb_frame, textvariable=self.oops_all_nb_target_var,
+            values=self.oops_all_options,
             state='normal', width=42)
-        self.oops_all_nb_combo.set_completion_list(self.oops_all_options)
         self.oops_all_nb_combo.pack(side='left', padx=8, fill='x', expand=True)
         Tooltip(self.oops_all_nb_combo,
                 "Pick the boss to force at every Night Boss-tier slot "
@@ -3008,7 +3282,7 @@ class RandoGUI:
         without redoing the others.
         """
         # Helpful banner explaining what this tab is and isn't for.
-        banner = ttk.Frame(parent, padding=(8, 8, 8, 0))
+        banner = ttk.Frame(parent, padding=(16, 12, 16, 0))
         banner.pack(fill='x')
         ttk.Label(banner,
             text="These paths auto-fill from Game install + me3 package on the Generate tab. "
@@ -3018,7 +3292,7 @@ class RandoGUI:
 
         # === Vanilla side ===
         f_van = ttk.LabelFrame(parent, text="Vanilla (read)", padding=8)
-        f_van.pack(fill='x', padx=8, pady=(8, 4))
+        f_van.pack(fill='x', padx=16, pady=(8, 4))
         for label, var, browse_cmd in [
             ("Vanilla MSBs:", self.input_dir_var,
              lambda v=self.input_dir_var: self._browse_dir(v)),
@@ -3043,7 +3317,7 @@ class RandoGUI:
 
         # === Mod side ===
         f_mod = ttk.LabelFrame(parent, text="Mod (write)", padding=8)
-        f_mod.pack(fill='x', padx=8, pady=4)
+        f_mod.pack(fill='x', padx=16, pady=4)
         for label, var, browse_cmd in [
             ("Output:", self.output_dir_var,
              lambda v=self.output_dir_var: self._browse_dir(v)),
@@ -3071,7 +3345,7 @@ class RandoGUI:
         # edit that constant directly.
 
         # Footer note about derivation behavior
-        foot = ttk.Frame(parent, padding=(8, 4, 8, 8))
+        foot = ttk.Frame(parent, padding=(16, 4, 16, 8))
         foot.pack(fill='x')
         ttk.Label(foot,
             text="Changing Game install or me3 package on the Generate tab overwrites "
@@ -3080,72 +3354,22 @@ class RandoGUI:
             style='Dim.TLabel', wraplength=720, justify='left').pack(anchor='w')
 
     def _build_excluded_tab(self, parent):
-        # Header / explanation
-        h = ttk.Frame(parent, padding=8); h.pack(fill='x')
-        ttk.Label(h, text="Enemies in this list will not appear as swap targets and their slots will stay vanilla.",
-                  wraplength=800).pack(side='left', anchor='w')
-        self._add_help_button(h, 'excluded')
-
-        # Search bar
-        s = ttk.Frame(parent, padding=(8, 4)); s.pack(fill='x')
-        ttk.Label(s, text="Search:").pack(side='left')
-        ttk.Entry(s, textvariable=self.search_var).pack(side='left', fill='x', expand=True, padx=4)
-        ttk.Button(s, text="Clear", command=lambda: self.search_var.set("")).pack(side='left')
-        ttk.Button(s, text="Reset to default",
-                   command=lambda: self._set_excluded(DEFAULT_EXCLUDED)).pack(side='left', padx=4)
-
-        # Two-pane: All enemies (left) | Excluded (right)
-        body = ttk.Frame(parent); body.pack(fill='both', expand=True, padx=8, pady=4)
-
-        left = ttk.LabelFrame(body, text="Available", padding=4)
-        left.pack(side='left', fill='both', expand=True, padx=(0,4))
-        self.all_listbox = tk.Listbox(left, selectmode='extended', font=('Courier', 9))
-        sb1 = ttk.Scrollbar(left, command=self.all_listbox.yview)
-        self.all_listbox.config(yscrollcommand=sb1.set)
-        sb1.pack(side='right', fill='y')
-        self.all_listbox.pack(side='left', fill='both', expand=True)
-
-        mid = ttk.Frame(body); mid.pack(side='left', padx=4, fill='y')
-        ttk.Button(mid, text="Exclude →", command=self._exclude_selected).pack(pady=8)
-        ttk.Button(mid, text="← Include", command=self._include_selected).pack()
-
-        right = ttk.LabelFrame(body, text="Excluded", padding=4)
-        right.pack(side='left', fill='both', expand=True, padx=(4,0))
-        self.excluded_listbox = tk.Listbox(right, selectmode='extended', font=('Courier', 9))
-        sb2 = ttk.Scrollbar(right, command=self.excluded_listbox.yview)
-        self.excluded_listbox.config(yscrollcommand=sb2.set)
-        sb2.pack(side='right', fill='y')
-        self.excluded_listbox.pack(side='left', fill='both', expand=True)
-
-        # Footer count
-        self.count_label = ttk.Label(parent, text="", padding=4)
-        self.count_label.pack(anchor='w', padx=8)
-
-        self._refresh_listbox()
+        # v0.27.x: DEPRECATED. The standalone "Excluded Enemies" tab was
+        # removed; pool include/exclude now lives in the "Pool Membership"
+        # sub-tab of Pools & Caps (dev/pools_caps_panel.py). self.excluded
+        # remains the canonical exclude set, seeded in __init__ and consumed
+        # by the run config / engine_kwargs['excluded_prefixes'] unchanged.
+        # Kept as a no-op so any stray caller doesn't break.
+        return
 
     def _build_hub_tab(self, parent):
-        h = ttk.Frame(parent, padding=8); h.pack(fill='x')
-        ttk.Label(h, text="Maps that should be left vanilla (NPCs preserved). The defaults cover Roundtable Hold and its variants.",
-                  wraplength=800).pack(side='left', anchor='w')
-        self._add_help_button(h, 'hub_maps')
-
-        body = ttk.Frame(parent); body.pack(fill='both', expand=True, padx=8, pady=4)
-        self.hub_listbox = tk.Listbox(body, selectmode='extended', font=('Courier', 9))
-        sb = ttk.Scrollbar(body, command=self.hub_listbox.yview)
-        self.hub_listbox.config(yscrollcommand=sb.set)
-        sb.pack(side='right', fill='y')
-        self.hub_listbox.pack(side='left', fill='both', expand=True)
-
-        # Refresh hub list
-        self._refresh_hub_listbox()
-
-        # Buttons
-        btns = ttk.Frame(parent, padding=8); btns.pack(fill='x')
-        ttk.Button(btns, text="Add map...", command=self._add_hub_map).pack(side='left')
-        ttk.Button(btns, text="Remove selected", command=self._remove_hub_map).pack(side='left', padx=4)
-        ttk.Button(btns, text="Reset to defaults",
-                   command=lambda: (self.hub_maps.update(DEFAULT_HUB_MAPS),
-                                     self._refresh_hub_listbox())).pack(side='left', padx=4)
+        # v0.27.x: DEPRECATED. The Hub Maps tab was removed — it was a
+        # static config (Roundtable Hold + variants, which never change),
+        # not something a normal run adjusts. self.hub_maps remains seeded
+        # from DEFAULT_HUB_MAPS in __init__ and flows to the run config /
+        # engine_kwargs['hub_maps'] unchanged. No-op so any stray caller
+        # doesn't break.
+        return
 
     def _build_heritage_tab(self, parent):
         """Heritage / Multiplayer-safety toggle + heritage explainer."""
@@ -3167,7 +3391,7 @@ class RandoGUI:
         vsb.pack(side='right', fill='y')
         scroll_canvas.pack(side='left', fill='both', expand=True)
 
-        scroll_frame = ttk.Frame(scroll_canvas)
+        scroll_frame = ttk.Frame(scroll_canvas, padding=(16, 12, 16, 16))
         scroll_window = scroll_canvas.create_window(
             (0, 0), window=scroll_frame, anchor='nw')
 
@@ -3279,34 +3503,13 @@ class RandoGUI:
                   "takes effect on the next run)"),
             style='Dim.TLabel').pack(anchor='w', pady=(4, 0))
 
-        # v0.23.64: Vanilla mapstudio path. Moved here from the Generate
-        # tab's Folders box because it's an advanced optional-content
-        # toggle (like MMV above), not a daily-use folder picker. Most
-        # users never set this and most runs work fine without it.
-        # v0.26.x: wrapped in CollapsibleSection — collapsed by default
-        # so first-time users don't see this advanced override.
-        self._vanilla_mapstudio_section = CollapsibleSection(
-            f, "Vanilla mapstudio (optional, advanced)", expanded=False)
-        self._vanilla_mapstudio_section.pack(fill='x', pady=(0, 12))
-        sp_body = self._vanilla_mapstudio_section.body
-        sp_row = ttk.Frame(sp_body); sp_row.pack(fill='x')
-        ttk.Label(sp_row, text="Path:", width=8).pack(side='left')
-        ttk.Entry(sp_row, textvariable=self.spawn_pool_source_dir_var).pack(
-            side='left', fill='x', expand=True, padx=4)
-        ttk.Button(sp_row, text="Browse...",
-                   command=lambda: self._browse_dir(
-                       self.spawn_pool_source_dir_var)).pack(side='left')
-        ttk.Label(sp_body,
-            text=("Not needed for normal use. The bundled vanilla_msbs/ "
-                  "already includes all 23 spawn-pool MSBs, so rotation-"
-                  "pool bosses (Bell-Bearing Hunter at Castle Basement, "
-                  "Tree Sentinels, Death Rite Bird, etc.) are randomized "
-                  "automatically. Only set this if you've pointed the "
-                  "input folder at your own NR install that's missing the "
-                  "spawn-pool maps — then they get backfilled from here. "
-                  "Leave blank otherwise."),
-            style='Dim.TLabel', wraplength=720,
-            justify='left').pack(anchor='w', pady=(4, 0))
+        # v0.27.x: Vanilla mapstudio UI section REMOVED. The bundled
+        # vanilla_msbs/ already ships all 23 spawn-pool MSBs, so this
+        # override was never needed for normal use and only added clutter.
+        # self.spawn_pool_source_dir_var is retained (defaults to '' /
+        # disabled) and still flows to the run config, so a power user can
+        # set it via the saved-settings JSON if they ever point the input
+        # at an NR install missing the spawn-pool maps. No widget shown.
 
         # v0.26.x: Tier 2 UX #8 — wrap the diagnostic / engine-validation
         # section in a CollapsibleSection so first-time users don't see
@@ -3439,6 +3642,40 @@ class RandoGUI:
             "pre-attached visual-mount behaviour."
         ))
 
+        # v0.27.24: all-SOTE mode toggle.
+        sote_row = ttk.Frame(diag_frame); sote_row.pack(fill='x', pady=(8, 0))
+        sote_check = ttk.Checkbutton(sote_row,
+                         text="All-SOTE mode (every enemy becomes a Shadow-of-the-Erdtree chr)",
+                         variable=self.sote_mode_var,
+                         style='TCheckbutton')
+        sote_check.pack(side='left')
+        Tooltip(sote_check,
+                "When ON, every swap target is restricted to the "
+                "Shadow-of-the-Erdtree roster, and unique-target caps/floors "
+                "are bypassed (the SOTE set is small and meant to repeat). "
+                "Kaiden Sellsword + Horse become the Black Knight + Black "
+                "Knight Horse.\n\n"
+                "REQUIRES MMV + heritage SOTE assets staged in your chr "
+                "folder. On a base install most slots will have no eligible "
+                "SOTE chr and stay vanilla.")
+        make_info_icon(sote_row, tooltip_text=(
+            "Default: OFF\n\n"
+            "Engine sote_mode (CLI --sote). Intersects every swap target "
+            "with V3_SOTE_PREFIXES — chrs whose tag carries "
+            "origin_game=='SoTE' OR sote_eligible==true. The tier-preserve "
+            "filter still runs, so SOTE bosses land at boss slots and SOTE "
+            "field enemies at field slots; a slot with no eligible SOTE chr "
+            "(e.g. a flier-required slot with no SOTE flier) stays vanilla.\n\n"
+            "Caps and floors are bypassed for the run, so expect heavy "
+            "repeats — this is the intended 'all-SOTE' feel. The SOTE roster "
+            "is currently ~53 chrs (10 MMV boss ports + heritage SOTE field "
+            "enemies + the Black Knight pairing).\n\n"
+            "HARD DEPENDENCY: the SOTE chrs are MMV imports + heritage "
+            "(ER-unpack) assets. They must be staged in the target chr "
+            "folder or the game CTDs on cell-load. An all-SOTE run on a base "
+            "NR install will mostly no-target."
+        ))
+
         # v0.23.23: Heritage essay converted from always-visible body text
         # to a collapsible "Read more" expander. The full text is preserved
         # — it's substantive and worth reading once — but it no longer
@@ -3542,7 +3779,7 @@ class RandoGUI:
 
         # v0.26.x: title row with the ? button on the right
         title_row = ttk.Frame(f); title_row.pack(fill='x')
-        ttk.Label(title_row, text="Elden Ring Assets — import to me3",
+        ttk.Label(title_row, text="Import Elden Ring — assets to me3",
                   font=(self.ui_font, 14, 'bold'),
                   foreground=THEME['accent'],
                   background=THEME['bg']).pack(side='left', anchor='w')
@@ -3662,6 +3899,13 @@ class RandoGUI:
             font=(self.mono_font, 10),
             relief='flat', borderwidth=0)
         self.chr_log.pack(fill='both', expand=True)
+        # Seed a guiding placeholder so a cold open isn't a blank void —
+        # mirrors the Generate tab's "Ready. ..." log line.
+        self.chr_log.insert('end',
+            "Set at least one source folder (MMV and/or Elden Ring) plus "
+            "your me3 mod folder above, then run an import action.\n"
+            "Imported chr models / AI scripts are copied here so heritage "
+            "content loads correctly in-game.\n")
         self.chr_log.configure(state='disabled')
 
     def _resolve_asset_subdir(self, root_path, subname):
@@ -4901,14 +5145,14 @@ class RandoGUI:
         lives on self for the render method to consult."""
         # v0.26.x: header row for the per-tab help button. Sits above
         # the file picker so the affordance is discoverable.
-        header_row = ttk.Frame(parent, padding=(8, 8, 8, 0))
+        header_row = ttk.Frame(parent, padding=(16, 12, 16, 0))
         header_row.pack(fill='x')
         ttk.Label(header_row, text="Spoiler viewer",
                   font=(self.ui_font, 11, 'bold')).pack(side='left')
         self._add_help_button(header_row, 'spoiler')
 
         # --- File picker row ---
-        picker_row = ttk.Frame(parent, padding=(8, 4, 8, 4))
+        picker_row = ttk.Frame(parent, padding=(16, 4, 16, 4))
         picker_row.pack(fill='x')
         ttk.Label(picker_row, text="Spoiler file:",
                   width=14).pack(side='left')
@@ -4935,15 +5179,25 @@ class RandoGUI:
         # --- Run-info panel ---
         self.spoiler_info_frame = ttk.LabelFrame(parent,
             text="Run info", padding=8)
-        self.spoiler_info_frame.pack(fill='x', padx=8, pady=(0, 4))
-        # Placeholder until a spoiler is loaded
-        ttk.Label(self.spoiler_info_frame,
-            text="No spoiler loaded. Use Browse or Load latest above.",
-            style='Dim.TLabel').pack(anchor='w')
+        self.spoiler_info_frame.pack(fill='x', padx=16, pady=(0, 4))
+        # Placeholder until a spoiler is loaded — explain what this tab is
+        # for and how to populate it, so a cold open isn't just a dark void.
+        ph = ttk.Frame(self.spoiler_info_frame)
+        ph.pack(anchor='w', fill='x')
+        ttk.Label(ph,
+            text="No spoiler loaded yet.",
+            style='TLabel').pack(anchor='w')
+        ttk.Label(ph,
+            text=("After a run, this tab shows every enemy swap — searchable "
+                  "and filterable by map. Click \"Load latest\" above to pull "
+                  "the most recent run's spoiler, or \"Browse\" to open a "
+                  "specific _spoilers.json."),
+            style='Dim.TLabel', wraplength=820, justify='left').pack(
+            anchor='w', pady=(2, 0))
 
         # --- Filter controls ---
         filter_row = ttk.LabelFrame(parent, text="Filters", padding=8)
-        filter_row.pack(fill='x', padx=8, pady=(0, 4))
+        filter_row.pack(fill='x', padx=16, pady=(0, 4))
         # Search text
         search_inner = ttk.Frame(filter_row); search_inner.pack(fill='x')
         ttk.Label(search_inner, text="Search:",
@@ -4986,7 +5240,7 @@ class RandoGUI:
         # --- Entries view ---
         self._spoiler_data = None  # current parsed spoiler dict
         body = ttk.LabelFrame(parent, text="Swaps", padding=4)
-        body.pack(fill='both', expand=True, padx=8, pady=(0, 8))
+        body.pack(fill='both', expand=True, padx=16, pady=(0, 8))
         self.spoiler_text = scrolledtext.ScrolledText(
             body, height=22, wrap='none', state='disabled',
             font=(self.mono_font, 10),
@@ -5003,6 +5257,13 @@ class RandoGUI:
             foreground=THEME.get('warn', '#ffb74d'))
         self.spoiler_text.tag_configure('dim',
             foreground=THEME.get('text_dim', '#888'))
+        # Seed a placeholder so the Swaps area isn't a blank void on a cold
+        # open. Cleared on first load.
+        self.spoiler_text.configure(state='normal')
+        self.spoiler_text.insert('end',
+            "  Swaps from the loaded run appear here, grouped by map.\n"
+            "  Load a spoiler above to populate this view.\n", 'dim')
+        self.spoiler_text.configure(state='disabled')
 
     def _spoiler_browse(self):
         """File picker for a _spoilers.json."""
@@ -5292,6 +5553,32 @@ class RandoGUI:
     def _random_seed(self):
         self.seed_var.set(str(random.randint(0, 999999)))
 
+    @staticmethod
+    def _resolve_seed(raw_seed):
+        """Resolve the seed field's raw text into (seed_int, note_or_None).
+
+        Rules:
+          - blank  -> roll a fresh random seed in [0, 999999]; note tells
+                      the user it was rolled (so they can reproduce/share).
+          - integer text -> that integer, no note.
+          - other text   -> a stable hash of the text into a positive int,
+                      with a note that it was hashed.
+
+        Pure (no Tk, no logging) so it's unit-testable; the caller writes a
+        rolled seed back into the field and emits the note to the log.
+        """
+        raw_seed = (raw_seed or "").strip()
+        if not raw_seed:
+            seed = random.randint(0, 999999)
+            return seed, (f"No seed entered — rolled a random seed: {seed} "
+                          f"(reuse this seed to reproduce or share this run)")
+        try:
+            return int(raw_seed), None
+        except ValueError:
+            seed = abs(hash(raw_seed)) % (2**31)
+            return seed, (f"Seed '{raw_seed}' is not an integer — using "
+                          f"hashed seed {seed}")
+
     def _on_mode_change(self):
         """Show or hide the right target picker based on mode.
 
@@ -5513,62 +5800,25 @@ class RandoGUI:
             return {}
 
     def _apply_install_autodetect(self, saved):
-        """Fill empty 'game_install' / 'er_install' entries in the saved
-        root-paths dict with Steam auto-detection results. Returns a
-        new dict; doesn't mutate the input.
-
-        Called once at GUI startup, just after _load_root_paths(). Saved
-        non-empty values always win — auto-detect only fires for fields
-        that haven't been set yet. If the user manually clears a saved
-        value to re-detect, they can do so by emptying the field via
-        the Browse dialog (clearing it and saving with empty path).
-
-        Detection failures are silent. The dev/install_discovery module
-        is designed to never raise; we wrap the call in a try/except as
-        defense-in-depth in case a future change breaks that contract.
+        """Fill empty 'game_install' / 'er_install' / 'me3_launcher' entries
+        in the saved root-paths dict with Steam auto-detection results.
+        Returns a new dict; doesn't mutate the input. Saved non-empty
+        values always win — auto-detect only fires for fields that haven't
+        been set yet.
 
         Side effect: populates self._autodetected_keys with the set of
-        keys this call filled, so the UI can show "(auto-detected)"
-        badges and "Re-detect" buttons next to those fields. Re-running
-        autodetect (via the Re-detect button) re-populates the set.
+        keys this call filled, so the UI can show "(auto-detected)" badges
+        and "Re-detect" buttons next to those fields.
+
+        Delegates to the module-level _autodetect_paths helper so the
+        same logic also runs at the startup block (which pre-populates
+        the wizard's config before it opens). Single implementation,
+        no risk of drift.
         """
-        # Initialize / reset the provenance tracker. Used by the UI to
-        # decide which path fields display an "(auto-detected)" badge.
         if not hasattr(self, '_autodetected_keys'):
             self._autodetected_keys = set()
-        result = dict(saved)
-        # Early-out if all four discoverable paths already set
-        if (result.get('game_install', '').strip()
-                and result.get('er_install', '').strip()
-                and result.get('me3_launcher', '').strip()):
-            return result
-        try:
-            sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'dev'))
-            import install_discovery
-            if not result.get('game_install', '').strip():
-                nr_path = install_discovery.find_nightreign_install()
-                if nr_path:
-                    result['game_install'] = nr_path
-                    self._autodetected_keys.add('game_install')
-            if not result.get('er_install', '').strip():
-                er_path = install_discovery.find_elden_ring_install()
-                if er_path:
-                    result['er_install'] = er_path
-                    self._autodetected_keys.add('er_install')
-            # v0.26.x: me3 launcher binary. The Launch button still
-            # falls back to runtime discovery if this stays empty, but
-            # filling it on first launch makes the path field
-            # actionable (browse / re-detect) instead of mysterious.
-            if not result.get('me3_launcher', '').strip():
-                me3_path = install_discovery.find_me3_binary()
-                if me3_path:
-                    result['me3_launcher'] = me3_path
-                    self._autodetected_keys.add('me3_launcher')
-        except Exception:
-            # Discovery is best-effort. Any failure (import error,
-            # registry-read failure on a locked-down system, etc.)
-            # falls back silently to empty fields.
-            pass
+        result, filled = _autodetect_paths(saved)
+        self._autodetected_keys |= filled
         return result
 
     def _save_root_paths(self, paths):
@@ -6061,12 +6311,13 @@ class RandoGUI:
         # run hasn't completed yet and the old summary is misleading.
         self._hide_post_run_summary()
 
-        try:
-            seed = int(self.seed_var.get())
-        except ValueError:
-            seed_str = self.seed_var.get()
-            seed = abs(hash(seed_str)) % (2**31)
-            self._log(f"Seed '{seed_str}' is not an integer — using hashed seed {seed}\n")
+        raw_seed = self.seed_var.get().strip()
+        seed, seed_note = self._resolve_seed(raw_seed)
+        if seed_note:
+            self._log(seed_note + "\n")
+        if not raw_seed:
+            # Show the rolled seed in the field so the user sees what ran.
+            self.seed_var.set(str(seed))
 
         in_dir = self.input_dir_var.get()
         out_dir = self.output_dir_var.get()
@@ -6242,6 +6493,12 @@ class RandoGUI:
             'mod_map_dir': mod_map_dir,
             'spawn_pool_source_dir': spawn_pool_source_dir,
             'excluded': set(self.excluded),
+            # v0.27.x: pool/cap overrides from the Pools & Caps tab —
+            # unique_cap_overrides / caliber_pool_extras /
+            # caliber_pool_removals. Empty selections come back as None, so
+            # a run with the tab untouched is byte-identical to a pre-panel
+            # run. (Pool membership rides via 'excluded' above.)
+            **self.pools_caps_engine_config(),
             'hub_maps': set(self.hub_maps),
             'oops_all_target_cp': oops_all_target_cp,
             'oops_all_nb_target_cp': oops_all_nb_target_cp,
@@ -6283,6 +6540,8 @@ class RandoGUI:
             'chaos_mode': bool(self.chaos_mode_var.get()),
             # v0.26.15: mount/rider detection (cut 1 — audit only).
             'mount_rider_swap': bool(self.mount_rider_swap_var.get()),
+            # v0.27.24: all-SOTE mode toggle.
+            'sote_mode': bool(self.sote_mode_var.get()),
         }
 
         # v0.20.89: clear any lingering cancel flag from a prior cancelled
@@ -6421,6 +6680,13 @@ class RandoGUI:
                 force_include_targets=config.get('force_include_targets'),
                 chaos_mode=bool(config.get('chaos_mode')),
                 mount_rider_swap=bool(config.get('mount_rider_swap')),
+                sote_mode=bool(config.get('sote_mode')),
+                # v0.27.x: Pools & Caps overrides — threaded into both the
+                # rando_pipeline (DCX) and cmd_shuffle_v3 (raw MSB) paths
+                # via **engine_kwargs. None when the tab is untouched.
+                unique_cap_overrides=config.get('unique_cap_overrides'),
+                caliber_pool_extras=config.get('caliber_pool_extras'),
+                caliber_pool_removals=config.get('caliber_pool_removals'),
             )
 
             # Temporarily redirect the backend's prints to our log queue
@@ -6965,24 +7231,13 @@ class RandoGUI:
         self.root.after(100, self._drain_log_queue)
 
     def _log(self, msg, tag=None):
-        """Append a line to the log. If tag is None, auto-detect by content."""
+        """Append a line to the log. If tag is None, auto-detect via
+        _classify_log_line; unclassified lines default to 'dim' so
+        every line ends up tagged."""
         if tag is None:
-            low = msg.lower()
-            if 'error' in low or 'traceback' in low or 'failed' in low:
-                tag = 'error'
-            elif 'warn' in low or 'skipped' in low:
-                tag = 'warn'
-            elif msg.startswith('---') or msg.startswith('==='):
-                tag = 'accent'
-            elif 'processed' in low or 'complete' in low or 'done' in low:
-                tag = 'success'
-            elif msg.startswith('  ') or 'detected' in low or 'building' in low:
-                tag = 'info'
+            tag = _classify_log_line(msg) or 'dim'
         self.log.config(state='normal')
-        if tag:
-            self.log.insert('end', msg, tag)
-        else:
-            self.log.insert('end', msg)
+        self.log.insert('end', msg, tag)
         self.log.see('end')
         self.log.config(state='disabled')
 
@@ -7125,9 +7380,16 @@ def main():
     # extra plumbing required.
     saved = _load_saved_paths()
     if args.setup or should_run_wizard(saved):
+        # v0.27.x: pre-populate the wizard's config with Steam autodetect
+        # results BEFORE opening it. Previously the wizard received the
+        # raw (empty) saved dict and showed empty install fields even on
+        # a stock machine where discovery would find NR/ER/me3 instantly.
+        # Filling here means the wizard opens with the right paths already
+        # in place; the user just confirms instead of manually browsing.
+        wizard_config, _filled = _autodetect_paths(saved)
         root.withdraw()  # hide main window during wizard
         try:
-            wiz = FirstLaunchWizard(root, initial_config=saved)
+            wiz = FirstLaunchWizard(root, initial_config=wizard_config)
             root.wait_window(wiz.top)
             # Persist whatever the user entered, even if they Skipped —
             # saves them from re-entering the same paths next launch.

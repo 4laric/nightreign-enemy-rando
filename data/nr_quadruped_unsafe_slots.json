@@ -1,14 +1,15 @@
 {
   "_meta": {
     "format_version": 1,
-    "description": "Per-(msb, pi) slot excludes for quadruped chrs (locomotion=3). Quadrupeds in NR/ER's engine sample a wider footprint at spawn-time pathfinding than bipeds \u2014 body extends further forward/back from the anchor point. A slot that's on-mesh by biped classification can still fail quadruped spawn validation if the surrounding walkable area is sparse, even when the spawn point itself is valid. This catalog records empirically-observed quadruped-unsafe slots so the picker can route quadruped chrs (Wolves, Rats, Giant Ants, Horses, Tree Sentinels, etc.) away from them.",
-    "tagging_unit": "(msb, pi) \u2014 a single Part slot in a single MSB. Adds are per-slot, not per-MSB.",
+    "description": "Per-(msb, pi) slot excludes for quadruped chrs (locomotion=3). Quadrupeds in NR/ER's engine sample a wider footprint at spawn-time pathfinding than bipeds — body extends further forward/back from the anchor point. A slot that's on-mesh by biped classification can still fail quadruped spawn validation if the surrounding walkable area is sparse, even when the spawn point itself is valid. This catalog records empirically-observed quadruped-unsafe slots so the picker can route quadruped chrs (Wolves, Rats, Giant Ants, Horses, Tree Sentinels, etc.) away from them.",
+    "tagging_unit": "(msb, pi) — a single Part slot in a single MSB. Adds are per-slot, not per-MSB.",
     "scope": "Applies to ALL chrs with locomotion=3. Whether finer-grained (per-anim-class) distinctions are needed (e.g., 'quadruped is safe but quadruped_large is not') is an open question; refine when we have data.",
     "added_in": "v0.24.31",
-    "maintained_by": "manual \u2014 entries added as freezes are reported in playtests",
+    "maintained_by": "manual — entries added as freezes are reported in playtests",
     "_v0_24_33_note": "v0.24.33 added 4 prophylactic entries (m43_01 pi=5, m43_01 pi=6, m44_01 pi=2, m45_01 pi=1) based on the m45_01 pi=3 hypothesis (sparse navmesh + biped vanilla source = likely quadruped freeze risk). These have discovery_method='prophylactic_density_scan' to distinguish from empirically-observed entries.",
     "_v0_24_34_note": "v0.24.34 added m43_02_00_00.msb to starting encampments catalog (label: wandering_demi_human_camp) and added pi=4 to prophylactic quadruped-unsafe slots. Catalog now: 1 empirical + 5 prophylactic = 6 entries.",
-    "since_version": "; v0.24.54: added m46_77 pi=8 (Demi-Human Queen anchor, Red Wolf freeze seed 714653, reject_anim_classes=['quadruped']); v0.24.59: added m43_01 pi=2 (Goat freeze) + pi=3 (Bear freeze), seed 923958 starting encampment, both reject_anim_classes=['quadruped'] \u2014 first encampment-slot Gate 4 entries; v0.24.62: BROADENED DEFAULT criterion from `locomotion==3` to `locomotion==3 OR anim_class.startswith('quadruped')`. All 6 legacy entries (m45_01 pi=1+3, m43_01 pi=5+6, m43_02 pi=4, m44_01 pi=2) now ALSO catch anim_class=quadruped(_large) chrs (Bear, Goat, Wolf) regardless of locomotion. Per user request 'mark the regular grunt bear basically as fragile as small rat'."
+    "since_version": "; v0.24.54: added m46_77 pi=8 (Demi-Human Queen anchor, Red Wolf freeze seed 714653); v0.24.59: added m43_01 pi=2 (Goat freeze) + pi=3 (Bear freeze), seed 923958 starting encampment; v0.27.28: gate keys on the fragile_locomotion tag (set on the 70 former quadruped/quadruped_large chrs, covering the loco-0/5 Bear/Wolf/Goat a pure loco==3 check misses) OR locomotion==3 (the few non-quadruped loco=3 bipeds). Per-slot reject_fragile_locomotion rejects every fragile-locomotion target at slots authored for humanoid bipedal AI. Per user request 'mark the regular grunt bear basically as fragile as small rat'.",
+    "_v0_27_30_note": "v0.27.30: empirical freeze observations cross-checked against the newly-found RetargetReferenceChrId T-pose bug. Of the 4 empirical freezes, only c6031 Bear (m43_01 pi=3) retargets from an unstaged source (c6030) and is therefore a possible T-pose-misread-as-freeze — flagged for re-test, gate kept active pending. The other 3 (c3181 Red Wolf m46_77 pi=8, c6060 Goat m43_01 pi=2, c4080 Rat m45_01 pi=3) animate from themselves and are genuine navmesh pathlocks. The 6 prophylactic_density_scan slots remain unverified guesses, removable per their own _verification_protocol once quadrupeds are confirmed to work at the original positions. No gate behavior changed this version."
   },
   "slots": [
     {
@@ -42,13 +43,14 @@
         "shift_direction": "toward_sibling_pi0",
         "target_sibling_pi": 0,
         "target_sibling_n10": 111,
-        "rationale": "Sibling pi=0 has highest navmesh density in m45_01 (n10=111 vs pi=3's 79). 4.22m away, a 2.0m shift toward it lands at 2.23m XZ from pi=0 \u2014 safe spacing, well outside collision threshold. Likely-denser navmesh at new position; quadruped spawn footprint should validate.",
+        "rationale": "Sibling pi=0 has highest navmesh density in m45_01 (n10=111 vs pi=3's 79). 4.22m away, a 2.0m shift toward it lands at 2.23m XZ from pi=0 — safe spacing, well outside collision threshold. Likely-denser navmesh at new position; quadruped spawn footprint should validate.",
         "applied_in_slot_repositions": true,
         "slot_repositions_status": "quadruped_safe_relocation",
         "playtest_verified": false,
-        "_verification_protocol": "When playtest confirms a quadruped (Rat/Wolf/Giant Ant) spawns and ambulates correctly at this slot's new position, flip playtest_verified to true. The picker gate (gate 4 in _reject_target_for_slot) reads this flag \u2014 when true, quadruped targets are no longer rejected at this slot."
+        "_verification_protocol": "When playtest confirms a quadruped (Rat/Wolf/Giant Ant) spawns and ambulates correctly at this slot's new position, flip playtest_verified to true. The picker gate (gate 4 in _reject_target_for_slot) reads this flag — when true, quadruped targets are no longer rejected at this slot."
       },
-      "notes": "First confirmed quadruped freeze. Rat (c4080, loco=3) replaced Wandering Noble (c4300, loco=0) at the roadside_thieves_camp starting encampment. Slot had the lowest navmesh density of any pi in m45_01 (n10=79 vs 80-145 for siblings) and the classifier called it on_mesh, so build_slot_repositions proposed no fix. Hypothesis: quadruped spawn-time pathfinding samples a wider radius than biped; in a sparse navmesh region the wider sample falls into a gap and the entity stalls. Confirms Alaric's hypothesis that quadrupeds need denser navmesh. v0.24.32 adds a reposition proposal (shifted 2m toward dense-navmesh pi=0) \u2014 see reposition_proposed field. Gate remains active until playtest verifies the new position is quadruped-safe."
+      "notes": "First confirmed quadruped freeze. Rat (c4080, loco=3) replaced Wandering Noble (c4300, loco=0) at the roadside_thieves_camp starting encampment. Slot had the lowest navmesh density of any pi in m45_01 (n10=79 vs 80-145 for siblings) and the classifier called it on_mesh, so build_slot_repositions proposed no fix. Hypothesis: quadruped spawn-time pathfinding samples a wider radius than biped; in a sparse navmesh region the wider sample falls into a gap and the entity stalls. Confirms Alaric's hypothesis that quadrupeds need denser navmesh. v0.24.32 adds a reposition proposal (shifted 2m toward dense-navmesh pi=0) — see reposition_proposed field. Gate remains active until playtest verifies the new position is quadruped-safe.",
+      "_v0_27_30_tpose_confound": "NOT confounded — c4080 Rat animates from itself (no retarget). Genuine navmesh freeze, not a T-pose. Gate correctly retained."
     },
     {
       "msb": "m43_01_00_00.msb",
@@ -81,7 +83,7 @@
         "applied_in_slot_repositions": true,
         "slot_repositions_status": "quadruped_safe_relocation",
         "playtest_verified": false,
-        "_verification_protocol": "Prophylactic addition based on m45_01 pi=3 hypothesis. Playtest to confirm quadrupeds spawn cleanly at the new position. If quadrupeds work AT THE ORIGINAL position too (hypothesis was over-broad), this entry can be removed from the catalog \u2014 slot doesn't need protection. If quadrupeds work at new position only, flip playtest_verified=true to release the gate. Lower priority than empirically-observed freezes."
+        "_verification_protocol": "Prophylactic addition based on m45_01 pi=3 hypothesis. Playtest to confirm quadrupeds spawn cleanly at the new position. If quadrupeds work AT THE ORIGINAL position too (hypothesis was over-broad), this entry can be removed from the catalog — slot doesn't need protection. If quadrupeds work at new position only, flip playtest_verified=true to release the gate. Lower priority than empirically-observed freezes."
       },
       "notes": "Prophylactic catalog entry. Slot has sparse navmesh (n10=56, at or below the m45_01 pi=3 freeze threshold of n10=79) AND biped vanilla source (c4300 loco=0). The m45_01 pi=3 hypothesis predicts quadrupeds here would face the same spawn-time pathfinding failure. No empirical freeze observation yet. Reposition is applied immediately (biped lands at safer position) but quadruped gate stays active until playtest verifies."
     },
@@ -116,7 +118,7 @@
         "applied_in_slot_repositions": true,
         "slot_repositions_status": "quadruped_safe_relocation",
         "playtest_verified": false,
-        "_verification_protocol": "Prophylactic addition based on m45_01 pi=3 hypothesis. Playtest to confirm quadrupeds spawn cleanly at the new position. If quadrupeds work AT THE ORIGINAL position too (hypothesis was over-broad), this entry can be removed from the catalog \u2014 slot doesn't need protection. If quadrupeds work at new position only, flip playtest_verified=true to release the gate. Lower priority than empirically-observed freezes."
+        "_verification_protocol": "Prophylactic addition based on m45_01 pi=3 hypothesis. Playtest to confirm quadrupeds spawn cleanly at the new position. If quadrupeds work AT THE ORIGINAL position too (hypothesis was over-broad), this entry can be removed from the catalog — slot doesn't need protection. If quadrupeds work at new position only, flip playtest_verified=true to release the gate. Lower priority than empirically-observed freezes."
       },
       "notes": "Prophylactic catalog entry. Slot has sparse navmesh (n10=39, at or below the m45_01 pi=3 freeze threshold of n10=79) AND biped vanilla source (c4300 loco=0). The m45_01 pi=3 hypothesis predicts quadrupeds here would face the same spawn-time pathfinding failure. No empirical freeze observation yet. Reposition is applied immediately (biped lands at safer position) but quadruped gate stays active until playtest verifies."
     },
@@ -147,13 +149,13 @@
         "shift_direction": "toward_sibling_pi2",
         "target_sibling_pi": 2,
         "target_sibling_n10": 97,
-        "rationale": "Slot is the sparsest in m43_02 (n10=34, 35% of MSB max 97). Significantly sparser than m45_01 pi=3 (n10=79) in absolute terms but m43_02 has a lower MSB-wide n10 ceiling. Position (0.99, 1.76, 13.19) is an outlier ~17m from the main cluster (pi=1/2 at z\u2248-3 to -6). Shift 2m toward pi=2 (n10=97, densest with valid position; pi=3 and pi=5 have origin-sentinel y=-37.77 indicating script-spawn placeholders, excluded as shift targets). 14m+ from pi=1 and 17m+ from pi=2 after shift.",
+        "rationale": "Slot is the sparsest in m43_02 (n10=34, 35% of MSB max 97). Significantly sparser than m45_01 pi=3 (n10=79) in absolute terms but m43_02 has a lower MSB-wide n10 ceiling. Position (0.99, 1.76, 13.19) is an outlier ~17m from the main cluster (pi=1/2 at z≈-3 to -6). Shift 2m toward pi=2 (n10=97, densest with valid position; pi=3 and pi=5 have origin-sentinel y=-37.77 indicating script-spawn placeholders, excluded as shift targets). 14m+ from pi=1 and 17m+ from pi=2 after shift.",
         "applied_in_slot_repositions": true,
         "slot_repositions_status": "quadruped_safe_relocation",
         "playtest_verified": false,
-        "_verification_protocol": "Prophylactic addition based on m45_01 pi=3 hypothesis. m43_02's overall n10 is lower than m45_01's, so it's possible vanilla NR works fine with quadrupeds here and this slot doesn't need protection. Playtest to confirm. If quadrupeds spawn cleanly at the ORIGINAL position, remove this entry \u2014 m43_02 may just be a low-density-but-quadruped-tolerant MSB."
+        "_verification_protocol": "Prophylactic addition based on m45_01 pi=3 hypothesis. m43_02's overall n10 is lower than m45_01's, so it's possible vanilla NR works fine with quadrupeds here and this slot doesn't need protection. Playtest to confirm. If quadrupeds spawn cleanly at the ORIGINAL position, remove this entry — m43_02 may just be a low-density-but-quadruped-tolerant MSB."
       },
-      "notes": "Prophylactic catalog entry. Slot is sparsest in m43_02 (n10=34, 35% of MSB max). m43_02 is a small wandering_demi_human_camp starting encampment (5 grunt placements, all vanilla c4371 Godrick Foot Soldier). pi=4 is the outlier ground-level slot at z=13.19 \u2014 possibly the far end of the patrol route. Reposition shifts it 2m toward pi=2 (the densest valid-position sibling). If hypothesis holds, this protects against the same freeze-on-spawn pattern observed at m45_01 pi=3. If hypothesis is wrong for this slot (m43_02 might be inherently low-density-but-quadruped-tolerant), the catalog entry can be removed."
+      "notes": "Prophylactic catalog entry. Slot is sparsest in m43_02 (n10=34, 35% of MSB max). m43_02 is a small wandering_demi_human_camp starting encampment (5 grunt placements, all vanilla c4371 Godrick Foot Soldier). pi=4 is the outlier ground-level slot at z=13.19 — possibly the far end of the patrol route. Reposition shifts it 2m toward pi=2 (the densest valid-position sibling). If hypothesis holds, this protects against the same freeze-on-spawn pattern observed at m45_01 pi=3. If hypothesis is wrong for this slot (m43_02 might be inherently low-density-but-quadruped-tolerant), the catalog entry can be removed."
     },
     {
       "msb": "m44_01_00_00.msb",
@@ -186,7 +188,7 @@
         "applied_in_slot_repositions": true,
         "slot_repositions_status": "quadruped_safe_relocation",
         "playtest_verified": false,
-        "_verification_protocol": "Prophylactic addition based on m45_01 pi=3 hypothesis. Playtest to confirm quadrupeds spawn cleanly at the new position. If quadrupeds work AT THE ORIGINAL position too (hypothesis was over-broad), this entry can be removed from the catalog \u2014 slot doesn't need protection. If quadrupeds work at new position only, flip playtest_verified=true to release the gate. Lower priority than empirically-observed freezes."
+        "_verification_protocol": "Prophylactic addition based on m45_01 pi=3 hypothesis. Playtest to confirm quadrupeds spawn cleanly at the new position. If quadrupeds work AT THE ORIGINAL position too (hypothesis was over-broad), this entry can be removed from the catalog — slot doesn't need protection. If quadrupeds work at new position only, flip playtest_verified=true to release the gate. Lower priority than empirically-observed freezes."
       },
       "notes": "Prophylactic catalog entry. Slot has sparse navmesh (n10=40, at or below the m45_01 pi=3 freeze threshold of n10=79) AND biped vanilla source (c3660 loco=0). The m45_01 pi=3 hypothesis predicts quadrupeds here would face the same spawn-time pathfinding failure. No empirical freeze observation yet. Reposition is applied immediately (biped lands at safer position) but quadruped gate stays active until playtest verifies."
     },
@@ -221,7 +223,7 @@
         "applied_in_slot_repositions": true,
         "slot_repositions_status": "quadruped_safe_relocation",
         "playtest_verified": false,
-        "_verification_protocol": "Prophylactic addition based on m45_01 pi=3 hypothesis. Playtest to confirm quadrupeds spawn cleanly at the new position. If quadrupeds work AT THE ORIGINAL position too (hypothesis was over-broad), this entry can be removed from the catalog \u2014 slot doesn't need protection. If quadrupeds work at new position only, flip playtest_verified=true to release the gate. Lower priority than empirically-observed freezes."
+        "_verification_protocol": "Prophylactic addition based on m45_01 pi=3 hypothesis. Playtest to confirm quadrupeds spawn cleanly at the new position. If quadrupeds work AT THE ORIGINAL position too (hypothesis was over-broad), this entry can be removed from the catalog — slot doesn't need protection. If quadrupeds work at new position only, flip playtest_verified=true to release the gate. Lower priority than empirically-observed freezes."
       },
       "notes": "Prophylactic catalog entry. Slot has sparse navmesh (n10=80, at or below the m45_01 pi=3 freeze threshold of n10=79) AND biped vanilla source (c4300 loco=0). The m45_01 pi=3 hypothesis predicts quadrupeds here would face the same spawn-time pathfinding failure. No empirical freeze observation yet. Reposition is applied immediately (biped lands at safer position) but quadruped gate stays active until playtest verifies."
     },
@@ -235,10 +237,9 @@
       "freeze_target_name": "Red Wolf of Radagon",
       "vanilla_source": "c4130",
       "vanilla_source_name": "Demi-Human Queen (Field Boss)",
-      "reject_anim_classes": [
-        "quadruped"
-      ],
-      "notes": "v0.24.54: Red Wolf c3181 (anim=quadruped, loco=5) froze here. Slot's existing per-chr position_shift system has been trying (0, +0.5, -5) for c3181/c5820 since v0.24.18 \u2014 playtest seed 714653 confirms the shift is NOT sufficient: c3181 still freezes. Per the spoiler position_shift escalation plan ('PROBLEM_SLOTS no-quadrupeds'), gating quadrupeds entirely.\n\nDistinct from the default V3_QUADRUPED_UNSAFE_SLOTS loco=3 criterion: c3181 is loco=5. The slot's failure mode is 'humanoid bipedal spawn point, quadrupeds freeze with navmesh-edge pathlock' (from the position_shift note), affecting all quadrupeds regardless of locomotion bucket. reject_anim_classes=['quadruped'] makes the rejection anim_class-based for this specific slot.\n\nThe pre-existing per-chr position_shift entry for c3181/c5820 at this slot can be left in place \u2014 it's a no-op now since Gate 4 rejects these chrs before the shift would apply."
+      "notes": "v0.24.54: Red Wolf c3181 (fragile-locomotion, loco=5) froze here. Slot's existing per-chr position_shift system has been trying (0, +0.5, -5) for c3181/c5820 since v0.24.18 — playtest seed 714653 confirms the shift is NOT sufficient: c3181 still freezes. Per the spoiler position_shift escalation plan ('PROBLEM_SLOTS no-quadrupeds'), gating quadrupeds entirely.\n\nDistinct from the default V3_QUADRUPED_UNSAFE_SLOTS loco=3 criterion: c3181 is loco=5. The slot's failure mode is 'humanoid bipedal spawn point, quadrupeds freeze with navmesh-edge pathlock' (from the position_shift note), affecting all quadrupeds regardless of locomotion bucket. reject_fragile_locomotion flags this slot so every fragile-locomotion target is rejected regardless of locomotion bucket.\n\nThe pre-existing per-chr position_shift entry for c3181/c5820 at this slot can be left in place — it's a no-op now since Gate 4 rejects these chrs before the shift would apply.",
+      "reject_fragile_locomotion": true,
+      "_v0_27_30_tpose_confound": "NOT confounded — c3181 Red Wolf animates from itself (no RetargetReferenceChrId), so this freeze is a genuine navmesh pathlock, not a T-pose. The v0.27.30 retarget bug does not apply here. Gate correctly retained. (Distinguished from the Bear entry at m43_01 pi=3, which IS a T-pose confound.)"
     },
     {
       "msb": "m43_01_00_00.msb",
@@ -250,10 +251,9 @@
       "freeze_target_name": "Goat (NR 'Lightning Ram' variant)",
       "vanilla_source": "c4300",
       "vanilla_source_name": "Wandering Noble",
-      "reject_anim_classes": [
-        "quadruped"
-      ],
-      "notes": "v0.24.59: c6060 Goat (anim=quadruped, loco=0, size=S) froze here. Wandering Noble starting encampment slot \u2014 humanoid bipedal vanilla, tight camp cluster geometry, quadruped pathing fails. Same failure mode as m46_77 pi=8 / m45_01 pi=3 (humanoid vanilla + sparse-or-tight nav around spawn). loco=0 (not the default V3_QUADRUPED_UNSAFE_SLOTS loco=3 criterion), so reject_anim_classes=['quadruped'] is required to catch this and other anim_class=quadruped chrs regardless of locomotion. Note: NR's in-game UI calls a c6060 variant 'Lightning Ram' (per user report); mechanically still c6060."
+      "notes": "v0.24.59: c6060 Goat (fragile-locomotion, loco=0, size=S) froze here. Wandering Noble starting encampment slot — humanoid bipedal vanilla, tight camp cluster geometry, quadruped pathing fails. Same failure mode as m46_77 pi=8 / m45_01 pi=3 (humanoid vanilla + sparse-or-tight nav around spawn). loco=0 (not the default V3_QUADRUPED_UNSAFE_SLOTS loco=3 criterion), so reject_fragile_locomotion flags this slot so every fragile-locomotion target is rejected regardless of locomotion bucket. Note: NR's in-game UI calls a c6060 variant 'Lightning Ram' (per user report); mechanically still c6060.",
+      "reject_fragile_locomotion": true,
+      "_v0_27_30_tpose_confound": "NOT confounded — c6060 Goat animates from itself (no retarget). Genuine navmesh freeze, not a T-pose. Gate correctly retained."
     },
     {
       "msb": "m43_01_00_00.msb",
@@ -265,10 +265,9 @@
       "freeze_target_name": "Bear",
       "vanilla_source": "c4300",
       "vanilla_source_name": "Wandering Noble",
-      "reject_anim_classes": [
-        "quadruped"
-      ],
-      "notes": "v0.24.59: c6031 Bear (anim=quadruped_large, loco=0, size=M) froze here. Companion to pi=2 in same encampment (m43_01_00_00.msb 'wandering_noble_camp'). Same humanoid-vanilla / tight-camp / quadruped-pathing-fails pattern. reject_anim_classes=['quadruped'] uses prefix match \u2014 catches both 'quadruped' (Goat) and 'quadruped_large' (Bear, Runebear, etc.). CARRY-FORWARD: m43_01 pi=0 (c2041 Larva of Rot, quadruped_large) and pi=8 (c4165 Bloodbane Stray, quadruped) in this same seed are also quadrupeds at humanoid-vanilla slots in the same encampment cluster, likely to freeze too but not playtested. Add preemptively if next playtest reports more m43_01 freezes; otherwise leave for evidence-driven escalation."
+      "notes": "v0.24.59: c6031 Bear (fragile-locomotion (large), loco=0, size=M) froze here. Companion to pi=2 in same encampment (m43_01_00_00.msb 'wandering_noble_camp'). Same humanoid-vanilla / tight-camp / quadruped-pathing-fails pattern. reject_fragile_locomotion=true uses prefix match — catches both 'quadruped' (Goat) and 'quadruped_large' (Bear, Runebear, etc.). CARRY-FORWARD: m43_01 pi=0 (c2041 Larva of Rot, quadruped_large) and pi=8 (c4165 Bloodbane Stray, quadruped) in this same seed are also quadrupeds at humanoid-vanilla slots in the same encampment cluster, likely to freeze too but not playtested. Add preemptively if next playtest reports more m43_01 freezes; otherwise leave for evidence-driven escalation.",
+      "reject_fragile_locomotion": true,
+      "_v0_27_30_tpose_confound": "SUSPECT — RE-TEST AFTER STAGING c6030. This freeze was observed (seed 923958, v0.24.59) BEFORE the RetargetReferenceChrId bug was found. c6031 Bear retargets its animations from c6030, which was absent from the deploy — so Bear was T-posing this whole time (Alaric confirmed v0.27.30). A T-posing chr stands motionless, visually identical to a navmesh pathlock, so the 'quadruped pathing fails' attribution may be wrong: what was seen could have been the T-pose, not a spawn stall. ACTION: after staging c6030.anibnd, re-run seed 923958 and watch this slot. If a now-animated Bear spawns and ambulates, this entry is a false positive — remove it (and Bear regains the slot). If it still freezes, the navmesh attribution was correct and the gate stays. Until re-tested, gate remains active (safe default)."
     }
   ]
 }

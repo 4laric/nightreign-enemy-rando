@@ -1,5 +1,25 @@
 {
   "_comment": "Manual has_reward overrides. Applied AFTER the tier rule in dev/emit_has_reward.py, so they SURVIVE re-derivation (unlike hand-edits to mmv_imports.json, which the old patch_mmv_has_reward.py clobbered). Use this only for genuine exceptions to 'miniboss and above = has_reward': e.g. a tagged miniboss that drops nothing, or an MMV import that is not actually boss-tier. Precedence: by_npc_param_id > by_c_prefix > tier rule. by_c_prefix affects the nr_enemy_tags entry plus every variant of that prefix; by_npc_param_id pins one variant. Keep this file small and reviewed — every entry here is a documented deviation from the rule.",
-  "by_c_prefix": {},
+  "by_c_prefix": {
+    "c2030": true,
+    "c2031": true,
+    "c2110": true,
+    "c2120": true,
+    "c4511": true,
+    "c4720": true,
+    "c4721": true,
+    "c4730": true,
+    "c5030": true,
+    "c5051": true,
+    "c5130": true,
+    "c5200": true,
+    "c5230": true,
+    "c5300": true,
+    "c6200": true,
+    "c8200": true,
+    "c8300": true,
+    "c8400": true,
+    "c8500": true
+  },
   "by_npc_param_id": {}
 }

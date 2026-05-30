@@ -28,9 +28,11 @@ oops_v3.py                      V3_ENGINE_FINGERPRINT bumped to v0.25.0.
                                 c5840 misdiagnosis), V3_PRESERVE_SLOTS
                                 refinements.
 
-swap_compat.py                  anim_class identity gating removed
-                                (v0.24.100). flier-vs-ground split via
-                                is_flier(tag) is what remains.
+swap_compat.py                  size + boss-arena compat only. All rig/
+                                family ("anim_class") gating and the
+                                flier-vs-ground split were removed
+                                (v0.27.28); locomotion-fragility moved to
+                                the fragile_locomotion tag.
 
 oops_all_anyone.py              Unchanged core; reused by oops_v3 for MSB
                                 primitives.
@@ -197,6 +199,45 @@ healthbar_inplace/              Self-contained pipeline for in-place
 
 healthbar_tools/                Companion CLI + demo prep scripts.
 ```
+
+### Zero-config bundles (must be present in the RELEASE zip)
+
+For the "unzip and it runs, no extra config" guarantee, the release zip
+MUST include these binary bundles. They are large and are NOT in the
+dev/working zips passed around during development — add them when cutting
+the release:
+
+```
+vanilla_msbs/      The spawn-pool + shuffle-source MSBs (m*.msb.dcx).
+                   GUI defaults Input dir here (oops_rando_gui input_dir_var).
+                   WITHOUT THIS the rando has nothing to shuffle out of the
+                   box — the user must point Input at their own NR install.
+                   THE critical zero-config bundle.
+
+vanilla_event/     v0.27.15: 197 .emevd.dcx + eventflag/ (~924K). GUI
+                   defaults the Vanilla event/ field here. Enables the
+                   in-pipeline EMEVD step (boss rewards + healthbar names)
+                   with no config once the me3 output profile is set.
+
+patched_emevd/     Sparse overlay: must be .emevd.dcx (+ .emevd.dcx.js)
+                   for the rando_pipeline overlay matcher (it looks for
+                   .emevd.dcx names matching vanilla_event/). If shipped
+                   decompressed (.emevd only), the overlay is INERT — the
+                   base vanilla_event still runs, but the boss-encounter
+                   fix patches on top do NOT apply. RECOMPRESS before
+                   release with a Windows build (oodle DLL required):
+                     python3 -c "import dcx_batch; dcx_batch.emevd_compress_dir('patched_emevd_raw','patched_emevd')"
+                   then confirm `find patched_emevd -name '*.emevd.dcx'`
+                   is non-empty. (Can't be done on Linux/CI — oo2core is
+                   a win64 DLL.)
+
+bundled_aicommon/  aicommon.luabnd.dcx etc. (test_bundled_aicommon).
+```
+
+Release checklist: verify all four dirs exist AND contain .dcx files
+(not just the dir). A quick gate:
+  for d in vanilla_msbs vanilla_event patched_emevd bundled_aicommon; do
+    echo "$d: $(find "$d" -name '*.dcx' 2>/dev/null | wc -l) .dcx"; done
 
 ### Patched EMEVD bundle
 

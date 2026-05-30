@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "blacklist_active_count": 10,
-    "blacklist_breakdown": "2 CTD-unidentified + 7 DLC-assets-missing + 1 AI-broken",
+    "blacklist_active_count": 11,
+    "blacklist_breakdown": "2 CTD-unidentified + 7 DLC-assets-missing + 1 AI-broken + 1 phase-transition-broken",
     "c_prefix_count": 41,
     "description": "More Map Variations chr imports â€” cross-game boss ports. REQUIRES the MMV mod (https://www.nexusmods.com/eldenringnightreign/mods/578) installed in your me3 profile. Without MMV's regulation + chr assets, enabling this will cause CTDs because the rando will reference chrs that don't exist in your active regulation.",
     "enable_instructions": "If you have MMV installed: set _meta.enabled=true and run normally. The 13 c-prefixes in blacklist_when_active are blocked because they CTD or have missing assets even WITH MMV â€” leave them. If you don't have MMV: leave _meta.enabled=false. The rando will run on vanilla NR + DLC content only.",
@@ -30,23 +30,26 @@
       "c7660",
       "c7720",
       "c7930"
-    ]
+    ],
+    "phase_transition_broken": [
+      "c8300"
+    ],
+    "_note_phase_transition_broken": "c8300 Dragonslayer Armor (DS3 import). HP-threshold phase transition (ground-slam weapon plant that grants phase-2 marker 11300) plays to completion, boss rises, then FREEZES idle and never resumes combat when RELOCATED. NOT a CTD, NOT missing assets, NOT the battle AI. Characterized 2026-05 over an extended diagnosis; distinguishing it from the speculative-CTD bans in _note (c8300 was itself vindicated once in v0.23.46 — this ban is different: it is a reproducible, characterized transition failure, not a one-off crash attribution). Eliminations, all by playtest: (1) removed all modified EMEVD -> still froze (not the nb_phase_reenable layer); (2) AI leap-swap 3200-3203->phase-1 anims, witchy-confirmed loaded -> still froze (not AI move selection); (3) CSV forcing 11300 via param conditionHpRate -> still froze (not marker source); (4) placeholder anibnd supplying the 8 TAE-referenced-but-absent anims incl 20013/3200-3203 -> still froze (not missing animations — and the transition anim demonstrably PLAYS); (5) forced phase-1-only (all HasSpecialEffectId(11300) reads -> false, Act07 unreachable), witchy-confirmed -> still froze (the transition trigger is OUTSIDE the battle AI); (6) single-attack sanity build -> DID restrict to one attack, proving the luabnd loads and edits take effect, AND the ground-slam + freeze still occurred -> the transition fires from outside the editable AI/behavior layers. Root: the phase transition is triggered at an HP threshold by a mechanism not in the battle AI, not in a conditionHpRate speffect, and not in the shared c9997 behavior graph (which has no HP/phase variables); the post-transition combat resume fails in the relocated context. c8300's own behbnd is a thin wrapper delegating to c9997, so the transition's exit-to-combat is not editable with the surgical tooling here — it would need Havok behavior-graph re-authoring. Banning rather than fixing. To revisit: would need (a) a home-arena (m49_53) control fight to confirm whether it freezes at home too (broken import) vs only relocated (relocation dependency) — never obtained, user has not fought home c8300; and (b) genuine behavior-graph authoring. If the 'two distinct characters' import model is adopted, c8300-as-phase-1-only could re-enter via that path (phase-1 AI works fine; it's the transition that's broken). Do NOT lift on the c8300/c4720/c5840 vindication-pattern reasoning — those were CTD mis-attributions; this is a characterized freeze."
   },
   "tags": {
     "c1260": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "name": "Hollow Manserving Servant (Saw)",
       "origin_game": "BB",
       "size_class": "M",
-      "tier": "field_boss",
-      "variants": 8
+      "tier": "miniboss",
+      "variants": 8,
+      "_tier_override_v0_26_x": "v0.27.13: completes the v0.26.x flatten — that pass migrated 7 mmv entries per the oops_v3.py note but only 6 landed; c1260 was the dropped 7th. Hollow Manserving Servant (Saw) is an M humanoid BB mob (8 variants) — field_boss was wrong; collapse target -> miniboss. Surfaced by test_pick_target::test_field_boss_tier_eliminated."
     },
     "c1310": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "name": "Outrider Knight",
       "origin_game": "DS3",
       "size_class": "L",
@@ -58,49 +61,53 @@
     "c2030": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Rennala, Queen of the Full Moon",
       "origin_game": "ER",
       "size_class": "XL",
-      "tier": "nightlord",
+      "tier": "night_boss",
       "variants": 5,
-      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=0.60m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=0.60m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c2031": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Rennala (Phase 2)",
       "origin_game": "ER",
       "size_class": "XL",
-      "tier": "nightlord",
+      "tier": "night_boss",
       "variants": 5,
-      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=0.80m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=0.80m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c2110": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Beast Clergyman / Maliketh",
       "origin_game": "ER",
       "size_class": "XL",
-      "tier": "nightlord",
+      "tier": "night_boss",
       "variants": 13,
-      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=3.60m, hitRadius=2.50m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=3.60m, hitRadius=2.50m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c2120": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Malenia, Blade of Miquella",
       "origin_game": "ER",
       "size_class": "M",
-      "tier": "nightlord",
-      "variants": 10
+      "tier": "night_boss",
+      "variants": 10,
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c2240": {
       "_confidence": "low",
@@ -113,7 +120,6 @@
     "c3110": {
       "_confidence": "low",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "name": "Unknown MMV import (likely Banished Knight variant)",
       "origin_game": "?",
       "size_class": "XL",
@@ -124,14 +130,15 @@
     "c4511": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "flying_dragon",
       "expects_boss_arena": true,
       "name": "Lichdragon Fortissax",
       "origin_game": "ER",
       "size_class": "GIGA",
-      "tier": "nightlord",
+      "tier": "night_boss",
       "variants": 4,
-      "_size_correction_v0_26_x": "corrected from 'XXL' → 'GIGA' based on NpcParam.csv (median hitHeight=14.10m, hitRadius=7.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'XXL' → 'GIGA' based on NpcParam.csv (median hitHeight=14.10m, hitRadius=7.00m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c4540": {
       "_confidence": "low",
@@ -152,146 +159,138 @@
     "c4720": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Godfrey, First Elden Lord",
       "origin_game": "ER",
       "size_class": "XL",
-      "tier": "nightlord",
+      "tier": "night_boss",
       "variants": 7,
-      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.70m, hitRadius=1.10m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.70m, hitRadius=1.10m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c4721": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Hoarah Loux",
       "origin_game": "ER",
       "size_class": "XL",
-      "tier": "nightlord",
+      "tier": "night_boss",
       "variants": 3,
-      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.70m, hitRadius=1.10m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.70m, hitRadius=1.10m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c4730": {
-      "_anim_class_v0_23_71_note": "Mounted-rider compound chr (rider on Leonard). Tagged quadruped_large to bias placement toward Tree Sentinel / mount-shaped arena slots whose geometry + EMEVD timing suits mounted units. Was untagged before â€” landed at any scripted-intro slot, including humanoid arenas where the missing-mount state machine froze the rider.",
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "quadruped_large",
       "expects_boss_arena": true,
       "name": "Starscourge Radahn",
       "origin_game": "ER",
       "size_class": "GIGA",
-      "tier": "nightlord",
+      "tier": "night_boss",
       "variants": 3,
-      "_size_correction_v0_26_x": "corrected from 'XL' → 'GIGA' based on NpcParam.csv (median hitHeight=8.00m, hitRadius=3.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'XL' → 'GIGA' based on NpcParam.csv (median hitHeight=8.00m, hitRadius=3.00m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "fragile_locomotion": true,
+      "_placement_bias_note_v0_23_71": "Mounted-rider compound chr (rider on Leonard). Flagged fragile_locomotion to bias placement toward Tree Sentinel / mount-shaped arena slots whose geometry + EMEVD timing suits mounted units. Was untagged before â€” landed at any scripted-intro slot, including humanoid arenas where the missing-mount state machine froze the rider.",
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c5000": {
       "_backfill_justification": "known: Commander Gaius = boar-mounted centaur, quadruped_large",
       "_confidence": "high",
       "_source": "mmv_import",
       "_tags_backfilled_v0_24_72": true,
-      "anim_class": "quadruped_large",
       "expects_boss_arena": true,
       "name": "Commander Gaius",
       "origin_game": "SoTE",
       "size_class": "XL",
       "tier": "night_boss",
+      "has_reward": true,
       "variants": 4,
-      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)"
+      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)",
+      "fragile_locomotion": true
     },
     "c5030": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Romina, Saint of the Bud",
       "origin_game": "SoTE",
       "size_class": "XL",
-      "tier": "nightlord",
+      "tier": "night_boss",
+      "has_reward": true,
       "variants": 6,
-      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=3.90m, hitRadius=1.50m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'M' → 'XL' based on NpcParam.csv (median hitHeight=3.90m, hitRadius=1.50m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction."
     },
     "c5051": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Midra, Lord of Frenzied Flame",
       "origin_game": "SoTE",
       "size_class": "M",
-      "tier": "nightlord",
-      "variants": 5
-    },
-    "c5060": {
-      "_confidence": "high",
-      "_source": "mmv_import",
-      "name": "Lamprey",
-      "origin_game": "SoTE",
-      "size_class": "XL",
-      "tier": "field_boss",
-      "variants": 22,
-      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.50m, hitRadius=1.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
-    },
-    "c5061": {
-      "_confidence": "high",
-      "_source": "mmv_import",
-      "name": "Lamprey (Large)",
-      "origin_game": "SoTE",
-      "size_class": "XL",
-      "tier": "field_boss",
-      "variants": 7,
-      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.50m, hitRadius=1.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "tier": "night_boss",
+      "has_reward": true,
+      "variants": 5,
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction."
     },
     "c5130": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Messmer the Impaler",
       "origin_game": "SoTE",
       "size_class": "M",
-      "tier": "nightlord",
-      "variants": 7
+      "tier": "night_boss",
+      "has_reward": true,
+      "variants": 7,
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction."
     },
     "c5200": {
       "_backfill_justification": "known: SoTE Metyr = anchored 6-eyed boss, large_boss_ground anim like Erdtree Avatar; size=XL was already set",
       "_confidence": "high",
       "_source": "mmv_import",
       "_tags_backfilled_v0_24_73": true,
-      "anim_class": "large_boss_ground",
       "expects_boss_arena": true,
       "name": "Metyr, Mother of Fingers",
       "origin_game": "SoTE",
       "size_class": "XXL",
-      "tier": "nightlord",
+      "tier": "night_boss",
+      "has_reward": true,
       "variants": 4,
-      "_size_correction_v0_26_x": "corrected from 'XL' → 'XXL' based on NpcParam.csv (median hitHeight=5.00m, hitRadius=5.00m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'XL' → 'XXL' based on NpcParam.csv (median hitHeight=5.00m, hitRadius=5.00m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction."
     },
     "c5230": {
       "_backfill_justification": "known: Scadutree Avatar = SOTE giant avatar, matches c4810",
       "_confidence": "high",
       "_source": "mmv_import",
       "_tags_backfilled_v0_24_72": true,
-      "anim_class": "quadruped_large",
       "expects_boss_arena": true,
       "name": "Scadutree Avatar",
       "origin_game": "SoTE",
       "size_class": "GIGA",
-      "tier": "nightlord",
+      "tier": "night_boss",
+      "has_reward": true,
       "variants": 20,
-      "_size_correction_v0_26_x": "corrected from 'XXL' → 'GIGA' based on NpcParam.csv (median hitHeight=8.00m, hitRadius=4.95m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'XXL' → 'GIGA' based on NpcParam.csv (median hitHeight=8.00m, hitRadius=4.95m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "fragile_locomotion": true,
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction."
     },
     "c5300": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Rellana, Twin Moon Knight",
       "origin_game": "SoTE",
       "size_class": "M",
-      "tier": "nightlord",
-      "variants": 5
+      "tier": "night_boss",
+      "has_reward": true,
+      "variants": 5,
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction."
     },
     "c5650": {
       "_confidence": "low",
@@ -305,7 +304,6 @@
     "c5651": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "name": "Messmer Foot Soldier",
       "origin_game": "SoTE",
       "size_class": "M",
@@ -315,33 +313,37 @@
     "c5740": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "name": "Kindred of Rot (MMV variant)",
       "origin_game": "ER",
       "size_class": "M",
       "tier": "miniboss",
-      "variants": 37
+      "variants": 37,
+      "sote_eligible": true,
+      "_sote_eligible_v0_27_36": "sote_eligible=true added v0.27.36 (Alaric direction). Opts the MMV Kindred of Rot variant into all-SOTE mode without asserting SoTE provenance (origin_game stays 'ER', accurate). 37 variants incl GH-Castle/Pink colors. Not excluded/arena-only/nav-dependent. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
     },
     "c5840": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "name": "Black Knight",
       "origin_game": "DS3",
       "size_class": "M",
       "tier": "miniboss",
       "variants": 45,
-      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)"
+      "_tier_override_v0_26_x": "corrected from 'field_boss' to match v0.20.18-era V3_TAG_OVERRIDES intent (now flattened)",
+      "mount_role": "rider",
+      "sote_eligible": true,
+      "_sote_mount_role_v0_27_21": "mount_role=rider + sote_eligible=true. The Black Knight/Horse are DS3-lineage models that ship as SoTE encounters; origin_game stays 'DS3' (accurate provenance) while sote_eligible opts them into all-SOTE mode. mount_role pairs the vanilla Kaiden rider/mount slots with them; the mount-component target ban is lifted for mount_role=='mount'. Pairs: c5840<->c5890. See V3_SOTE_PREFIXES (origin OR sote_eligible) and pick_target_cp role intersection."
     },
     "c5880": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "name": "Catacombs Sorcerer",
       "origin_game": "DS3",
       "size_class": "M",
       "tier": "miniboss",
-      "variants": 21
+      "variants": 21,
+      "sote_eligible": true,
+      "_sote_eligible_v0_27_36": "sote_eligible=true added v0.27.36 (Alaric direction). DS3-lineage model; origin_game stays 'DS3' (accurate) while the flag opts it into all-SOTE mode. Was a speculative-CTD ban brought back in v0.26.x (see _meta._note) — currently not excluded. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
     },
     "c5890": {
       "_confidence": "high",
@@ -351,14 +353,16 @@
       "size_class": "XL",
       "tier": "mount_component",
       "variants": 6,
-      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.50m, hitRadius=0.70m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=3.50m, hitRadius=0.70m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "mount_role": "mount",
+      "sote_eligible": true,
+      "_sote_mount_role_v0_27_21": "mount_role=mount + sote_eligible=true. The Black Knight/Horse are DS3-lineage models that ship as SoTE encounters; origin_game stays 'DS3' (accurate provenance) while sote_eligible opts them into all-SOTE mode. mount_role pairs the vanilla Kaiden rider/mount slots with them; the mount-component target ban is lifted for mount_role=='mount'. Pairs: c5840<->c5890. See V3_SOTE_PREFIXES (origin OR sote_eligible) and pick_target_cp role intersection."
     },
     "c5930": {
       "_backfill_justification": "known: Giant Skeleton (ER/DS3) = giant humanoid skeleton XL",
       "_confidence": "high",
       "_source": "mmv_import",
       "_tags_backfilled_v0_24_72": true,
-      "anim_class": "humanoid",
       "name": "Giant Skeleton",
       "origin_game": "DS3",
       "size_class": "XL",
@@ -369,13 +373,14 @@
     "c6200": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Slave Knight Gael",
       "origin_game": "DS3",
       "size_class": "M",
-      "tier": "nightlord",
-      "variants": 15
+      "tier": "night_boss",
+      "variants": 15,
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c6201": {
       "_confidence": "high",
@@ -383,13 +388,13 @@
       "name": "Scarab",
       "origin_game": "ER",
       "size_class": "S",
-      "tier": "trash",
-      "variants": 22
+      "tier": "grunt",
+      "variants": 22,
+      "_tier_collapse_v0_27_8": "trash"
     },
     "c6210": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "name": "Corvian Knight",
       "origin_game": "DS3",
       "size_class": "M",
@@ -402,7 +407,6 @@
       "_confidence": "high",
       "_source": "mmv_import",
       "_tags_backfilled_v0_24_72": true,
-      "anim_class": "humanoid",
       "name": "Fire Demon",
       "origin_game": "DS3",
       "size_class": "XL",
@@ -422,7 +426,6 @@
     "c6231": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "name": "Perfumer",
       "origin_game": "ER",
       "size_class": "M",
@@ -432,7 +435,6 @@
     "c6260": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "flying_dragon",
       "name": "Death Rite Bird",
       "origin_game": "ER",
       "size_class": "GIGA",
@@ -447,19 +449,22 @@
       "expects_boss_arena": true,
       "name": "Unknown MMV import (likely Messmer or Romina)",
       "origin_game": "?",
-      "tier": "nightlord",
-      "variants": 1
+      "tier": "night_boss",
+      "variants": 1,
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c8300": {
       "_confidence": "high",
       "_source": "mmv_import",
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Dragonslayer Armor",
       "origin_game": "DS3",
       "size_class": "L",
-      "tier": "nightlord",
-      "variants": 1
+      "tier": "night_boss",
+      "variants": 1,
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c8400": {
       "_confidence": "low",
@@ -467,22 +472,25 @@
       "expects_boss_arena": true,
       "name": "Unknown MMV import (likely Promised Consort Radahn)",
       "origin_game": "?",
-      "tier": "nightlord",
-      "variants": 1
+      "tier": "night_boss",
+      "variants": 1,
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     },
     "c8500": {
       "_backfill_justification": "known: Manus (DS1) = ape-like humanoid L",
       "_confidence": "high",
       "_source": "mmv_import",
       "_tags_backfilled_v0_24_72": true,
-      "anim_class": "humanoid",
       "expects_boss_arena": true,
       "name": "Manus, Father of the Abyss",
       "origin_game": "DS1",
       "size_class": "XL",
-      "tier": "nightlord",
+      "tier": "night_boss",
       "variants": 1,
-      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=1.20m); MMV bulk audit surfaced 18 systematically-undersized entries"
+      "_size_correction_v0_26_x": "corrected from 'L' → 'XL' based on NpcParam.csv (median hitHeight=4.00m, hitRadius=1.20m); MMV bulk audit surfaced 18 systematically-undersized entries",
+      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
+      "has_reward": true
     }
   },
   "variants": [
@@ -1605,296 +1613,6 @@
       "sample_maps": [],
       "think_param_id": 50000000,
       "variant_name": "Commander Gaius (NB2)"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600000,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600001,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600083,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600093,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600100,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600101,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600193,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600200,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600201,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600283,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600293,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600300,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600301,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600383,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600393,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600400,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600493,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600593,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600683,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600793,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600883,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5060",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50600900,
-      "sample_maps": [],
-      "think_param_id": 50600000,
-      "variant_name": "Lamprey (NB Prelude)"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5061",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50610000,
-      "sample_maps": [],
-      "think_param_id": 50610000,
-      "variant_name": "Lamprey (Large)"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5061",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50610001,
-      "sample_maps": [],
-      "think_param_id": 50610000,
-      "variant_name": "Lamprey (Large)"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5061",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50610083,
-      "sample_maps": [],
-      "think_param_id": 50610000,
-      "variant_name": "Lamprey (Large)"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5061",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50610093,
-      "sample_maps": [],
-      "think_param_id": 50610000,
-      "variant_name": "Lamprey (Large)"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5061",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50610883,
-      "sample_maps": [],
-      "think_param_id": 50610000,
-      "variant_name": "Lamprey (Large)"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5061",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50610893,
-      "sample_maps": [],
-      "think_param_id": 50610000,
-      "variant_name": "Lamprey (Large)"
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c5061",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 50610900,
-      "sample_maps": [],
-      "think_param_id": 50610000,
-      "variant_name": "Lamprey (Large) (NB Prelude)"
     },
     {
       "_source": "mmv_import",

@@ -8,7 +8,8 @@
     "hp_median": 291,
     "name": "Player Template",
     "tier": "cinematic",
-    "variants": 8
+    "variants": 8,
+    "has_reward": false
   },
   "c0010": {
     "_confidence": "high",
@@ -19,7 +20,8 @@
     "hp_median": null,
     "name": "Player System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c0100": {
     "_confidence": "high",
@@ -30,7 +32,8 @@
     "hp_median": 1939,
     "name": "Standin Template",
     "tier": "cinematic",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c0110": {
     "_confidence": "high",
@@ -41,7 +44,8 @@
     "hp_median": 1939,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c0120": {
     "_confidence": "high",
@@ -52,7 +56,8 @@
     "hp_median": 1939,
     "name": "System",
     "tier": "cinematic",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false
   },
   "c0130": {
     "_confidence": "high",
@@ -63,7 +68,8 @@
     "hp_median": 39,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c1000": {
     "_confidence": "high",
@@ -74,7 +80,8 @@
     "hp_median": 1939,
     "name": "System Object",
     "tier": "cinematic",
-    "variants": 17
+    "variants": 17,
+    "has_reward": false
   },
   "c10000": {
     "_confidence": "high",
@@ -85,7 +92,8 @@
     "hp_median": 1551,
     "name": "Interactable Object",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c1010": {
     "_confidence": "high",
@@ -96,7 +104,8 @@
     "hp_median": 1939,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c13703": {
     "_confidence": "high",
@@ -107,7 +116,8 @@
     "hp_median": 461,
     "name": "Helen (Revenant Page)",
     "tier": "cinematic",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false
   },
   "c14340": {
     "_confidence": "high",
@@ -118,7 +128,8 @@
     "hp_median": 768,
     "name": "Frederick (Revenant Pumpkin Head)",
     "tier": "cinematic",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false
   },
   "c14961": {
     "_confidence": "high",
@@ -129,7 +140,8 @@
     "hp_median": 1094,
     "name": "Sebastian (Revenant Giant Skeleton Torso)",
     "tier": "cinematic",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false
   },
   "c19999": {
     "_confidence": "high",
@@ -140,14 +152,14 @@
     "hp_median": 1551,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c2040": {
     "_heritage_imported": true,
     "_source": "nr_placed",
     "anim_bank": 20400,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -172,7 +184,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 20410,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -188,16 +199,17 @@
     "name": "Kindred of Rot Larva",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 3,
-    "weight_median": 45.0
+    "weight_median": 45.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c2100": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 21000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -222,7 +234,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 21300,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -247,7 +258,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 21400,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -271,14 +281,14 @@
     "_non_combat": true,
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "Lightning Ball",
     "size_class": "S",
     "team": 0,
     "tier": "non_combat",
-    "variants": 13
+    "variants": 13,
+    "has_reward": false
   },
   "c2270": {
     "_confidence": "high",
@@ -286,7 +296,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 22700,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -311,7 +320,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 22710,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "has_boss_reward": false,
     "has_drops": false,
     "has_reward": false,
@@ -325,9 +333,10 @@
     "name": "Crab",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 4,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c2272": {
     "_confidence": "high",
@@ -335,7 +344,6 @@
     "_source": "manual_retier_v0.24.100",
     "anim_bank": 22720,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -358,7 +366,7 @@
   "c2273": {
     "_backfill_justification": "family: Crab small variants are aquatic/S",
     "_confidence": "high",
-    "_locomotion_backfill_v0_27_0": "anim_class=aquatic: empirically-clean anim_class->locomotion inference",
+    "_locomotion_backfill_v0_27_0": "empirically-clean locomotion inference from creature family",
     "_pre_correction": {
       "name": "Crab Variant"
     },
@@ -366,7 +374,6 @@
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
     "_tags_backfilled_v0_27_0": true,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 28,
@@ -375,17 +382,17 @@
     "name": "Crab (Maggots)",
     "size_class": "S",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c2274": {
     "_backfill_justification": "family: Giant Sleep Crab matches c2270/c2272 Giant Crab pattern",
     "_confidence": "high",
-    "_locomotion_backfill_v0_27_0": "anim_class=aquatic: empirically-clean anim_class->locomotion inference",
+    "_locomotion_backfill_v0_27_0": "empirically-clean locomotion inference from creature family",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
     "_tags_backfilled_v0_27_0": true,
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 357,
@@ -394,7 +401,8 @@
     "name": "Giant Sleep Crab",
     "size_class": "XL",
     "tier": "miniboss",
-    "variants": 4
+    "variants": 4,
+    "has_reward": true
   },
   "c2275": {
     "_backfill_justification": "family: Crab variant",
@@ -406,7 +414,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 260,
@@ -415,7 +422,8 @@
     "name": "Crab (Clean)",
     "size_class": "S",
     "tier": "grunt",
-    "variants": 4
+    "variants": 4,
+    "has_reward": false
   },
   "c2276": {
     "_source": "nr_placed",
@@ -423,11 +431,10 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 22700,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 5.1,
     "hit_radius_median": 2.5,
     "hp_max": 322,
@@ -453,7 +460,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 28,
@@ -462,14 +468,14 @@
     "name": "Crab (Golden Tufts)",
     "size_class": "S",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c2500": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 25000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -494,7 +500,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 30000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -519,7 +524,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 30100,
     "anim_bank_count": 2,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -544,7 +548,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 30200,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -569,7 +572,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 30500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -594,11 +596,10 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 30600,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 2.4,
     "hit_radius_median": 0.5,
     "hp_max": 671,
@@ -619,11 +620,10 @@
     "_source": "heritage",
     "anim_bank": 30610,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 2.5,
     "hit_radius_median": 0.6,
     "hp_max": 671,
@@ -644,7 +644,6 @@
     "_source": "heritage",
     "anim_bank": 30700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -669,7 +668,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 30800,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -685,16 +683,16 @@
     "name": "Imp",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 18,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c3100": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 31000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -719,7 +717,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 31500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -744,7 +741,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 31600,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -762,7 +758,8 @@
     "team": 33,
     "tier": "mount_component",
     "variants": 4,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c3170": {
     "_confidence": "high",
@@ -770,11 +767,10 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 31700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": true,
+    "has_reward": false,
     "hit_height_median": 1.4,
     "hit_radius_median": 0.5,
     "hp_max": 410,
@@ -795,7 +791,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 31800,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -813,7 +808,8 @@
     "team": 6,
     "tier": "mount_component",
     "variants": 9,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "fragile_locomotion": true
   },
   "c3181": {
     "_source": "nr_placed",
@@ -821,7 +817,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 31810,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -839,29 +834,29 @@
     "team": 33,
     "tier": "miniboss",
     "variants": 6,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c3200": {
     "_merchant": true,
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "Nomadic Merchant",
     "size_class": "M",
     "team": 0,
     "tier": "non_combat",
-    "variants": 14
+    "variants": 14,
+    "has_reward": false
   },
   "c3201": {
     "_backfill_justification": "sibling: c3200 Nomadic Merchant humanoid/M",
     "_confidence": "auto",
-    "_locomotion_backfill_v0_27_0": "anim_class=humanoid: empirically-clean anim_class->locomotion inference",
+    "_locomotion_backfill_v0_27_0": "empirically-clean locomotion inference from creature family",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
     "_tags_backfilled_v0_27_0": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 169,
@@ -869,8 +864,10 @@
     "locomotion": 0,
     "name": "Frenzied Nomad (Marsh Group Boss)",
     "size_class": "M",
-    "tier": "trash",
-    "variants": 2
+    "tier": "grunt",
+    "variants": 2,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c3210": {
     "_confidence": "auto",
@@ -881,14 +878,14 @@
     "hp_median": 747,
     "name": "c3210",
     "tier": "grunt",
-    "variants": 13
+    "variants": 13,
+    "has_reward": false
   },
   "c3250": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 32500,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -906,14 +903,14 @@
     "team": 33,
     "tier": "night_boss",
     "variants": 5,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "fragile_locomotion": true
   },
   "c3251": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 32510,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -931,7 +928,8 @@
     "team": 33,
     "tier": "night_boss",
     "variants": 7,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "fragile_locomotion": true
   },
   "c3252": {
     "_name_corrected_v0_26_x": "Was 'Loretta Tree Sentinel (Unscaled)'; all 4 NpcParam variants are named Royal Carian Knight. Original name appears to be an ER-origin assumption that did not match the chr NR actually ships under c3252.",
@@ -939,7 +937,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 32520,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -957,18 +954,18 @@
     "team": 33,
     "tier": "field_boss",
     "variants": 4,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "fragile_locomotion": true
   },
   "c3300": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 33100,
     "anim_bank_count": 2,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 2.3,
     "hit_radius_median": 0.4,
     "hp_max": 659,
@@ -989,7 +986,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 33200,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -1007,18 +1003,18 @@
     "team": 6,
     "tier": "grunt",
     "variants": 23,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c3330": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 33300,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 4.2,
     "hit_radius_median": 2.2,
     "hp_max": 552,
@@ -1032,7 +1028,8 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 2,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c3350": {
     "_source": "nr_placed",
@@ -1040,7 +1037,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 33500,
     "anim_bank_count": 3,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1066,7 +1062,6 @@
     "_locomotion_backfill_v0_24_91": "Ancestral Follower — quadruped, matches c3350 base",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 316,
@@ -1075,14 +1070,15 @@
     "name": "Ancestral Follower",
     "size_class": "L",
     "tier": "grunt",
-    "variants": 34
+    "variants": 34,
+    "has_reward": false,
+    "fragile_locomotion": true
   },
   "c3361": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 33600,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1107,7 +1103,6 @@
     "_confidence": "auto",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 450,
@@ -1115,7 +1110,8 @@
     "name": "Ancestral Follower Shaman",
     "size_class": "L",
     "tier": "grunt",
-    "variants": 5
+    "variants": 5,
+    "has_reward": false
   },
   "c3371": {
     "_confidence": "high",
@@ -1123,7 +1119,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 33700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -1148,7 +1143,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 34000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1173,7 +1167,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 34500,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1191,14 +1184,14 @@
     "team": 6,
     "tier": "grunt",
     "variants": 18,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c3451": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 34510,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1223,7 +1216,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 34600,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1241,14 +1233,14 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 6,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c3470": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 34700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1273,7 +1265,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 34700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1298,7 +1289,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 35000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1314,9 +1304,10 @@
     "name": "Large Skeleton (Spear)",
     "size_class": "M",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 62,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c3501": {
     "_confidence": "auto",
@@ -1327,14 +1318,14 @@
     "hp_median": 1701,
     "name": "c3501",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c3510": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 35100,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -1359,7 +1350,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 35500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1384,7 +1374,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 35600,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1409,7 +1398,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 35700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1434,11 +1422,10 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 36000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 3.0,
     "hit_radius_median": 0.6,
     "hp_max": 985,
@@ -1458,28 +1445,28 @@
     "_cluster_only": true,
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "locomotion": 5,
     "name": "Oracle Envoy",
     "size_class": "M",
     "team": 6,
     "tier": "grunt",
-    "variants": 4
+    "variants": 4,
+    "has_reward": false
   },
   "c3620": {
     "_cluster_only": true,
     "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "locomotion": 5,
     "name": "Oracle Envoy (Large; Cathedral)",
     "size_class": "L",
     "team": 6,
     "tier": "grunt",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false
   },
   "c3630": {
     "_confidence": "auto",
@@ -1490,7 +1477,8 @@
     "hp_median": 768,
     "name": "c3630",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c3650": {
     "_confidence": "high",
@@ -1498,7 +1486,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 36500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -1523,7 +1510,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 36600,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1548,7 +1534,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 36610,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -1573,7 +1558,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 36620,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -1599,11 +1583,10 @@
     "_tier_demoted_v0_24_67": "Was miniboss. Demoted to grunt after seed 877217 m32_00 pi=31 encampment CTD (Elder Lion slot). HP 939 / weight 130 is grunt-tier territory (cf. Elder Lion HP 2560 / weight 300). Removed from V3_FRAGILE_SAFE_CONFIRMED in same release; Gate 5.5 now bars c3664 from boss-bar slots regardless. NpcParam variants 36640020/32/35 carry spawner-generator entity IDs that fire child entities on death, incompatible with vanilla NR boss-clear chains.",
     "anim_bank": 36640,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": true,
+    "has_reward": false,
     "hit_height_median": 1.8,
     "hit_radius_median": 0.3,
     "hp_max": 939,
@@ -1617,7 +1600,8 @@
     "team": 6,
     "tier": "grunt",
     "variants": 4,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c3670": {
     "_source": "manual_tag",
@@ -1625,7 +1609,6 @@
     "_tag_note": "Manually tagged in v0.2 (no auto-tag heuristic data); mirror of c3471 Large Albinauric (humanoid M boss-tier, anim_bank 34700). Boss-tier via has_reward=True.",
     "anim_bank": 34700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1650,7 +1633,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 37000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1675,7 +1657,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 37000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1701,7 +1682,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 37020,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1726,7 +1706,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 37030,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1751,7 +1730,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 37040,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1776,7 +1754,6 @@
     "_source": "heritage",
     "anim_bank": 37300,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1801,7 +1778,6 @@
     "_source": "heritage",
     "anim_bank": 37500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1826,7 +1802,6 @@
     "_source": "heritage",
     "anim_bank": 38000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1851,7 +1826,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 38100,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1869,14 +1843,14 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 11,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c3850": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 38500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -1901,7 +1875,6 @@
     "_source": "heritage",
     "anim_bank": 38600,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -1926,7 +1899,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 39000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -1951,11 +1923,10 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 39010,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 2.2,
     "hit_radius_median": 0.5,
     "hp_max": 594,
@@ -1976,7 +1947,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 39100,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -2001,7 +1971,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 39500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2026,7 +1995,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 39700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2051,7 +2019,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 40000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2076,7 +2043,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 40200,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -2094,14 +2060,14 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 5,
-    "weight_median": 150.0
+    "weight_median": 150.0,
+    "fragile_locomotion": true
   },
   "c4021": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 40210,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -2117,16 +2083,17 @@
     "name": "Royal Revenant",
     "size_class": "XL",
     "team": 33,
-    "tier": "field_boss",
+    "tier": "miniboss",
     "variants": 6,
-    "weight_median": 150.0
+    "weight_median": 150.0,
+    "_tier_override_v0_26_x": "v0.27.13: field_boss tier eliminated. c4021 acquired tier='field_boss' from its post_dlc_dump source manifest after the v0.26.x collapse, so it was never caught by the original flatten. Royal Revenant is an XL quadruped_large recurring ER elite (hp~2279, not a named unique) -> miniboss. Surfaced by test_pick_target::test_field_boss_tier_eliminated.",
+    "fragile_locomotion": true
   },
   "c4040": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 40400,
     "anim_bank_count": 1,
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2142,16 +2109,16 @@
     "name": "Slug",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 10,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4050": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 40500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2161,13 +2128,14 @@
     "hp_max": 99999,
     "hp_median": 487.0,
     "locomotion": 0,
+    "mount_role": "rider",
     "move_type": 3,
     "n_noreward_variants": 10,
     "n_reward_variants": 0,
     "name": "Kaiden Sellsword",
     "size_class": "M",
     "team": 6,
-    "tier": "mount_component",
+    "tier": "miniboss",
     "variants": 10,
     "weight_median": 130.0
   },
@@ -2175,21 +2143,22 @@
     "_cluster_only": true,
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
+    "has_reward": false,
     "locomotion": 3,
+    "mount_role": "mount",
     "name": "Kaiden Sellsword's Horse",
     "size_class": "L",
     "team": 6,
     "tier": "mount_component",
-    "variants": 2
+    "variants": 2,
+    "fragile_locomotion": true
   },
   "c4070": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 40700,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2205,16 +2174,17 @@
     "name": "Wolf",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 14,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4071": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 40700,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2230,16 +2200,17 @@
     "name": "White Wolf",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 3,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4080": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 40800,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2255,16 +2226,17 @@
     "name": "Rat",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 9,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4090": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 40900,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2282,14 +2254,14 @@
     "team": 6,
     "tier": "grunt",
     "variants": 9,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "fragile_locomotion": true
   },
   "c4100": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2305,16 +2277,16 @@
     "name": "Demi-Human",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 18,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4101": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41010,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2340,7 +2312,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41100,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2365,7 +2336,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41200,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2390,7 +2360,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41300,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -2408,17 +2377,17 @@
     "team": 33,
     "tier": "night_boss",
     "variants": 5,
-    "weight_median": 200.0
+    "weight_median": 200.0,
+    "fragile_locomotion": true
   },
   "c4140": {
     "_backfill_justification": "known: Spiritcaller Snail = stationary misc, boss form M-sized",
     "_confidence": "high",
-    "_locomotion_backfill_v0_27_0": "anim_class=misc: empirically-clean anim_class->locomotion inference",
+    "_locomotion_backfill_v0_27_0": "empirically-clean locomotion inference from creature family",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
     "_tags_backfilled_v0_27_0": true,
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
-    "anim_class": "misc",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "hp_max": 1070,
@@ -2427,14 +2396,14 @@
     "name": "Spiritcaller Snail (Great Church Boss)",
     "size_class": "M",
     "tier": "miniboss",
-    "variants": 11
+    "variants": 11,
+    "has_reward": true
   },
   "c4150": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41500,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2450,16 +2419,17 @@
     "name": "Basilisk",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 5,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4160": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41600,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2475,16 +2445,17 @@
     "name": "Large Stray",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 7,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4161": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41610,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2500,9 +2471,11 @@
     "name": "Stray",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 9,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4162": {
     "_backfill_justification": "family: Large Braided Dog = dog, c416x = quadruped/S",
@@ -2514,7 +2487,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 197,
@@ -2522,8 +2494,11 @@
     "locomotion": 0,
     "name": "Large Braided Dog",
     "size_class": "S",
-    "tier": "trash",
-    "variants": 1
+    "tier": "grunt",
+    "variants": 1,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4163": {
     "_backfill_justification": "family: Braided Dog = dog",
@@ -2535,7 +2510,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 162,
@@ -2543,15 +2517,17 @@
     "locomotion": 0,
     "name": "Braided Dog",
     "size_class": "S",
-    "tier": "trash",
-    "variants": 1
+    "tier": "grunt",
+    "variants": 1,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4164": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41600,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2567,16 +2543,17 @@
     "name": "Large Bloodbane Stray",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 3,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4165": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41610,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2592,16 +2569,17 @@
     "name": "Bloodbane Stray",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 3,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4166": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41600,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2617,9 +2595,11 @@
     "name": "Large Rotten Stray",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 3,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4167": {
     "_backfill_justification": "family: Mushroom Dog = dog",
@@ -2631,7 +2611,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 162,
@@ -2639,15 +2618,17 @@
     "locomotion": 0,
     "name": "Mushroom Dog",
     "size_class": "S",
-    "tier": "trash",
-    "variants": 3
+    "tier": "grunt",
+    "variants": 3,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4170": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41700,
     "anim_bank_count": 1,
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2663,16 +2644,16 @@
     "name": "Putrid Flesh",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 7,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4171": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41710,
     "anim_bank_count": 1,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2688,16 +2669,16 @@
     "name": "Giant Putrid Flesh (Blood)",
     "size_class": "XXL",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 2,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4180": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 41800,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2721,14 +2702,14 @@
     "_cluster_only": true,
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "Maris' Jellyfish",
     "size_class": "S",
     "team": 6,
     "tier": "grunt",
-    "variants": 5
+    "variants": 5,
+    "has_reward": false
   },
   "c4190": {
     "_backfill_justification": "family: Scarab, sibling c4191 misc/S",
@@ -2736,7 +2717,6 @@
     "_locomotion_backfill_v0_24_91": "Large Scarab — matches c4191 base",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 213,
@@ -2745,20 +2725,21 @@
     "name": "Large Scarab",
     "size_class": "S",
     "tier": "grunt",
-    "variants": 14
+    "variants": 14,
+    "has_reward": false
   },
   "c4191": {
     "_non_combat": true,
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "Scarab",
     "size_class": "S",
     "team": 0,
     "tier": "non_combat",
-    "variants": 16
+    "variants": 16,
+    "has_reward": false
   },
   "c4192": {
     "_backfill_justification": "family: Scarab variant",
@@ -2770,7 +2751,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "manual_correction_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 271,
@@ -2779,14 +2759,14 @@
     "name": "Large Scarab (variant)",
     "size_class": "S",
     "tier": "grunt",
-    "variants": 10
+    "variants": 10,
+    "has_reward": false
   },
   "c4200": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 42000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2811,7 +2791,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 42010,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2829,14 +2808,14 @@
     "team": 6,
     "tier": "grunt",
     "variants": 9,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c4210": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 42100,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2854,7 +2833,8 @@
     "team": 6,
     "tier": "grunt",
     "variants": 19,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c4220": {
     "_heritage_imported": true,
@@ -2862,11 +2842,10 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 42200,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 4.8,
     "hit_radius_median": 2.4,
     "hp_max": 2327,
@@ -2887,7 +2866,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 42300,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2912,7 +2890,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 42400,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -2930,7 +2907,8 @@
     "team": 6,
     "tier": "grunt",
     "variants": 6,
-    "weight_median": 970.0
+    "weight_median": 970.0,
+    "fragile_locomotion": true
   },
   "c4241": {
     "_source": "nr_placed",
@@ -2938,11 +2916,10 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 42410,
     "anim_bank_count": 1,
-    "anim_class": "giga_boss",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 11.4,
     "hit_radius_median": 5.7,
     "hp_max": 1021,
@@ -2963,7 +2940,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 42500,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -2979,16 +2955,17 @@
     "name": "Small Fingercreeper",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 5,
-    "weight_median": 40.0
+    "weight_median": 40.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c4260": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 42600,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3006,7 +2983,8 @@
     "team": 50,
     "tier": "miniboss",
     "variants": 31,
-    "weight_median": 300.0
+    "weight_median": 300.0,
+    "fragile_locomotion": true
   },
   "c4270": {
     "_source": "nr_placed",
@@ -3014,7 +2992,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 42700,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -3032,14 +3009,14 @@
     "team": 7,
     "tier": "miniboss",
     "variants": 9,
-    "weight_median": 300.0
+    "weight_median": 300.0,
+    "fragile_locomotion": true
   },
   "c4280": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 42800,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -3057,7 +3034,8 @@
     "team": 6,
     "tier": "grunt",
     "variants": 16,
-    "weight_median": 90.0
+    "weight_median": 90.0,
+    "fragile_locomotion": true
   },
   "c4281": {
     "_confidence": "high",
@@ -3065,7 +3043,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 42800,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -3083,14 +3060,14 @@
     "team": 6,
     "tier": "grunt",
     "variants": 2,
-    "weight_median": 90.0
+    "weight_median": 90.0,
+    "fragile_locomotion": true
   },
   "c4290": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 42900,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -3115,7 +3092,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3140,7 +3116,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43100,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3166,7 +3141,6 @@
     "_locomotion_backfill_v0_24_91": "Raya Lucaria Soldier — matches Soldier family",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 192,
@@ -3174,15 +3148,16 @@
     "locomotion": 0,
     "name": "Raya Lucaria Soldier",
     "size_class": "M",
-    "tier": "trash",
-    "variants": 30
+    "tier": "grunt",
+    "variants": 30,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4313": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43100,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3207,7 +3182,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43100,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3232,7 +3206,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43100,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3262,7 +3235,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 192,
@@ -3270,15 +3242,16 @@
     "locomotion": 0,
     "name": "Haligtree Soldier",
     "size_class": "M",
-    "tier": "trash",
-    "variants": 20
+    "tier": "grunt",
+    "variants": 20,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4321": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43210,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3303,7 +3276,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43400,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -3328,11 +3300,10 @@
     "_source": "heritage",
     "anim_bank": 43410,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 2.4,
     "hit_radius_median": 1.0,
     "hp_max": 582,
@@ -3353,7 +3324,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -3379,7 +3349,6 @@
     "_tag_note": "Manually tagged in v0.2 (no auto-tag heuristic data); mirror of c4351 Godrick Knight (humanoid M boss-tier knight, anim_bank 43500). Boss-tier via has_reward=True.",
     "anim_bank": 43500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -3405,7 +3374,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='night_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 43500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3430,7 +3398,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3455,7 +3422,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -3486,7 +3452,6 @@
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
     "_tier_override_v0_27_13": "v0.27.13: promoted from 'grunt' to 'miniboss' (playtest: Haligtree Knight AI confirmed working for the first time as a placed chr — plays as a bounded elite encounter, not grunt-tier filler).",
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 576,
@@ -3495,7 +3460,8 @@
     "name": "Haligtree Knight",
     "size_class": "M",
     "tier": "miniboss",
-    "variants": 6
+    "variants": 6,
+    "has_reward": true
   },
   "c4358": {
     "_backfill_justification": "family: Castle Knight Variant matches Knight family",
@@ -3506,7 +3472,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 576,
@@ -3514,7 +3479,8 @@
     "name": "Castle Knight Variant",
     "size_class": "M",
     "tier": "grunt",
-    "variants": 4
+    "variants": 4,
+    "has_reward": false
   },
   "c4361": {
     "_backfill_justification": "family: Godrick Knight's Horse, sibling c4363 quadruped_large/L",
@@ -3527,7 +3493,6 @@
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
     "_tier_correction_v0_25_0_patch1": "Was tier='grunt' (legacy auto-tag from post_dlc_dump pass-a). Other Knight's Horse variants (c4060, c4363) correctly carry tier='mount_component'; c4361 was the outlier and leaked into seed 939029 (m60_43_37_00 pi=52) and seed 42 (m34_20_00_00 pi=24) as a riderless horse placement. Hardcoded ban also added to V3_EXCLUDE_TARGET_PREFIXES in oops_v3.py for defense in depth.",
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 448,
@@ -3536,7 +3501,9 @@
     "name": "Godrick Knight's Horse",
     "size_class": "L",
     "tier": "mount_component",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false,
+    "fragile_locomotion": true
   },
   "c4362": {
     "_confidence": "auto",
@@ -3547,20 +3514,22 @@
     "hp_median": 448,
     "name": "c4362",
     "tier": "grunt",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c4363": {
     "_cluster_only": true,
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "locomotion": 3,
     "name": "Lordsworn Knight's Horse (Night Boss)",
     "size_class": "L",
     "team": 6,
     "tier": "mount_component",
-    "variants": 4
+    "variants": 4,
+    "has_reward": false,
+    "fragile_locomotion": true
   },
   "c4364": {
     "_confidence": "auto",
@@ -3571,7 +3540,8 @@
     "hp_median": 448,
     "name": "c4364",
     "tier": "grunt",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c4365": {
     "_confidence": "auto",
@@ -3582,7 +3552,8 @@
     "hp_median": 448,
     "name": "c4365",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c4368": {
     "_confidence": "auto",
@@ -3593,14 +3564,14 @@
     "hp_median": 448,
     "name": "c4368",
     "tier": "grunt",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c4371": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -3625,7 +3596,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -3650,7 +3620,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -3675,7 +3644,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -3700,7 +3668,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -3730,7 +3697,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 147,
@@ -3738,8 +3704,10 @@
     "locomotion": 0,
     "name": "Haligtree Foot Soldier",
     "size_class": "M",
-    "tier": "trash",
-    "variants": 28
+    "tier": "grunt",
+    "variants": 28,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4377": {
     "_confidence": "high",
@@ -3747,7 +3715,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -3772,7 +3739,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43800,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3788,16 +3754,16 @@
     "name": "Starcaller",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 4,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4381": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43810,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3813,16 +3779,16 @@
     "name": "Guilty",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 12,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4382": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43820,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3847,7 +3813,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43830,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3872,7 +3837,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43840,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3897,7 +3861,6 @@
     "_source": "heritage",
     "anim_bank": 43850,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -3922,7 +3885,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 43810,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -3938,9 +3900,10 @@
     "name": "c4386",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 8,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4420": {
     "_heritage_imported": true,
@@ -3948,7 +3911,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 44200,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -3976,7 +3938,6 @@
     },
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 174,
@@ -3984,15 +3945,16 @@
     "locomotion": 0,
     "name": "Abnormal Stone Cluster",
     "size_class": "M",
-    "tier": "trash",
-    "variants": 6
+    "tier": "grunt",
+    "variants": 6,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4440": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 44400,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -4008,9 +3970,10 @@
     "name": "Land Squirt",
     "size_class": "M",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 3,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4441": {
     "_backfill_justification": "family: Land Squirt Boss = bigger version of c4440 aquatic/M",
@@ -4018,7 +3981,6 @@
     "_locomotion_backfill_v0_24_91": "Land Squirt (Boss) — matches c4440 base",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1429,
@@ -4027,7 +3989,8 @@
     "name": "Land Squirt (Boss)",
     "size_class": "L",
     "tier": "miniboss",
-    "variants": 1
+    "variants": 1,
+    "has_reward": true
   },
   "c4442": {
     "_backfill_justification": "family: Land Squirt Variant = small/M variant of c4440",
@@ -4035,7 +3998,6 @@
     "_locomotion_backfill_v0_24_91": "Land Squirt variant — matches c4440 base",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1429,
@@ -4044,7 +4006,8 @@
     "name": "Land Squirt Variant",
     "size_class": "M",
     "tier": "grunt",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c4450": {
     "_backfill_justification": "known: Walking Mausoleum = huge slow crawler, large_boss_ground",
@@ -4053,10 +4016,9 @@
     "_tags_backfilled_v0_24_72": true,
     "anim_bank": 44500,
     "anim_bank_count": 1,
-    "anim_class": "large_boss_ground",
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 59.0,
     "hit_radius_median": 18.0,
     "hp_max": 0,
@@ -4076,7 +4038,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 44600,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -4094,14 +4055,14 @@
     "team": 7,
     "tier": "field_boss",
     "variants": 8,
-    "weight_median": 2000.0
+    "weight_median": 2000.0,
+    "fragile_locomotion": true
   },
   "c4470": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 44700,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4119,13 +4080,13 @@
     "team": 51,
     "tier": "miniboss",
     "variants": 7,
-    "weight_median": 2500.0
+    "weight_median": 2500.0,
+    "fragile_locomotion": true
   },
   "c4480": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": true,
     "has_reward": true,
     "locomotion": 0,
@@ -4139,14 +4100,14 @@
     "_cluster_only": true,
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "Miranda Sprout",
     "size_class": "M",
     "team": 6,
     "tier": "grunt",
-    "variants": 17
+    "variants": 17,
+    "has_reward": false
   },
   "c4482": {
     "_backfill_justification": "family: Giant Fading Miranda matches c4480 large_boss_ground/XL",
@@ -4159,7 +4120,6 @@
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
     "_tags_backfilled_v0_27_0": true,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1939,
@@ -4168,7 +4128,8 @@
     "name": "Giant Fading Miranda Sprout",
     "size_class": "XL",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c4483": {
     "_backfill_justification": "family: Fading Miranda Sprout matches c4481 misc/M",
@@ -4180,7 +4141,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 120,
@@ -4188,15 +4148,16 @@
     "locomotion": 0,
     "name": "Fading Miranda Sprout",
     "size_class": "M",
-    "tier": "trash",
-    "variants": 2
+    "tier": "grunt",
+    "variants": 2,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4490": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 44900,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -4220,14 +4181,14 @@
     "_merchant": true,
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "Small Jar Merchant",
     "size_class": "S",
     "team": 0,
     "tier": "non_combat",
-    "variants": 7
+    "variants": 7,
+    "has_reward": false
   },
   "c4492": {
     "_confidence": "auto",
@@ -4237,8 +4198,10 @@
     "hp_max": 0,
     "hp_median": 0,
     "name": "c4492",
-    "tier": "trash",
-    "variants": 2
+    "tier": "grunt",
+    "variants": 2,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c4500": {
     "_source": "nr_placed",
@@ -4246,7 +4209,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 45000,
     "anim_bank_count": 1,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4272,7 +4234,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 45010,
     "anim_bank_count": 1,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -4294,11 +4255,10 @@
   },
   "c4502": {
     "_confidence": "high",
-    "_locomotion_backfill_v0_27_0": "anim_class=flying_dragon: empirically-clean anim_class->locomotion inference",
+    "_locomotion_backfill_v0_27_0": "empirically-clean locomotion inference from creature family",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_27_0": true,
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
-    "anim_class": "flying_dragon",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1518,
@@ -4307,7 +4267,8 @@
     "name": "Decaying Ekzykes-class Dragon",
     "size_class": "GIGA",
     "tier": "miniboss",
-    "variants": 3
+    "variants": 3,
+    "has_reward": true
   },
   "c4503": {
     "_source": "nr_placed",
@@ -4315,7 +4276,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 45030,
     "anim_bank_count": 1,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -4337,7 +4297,7 @@
   },
   "c4504": {
     "_confidence": "high",
-    "_locomotion_backfill_v0_27_0": "anim_class=flying_dragon: empirically-clean anim_class->locomotion inference",
+    "_locomotion_backfill_v0_27_0": "empirically-clean locomotion inference from creature family",
     "_pre_correction": {
       "name": "Greyoll-class Dragon",
       "tier": "nightlord"
@@ -4345,7 +4305,6 @@
     "_source": "post_dlc_dump",
     "_source_override": "er_npc_param_import_pass_a_v0_23_72_late",
     "_tags_backfilled_v0_27_0": true,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "hp_max": 12440,
@@ -4354,7 +4313,8 @@
     "name": "Elder Dragon Greyoll",
     "size_class": "XXL",
     "tier": "night_boss",
-    "variants": 1
+    "variants": 1,
+    "has_reward": true
   },
   "c4505": {
     "_source": "nr_placed",
@@ -4362,7 +4322,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 45000,
     "anim_bank_count": 1,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4387,7 +4346,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 45100,
     "anim_bank_count": 1,
-    "anim_class": "giga_boss",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4412,11 +4370,10 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 45500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 4.0,
     "hit_radius_median": 1.0,
     "hp_max": 668,
@@ -4438,7 +4395,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 45600,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4456,18 +4412,18 @@
     "team": 49,
     "tier": "miniboss",
     "variants": 9,
-    "weight_median": 1298.0
+    "weight_median": 1298.0,
+    "fragile_locomotion": true
   },
   "c4561": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 45610,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 4.5,
     "hit_radius_median": 1.4,
     "hp_max": 767,
@@ -4481,14 +4437,14 @@
     "team": 7,
     "tier": "field_boss",
     "variants": 2,
-    "weight_median": 1298.0
+    "weight_median": 1298.0,
+    "fragile_locomotion": true
   },
   "c4570": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 45700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -4513,7 +4469,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 45800,
     "anim_bank_count": 1,
-    "anim_class": "giga_boss",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4539,7 +4494,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from night_boss to miniboss (user direction: trolls play as filler miniboss-tier, not marquee NB). Originally field_boss in JSON; promoted to night_boss by old V3_TAG_OVERRIDES before flatten; now correctly classified as miniboss. cap=6 retained as filler-tier ceiling.",
     "anim_bank": 46000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4566,7 +4520,6 @@
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='grunt'); see git history of oops_v3.py for original rationale comment",
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1901,
@@ -4575,7 +4528,8 @@
     "name": "Troll Knight",
     "size_class": "XXL",
     "tier": "miniboss",
-    "variants": 5
+    "variants": 5,
+    "has_reward": true
   },
   "c4602": {
     "_source": "nr_placed",
@@ -4583,7 +4537,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from night_boss to miniboss (user direction: trolls play as filler miniboss-tier, not marquee NB). Originally field_boss in JSON; promoted to night_boss by old V3_TAG_OVERRIDES before flatten; now correctly classified as miniboss. cap=6 retained as filler-tier ceiling.",
     "anim_bank": 46000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4609,7 +4562,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from night_boss to miniboss (user direction: trolls play as filler miniboss-tier, not marquee NB). Originally field_boss in JSON; promoted to night_boss by old V3_TAG_OVERRIDES before flatten; now correctly classified as miniboss. cap=6 retained as filler-tier ceiling.",
     "anim_bank": 46030,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4635,7 +4587,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 46200,
     "anim_bank_count": 1,
-    "anim_class": "giga_boss",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -4661,7 +4612,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 46300,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4679,14 +4629,14 @@
     "team": 9,
     "tier": "miniboss",
     "variants": 9,
-    "weight_median": 150.0
+    "weight_median": 150.0,
+    "fragile_locomotion": true
   },
   "c4640": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 46400,
     "anim_bank_count": 1,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4711,7 +4661,6 @@
     "_confidence": "high",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "hp_max": 1280,
@@ -4719,14 +4668,14 @@
     "name": "Weapon-Bequeathed Harmonia (Everdark Worm)",
     "size_class": "XL",
     "tier": "nightlord",
-    "variants": 2
+    "variants": 2,
+    "has_reward": true
   },
   "c4650": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 46500,
     "anim_bank_count": 1,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4752,7 +4701,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 46600,
     "anim_bank_count": 1,
-    "anim_class": "giga_boss",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4783,7 +4731,6 @@
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "_tags_backfilled_v0_24_72": true,
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "hp_max": 1882,
@@ -4791,14 +4738,14 @@
     "name": "Ancestor Spirit",
     "size_class": "XL",
     "tier": "night_boss",
-    "variants": 10
+    "variants": 10,
+    "has_reward": true
   },
   "c4680": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 46800,
     "anim_bank_count": 1,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4828,7 +4775,6 @@
     "_source_override": "manual_correction_v0_23_72_late",
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1811,
@@ -4836,14 +4782,14 @@
     "name": "Grafted Scion",
     "size_class": "L",
     "tier": "miniboss",
-    "variants": 3
+    "variants": 3,
+    "has_reward": true
   },
   "c4750": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 47500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -4868,7 +4814,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 47700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4894,7 +4839,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 48000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -4919,7 +4863,6 @@
     "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 96,
@@ -4927,7 +4870,8 @@
     "name": "Lord of Blood Spear",
     "size_class": "XL",
     "tier": "grunt",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c4810": {
     "_source": "nr_placed",
@@ -4935,7 +4879,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 48100,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -4953,7 +4896,8 @@
     "team": 33,
     "tier": "miniboss",
     "variants": 6,
-    "weight_median": 480.0
+    "weight_median": 480.0,
+    "fragile_locomotion": true
   },
   "c4811": {
     "_backfill_justification": "sibling: c4810 Erdtree Avatar quadruped_large/XL",
@@ -4972,7 +4916,6 @@
       "version": "v0.24.86-patch4"
     },
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 2321,
@@ -4981,14 +4924,15 @@
     "name": "Erdtree Avatar Variant",
     "size_class": "XL",
     "tier": "miniboss",
-    "variants": 1
+    "variants": 1,
+    "has_reward": true,
+    "fragile_locomotion": true
   },
   "c4820": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 48200,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5013,11 +4957,10 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 49000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 20.0,
     "hit_radius_median": 10.0,
     "hp_max": 3392,
@@ -5038,11 +4981,10 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 49000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 20.0,
     "hit_radius_median": 10.0,
     "hp_max": 3392,
@@ -5059,12 +5001,10 @@
     "weight_median": 300.0
   },
   "c4910": {
-    "_anim_class_retag_v0_23_71": "was flying_dragon — retagged to quadruped_large because Magma Wyrm slithers/crawls (no actual flight). Opens swap pool from ~7 (mostly dead-variant) to ~30 quadruped_large XL/XXL/GIGA chrs.",
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 49100,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5082,14 +5022,14 @@
     "team": 33,
     "tier": "field_boss",
     "variants": 5,
-    "weight_median": 200.0
+    "weight_median": 200.0,
+    "fragile_locomotion": true
   },
   "c4911": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 49100,
     "anim_bank_count": 1,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -5114,7 +5054,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 49500,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -5132,14 +5071,14 @@
     "team": 33,
     "tier": "night_boss",
     "variants": 2,
-    "weight_median": 200.0
+    "weight_median": 200.0,
+    "fragile_locomotion": true
   },
   "c4960": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 49600,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -5157,27 +5096,27 @@
     "team": 33,
     "tier": "non_combat",
     "variants": 2,
-    "weight_median": 200.0
+    "weight_median": 200.0,
+    "fragile_locomotion": true
   },
   "c4961": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_special_story": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "locomotion": 0,
     "name": "Giant Skeleton Torso",
     "size_class": "M",
     "team": 6,
     "tier": "grunt",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false
   },
   "c4980": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 49800,
     "anim_bank_count": 1,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5206,7 +5145,8 @@
     "hp_median": 1939,
     "name": "Roundtable Object",
     "tier": "cinematic",
-    "variants": 7
+    "variants": 7,
+    "has_reward": false
   },
   "c50002": {
     "_confidence": "high",
@@ -5217,14 +5157,14 @@
     "hp_median": 10938,
     "name": "System",
     "tier": "cinematic",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c5010": {
     "_heritage_imported": true,
     "_source": "nr_placed",
     "anim_bank": 50100,
     "anim_bank_count": 1,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5249,7 +5189,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 50110,
     "anim_bank_count": 1,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5267,14 +5206,15 @@
     "team": 33,
     "tier": "night_boss",
     "variants": 6,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5040": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 50400,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5288,6 +5228,7 @@
     "n_noreward_variants": 5,
     "n_reward_variants": 2,
     "name": "Curseblade",
+    "origin_game": "SoTE",
     "size_class": "M",
     "team": 7,
     "tier": "miniboss",
@@ -5299,7 +5240,6 @@
     "_source": "heritage",
     "anim_bank": 50700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5313,6 +5253,7 @@
     "n_noreward_variants": 6,
     "n_reward_variants": 1,
     "name": "Death Knight",
+    "origin_game": "SoTE",
     "size_class": "M",
     "team": 33,
     "tier": "miniboss",
@@ -5324,7 +5265,6 @@
     "_source": "heritage",
     "anim_bank": 50800,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -5338,6 +5278,7 @@
     "n_noreward_variants": 17,
     "n_reward_variants": 0,
     "name": "Bloodfiend",
+    "origin_game": "SoTE",
     "size_class": "L",
     "team": 51,
     "tier": "grunt",
@@ -5349,7 +5290,6 @@
     "_source": "heritage",
     "anim_bank": 50810,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5363,6 +5303,7 @@
     "n_noreward_variants": 2,
     "n_reward_variants": 3,
     "name": "Chief Bloodfiend",
+    "origin_game": "SoTE",
     "size_class": "XL",
     "team": 51,
     "tier": "miniboss",
@@ -5375,7 +5316,6 @@
     "_source": "manual_retier_v0.24.100",
     "anim_bank": 50900,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -5389,24 +5329,28 @@
     "n_noreward_variants": 10,
     "n_reward_variants": 0,
     "name": "Gravebird",
+    "origin_game": "SoTE",
     "size_class": "L",
     "team": 6,
     "tier": "grunt",
     "variants": 10,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "fragile_locomotion": true
   },
   "c5110": {
     "_cluster_only": true,
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "Maris' Tendril",
     "size_class": "L",
     "team": 6,
     "tier": "grunt",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5160": {
     "_heritage_imported": true,
@@ -5414,7 +5358,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 51600,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5428,6 +5371,7 @@
     "n_noreward_variants": 13,
     "n_reward_variants": 3,
     "name": "Fire Knight",
+    "origin_game": "SoTE",
     "size_class": "M",
     "team": 6,
     "tier": "miniboss",
@@ -5440,7 +5384,6 @@
     "_source": "manual_retier_v0.24.100",
     "anim_bank": 51900,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -5454,6 +5397,7 @@
     "n_noreward_variants": 10,
     "n_reward_variants": 0,
     "name": "Spider Scorpion",
+    "origin_game": "SoTE",
     "size_class": "L",
     "team": 6,
     "tier": "grunt",
@@ -5466,7 +5410,6 @@
     "_source": "heritage",
     "anim_bank": 51920,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -5480,6 +5423,7 @@
     "n_noreward_variants": 3,
     "n_reward_variants": 0,
     "name": "Spider Scorpion",
+    "origin_game": "SoTE",
     "size_class": "L",
     "team": 6,
     "tier": "grunt",
@@ -5491,7 +5435,6 @@
     "_source": "heritage",
     "anim_bank": 51930,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -5505,6 +5448,7 @@
     "n_noreward_variants": 3,
     "n_reward_variants": 0,
     "name": "Spider Scorpion",
+    "origin_game": "SoTE",
     "size_class": "S",
     "team": 6,
     "tier": "grunt",
@@ -5520,7 +5464,8 @@
     "hp_median": 1551,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c5210": {
     "_heritage_imported": true,
@@ -5528,7 +5473,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 52100,
     "anim_bank_count": 1,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -5546,7 +5490,9 @@
     "team": 7,
     "tier": "night_boss",
     "variants": 2,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c52101": {
     "_confidence": "high",
@@ -5557,7 +5503,8 @@
     "hp_median": 1551,
     "name": "Wylder (Roundtable NPC)",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c52102": {
     "_confidence": "high",
@@ -5568,7 +5515,8 @@
     "hp_median": 1551,
     "name": "Guardian (Roundtable NPC)",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c52103": {
     "_confidence": "high",
@@ -5579,7 +5527,8 @@
     "hp_median": 1551,
     "name": "Ironeye (Roundtable NPC)",
     "tier": "cinematic",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false
   },
   "c52104": {
     "_confidence": "high",
@@ -5590,7 +5539,8 @@
     "hp_median": 1551,
     "name": "Duchess (Roundtable NPC)",
     "tier": "cinematic",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c52105": {
     "_confidence": "high",
@@ -5601,7 +5551,8 @@
     "hp_median": 1551,
     "name": "Raider (Roundtable NPC)",
     "tier": "cinematic",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c52106": {
     "_confidence": "high",
@@ -5612,7 +5563,8 @@
     "hp_median": 1551,
     "name": "Revenant (Roundtable NPC)",
     "tier": "cinematic",
-    "variants": 5
+    "variants": 5,
+    "has_reward": false
   },
   "c52107": {
     "_confidence": "high",
@@ -5623,7 +5575,8 @@
     "hp_median": 1551,
     "name": "Recluse (Roundtable NPC)",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c52108": {
     "_confidence": "high",
@@ -5634,7 +5587,8 @@
     "hp_median": 1551,
     "name": "Executor (Roundtable NPC)",
     "tier": "cinematic",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c52109": {
     "_confidence": "high",
@@ -5645,7 +5599,8 @@
     "hp_median": 1551,
     "name": "Scholar (Roundtable NPC)",
     "tier": "cinematic",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false
   },
   "c52110": {
     "_confidence": "high",
@@ -5656,14 +5611,14 @@
     "hp_median": 1551,
     "name": "Undertaker (Roundtable NPC)",
     "tier": "cinematic",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false
   },
   "c52309": {
     "_backfill_justification": "known: Priestess Duchess = humanoid female caster, M",
     "_confidence": "auto",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1551,
@@ -5671,14 +5626,14 @@
     "name": "Priestess (Duchess)",
     "size_class": "M",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c52312": {
     "_backfill_justification": "known: Witch of the Wheel = wheel-bound humanoid, L due to wheel",
     "_confidence": "auto",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1551,
@@ -5686,7 +5641,8 @@
     "name": "Witch of the Wheel (Recluse Remembrance)",
     "size_class": "L",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c52313": {
     "_confidence": "auto",
@@ -5697,18 +5653,18 @@
     "hp_median": 1551,
     "name": "Executor?",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c5240": {
     "_heritage_imported": true,
     "_source": "nr_placed",
     "anim_bank": 52400,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 1.8,
     "hit_radius_median": 0.4,
     "hp_max": 163,
@@ -5717,19 +5673,20 @@
     "move_type": 3,
     "n_noreward_variants": 63,
     "n_reward_variants": 0,
-    "name": "Commoner (Pot)",
+    "name": "Shadowpot",
     "size_class": "M",
     "team": 6,
     "tier": "grunt",
     "variants": 63,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5241": {
     "_heritage_imported": true,
     "_source": "nr_placed",
     "anim_bank": 52410,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -5747,14 +5704,15 @@
     "team": 6,
     "tier": "grunt",
     "variants": 3,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5250": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 52500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5768,6 +5726,7 @@
     "n_noreward_variants": 11,
     "n_reward_variants": 7,
     "name": "Horned Warrior",
+    "origin_game": "SoTE",
     "size_class": "M",
     "team": 7,
     "tier": "miniboss",
@@ -5779,11 +5738,10 @@
     "_source": "nr_placed",
     "anim_bank": 53110,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 2.0,
     "hit_radius_median": 0.5,
     "hp_max": 173,
@@ -5793,6 +5751,7 @@
     "n_noreward_variants": 12,
     "n_reward_variants": 0,
     "name": "Inquisitor (Candles)",
+    "origin_game": "SoTE",
     "size_class": "M",
     "team": 6,
     "tier": "miniboss",
@@ -5804,7 +5763,6 @@
     "_source": "nr_placed",
     "anim_bank": 53120,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5818,6 +5776,7 @@
     "n_noreward_variants": 2,
     "n_reward_variants": 1,
     "name": "Inquisitor (Staff)",
+    "origin_game": "SoTE",
     "size_class": "M",
     "team": 6,
     "tier": "miniboss",
@@ -5829,7 +5788,6 @@
     "_source": "heritage",
     "anim_bank": 53200,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -5843,6 +5801,7 @@
     "n_noreward_variants": 1,
     "n_reward_variants": 1,
     "name": "Fat Inquisitor",
+    "origin_game": "SoTE",
     "size_class": "XL",
     "team": 6,
     "tier": "miniboss",
@@ -5854,7 +5813,6 @@
     "_source": "heritage",
     "anim_bank": 55220,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -5870,16 +5828,17 @@
     "name": "Stray",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 1,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c5523": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 55230,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -5895,23 +5854,24 @@
     "name": "Stray",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 2,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c5661": {
     "_confidence": "medium",
     "_heritage_imported": true,
     "_source": "er_heritage_port_v0_27_0",
-    "anim_bank": 566100,
+    "anim_bank": 56610,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
     "has_reward": false,
-    "hit_height_median": 1.7,
-    "hit_radius_median": 0.4,
+    "hit_height_median": 1.2,
+    "hit_radius_median": 0.3,
     "hp_max": 153,
     "hp_median": 153.0,
     "locomotion": 0,
@@ -5919,11 +5879,14 @@
     "n_noreward_variants": 24,
     "n_reward_variants": 0,
     "name": "Shadow Militia",
-    "size_class": "M",
+    "size_class": "S",
     "team": 6,
     "tier": "grunt",
     "variants": 24,
-    "weight_median": 80.0
+    "weight_median": 130.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible).",
+    "_v0_27_29_fix": "Corrected promotion-time errors: size_class M->S, hit_height 1.7->1.2, hit_radius 0.4->0.3, weight 80->130 (matches regulation NpcParam 56610000; same dims as c4321 Vulgar Militia, which Shadow Militia is the SOTE reskin of). anim_bank 566100->56610: the 6-digit value was a stray-zero typo (convention is model*10: c4321=43210, c2140=21400; reg behaviorVariationId=56610). Bad bank is the suspected cause of the in-game T-pose (engine resolved bank 566100 but the c5661 anibnd is keyed 56610, so animations failed to bind). Verify in-game; if still T-posing, unpack c5661.anibnd.dcx and check TAE/HKX contents."
   },
   "c5700": {
     "_confidence": "medium",
@@ -5931,7 +5894,6 @@
     "_source": "er_heritage_port_v0_27_0",
     "anim_bank": 410000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -5949,14 +5911,15 @@
     "team": 6,
     "tier": "grunt",
     "variants": 12,
-    "weight_median": 70.0
+    "weight_median": 70.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5750": {
     "_heritage_imported": true,
     "_source": "nr_placed",
     "anim_bank": 57500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -5981,7 +5944,6 @@
     "_source": "nr_placed",
     "anim_bank": 57510,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -6006,7 +5968,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 58100,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
@@ -6024,7 +5985,9 @@
     "team": 6,
     "tier": "night_boss",
     "variants": 4,
-    "weight_median": 60.0
+    "weight_median": 60.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5820": {
     "_heritage_imported": true,
@@ -6032,7 +5995,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 58200,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6046,11 +6008,13 @@
     "n_noreward_variants": 1,
     "n_reward_variants": 1,
     "name": "Great Red Bear",
+    "origin_game": "SoTE",
     "size_class": "XXL",
     "team": 7,
     "tier": "miniboss",
     "variants": 2,
-    "weight_median": 150.0
+    "weight_median": 150.0,
+    "fragile_locomotion": true
   },
   "c5830": {
     "_confidence": "high",
@@ -6058,7 +6022,6 @@
     "_source": "manual_retier_v0.24.100",
     "anim_bank": 58300,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -6072,6 +6035,7 @@
     "n_noreward_variants": 14,
     "n_reward_variants": 0,
     "name": "Messmer Soldier",
+    "origin_game": "SoTE",
     "size_class": "M",
     "team": 48,
     "tier": "grunt",
@@ -6084,7 +6048,6 @@
     "_tier_override_v0_26_x": "flattened from V3_TAG_OVERRIDES (was tier='field_boss'); see git history of oops_v3.py for original rationale comment",
     "anim_bank": 58600,
     "anim_bank_count": 1,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -6098,6 +6061,7 @@
     "n_noreward_variants": 1,
     "n_reward_variants": 1,
     "name": "Ghostflame Dragon",
+    "origin_game": "SoTE",
     "size_class": "GIGA",
     "team": 9,
     "tier": "night_boss",
@@ -6109,7 +6073,6 @@
     "_source": "heritage",
     "anim_bank": 58700,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -6123,18 +6086,19 @@
     "n_noreward_variants": 6,
     "n_reward_variants": 0,
     "name": "Imp (Lion Head)",
+    "origin_game": "SoTE",
     "size_class": "S",
     "team": 51,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 6,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c5900": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 59000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -6148,11 +6112,13 @@
     "n_noreward_variants": 9,
     "n_reward_variants": 0,
     "name": "Man-Fly",
+    "origin_game": "SoTE",
     "size_class": "M",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 9,
-    "weight_median": 150.0
+    "weight_median": 150.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c59999": {
     "_confidence": "high",
@@ -6163,7 +6129,8 @@
     "hp_median": 0,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c60003": {
     "_confidence": "high",
@@ -6174,7 +6141,8 @@
     "hp_median": 1551,
     "name": "Night Assassin Template",
     "tier": "cinematic",
-    "variants": 20
+    "variants": 20,
+    "has_reward": false
   },
   "c60004": {
     "_confidence": "high",
@@ -6185,7 +6153,8 @@
     "hp_median": 1551,
     "name": "System",
     "tier": "cinematic",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c6001": {
     "_confidence": "auto",
@@ -6195,8 +6164,10 @@
     "hp_max": 27,
     "hp_median": 27,
     "name": "Eagle",
-    "tier": "trash",
-    "variants": 1
+    "tier": "grunt",
+    "variants": 1,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c6010": {
     "_confidence": "auto",
@@ -6206,15 +6177,16 @@
     "hp_max": 55,
     "hp_median": 55,
     "name": "c6010",
-    "tier": "trash",
-    "variants": 1
+    "tier": "grunt",
+    "variants": 1,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c6031": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 60310,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6232,7 +6204,8 @@
     "team": 6,
     "tier": "grunt",
     "variants": 1,
-    "weight_median": 250.0
+    "weight_median": 250.0,
+    "fragile_locomotion": true
   },
   "c6040": {
     "_confidence": "auto",
@@ -6242,8 +6215,10 @@
     "hp_max": 27,
     "hp_median": 27,
     "name": "c6040",
-    "tier": "trash",
-    "variants": 1
+    "tier": "grunt",
+    "variants": 1,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c6050": {
     "_confidence": "auto",
@@ -6253,15 +6228,16 @@
     "hp_max": 82,
     "hp_median": 82,
     "name": "c6050",
-    "tier": "trash",
-    "variants": 2
+    "tier": "grunt",
+    "variants": 2,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c6060": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 60600,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6277,9 +6253,11 @@
     "name": "Goat",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 7,
-    "weight_median": 70.0
+    "weight_median": 70.0,
+    "_tier_collapse_v0_27_8": "trash",
+    "fragile_locomotion": true
   },
   "c6070": {
     "_confidence": "auto",
@@ -6289,8 +6267,10 @@
     "hp_max": 27,
     "hp_median": 27,
     "name": "c6070",
-    "tier": "trash",
-    "variants": 1
+    "tier": "grunt",
+    "variants": 1,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c6072": {
     "_confidence": "auto",
@@ -6300,8 +6280,10 @@
     "hp_max": 27,
     "hp_median": 27,
     "name": "c6072",
-    "tier": "trash",
-    "variants": 2
+    "tier": "grunt",
+    "variants": 2,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c6080": {
     "_confidence": "auto",
@@ -6311,8 +6293,10 @@
     "hp_max": 17,
     "hp_median": 17,
     "name": "c6080",
-    "tier": "trash",
-    "variants": 1
+    "tier": "grunt",
+    "variants": 1,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c6081": {
     "_confidence": "auto",
@@ -6322,8 +6306,10 @@
     "hp_max": 17,
     "hp_median": 17,
     "name": "c6081",
-    "tier": "trash",
-    "variants": 1
+    "tier": "grunt",
+    "variants": 1,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c6082": {
     "_confidence": "auto",
@@ -6333,8 +6319,10 @@
     "hp_max": 17,
     "hp_median": 17,
     "name": "c6082",
-    "tier": "trash",
-    "variants": 1
+    "tier": "grunt",
+    "variants": 1,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c6090": {
     "_confidence": "auto",
@@ -6345,7 +6333,8 @@
     "hp_median": 378,
     "name": "c6090",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c6091": {
     "_confidence": "auto",
@@ -6356,7 +6345,8 @@
     "hp_median": 378,
     "name": "c6091",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c6100": {
     "_confidence": "auto",
@@ -6366,8 +6356,10 @@
     "hp_max": 27,
     "hp_median": 27,
     "name": "c6100",
-    "tier": "trash",
-    "variants": 3
+    "tier": "grunt",
+    "variants": 3,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c61003": {
     "_confidence": "high",
@@ -6378,7 +6370,8 @@
     "hp_median": 1551,
     "name": "Wylder Remembrance Variant",
     "tier": "cinematic",
-    "variants": 8
+    "variants": 8,
+    "has_reward": false
   },
   "c6240": {
     "_confidence": "auto",
@@ -6388,15 +6381,16 @@
     "hp_max": 187,
     "hp_median": 187,
     "name": "c6240",
-    "tier": "trash",
-    "variants": 10
+    "tier": "grunt",
+    "variants": 10,
+    "has_reward": false,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c7000": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 70000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6425,7 +6419,8 @@
     "hp_median": 1600,
     "name": "Libra-class Variant Template",
     "tier": "cinematic",
-    "variants": 60
+    "variants": 60,
+    "has_reward": false
   },
   "c7100": {
     "_source": "nr_placed",
@@ -6433,7 +6428,6 @@
     "_tier_override_v0_26_x": "v0.26.x: demoted from 'night_boss' to 'miniboss' (user direction: these are field-tier in vanilla; old V3_TAG_OVERRIDES promoted them to night_boss for engine-routing reasons but they play as miniboss-tier filler, not marquee NB encounters. Existing caps retained as miniboss-tier ceilings.)",
     "anim_bank": 71000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": true,
     "has_drops": true,
@@ -6458,7 +6452,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 75000,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6476,14 +6469,14 @@
     "team": 33,
     "tier": "nightlord",
     "variants": 28,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "fragile_locomotion": true
   },
   "c7510": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 75100,
     "anim_bank_count": 1,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6508,7 +6501,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 75100,
     "anim_bank_count": 1,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6533,7 +6525,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 75200,
     "anim_bank_count": 1,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6557,7 +6548,6 @@
     "_source": "nr_placed",
     "anim_bank": 75200,
     "anim_bank_count": 1,
-    "anim_class": "large_boss_ground",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6582,7 +6572,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 75300,
     "anim_bank_count": 1,
-    "anim_class": "flying_dragon",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6607,7 +6596,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 75400,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6625,17 +6613,17 @@
     "team": 33,
     "tier": "nightlord",
     "variants": 5,
-    "weight_median": 30000.0
+    "weight_median": 30000.0,
+    "fragile_locomotion": true
   },
   "c7541": {
     "_source": "nr_placed",
     "anim_bank": 75400,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 6.0,
     "hit_radius_median": 3.0,
     "hp_max": 8320,
@@ -6649,14 +6637,14 @@
     "team": 33,
     "tier": "nightlord",
     "variants": 1,
-    "weight_median": 30000.0
+    "weight_median": 30000.0,
+    "fragile_locomotion": true
   },
   "c7560": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 75600,
     "anim_bank_count": 1,
-    "anim_class": "misc",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6681,7 +6669,6 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 75600,
     "anim_bank_count": 1,
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6706,11 +6693,10 @@
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 75700,
     "anim_bank_count": 1,
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 2.0,
     "hit_radius_median": 0.5,
     "hp_max": 3200,
@@ -6730,25 +6716,24 @@
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_unknown": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "locomotion": 0,
     "name": "Heolstor (Shape of Night)",
     "size_class": "M",
     "team": 6,
     "tier": "nightlord",
-    "variants": 8
+    "variants": 8,
+    "has_reward": true
   },
   "c7600": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 76000,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 5.0,
     "hit_radius_median": 1.5,
     "hp_max": 3360,
@@ -6762,14 +6747,14 @@
     "team": 7,
     "tier": "nightlord",
     "variants": 6,
-    "weight_median": 30000.0
+    "weight_median": 30000.0,
+    "fragile_locomotion": true
   },
   "c7610": {
     "_backfill_justification": "known: Traitorous Straghess = humanoid field_boss L; ac=humanoid set",
     "_confidence": "high",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 3264,
@@ -6777,18 +6762,18 @@
     "name": "Traitorous Straghess",
     "size_class": "L",
     "tier": "field_boss",
-    "variants": 4
+    "variants": 4,
+    "has_reward": true
   },
   "c7620": {
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "anim_bank": 76200,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 3.3,
     "hit_radius_median": 0.5,
     "hp_max": 640,
@@ -6809,7 +6794,6 @@
     "_confidence": "high",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 269,
@@ -6817,14 +6801,14 @@
     "name": "Dreg Corpse",
     "size_class": "M",
     "tier": "grunt",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c7651": {
     "_backfill_justification": "known: Large Dreg Corpse = humanoid miniboss L",
     "_confidence": "high",
     "_source": "manual_retier_v0.24.100",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 447,
@@ -6832,14 +6816,14 @@
     "name": "Large Dreg Corpse",
     "size_class": "L",
     "tier": "grunt",
-    "variants": 4
+    "variants": 4,
+    "has_reward": false
   },
   "c7660": {
     "_backfill_justification": "known: Dreg Wormface = humanoid field_boss M",
     "_confidence": "high",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "hp_max": 1587,
@@ -6847,7 +6831,8 @@
     "name": "Dreg Wormface",
     "size_class": "M",
     "tier": "field_boss",
-    "variants": 2
+    "variants": 2,
+    "has_reward": true
   },
   "c7700": {
     "_pre_correction": {
@@ -6861,7 +6846,6 @@
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 77000,
     "anim_bank_count": 1,
-    "anim_class": "giga_boss",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6893,7 +6877,6 @@
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 77100,
     "anim_bank_count": 1,
-    "anim_class": "giga_boss",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -6919,14 +6902,13 @@
       "name": "c7711",
       "tier": "nightlord"
     },
-    "_retier_v0_24_101": "anim_class quadruped_large → quadruped, size_class XXL → L (user request, post-sim — was placing at 1.1-1.4/seed)",
+    "_retier_v0_24_101": "size_class XXL → L (user request, post-sim — was placing at 1.1-1.4/seed)",
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_source_override": "manual_correction_v0_23_72_late",
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 77110,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -6944,7 +6926,8 @@
     "team": 33,
     "tier": "grunt",
     "variants": 3,
-    "weight_median": 30000.0
+    "weight_median": 30000.0,
+    "fragile_locomotion": true
   },
   "c7712": {
     "_pre_correction": {
@@ -6952,14 +6935,13 @@
       "name": "c7712",
       "tier": "nightlord"
     },
-    "_retier_v0_24_101": "anim_class quadruped_large → quadruped, size_class XXL → L (user request, post-sim — was placing at 1.1-1.4/seed)",
+    "_retier_v0_24_101": "size_class XXL → L (user request, post-sim — was placing at 1.1-1.4/seed)",
     "_source": "nr_placed",
     "_source_dlc": "post_dlc_dump_added_variants",
     "_source_override": "manual_correction_v0_23_72_late",
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 77120,
     "anim_bank_count": 1,
-    "anim_class": "quadruped",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -6977,12 +6959,12 @@
     "team": 33,
     "tier": "grunt",
     "variants": 3,
-    "weight_median": 30000.0
+    "weight_median": 30000.0,
+    "fragile_locomotion": true
   },
   "c7720": {
     "_confidence": "high",
     "_source": "post_dlc_dump",
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "hp_max": 2880,
@@ -6990,7 +6972,8 @@
     "name": "Knight Artorias",
     "size_class": "M",
     "tier": "night_boss",
-    "variants": 2
+    "variants": 2,
+    "has_reward": true
   },
   "c7800": {
     "_pre_correction": {
@@ -7004,7 +6987,6 @@
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 78000,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -7022,7 +7004,8 @@
     "team": 7,
     "tier": "night_boss",
     "variants": 3,
-    "weight_median": 30000.0
+    "weight_median": 30000.0,
+    "fragile_locomotion": true
   },
   "c7810": {
     "_pre_correction": {
@@ -7036,7 +7019,6 @@
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 78100,
     "anim_bank_count": 1,
-    "anim_class": "aquatic",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -7052,9 +7034,10 @@
     "name": "Freja Spiderling",
     "size_class": "S",
     "team": 6,
-    "tier": "trash",
+    "tier": "grunt",
     "variants": 4,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "_tier_collapse_v0_27_8": "trash"
   },
   "c7820": {
     "_pre_correction": {
@@ -7068,7 +7051,6 @@
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 78200,
     "anim_bank_count": 1,
-    "anim_class": "misc",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -7099,7 +7081,6 @@
     "_source_override": "manual_correction_v0_23_72_late",
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "hp_max": 1770,
@@ -7107,7 +7088,8 @@
     "name": "Nameless King",
     "size_class": "L",
     "tier": "night_boss",
-    "variants": 4
+    "variants": 4,
+    "has_reward": true
   },
   "c7910": {
     "_confidence": "auto",
@@ -7125,7 +7107,8 @@
     "hp_median": 819,
     "name": "Storm King",
     "tier": "night_boss",
-    "variants": 4
+    "variants": 4,
+    "has_reward": true
   },
   "c7920": {
     "_pre_correction": {
@@ -7139,7 +7122,6 @@
     "_source_override_v0_26_x": "reclassified from script_spawn after MSB UTF-16-LE audit (dev/audit_source_tags.py) confirmed actual MSB placements",
     "anim_bank": 79200,
     "anim_bank_count": 1,
-    "anim_class": "misc",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "has_drops": true,
@@ -7164,7 +7146,6 @@
     "_confidence": "high",
     "_source": "post_dlc_dump",
     "_tags_backfilled_v0_24_72": true,
-    "anim_class": "humanoid",
     "expects_boss_arena": true,
     "has_boss_reward": false,
     "hp_max": 2880,
@@ -7172,7 +7153,8 @@
     "name": "Demon from Below",
     "size_class": "L",
     "tier": "night_boss",
-    "variants": 8
+    "variants": 8,
+    "has_reward": true
   },
   "c7931": {
     "_confidence": "auto",
@@ -7183,7 +7165,8 @@
     "hp_median": 2880,
     "name": "c7931",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c7932": {
     "_confidence": "auto",
@@ -7194,7 +7177,8 @@
     "hp_median": 2880,
     "name": "c7932",
     "tier": "grunt",
-    "variants": 4
+    "variants": 4,
+    "has_reward": false
   },
   "c8000": {
     "_confidence": "auto",
@@ -7205,7 +7189,8 @@
     "hp_median": 1939,
     "name": "c8000",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c8100": {
     "_confidence": "auto",
@@ -7216,7 +7201,8 @@
     "hp_median": 679,
     "name": "c8100",
     "tier": "grunt",
-    "variants": 2
+    "variants": 2,
+    "has_reward": false
   },
   "c8101": {
     "_confidence": "auto",
@@ -7227,7 +7213,8 @@
     "hp_median": 679,
     "name": "c8101",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c8110": {
     "_confidence": "auto",
@@ -7238,43 +7225,44 @@
     "hp_median": 441,
     "name": "c8110",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c8130": {
     "_non_combat": true,
     "_source": "nr_placed",
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "Training Post - Small",
     "size_class": "S",
     "team": 0,
     "tier": "non_combat",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c8131": {
     "_non_combat": true,
     "_source": "nr_placed",
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "Training Post - Medium",
     "size_class": "M",
     "team": 0,
     "tier": "non_combat",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c8132": {
     "_non_combat": true,
     "_source": "nr_placed",
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "Training Post - Large",
     "size_class": "L",
     "team": 0,
     "tier": "non_combat",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c8910": {
     "_confidence": "auto",
@@ -7285,19 +7273,20 @@
     "hp_median": 1551,
     "name": "c8910",
     "tier": "grunt",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c8911": {
     "_source": "nr_placed",
     "_unknown": true,
-    "anim_class": "misc",
     "expects_boss_arena": false,
     "locomotion": 0,
     "name": "c8911",
     "size_class": "M",
     "team": 0,
     "tier": "non_combat",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c8999": {
     "_confidence": "high",
@@ -7308,7 +7297,8 @@
     "hp_median": 291,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c9000": {
     "_confidence": "high",
@@ -7319,7 +7309,8 @@
     "hp_median": 1939,
     "name": "System",
     "tier": "cinematic",
-    "variants": 3
+    "variants": 3,
+    "has_reward": false
   },
   "c9001": {
     "_confidence": "high",
@@ -7330,7 +7321,8 @@
     "hp_median": 194,
     "name": "System",
     "tier": "cinematic",
-    "variants": 7
+    "variants": 7,
+    "has_reward": false
   },
   "c9002": {
     "_confidence": "high",
@@ -7341,7 +7333,8 @@
     "hp_median": 970,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c9008": {
     "_confidence": "high",
@@ -7352,7 +7345,8 @@
     "hp_median": 68,
     "name": "System",
     "tier": "cinematic",
-    "variants": 5
+    "variants": 5,
+    "has_reward": false
   },
   "c9009": {
     "_confidence": "high",
@@ -7363,7 +7357,8 @@
     "hp_median": 291,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c9020": {
     "_confidence": "high",
@@ -7374,7 +7369,8 @@
     "hp_median": 78,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c9051": {
     "_confidence": "high",
@@ -7385,7 +7381,8 @@
     "hp_median": 233,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c9220": {
     "_confidence": "high",
@@ -7396,7 +7393,8 @@
     "hp_median": 70,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c9300": {
     "_confidence": "high",
@@ -7407,7 +7405,8 @@
     "hp_median": 78,
     "name": "System",
     "tier": "cinematic",
-    "variants": 1
+    "variants": 1,
+    "has_reward": false
   },
   "c5701": {
     "_confidence": "medium",
@@ -7415,7 +7414,6 @@
     "_source": "er_heritage_port_v0_27_0",
     "anim_bank": 410000,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -7433,7 +7431,9 @@
     "team": 6,
     "tier": "grunt",
     "variants": 3,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5251": {
     "_confidence": "medium",
@@ -7441,7 +7441,6 @@
     "_source": "er_heritage_port_v0_27_0",
     "anim_bank": 52500,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
@@ -7455,6 +7454,7 @@
     "n_noreward_variants": 2,
     "n_reward_variants": 2,
     "name": "Horned Shaman",
+    "origin_game": "SoTE",
     "size_class": "M",
     "team": 7,
     "tier": "grunt",
@@ -7467,11 +7467,10 @@
     "_source": "er_heritage_port_v0_27_0",
     "anim_bank": 53600,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 1.9,
     "hit_radius_median": 0.3,
     "hp_max": 148,
@@ -7485,7 +7484,9 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 51,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5170": {
     "_confidence": "medium",
@@ -7493,11 +7494,10 @@
     "_source": "er_heritage_port_v0_27_0",
     "anim_bank": 51700,
     "anim_bank_count": 1,
-    "anim_class": "giga_boss",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 27.0,
     "hit_radius_median": 8.5,
     "hp_max": 16000,
@@ -7509,9 +7509,12 @@
     "name": "Furnace Golem",
     "size_class": "GIGA",
     "team": 7,
-    "tier": "field_boss",
+    "tier": "night_boss",
     "variants": 14,
-    "weight_median": 2000.0
+    "weight_median": 2000.0,
+    "_tier_override_v0_26_x": "v0.27.13: field_boss tier eliminated. c5170 arrived via er_heritage_port_v0_27_0 AFTER the v0.26.x collapse with tier='field_boss' from the port manifest. Furnace Golem is GIGA / giga_boss tier / hp~12800 / has_boss_reward — unambiguously boss-caliber -> night_boss. Surfaced by test_pick_target::test_field_boss_tier_eliminated.",
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5020": {
     "_confidence": "medium",
@@ -7519,11 +7522,10 @@
     "_source": "er_heritage_port_v0_27_0",
     "anim_bank": 50200,
     "anim_bank_count": 1,
-    "anim_class": "quadruped_large",
     "expects_boss_arena": false,
     "has_boss_reward": true,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 3.9,
     "hit_radius_median": 1.1,
     "hp_max": 2045,
@@ -7537,7 +7539,10 @@
     "team": 6,
     "tier": "night_boss",
     "variants": 7,
-    "weight_median": 100.0
+    "weight_median": 100.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible).",
+    "fragile_locomotion": true
   },
   "c5872": {
     "_confidence": "medium",
@@ -7545,11 +7550,10 @@
     "_source": "er_heritage_port_v0_27_0",
     "anim_bank": 58720,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 6.6,
     "hit_radius_median": 2.6,
     "hp_max": 172,
@@ -7563,7 +7567,9 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 8,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5260": {
     "_confidence": "medium",
@@ -7571,11 +7577,10 @@
     "_source": "er_heritage_port_v0_27_0",
     "anim_bank": 52600,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 3.5,
     "hit_radius_median": 0.88,
     "hp_max": 778,
@@ -7589,14 +7594,15 @@
     "team": 6,
     "tier": "miniboss",
     "variants": 35,
-    "weight_median": 130.0
+    "weight_median": 130.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
   },
   "c5840": {
     "_heritage_imported": true,
     "_source": "heritage",
     "anim_bank": 58400,
     "anim_bank_count": 1,
-    "anim_class": "humanoid",
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
@@ -7606,14 +7612,325 @@
     "hp_max": 1212,
     "hp_median": 512.0,
     "locomotion": 0,
+    "mount_role": "rider",
     "move_type": 3,
     "n_noreward_variants": 38,
     "n_reward_variants": 0,
     "name": "Black Knight",
+    "origin_game": "SoTE",
+    "size_class": "M",
+    "team": 48,
+    "tier": "miniboss",
+    "variants": 38,
+    "weight_median": 150.0
+  },
+  "c5450": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 54500,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": true,
+    "hit_height_median": 1.5,
+    "hit_radius_median": 0.5,
+    "hp_max": 82,
+    "hp_median": 55,
+    "locomotion": 0,
+    "move_type": 4,
+    "n_noreward_variants": 55,
+    "n_reward_variants": 0,
+    "name": "Ram",
+    "origin_game": "SoTE",
+    "size_class": "L",
+    "team": 6,
+    "tier": "miniboss",
+    "variants": 55,
+    "weight_median": 70.0,
+    "fragile_locomotion": true
+  },
+  "c5500": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 55000,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": false,
+    "hit_height_median": 1.3,
+    "hit_radius_median": 0.75,
+    "hp_max": 111,
+    "hp_median": 111.0,
+    "locomotion": 0,
+    "move_type": 3,
+    "n_noreward_variants": 36,
+    "n_reward_variants": 0,
+    "name": "Living Magma",
+    "origin_game": "SoTE",
+    "size_class": "M",
+    "team": 51,
+    "tier": "grunt",
+    "variants": 36,
+    "weight_median": 130.0
+  },
+  "c5511": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 55110,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": true,
+    "hit_height_median": 1.8,
+    "hit_radius_median": 0.3,
+    "hp_max": 376,
+    "hp_median": 376.0,
+    "locomotion": 0,
+    "move_type": 11,
+    "n_noreward_variants": 4,
+    "n_reward_variants": 0,
+    "name": "Shade",
+    "origin_game": "SoTE",
+    "size_class": "M",
+    "team": 6,
+    "tier": "miniboss",
+    "variants": 4,
+    "weight_median": 130.0
+  },
+  "c5512": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 55120,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": true,
+    "hit_height_median": 1.8,
+    "hit_radius_median": 0.3,
+    "hp_max": 626,
+    "hp_median": 626.0,
+    "locomotion": 0,
+    "move_type": 11,
+    "n_noreward_variants": 4,
+    "n_reward_variants": 0,
+    "name": "Shade",
+    "origin_game": "SoTE",
+    "size_class": "M",
+    "team": 6,
+    "tier": "miniboss",
+    "variants": 4,
+    "weight_median": 130.0
+  },
+  "c5513": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 55130,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": true,
+    "hit_height_median": 1.8,
+    "hit_radius_median": 0.3,
+    "hp_max": 305,
+    "hp_median": 305.0,
+    "locomotion": 0,
+    "move_type": 13,
+    "n_noreward_variants": 4,
+    "n_reward_variants": 0,
+    "name": "Cemetery Shade",
+    "origin_game": "SoTE",
+    "size_class": "M",
+    "team": 6,
+    "tier": "miniboss",
+    "variants": 4,
+    "weight_median": 130.0
+  },
+  "c5600": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 56000,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": false,
+    "hit_height_median": 1.9,
+    "hit_radius_median": 0.3,
+    "hp_max": 281,
+    "hp_median": 281.0,
+    "locomotion": 5,
+    "move_type": 3,
+    "n_noreward_variants": 26,
+    "n_reward_variants": 0,
+    "name": "Catacomb Skeleton",
+    "origin_game": "SoTE",
+    "size_class": "M",
+    "team": 6,
+    "tier": "grunt",
+    "variants": 26,
+    "weight_median": 100.0
+  },
+  "c5651": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 56510,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": false,
+    "hit_height_median": 1.9,
+    "hit_radius_median": 0.4,
+    "hp_max": 147,
+    "hp_median": 147.0,
+    "locomotion": 5,
+    "move_type": 3,
+    "n_noreward_variants": 54,
+    "n_reward_variants": 0,
+    "name": "Messmer Foot Soldier",
+    "origin_game": "SoTE",
     "size_class": "M",
     "team": 48,
     "tier": "grunt",
-    "variants": 38,
-    "weight_median": 150.0
+    "variants": 54,
+    "weight_median": 100.0
+  },
+  "c5890": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 58900,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": false,
+    "hit_height_median": 3.5,
+    "hit_radius_median": 0.7,
+    "hp_max": 448,
+    "hp_median": 448,
+    "locomotion": 0,
+    "mount_role": "mount",
+    "move_type": 13,
+    "n_noreward_variants": 5,
+    "n_reward_variants": 0,
+    "name": "Black Knight Horse",
+    "origin_game": "SoTE",
+    "size_class": "XL",
+    "team": 48,
+    "tier": "mount_component",
+    "variants": 5,
+    "weight_median": 980.0,
+    "fragile_locomotion": true
+  },
+  "c5060": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 50600,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": false,
+    "hit_height_median": 3.5,
+    "hit_radius_median": 1.0,
+    "hp_max": 159,
+    "hp_median": 159.0,
+    "locomotion": 0,
+    "move_type": 3,
+    "n_noreward_variants": 22,
+    "n_reward_variants": 0,
+    "name": "Lamprey",
+    "size_class": "L",
+    "team": 6,
+    "tier": "grunt",
+    "variants": 22,
+    "weight_median": 130.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
+  },
+  "c5061": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 50610,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": false,
+    "hit_height_median": 3.5,
+    "hit_radius_median": 1.0,
+    "hp_max": 210,
+    "hp_median": 210,
+    "locomotion": 0,
+    "move_type": 3,
+    "n_noreward_variants": 7,
+    "n_reward_variants": 0,
+    "name": "Lamprey (Large)",
+    "size_class": "XL",
+    "team": 6,
+    "tier": "grunt",
+    "variants": 7,
+    "weight_median": 130.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible)."
+  },
+  "c5270": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 52700,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": false,
+    "hit_height_median": 2.0,
+    "hit_radius_median": 0.6,
+    "hp_max": 397,
+    "hp_median": 397,
+    "locomotion": 0,
+    "move_type": 3,
+    "n_noreward_variants": 19,
+    "n_reward_variants": 0,
+    "name": "Jar Innards",
+    "size_class": "L",
+    "team": 6,
+    "tier": "grunt",
+    "variants": 19,
+    "weight_median": 130.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible).",
+    "_v0_27_33_tier_note": "Dropped miniboss -> grunt per user (Jar Innards are trash-tier adds, not minibosses)."
+  },
+  "c5271": {
+    "_heritage_imported": true,
+    "_source": "heritage",
+    "anim_bank": 52710,
+    "anim_bank_count": 1,
+    "expects_boss_arena": false,
+    "has_boss_reward": false,
+    "has_drops": false,
+    "has_reward": false,
+    "hit_height_median": 2.6,
+    "hit_radius_median": 0.78,
+    "hp_max": 666,
+    "hp_median": 666.0,
+    "locomotion": 0,
+    "move_type": 3,
+    "n_noreward_variants": 16,
+    "n_reward_variants": 0,
+    "name": "Jar Innards (Large)",
+    "size_class": "XL",
+    "team": 6,
+    "tier": "grunt",
+    "variants": 16,
+    "weight_median": 130.0,
+    "sote_eligible": true,
+    "_sote_eligible_v0_27_21": "sote_eligible=true added v0.27.21. Working chr in the SoTE numeric block (er_heritage_port_v0_27_0 round) whose origin_game was never stamped, so it was absent from the all-SOTE roster. Flag opts it into SOTE mode without asserting provenance via origin_game. Not in nr_missing_chr_files broken set — functions in-game. See V3_SOTE_PREFIXES (origin_game OR sote_eligible).",
+    "_v0_27_33_tier_note": "Dropped miniboss -> grunt per user (Jar Innards are trash-tier adds, not minibosses)."
   }
 }

@@ -160,7 +160,7 @@ def patch_death_timeout(content, filename):
 # the Recognition/Alert/HP-damage OR-clauses dead weight. If broken
 # encounters (boss healthbar never appears, fight never activates) reappear
 # in playtest, re-enable by restoring the @register decorator and consider
-# whether it's a specific anim_class issue first.
+# whether it's a chr-specific asset/script issue first.
 # Function body kept for reference; @register removed so it doesn't
 # get picked up by the apply pipeline.
 def patch_permissive_boss_wake(content, filename):
@@ -531,11 +531,12 @@ def patch_nb_speffect_wait_timeout(content, filename):
     the substituted chr's AI doesn't apply the expected SpEffect. The
     WaitFor blocks forever.
 
-    Important: this is FUNDAMENTALLY DIFFERENT from anim_class mismatch.
-    The boss is fightable — anim works, combat works, healthbar works. It's
-    just that the wave/phase-progression chain is gated on a SpEffect that
-    only vanilla AI applies. No amount of anim_class filtering catches it
-    because it's not an anim issue.
+    Important: this is FUNDAMENTALLY DIFFERENT from a spawn/compatibility
+    failure. The boss is fightable — it spawns, combat works, healthbar
+    works. It's just that the wave/phase-progression chain is gated on a
+    SpEffect that only vanilla AI applies. No amount of swap-compatibility
+    or locomotion filtering catches it because it's not a spawn issue —
+    it's a scripted-progression gate.
 
     Fix: append `|| ElapsedSeconds(N)` to each affected WaitFor. Vanilla NR
     itself uses this exact pattern in common_func $Event(90015163) with
@@ -1370,6 +1371,246 @@ def patch_nb_boss_force_enable_watchdog(content, filename):
 
 
 # ============================================================================
+# nb_phase_reenable (v0.27.39)
+# ============================================================================
+#
+# Every single-entity multi-phase MMV import shares one trait (verified across
+# the roster this session): the AI READS a phase marker via HasSpecialEffectId
+# but NEVER applies it -- there is no SpEffect setter in the AI API at all. The
+# marker is applied by the chr's own TAE during the transition buff; the buff
+# also parks the AI in a disabled state, and the matching re-enable lives only
+# in that boss's MMV home-arena EMEVD. Randomized to any other slot, the home
+# wiring is gone, so the boss buffs and then freezes.
+#
+# Fix: a marker-gated re-enable. A marker present on a boss entity means an
+# imported boss transitioned at that slot, so re-enable its AI after a short
+# settle. The markers are import-specific, so this NEVER fires for a vanilla
+# boss at the same entity (its WaitFor just blocks), leaving vanilla phase
+# transitions untouched. EnableCharacterAI on an already-enabled AI is a
+# documented no-op, so the loop re-polls safely and covers later phases of the
+# 3-phasers (Gael, Scadutree) too.
+#
+# To cover a future import: add its phase marker below. Identities all confirmed
+# from the AI scripts this session:
+#   11300    c8300 Dragonslayer Armor   (verified end-to-end: TAE grant + freeze)
+#   18000    c2120 Malenia
+#   20050004 c6200 Gael                 (3-phase)
+#   20011050 c5230 Scadutree Avatar     (3-phase; read from bytecode constants)
+#   20010262 c5051 Midra
+#   20010612 c5130 Messmer
+#   20010890 c5200 Metyr
+#   20012001 c5300 Rellana
+#   13926    c4730 Radahn               (meteor phase)
+#   15299    c2110 Maliketh
+# Deliberately excluded: the two-entity swap bosses (Rennala c2030/c2031,
+# Godfrey/Hoarah Loux c4720/c4721) -- they need second-entity placement
+# handling, not an AI re-enable -- and the single-phase imports (Manus c8500,
+# c8200, Romina c5030), which have no transition to recover.
+
+# v0.27.40: _AT_RISK_PHASE_MARKERS + the freeze-prone c_prefix set are now
+# DERIVED from data/phase_transition_imports.json — the single source of truth
+# shared with oops_v3.py's placement gate, so the two can't drift. The literal
+# below is a fallback used only if the file is missing/corrupt, so this patch
+# never silently loses coverage. To add a future import, edit the JSON, not here.
+_AT_RISK_PHASE_MARKERS_FALLBACK = (
+    11300, 18000, 20050004, 20011050, 20010262,
+    20010612, 20010890, 20012001, 13926, 15299,
+)
+
+
+def _load_phase_transition_imports():
+    """Load data/phase_transition_imports.json -> {c_prefix: marker} dict.
+    Returns {} on any failure (callers fall back to the literal). The marker
+    values feed the re-enable WaitFor; the c_prefix keys are what oops_v3
+    gates to entity-bearing slots. Resolves its own path (rather than using
+    _emevd_data_path, which is defined later in this module) so it can run at
+    module-import time."""
+    _here = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(_here, 'data', 'phase_transition_imports.json')
+    if not os.path.exists(path):
+        path = os.path.join(_here, 'phase_transition_imports.json')
+    try:
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+        markers = data.get('markers', {}) or {}
+        return {str(cp): int(m) for cp, m in markers.items()}
+    except (OSError, ValueError, TypeError):
+        return {}
+
+
+_PHASE_TRANSITION_IMPORTS = _load_phase_transition_imports()
+if _PHASE_TRANSITION_IMPORTS:
+    # Deterministic order so the rendered EMEVD is stable across runs.
+    _AT_RISK_PHASE_MARKERS = tuple(sorted(set(_PHASE_TRANSITION_IMPORTS.values())))
+else:
+    _AT_RISK_PHASE_MARKERS = _AT_RISK_PHASE_MARKERS_FALLBACK
+
+_PHASE_REENABLE_EVENT_ID = 99055400
+_PHASE_REENABLE_SETTLE_SECONDS = 6
+
+
+def _build_phase_reenable_event_body(markers=_AT_RISK_PHASE_MARKERS,
+                                     settle=_PHASE_REENABLE_SETTLE_SECONDS):
+    """Render the $Event(99055400) common_func template (Restart mode). One
+    instance is registered per NB arena with that arena's boss entity.
+    Separated for testability."""
+    or_terms = ('\r\n        || ').join(
+        f'CharacterHasSpEffect(bossEntity, {m})' for m in markers
+    )
+    lines = [
+        '',
+        f'$Event({_PHASE_REENABLE_EVENT_ID}, Restart, function(bossEntity) {{',
+        '    // nb_phase_reenable (v0.27.39): marker-gated phase-transition AI',
+        '    // re-enable for imported single-entity multi-phase bosses that',
+        '    // freeze after their transition buff when randomized to a slot',
+        '    // without their MMV home-arena re-enable wiring.',
+        '    //',
+        '    // Markers are import-specific: a vanilla boss at this entity never',
+        '    // holds one, so the WaitFor blocks and its own transition is left',
+        '    // alone. EnableCharacterAI on an enabled AI is a no-op, so the',
+        '    // loop re-polls safely and covers later phases of 3-phasers.',
+        'L0:',
+        f'    WaitFor({or_terms});',
+        f'    WaitFor(ElapsedSeconds({settle}));',
+        '    EnableCharacterAI(bossEntity);',
+        '    Goto(L0);',
+        '});',
+        '',
+    ]
+    return '\r\n'.join(lines)
+
+
+@register('nb_phase_reenable')
+def patch_nb_phase_reenable(content, filename):
+    """v0.27.39: Re-enable imported multi-phase bosses that freeze after their
+    phase transition at a randomized slot.
+
+    common_func: inject the $Event(99055400) template once.
+    per map: register the re-enable against EVERY boss-encounter entity in
+    the map -- i.e. every entity that gets a vanilla healthbar, found via the
+    90015000-family encounter-init calls in the map's $Event(0) constructor.
+
+    v0.27.40 coverage change: previously this registered only at the 25 NB
+    arenas in _NB_BOSS_ENTITY_IDS. But freeze-prone imports are gated (in
+    oops_v3, from the same data/phase_transition_imports.json) to ENTITY-
+    BEARING slots, which are exactly the healthbar-bearing boss slots in field
+    maps too -- not just NB arenas. So coverage must follow placement: register
+    wherever a vanilla healthbar exists. Deriving the entity list from the
+    90015000-family calls present in the file means coverage auto-tracks the
+    healthbar wiring with no second list to maintain (the entity a relocated
+    import occupies is the slot's vanilla entity -- swaps preserve entity
+    bindings). The marker-gate keeps over-registration harmless: a vanilla boss
+    at one of these entities never holds an at-risk import marker, so its
+    WaitFor never fires.
+
+    Idempotent: skips the template if $Event(99055400,) is present; per map,
+    skips entities already carrying an InitializeCommonEvent(0, 99055400, eid).
+    """
+    if filename.startswith('common_func'):
+        if f'$Event({_PHASE_REENABLE_EVENT_ID},' in content:
+            return content, 0
+        return content + _build_phase_reenable_event_body(), 1
+
+    if not filename.startswith('m'):
+        return content, 0
+
+    import re as _re
+
+    # Collect boss-encounter (healthbar-bearing) entities from the encounter-
+    # init family. Which events count, and the arg position of chrEntityId, was
+    # verified 2026-05 against common_func.emevd $Event signatures + the c8300
+    # home arena (m49_53, boss 49530800, wired by 90015008/23/30/02 with NO
+    # 90015000 — the case that proves we must scan the whole set, not just
+    # 90015000). Included = events that take chrEntityId TOGETHER WITH a nameId
+    # and/or bgmBossConvParamId (the healthbar + boss-music signature of a real
+    # encounter init). Deliberately EXCLUDED: 90015003/24 (spEffect/buff grants,
+    # not inits) and 90015012/15/16/71 (bare per-chr utility hooks that take
+    # only chrEntityId — hooking them would over-register against trash chrs).
+    #
+    # Entity arg position by event (1-indexed within the InitializeCommonEvent
+    # arg list after the leading 0):
+    #   arg 2: 90015007, 90015021, 90015030
+    #   arg 2: 90015020 (duo head: eventFlagId, chrEntityId)
+    #   arg 3: 90015000            (eventFlagId, chrEntityId, ...)  [arg2 is the entity here]
+    #   arg 4: 90015002, 90015008  (.., .., .., chrEntityId, ..)
+    #   arg 4: 90015023, 90015026  (eventFlagId, targetDistance, eventFlagId2, chrEntityId, [chrEntityId2..])
+    # NOTE: several of these carry MULTIPLE chr entities (90015023 up to 4,
+    # 90015026 two). We capture all trailing entity-shaped ints for the multi-
+    # boss events so duos/trios are fully covered.
+    entities = []
+    seen = set()
+
+    def _add(eid):
+        if eid and eid != '0' and eid not in seen:
+            seen.add(eid)
+            entities.append(eid)
+
+    # --- single-entity encounter inits, grouped by entity arg position ---
+    # arg 2 (90015007/21/30, and 90015020 duo head):
+    for m in _re.finditer(
+            r'\$InitializeCommonEvent\(0,\s*(?:90015007|90015020|90015021|90015030),'
+            r'\s*\d+,\s*(\d+)', content):
+        _add(m.group(1))
+    # arg 2 for 90015000 (eventFlagId, chrEntityId):
+    for m in _re.finditer(
+            r'\$InitializeCommonEvent\(0,\s*90015000,\s*\d+,\s*(\d+)', content):
+        _add(m.group(1))
+    # arg 4 (90015002 / 90015008): skip 3 args, capture the 4th:
+    for m in _re.finditer(
+            r'\$InitializeCommonEvent\(0,\s*(?:90015002|90015008),'
+            r'\s*\d+,\s*\d+,\s*\d+,\s*(\d+)', content):
+        _add(m.group(1))
+    # --- multi-entity encounter inits (90015023 up to 4 chrs, 90015026 two) ---
+    # Capture the whole arg list and pull entity-shaped ints (8-digit, the chr
+    # entity convention in NR maps) from positions known to be chrEntityId.
+    for m in _re.finditer(
+            r'\$InitializeCommonEvent\(0,\s*90015023,\s*([^)]*)\)', content):
+        args = [a.strip() for a in m.group(1).split(',')]
+        # signature: eventFlagId, targetDistance, eventFlagId2, chrEntityId,
+        #            chrEntityId2, nameId, chrEntityId3, nameId2, chrEntityId4, nameId3
+        for idx in (3, 4, 6, 8):
+            if idx < len(args):
+                _add(args[idx])
+    for m in _re.finditer(
+            r'\$InitializeCommonEvent\(0,\s*90015026,\s*([^)]*)\)', content):
+        args = [a.strip() for a in m.group(1).split(',')]
+        # signature: eventFlagId, targetDistance, eventFlagId2, chrEntityId,
+        #            chrEntityId2, nameId
+        for idx in (3, 4):
+            if idx < len(args):
+                _add(args[idx])
+
+    if not entities:
+        return content, 0
+
+    # Anchor: the first encounter-init line in the constructor. Match the WHOLE
+    # statement up to its terminating `);` so new lines insert AFTER it. Uses
+    # the same full event set so a map with (e.g.) only 90015002+90015030 and
+    # NO 90015000 still anchors (the c8300/m49_53 case).
+    anchor_pat = (r'^([ \t]*)\$InitializeCommonEvent\(0,\s*'
+                  r'(?:90015000|90015002|90015007|90015008|90015020|90015021|90015023|90015026|90015030),'
+                  r'[^\n]*?\);')
+    am = _re.search(anchor_pat, content, _re.MULTILINE)
+    if not am:
+        return content, 0
+    indent = am.group(1)
+
+    # Only add registrations for entities not already registered (idempotent
+    # per-entity, so a re-run or a partially-patched file converges).
+    new_lines = []
+    for eid in entities:
+        if f'InitializeCommonEvent(0, {_PHASE_REENABLE_EVENT_ID}, {eid})' in content:
+            continue
+        new_lines.append(f'{indent}$InitializeCommonEvent(0, {_PHASE_REENABLE_EVENT_ID}, {eid});')
+    if not new_lines:
+        return content, 0
+
+    insert_block = am.group(0) + '\r\n' + '\r\n'.join(new_lines)
+    new_content = content.replace(am.group(0), insert_block, 1)
+    return new_content, 1
+
+
+# ============================================================================
 # nb_arena_entry_trigger (v0.24.109)
 # ============================================================================
 
@@ -1639,9 +1880,9 @@ def _build_arena_hold_trigger_event_body(
         '    // after ring closure).',
         '    //',
         '    // Distinct from nb_arena_entry_trigger (which uses a 20m',
-        '    // step-into radius with no hold time): this is a smaller',
-        '    // inner zone with a deliberate hold, so players can\'t',
-        '    // accidentally trigger it just by entering the arena.',
+        '    // step-into radius with no hold time): this trigger uses a',
+        '    // deliberate timed hold, so players can\'t accidentally',
+        '    // trigger it just by passing through the arena.',
         '',
         '    EndIf(EventFlag(triggerFlag));',
         '',

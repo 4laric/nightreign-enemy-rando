@@ -16,7 +16,7 @@ that still have JSONs at root keep working transparently.
 | File | Purpose | Loaded by |
 |------|---------|-----------|
 | `nr_enemy_roster.json` | Every NPCParam variant of every NR enemy: name, tier, anim hints, base movement params. ~770KB. | `oops_v3.load_data` |
-| `nr_enemy_tags.json` | Per-c-prefix tag bundle: name, size, locomotion, anim_class, team, has_reward, source. The authoritative content/balance metadata. | `oops_v3.load_data`, GUI |
+| `nr_enemy_tags.json` | Per-c-prefix tag bundle: name, size, locomotion, fragile_locomotion, team, has_reward, source. The authoritative content/balance metadata. | `oops_v3.load_data`, GUI |
 | `manual_promotions.json` | Vanilla NR enemies with NpcParam data but never placed in any MSB (Storm King, Nameless King, Ancestor Spirit, Grafted Scion). Re-introduced as swap targets via tagging only. | `oops_v3.load_data` |
 | `vanilla_promotions_v1.json` | Additional vanilla NR chrs surfaced by tagging only (no Smithbox imports needed). `_source: vanilla_promotions_v1`. | `oops_v3.load_data` |
 

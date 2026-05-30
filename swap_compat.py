@@ -5,10 +5,13 @@ swap_compat.py — Reference compatibility logic for the NR enemy randomizer.
 Replaces the old size-class-only swap filter with a multi-axis check:
   1. expects_boss_arena must match (boss-arena placements only get arena-capable
      enemies; non-arena placements only get non-arena enemies).
-  2. anim_class must be in a compatible pair (no Dragonkin-in-Guardian-Golem
-     bugs; no flying enemies in ground slots; no merchants as fighters).
-  3. size_class must be within one tier of the slot's original size.
-  4. heritage imports may have additional locomotion/team caveats (warn only).
+  2. size_class must be within one tier of the slot's original size.
+  3. heritage imports may have additional locomotion/team caveats (warn only).
+
+(v0.27.28: the former anim_class compatibility rule and the flier-vs-ground
+split were removed — anim_class is expunged from the project and flying is no
+longer treated as a distinct class. Locomotion-fragility is handled separately
+in the engine via the fragile_locomotion tag.)
 
 Usage:
     from swap_compat import is_compatible, swap_pool_for
@@ -30,53 +33,18 @@ from typing import Dict, List, Optional, Tuple
 # Size class ordering — must match heritage_compat_tag.SIZE_BOUNDARIES
 SIZE_TIERS = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'GIGA']
 
-# v0.24.100: anim_class-as-swap-gate REMOVED. Per user directive:
-# "anim_class is only relevant as a proxy for locomotion."
-#
-# Background: the historical compat machinery — ANIM_CLASS_COMPAT_PAIRS,
-# _compat_anim_class, _LOCO_SENSITIVE_ANIMS, LOCOMOTION_MACRO — gated swaps
-# by anim_class identity or compat-pair membership ("humanoid only swaps
-# with misc", "quadruped with quadruped_large", etc.). This was a
-# theoretical safety layer with no empirical anchor; v0.24.75 had already
-# neutered _compat_anim_class to always-True after CTDs blamed on
-# anim_class drift turned out to have other root causes (chr-asset gaps,
-# AI script issues, locomotion-rig mismatches). The remaining layers
-# (LOCOMOTION_MACRO ground/air separation, intra-anim_class loco match for
-# Wolf/Stray-rig drift) survived because they encoded *locomotion*
-# information — which is what actually matters at runtime — but did it
-# indirectly through anim_class.
-#
-# The one thing that demonstrably matters: flying vs ground separation.
-# A flying chr placed at a ground slot CTDs the cell-load (Astel-at-
-# Flying-Dragon-slot, seed 552688). A ground chr at a flying slot crashes
-# similarly. This is a real locomotion-class boundary, not a rig-style
-# boundary.
-#
-# Flying classification needs both fields because the tag data is
-# inconsistent:
-#   - Dragons (c4500-c4505, c4680, c4911, c5860, c75xx): anim_class=
-#     flying_dragon, locomotion=5 or None
-#   - Bats (c4200 Man-Bat, c4201 Operatic Bat): locomotion=2, anim_class
-#     is humanoid or quadruped (NOT flying_dragon)
-# The OR predicate below captures both groups.
-def is_flier(tag: Dict) -> bool:
-    """True if the chr is a flier (dragon or bat). Cleanly separates the
-    flying-vs-ground concern from anim_class identity.
-
-    Empirically, the only locomotion-class boundary that produces CTDs
-    or visible breakage is flier-vs-ground. Other anim_class distinctions
-    (humanoid vs quadruped vs misc) describe animation rig style, not
-    locomotion behavior, and don't predict swap failure."""
-    return tag.get('locomotion') == 2 or tag.get('anim_class') == 'flying_dragon'
-
-# anim_class compatibility graph and _compat_anim_class function REMOVED in
-# v0.24.100 per the is_flier comment block above. The historical
-# ANIM_CLASS_COMPAT_PAIRS table gated by anim_class identity (humanoid+misc,
-# quadruped+quadruped_large, aquatic+everything, etc.); _compat_anim_class
-# consulted it. Both were retired after v0.24.75 neutered the function to
-# always-True and subsequent playtesting confirmed no anim_class-attributed
-# CTDs. The single thing the machinery was usefully encoding — flying-vs-
-# ground separation — is now expressed directly via is_flier(tag).
+# v0.27.28: flying-vs-ground separation REMOVED entirely, and with it the
+# last reader of anim_class. Per Alaric: dragons start on the ground and a
+# grounded enemy at a dragon slot (or vice versa) is fine — the seed-552688
+# "Astel at a Flying Dragon slot CTD" was only ever a best-guess attribution,
+# never confirmed as the actual cause. The is_flier predicate, the
+# flier-vs-ground symmetry checks in is_compatible / the size-rescue path,
+# and the whole V3_FLYING_REQUIRED_SLOTS gate (oops_v3 Gate 5) are gone.
+# This was the only place anim_class encoded anything load-bearing; the
+# field is now fully expunged from the project. (Locomotion-fragility — the
+# quadruped-on-constrained-navmesh freeze — is preserved separately via the
+# fragile_locomotion tag + loco==3 check, which is genuine locomotion data,
+# not anim-rig style.)
 
 
 def _size_distance(a: str, b: str) -> int:
@@ -136,17 +104,6 @@ def is_compatible(slot_tag: Dict, candidate_tag: Dict,
         warnings.append('non-arena enemy in arena slot — fog-door/music may '
                         'play without proper boss intro')
 
-    # 2. Flier-vs-ground separation. v0.24.100: anim_class compat gate
-    # and intra-anim_class locomotion match REMOVED — see the is_flier
-    # comment block at the top of this module. The only locomotion-class
-    # boundary that produces real failures is flier-vs-ground (dragon
-    # asset bundle ≠ ground asset bundle, aerial-spawn anim ≠ ground
-    # spawn anim). Other anim_class distinctions describe rig style and
-    # don't predict swap failure.
-    if is_flier(slot_tag) != is_flier(candidate_tag):
-        return False, ['flier-vs-ground mismatch (one is a dragon/bat, '
-                       'the other is grounded)']
-
     # 3. Size tier — asymmetric drift (v0.24.86-patch5)
     # v0.24.86-patch5: asymmetric size_drift. Size-down (small chr in
     # big arena) is engine-safe; size-up (big chr in small arena) clips
@@ -193,7 +150,7 @@ def is_compatible(slot_tag: Dict, candidate_tag: Dict,
     # (e.g. Crayfish → Crab denied because Crab had no reward variants). The
     # design call: every field-boss slot SHOULD drop a reward, but enforcing
     # this at the c-prefix level over-constrains the pool. Instead, we let
-    # any anim_class-compatible swap happen, and the variant picker prefers
+    # any size-compatible swap happen, and the variant picker prefers
     # reward-bearing variants for boss slots — when available. When the target
     # has no reward variants at all, the boss silently loses its reward, and
     # we accept that as part of the random vibe. Adding rewards to no-reward
@@ -217,9 +174,8 @@ def is_compatible(slot_tag: Dict, candidate_tag: Dict,
     return True, warnings
 
 
-# LOCOMOTION_MACRO dict REMOVED in v0.24.100 — its anim_class → ground/air
-# mapping is now expressed directly via the is_flier(tag) predicate at the
-# top of this module.
+# LOCOMOTION_MACRO dict REMOVED in v0.24.100; the flying-vs-ground concern it
+# encoded was itself removed in v0.27.28 (flying is no longer a tracked class).
 
 
 def is_compatible_size_down(slot_tag: Dict, candidate_tag: Dict,
@@ -237,13 +193,12 @@ def is_compatible_size_down(slot_tag: Dict, candidate_tag: Dict,
       - candidate size <= slot size (strict; no size-up rescue)
       - tier preservation is the caller's responsibility
 
-    v0.24.100: anim_class identity gating REMOVED. The previous version
-    keyed on LOCOMOTION_MACRO (anim_class → ground/air) and added an
-    intra-anim_class locomotion-field match within "skeleton-sensitive"
-    classes (Wolf/Stray Δloco T-pose theory). The locomotion-match part
-    didn't survive playtest — the actual T-pose cases turned out to be
-    chr-asset gaps. What remains is the empirically-grounded flier-vs-
-    ground split, expressed via is_flier(tag).
+    v0.27.28: all anim_class / flier-vs-ground gating REMOVED. Earlier
+    versions keyed on LOCOMOTION_MACRO (anim_class → ground/air) plus an
+    intra-class locomotion match; both were retired (the locomotion-match
+    T-pose cases turned out to be chr-asset gaps, and per Alaric the
+    flier-vs-ground split isn't a real constraint). This rescue path now
+    gates only on arena and size.
 
     Returns (allow, warnings) like is_compatible.
     """
@@ -254,12 +209,6 @@ def is_compatible_size_down(slot_tag: Dict, candidate_tag: Dict,
     cand_arena = candidate_tag.get('expects_boss_arena', False)
     if cand_arena and not slot_arena:
         return False, ['arena-script enemy cannot be placed in non-arena slot']
-
-    # 2. Flier-vs-ground separation. v0.24.100: was anim_class-based
-    # LOCOMOTION_MACRO check; now uses the is_flier predicate directly.
-    if is_flier(slot_tag) != is_flier(candidate_tag):
-        return False, ['flier-vs-ground mismatch (one is a dragon/bat, '
-                       'the other is grounded)']
 
     # 3. size MUST be strictly down (or equal — equal is just normal compat,
     # no rescue needed; but we allow it for completeness)
@@ -276,8 +225,8 @@ def is_compatible_size_down(slot_tag: Dict, candidate_tag: Dict,
         return False, [f'size-down too extreme: {cand_size} -> {slot_size} '
                        f'({slot_idx - cand_idx} tiers, max={max_size_drift_down})']
 
-    # v0.24.100: intra-anim_class locomotion-field gate REMOVED (was here
-    # historically — see module-level is_flier comment).
+    # v0.24.100: intra-class locomotion-field gate REMOVED (the rig-style
+    # locomotion match never survived playtest — see module-level note).
 
     if slot_idx > cand_idx:
         warnings.append(f'size-down: {cand_size} in {slot_size} slot')

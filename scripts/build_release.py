@@ -49,6 +49,19 @@ INCLUDE_FILES = [
     'oops_v3.py',
     'oops_all_anyone.py',
     'swap_compat.py',
+    # Archive reader (v0.28.0: read vanilla data straight from a packed
+    # install — no UXM unpack). The GUI's _maybe_prefetch_vanilla imports
+    # vanilla_source; the heritage dev tools import er_source. Both chain
+    # through data_archive -> aes128 and read the JSON manifests, so EVERY
+    # one of these must ship or the feature crashes on a user's machine.
+    'aes128.py',
+    'data_archive.py',
+    'nr_keys.py',
+    'nr_vanilla_manifest.json',
+    'vanilla_source.py',
+    'er_keys.py',
+    'er_source.py',
+    'er_chr_manifest.json',
     # Pipeline modules
     'dcx.py',
     'dcx_batch.py',
@@ -83,7 +96,8 @@ INCLUDE_DIRS = [
 # explicit picks are pulled.
 INCLUDE_FROM_DEV = [
     'dev/install_discovery.py',     # Steam/game/Oodle/me3 auto-detect
-    'dev/heritage_chr_import.py',   # chr-asset import flow
+    'dev/heritage_chr_import.py',   # chr-asset import flow (imports er_source)
+    'dev/import_heritage_ai_scripts.py',  # AI-script import (imports er_source)
 ]
 
 # Directories included if present, silently skipped if missing.

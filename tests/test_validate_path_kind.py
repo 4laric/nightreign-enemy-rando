@@ -90,7 +90,7 @@ class TestNrInstall:
         state, detail = validate_path_kind(str(install), 'nr_install')
         assert state == 'ok'
         assert 'NR install OK' in detail
-        assert 'MSBs found' in detail
+        assert 'MSBs' in detail
 
     def test_install_root_with_game_subdir(self, validate_path_kind, tmp_path):
         """User might pick the install ROOT (parent of Game/), not Game/.
@@ -152,10 +152,13 @@ class TestErInstall:
         assert state == 'warn'
 
     def test_no_chr_dir(self, validate_path_kind, tmp_path):
+        # v0.28.x: ER is optional (heritage only) and packed installs are read
+        # straight from the archives, so a non-ER folder is a soft 'warn', not
+        # a hard 'error' — consistent with nr_install.
         nope = tmp_path / 'random_folder'
         nope.mkdir()
         state, detail = validate_path_kind(str(nope), 'er_install')
-        assert state == 'error'
+        assert state == 'warn'
 
 
 # ---------------------------------------------------------------------

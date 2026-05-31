@@ -488,21 +488,10 @@ def validate_path_kind(path, kind):
             # a missing file as 'warn' (the binary is auto-discovered).
             pass
         elif kind == 'nr_install':
-            # v0.27.15: the NR install path is only a CONVENIENCE — setting
-            # it auto-fills the Vanilla MSBs and Vanilla event/ fields. It is
-            # NOT itself required, which is why this is a soft 'warn'. But be
-            # accurate about WHY it's non-fatal: the rando does NOT ship a
-            # bundled set of vanilla map MSBs (it only bundles event scripts
-            # + the msg/name BND). The actual requirement is that the
-            # "Vanilla MSBs" field point at a folder of m*.msb.dcx files —
-            # vanilla, or any prior shuffle / other mod's mapstudio. So a
-            # missing install path is fine ONLY if Vanilla MSBs is set on the
-            # Paths tab; otherwise the run fails the input check.
-            return ('warn', f"Install path not found — OK only if the "
-                            f"'Vanilla MSBs' field (Paths tab) already points "
-                            f"at a folder of m*.msb.dcx files. There is no "
-                            f"bundled map set; the rando needs real MSBs to "
-                            f"shuffle. Path: {path}")
+            # Packed installs are fully supported (vanilla map/event data is
+            # read straight from the game archives), so the only problem here
+            # is the path itself not existing.
+            return ('warn', f"Install path not found: {path}")
         else:
             return ('error', f"Directory does not exist: {path}")
 
@@ -517,7 +506,6 @@ def validate_path_kind(path, kind):
         # bundle silently covers. Flag green when we find content here;
         # otherwise warn and name the field to fix.
         # Conventional UXM layout: <install>/Game/{map/mapstudio, event}/
-        found = []
         roots = [path, os.path.join(path, 'Game')]
         has_msb = has_evt = False
         for r in roots:
@@ -533,31 +521,42 @@ def validate_path_kind(path, kind):
                 bits.append('MSBs')
             if has_evt:
                 bits.append('event scripts')
-            return ('ok', f"NR install OK ({' + '.join(bits)} found)")
-        # Nothing under this path. Non-fatal ONLY if the Vanilla MSBs field
-        # is set elsewhere (Paths tab) — there is no bundled map fallback.
-        return ('warn', "No map/mapstudio or event/ here. OK only if the "
-                        "'Vanilla MSBs' field on the Paths tab points at a "
-                        "folder of m*.msb.dcx files (vanilla, or any prior "
-                        "shuffle / other mod's mapstudio). The rando has no "
-                        "bundled maps, so if that field is empty too the "
-                        "run will fail the input check.")
+            return ('ok', f"NR install OK (unpacked — {' + '.join(bits)} read directly)")
+        # No loose map/mapstudio or event/ — but the rando reads vanilla map +
+        # event data straight out of the dvdbnd archives, so a PACKED (not
+        # UXM-unpacked) install is fully supported. Accept it as long as this
+        # really is a Nightreign install (archives / regulation / exe present).
+        has_archives = any(
+            os.path.isfile(os.path.join(r, n))
+            for r in roots
+            for n in ('data0.bhd', 'regulation.bin', 'nightreign.exe'))
+        if has_archives:
+            return ('ok', "NR install OK (packed — vanilla map/event data is read "
+                          "straight from the game archives; no UXM unpack needed)")
+        return ('warn', "Doesn't look like a Nightreign install — no map/mapstudio, "
+                        "no dvdbnd archives, and no nightreign.exe here.")
 
     if kind == 'er_install':
-        candidates = [
-            os.path.join(path, 'chr'),
-            os.path.join(path, 'Game', 'chr'),
-        ]
-        for d in candidates:
+        roots = [path, os.path.join(path, 'Game')]
+        for d in (os.path.join(r, 'chr') for r in roots):
             if os.path.isdir(d):
                 chrs = glob.glob(os.path.join(d, '*.chrbnd*'))
                 if chrs:
                     return ('ok', f"ER install OK ({len(chrs)} chr files "
                                   f"available for heritage imports)")
-                return ('warn', f"chr/ exists but is empty — UXM unpack "
-                                f"may not be complete")
-        return ('error', "No chr/ subdirectory — ER isn't UXM-unpacked, "
-                         "or this isn't an ER install.")
+        # No loose chr/ — but heritage imports read chr/script files straight
+        # from the ER dvdbnd archives (--source-game), so a PACKED ER install
+        # works too. Accept it when this is recognisably an ER install.
+        has_archives = any(
+            os.path.isfile(os.path.join(r, n))
+            for r in roots
+            for n in ('Data0.bhd', 'regulation.bin', 'eldenring.exe'))
+        if has_archives:
+            return ('ok', "ER install OK (packed — heritage chr/script files are "
+                          "read straight from the game archives via --source-game)")
+        return ('warn', "Doesn't look like an Elden Ring install — no chr/, no "
+                        "dvdbnd archives, no eldenring.exe. (ER is optional; only "
+                        "needed for heritage imports.)")
 
     if kind == 'me3_profile':
         # Profile dir exists. No deeper check — me3 profile shape varies.
@@ -1854,6 +1853,18 @@ class RandoGUI(PoolsCapsPanelMixin):
                 _pkg = None
             if _pkg and os.path.normpath(_pkg) != os.path.normpath(me3):
                 self.me3_package_var.set(_pkg)
+                return
+            # v0.28.x: also handle "picked the PARENT of the package" — if the
+            # path isn't itself a package but contains exactly one subdirectory
+            # that looks like one (map/, chr/, event/), descend into it. Set the
+            # corrected path and return; the re-fired trace sees a real package
+            # (a marker subdir present) so the descent runs at most once.
+            try:
+                _sub = _idisc.find_package_in_single_subdir(me3)
+            except Exception:
+                _sub = None
+            if _sub and os.path.normpath(_sub) != os.path.normpath(me3):
+                self.me3_package_var.set(_sub)
                 return
             # v0.24.43 BUGFIX: only derive child paths that are CURRENTLY EMPTY.
             # The previous behavior unconditionally overwrote output_dir,
@@ -3594,8 +3605,21 @@ class RandoGUI(PoolsCapsPanelMixin):
         self._add_help_button(banner, 'paths')
 
         # === Vanilla side ===
-        f_van = ttk.LabelFrame(parent, text="Vanilla (read)", padding=8)
-        f_van.pack(fill='x', padx=16, pady=(8, 4))
+        # v0.28.x: vanilla map/event/chr data is read automatically from the
+        # game install (packed or unpacked) via the archive reader, so these
+        # read-path rows are now optional overrides — tucked into a collapsed
+        # section instead of shown up-front.
+        ttk.Label(parent,
+            text="Vanilla map / event / chr data is read automatically from your "
+                 "game install — packed or unpacked, no UXM unpack needed. The "
+                 "fields below are optional overrides (e.g. point Vanilla MSBs at a "
+                 "prior shuffle's mapstudio); leave them blank otherwise.",
+            style='Dim.TLabel', wraplength=720, justify='left').pack(
+                fill='x', padx=16, pady=(8, 0))
+        _van_section = CollapsibleSection(
+            parent, "Vanilla read-path overrides (optional)", expanded=False)
+        _van_section.pack(fill='x', padx=16, pady=(0, 4))
+        f_van = _van_section.body
         # v0.27.15 (note 16): each row now carries a live status indicator
         # (kind drives validate_path_kind), registered into the Paths-tab
         # indicator list.

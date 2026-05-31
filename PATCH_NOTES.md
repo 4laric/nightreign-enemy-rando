@@ -1,3 +1,44 @@
+# v0.28.0 — what's new
+
+## No more UXM unpacking
+
+The big one: **you no longer need to UXM-unpack your games.** The rando now
+reads the vanilla files it needs directly out of your installed copy.
+
+- **Nightreign shuffle:** just point the GUI at your Nightreign `Game/`
+  folder on the Generate tab — packed install, straight from Steam, is
+  fine. The vanilla maps are read out of the game's archives on your first
+  run and cached locally; every run after that reuses the cache.
+- **Elden Ring heritage imports:** the heritage dev tools can now read boss
+  chr and AI-script files straight from a packed Elden Ring install too
+  (`--source-game`), including the Shadow of the Erdtree bosses. No 50 GB
+  unpack of either game.
+
+Nothing copyrighted ships in the download — all game data is read from your
+own legally-owned install at run time.
+
+## Setup is quieter and more forgiving
+
+- A **packed install no longer trips the Setup Status warning.** "Nightreign
+  install" and "Elden Ring install" go green as soon as you point them at a
+  real `Game/` folder, unpacked or not.
+- The **Paths tab no longer shows the vanilla read-path rows up front** —
+  they fill in automatically. They're still there as optional overrides,
+  tucked into a collapsible "Vanilla read-path overrides" section if you
+  ever need to point at, say, a previous shuffle's maps.
+- **me3 package auto-detect:** if you accidentally pick the *parent* of your
+  me3 package folder (and that folder is the only package-shaped thing in
+  it), the GUI now descends into it for you instead of writing output one
+  level too high.
+
+## Still required
+
+You still need the Oodle DLL (`oo2core_*.dll`) copied next to the tool — it's
+needed to decompress the game's `.dcx` files. Everything else now comes from
+your install automatically.
+
+---
+
 # v0.26.8 — what's new
 
 User-facing release notes for the v0.26.8 ship. For the engineering-level

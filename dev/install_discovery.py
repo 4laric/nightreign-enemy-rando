@@ -524,6 +524,38 @@ def find_me3_package_subdir(profile_root: str) -> Optional[str]:
     return None
 
 
+def find_package_in_single_subdir(parent_dir: str) -> Optional[str]:
+    """If `parent_dir` isn't itself an me3 package but contains exactly ONE
+    subdirectory that looks like one (has a map/, chr/, or event/ child),
+    return that subdir's absolute path. Handles the common "user picked the
+    PARENT of the package" mistake — e.g. they Browse to `.../mods/nrando-pkg`'s
+    parent `.../mods/` when `nrando-pkg/` is the only thing in it.
+
+    Returns None when `parent_dir` already looks like a package (so we don't
+    descend out of a real one), when there's no single unambiguous package
+    subdir, or on any error. Pure-ish: filesystem reads only, never raises.
+    """
+    _PKG_MARKERS = ('map', 'chr', 'event', 'msg', 'sfx')
+
+    def _looks_like_package(d):
+        return any(os.path.isdir(os.path.join(d, c)) for c in _PKG_MARKERS)
+
+    if not parent_dir or not os.path.isdir(parent_dir):
+        return None
+    if _looks_like_package(parent_dir):
+        return None  # already a package — don't descend past it
+    try:
+        subs = [os.path.join(parent_dir, e)
+                for e in sorted(os.listdir(parent_dir))
+                if os.path.isdir(os.path.join(parent_dir, e))]
+    except OSError:
+        return None
+    pkgs = [d for d in subs if _looks_like_package(d)]
+    if len(pkgs) == 1:
+        return os.path.abspath(pkgs[0])
+    return None
+
+
 # ---------------------------------------------------------------------
 # me3 profile scaffold (Tier 2 UX #7)
 # ---------------------------------------------------------------------

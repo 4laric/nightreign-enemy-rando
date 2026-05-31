@@ -1,3 +1,68 @@
+## v0.28.0
+
+No more UXM unpacking. The rando now reads vanilla game data straight out
+of the encrypted BHD5/BDT archives in your own installed copy of each game,
+so neither a Nightreign shuffle nor an Elden Ring heritage import needs a
+50 GB UXM unpack anymore. Everything is stdlib-only — no SoulsFormats, no
+external deps.
+
+Archive reader (new, dependency-free):
+- aes128.py — pure-Python AES-128-ECB (the per-file cipher FromSoft uses on
+  archived entries).
+- data_archive.py — BHD5 (Elden Ring format) parser + RSA "decrypt" (raw
+  modexp, drop the leading byte) + per-file AES over the entry's byte range.
+  `DataArchive(game_dir, keys=, archives=)` is fully parameterized over the
+  per-archive key set and archive list. NR leaves unpadded_size=0, so the
+  reader returns the full padded buffer (trimming corrupts the tail).
+- nr_keys.py / er_keys.py — the per-archive 2048-bit RSA public keys for
+  Nightreign and Elden Ring (incl. the ER DLC archive that holds the SoTE
+  bosses — Messmer, Rellana, Midra, …), extracted from UXM's key tables.
+- nr_vanilla_manifest.json (300 map + 197 event paths) and
+  er_chr_manifest.json (2420 chr + 469 script + 61 sfx paths), from UXM's
+  path dictionaries. Validated byte-for-byte against real installs:
+  NR 300/300 maps identical; ER c5210 9/9 banks identical (both `_div`
+  banks resolved).
+- vanilla_source.py (NR) and er_source.py (ER) — read-through sources that
+  prefer a packed archive and fall back to loose files, with `files_for_
+  prefixes()` catching the variable `_divNN` / `_h` / `_l` chr banks and a
+  `materialize()` that preserves the on-disk chr//script//sfx layout. Both
+  ship a CLI with `--validate` / `--cache`.
+
+GUI + dev-tool wiring:
+- oops_rando_gui.py `_maybe_prefetch_vanilla()`: on a packed NR install the
+  300 vanilla MSBs are read out of the archives into `.vanilla_cache/` and
+  the shuffle runs from there (the engine reads the input dir via
+  os.listdir, so materialize-to-cache is the correct seam). Event scripts
+  are only fetched/wired when the user has set the event field — the EMEVD
+  step is never silently enabled. Silent fallback to prior behavior on any
+  failure.
+- dev/heritage_chr_import.py and dev/import_heritage_ai_scripts.py gain
+  `--source-game` / optional `--er-source`: heritage chr + AI-script imports
+  read straight from a packed ER install. Carrier resolution mirrors
+  build_carrier_map (RetargetReferenceChrId via the regulation when given,
+  else the c[:-1] family heuristic) so the materialized cache satisfies real
+  carrier detection and bosses don't T-pose.
+
+UX relaxations (packed installs are now first-class):
+- validate_path_kind: a PACKED NR or ER `Game/` (dvdbnd archives present, no
+  loose map/mapstudio or chr/) now validates as 'ok' instead of warning /
+  erroring — the Setup Status panel stops flagging a packed install. ER
+  validation is now never-'error' (it's optional, heritage-only), matching
+  nr_install.
+- Paths tab: the "Vanilla (read)" rows are now read automatically and have
+  moved into a collapsed "Vanilla read-path overrides (optional)" section
+  behind an explanatory note — they're pure overrides now, not setup.
+- me3 package field: find_package_in_single_subdir() descends from a
+  wrongly-picked PARENT directory into the single subdir that looks like a
+  package (has map/ chr/ event/ …), in addition to the existing
+  .me3-profile-root descent. Leaves a real package alone; no-ops on
+  ambiguous/none.
+
+Tests: +23 over v0.27.47 (test_er_heritage_archive.py 12, test_packed_
+install_ux.py 11). Full suite 1491 passing, 0 regressions. The 8 remaining
+failures are pre-existing bundled-asset gaps (aicommon / patched_emevd /
+EMEVD corpus absent from a source checkout) and are unrelated to this work.
+
 ## v0.27.47
 
 Hotfix: v0.27.46 shipped with a NameError in shuffle_msb_v3. The Phase 2

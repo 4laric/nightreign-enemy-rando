@@ -5,7 +5,7 @@ enemies and Night Bosses placed across every map, so each seed plays
 differently — Maliketh in a Giant Crab clearing, an Erdtree Avatar where
 a Tree Sentinel used to be, a different Nightlord fight every run.
 
-Current release: **v0.26.10**. For what changed, see `PATCH_NOTES.md`
+Current release: **v0.28.0**. For what changed, see `PATCH_NOTES.md`
 (user-facing release notes) and `CHANGELOG.md` (full per-version
 history).
 
@@ -22,12 +22,18 @@ history).
 5. Launch the GUI: double-click `oops_rando_gui.pyw`, or run
    `python oops_rando_gui.py` from a terminal (use this one for
    diagnostic output).
-6. Point the output at your me3 profile's `map/mapstudio/` directory,
-   click Randomize, then click **Install pre-patched EMEVD**.
+6. On the **Generate** tab, point "Nightreign install" at your NR `Game/`
+   folder (packed is fine — no UXM unpack needed) and "ME3 mod profile" at
+   your me3 package. The output dir and vanilla read-paths auto-fill (and
+   if you accidentally pick the package's parent folder, it descends into
+   the package for you). Click Randomize, then **Install pre-patched EMEVD**.
 
-The bundle ships `vanilla_msbs/` — 300 vanilla Nightreign map files — so
-you do **not** need to UXM-unpack your own install first. The GUI's
-input folder defaults to the bundled maps.
+You do **not** need to UXM-unpack your install. The GUI reads vanilla map
+and event data straight from your own Nightreign install's `.bhd`/`.bdt`
+archives at run time — packed or unpacked, auto-detected — so this bundle
+ships no FromSoftware game data. Point the GUI at your NR install and click
+Randomize; the maps are pulled from the archives on the first run and cached
+locally.
 
 ## What it does
 
@@ -47,6 +53,11 @@ input folder defaults to the bundled maps.
 - **Cross-game imports.** With MMV in your me3 profile, the target pool
   includes cross-game boss imports (ER, SoTE, DS3, DS1). The heritage
   pack adds ~47 SoTE chr prefixes.
+- **No UXM unpack required.** Vanilla map/event data is read directly from
+  your installed Nightreign copy's archives, and heritage chr/AI-script
+  imports can read straight from a packed Elden Ring install (the dev
+  tools' `--source-game`). You never have to unpack tens of GB of game
+  files for either game.
 - **Spoiler logs.** Every run writes a spoiler so you can see — or
   derandomize — what landed where.
 
@@ -65,11 +76,11 @@ The rando code, GUI, data catalogs, and authored content in this
 repository are released under the [MIT License](LICENSE). Do whatever
 you want; just keep the copyright notice; no warranty.
 
-**Bundled vanilla `.msb.dcx` files are FromSoftware's, not mine.** The
-`vanilla_msbs/` directory contains copyrighted game map data, included
-as a convenience for people who own Nightreign. If you don't own a
-licensed copy, delete that folder and point the GUI at your own NR
-install. See [LICENSE](LICENSE) for the full note.
+**This bundle ships no FromSoftware game data.** Vanilla map, event, and
+chr data is read at run time from your own legally-owned install — never
+redistributed here. (The optional `vanilla_msbs/` fallback folder ships
+empty; you don't need to populate it.) You must own licensed copies of the
+games whose data you read. See [LICENSE](LICENSE) for the full note.
 
 ## Dedication
 

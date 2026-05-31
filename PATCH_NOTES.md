@@ -31,6 +31,13 @@ own legally-owned install at run time.
   it), the GUI now descends into it for you instead of writing output one
   level too high.
 
+## Fixes in this build
+
+- Manus (c8500) is now correctly held out of the shuffle when MMV is active.
+  It had a relocation freeze (a phase-transition that locks up when the boss
+  isn't in its home arena), so it's excluded rather than risking a stuck
+  encounter.
+
 ## Still required
 
 You still need the Oodle DLL (`oo2core_*.dll`) copied next to the tool — it's

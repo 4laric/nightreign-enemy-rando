@@ -19,9 +19,11 @@ def _pv():
     """Per-prefix variant map, built once."""
     global _PV
     if _PV is None:
-        roster = json.load(
-            open(o._data_path('nr_enemy_roster.json'), encoding='utf-8'))
-        o.load_data()
+        # Use the POST-LOAD roster (includes MMV / heritage imports), not the
+        # bare nr_enemy_roster.json — c-prefixes from MMV (e.g. c6200 Gael)
+        # only exist in the merged roster, and the test must check against
+        # the same view the engine uses.
+        roster, _ = o.load_data()
         _PV, _ = o.build_per_prefix_data(roster)
     return _PV
 

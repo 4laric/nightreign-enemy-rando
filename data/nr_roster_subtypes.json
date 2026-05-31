@@ -63,6 +63,22 @@
           "variant_name": "Divine Beast Warrior"
         }
       ]
+    },
+    "c6200": {
+      "base_name": "Slave Knight Gael",
+      "_note": "v0.27.48 (Alaric): added alongside the variant-restrict pin in data/variant_restrict_list.json that drops the 13 c6200-hosted Scarab summon variants (62001000-62005200) and keeps only the two real Gael variants. Phase 1 and Phase 2 Gael are technically two separate NpcParam rows with their own AI / movesets / stats (62000001 P1, 62000000 P2 -- yes the P2 has the lower id, that's how MMV imported them); at random placement time each is a distinct gameplay identity, same shape as the c5250 split above.",
+      "entries": [
+        {
+          "subtype": "gael_phase_1",
+          "display_name": "Slave Knight Gael (Phase 1)",
+          "variant_name": "Slave Knight Gael P1 (NB2)"
+        },
+        {
+          "subtype": "gael_phase_2",
+          "display_name": "Slave Knight Gael (Phase 2)",
+          "variant_name": "Slave Knight Gael P2 (NB2)"
+        }
+      ]
     }
   }
 }

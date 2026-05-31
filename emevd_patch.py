@@ -1404,8 +1404,16 @@ def patch_nb_boss_force_enable_watchdog(content, filename):
 #   15299    c2110 Maliketh
 # Deliberately excluded: the two-entity swap bosses (Rennala c2030/c2031,
 # Godfrey/Hoarah Loux c4720/c4721) -- they need second-entity placement
-# handling, not an AI re-enable -- and the single-phase imports (Manus c8500,
-# c8200, Romina c5030), which have no transition to recover.
+# handling, not an AI re-enable -- and the single-phase imports (c8200,
+# Romina c5030), which have no transition to recover.
+#
+# v0.27.48: Manus c8500 was previously listed in the single-phase set
+# above; playtest revealed it has a c8300-class HP-threshold transition
+# that freezes when relocated (HP threshold -> specific attack -> AI
+# freeze). Now banned outright in mmv_imports.json
+# blacklist_when_active.phase_transition_broken rather than handled
+# here -- same diagnosis as c8300 (transition fires outside the
+# editable battle AI / behavior layers).
 
 # v0.27.40: _AT_RISK_PHASE_MARKERS + the freeze-prone c_prefix set are now
 # DERIVED from data/phase_transition_imports.json — the single source of truth

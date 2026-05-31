@@ -7936,7 +7936,7 @@
     "c8500": {
       "arena_only": false,
       "cap": null,
-      "exclude": false,
+      "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,

@@ -58,6 +58,25 @@ UX relaxations (packed installs are now first-class):
   .me3-profile-root descent. Leaves a real package alone; no-ops on
   ambiguous/none.
 
+Roster + ban data (merged parallel work):
+- Manus (c8500) banned outright via mmv_imports.json
+  blacklist_when_active.phase_transition_broken. Playtest found it has a
+  c8300-class HP-threshold phase transition that freezes when the chr is
+  relocated (HP threshold -> specific attack -> AI freeze, firing outside
+  the editable battle-AI / behavior layers). emevd_patch.py drops c8500
+  from its single-phase "no transition to recover" set accordingly, and
+  phase_transition_imports.json is updated to match — that file remains the
+  single source of truth the freeze-prone marker set derives from.
+- nr_roster_subtypes.json: additional subtype tags. variant_restrict_list.json:
+  added restricted variants. placement_budget.json + the load_data lock
+  fixture (tests/fixtures/load_data_lock.json) regenerated to match the new
+  engine state (c8500 now exclude=true; everything_enabled tags 407/variants
+  3713/mp_safe 217).
+- tests/test_roster_subtypes.py now builds its per-prefix map from the
+  POST-load roster (load_data()) so MMV-only c-prefixes like c6200 (Gael)
+  are visible to the check. The stale c8500 tier sanity assertion was
+  corrected nightlord -> night_boss to match the shipped MMV-import retag.
+
 Tests: +23 over v0.27.47 (test_er_heritage_archive.py 12, test_packed_
 install_ux.py 11). Full suite 1491 passing, 0 regressions. The 8 remaining
 failures are pre-existing bundled-asset gaps (aicommon / patched_emevd /

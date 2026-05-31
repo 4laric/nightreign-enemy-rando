@@ -2075,15 +2075,19 @@ class TestManusUnBanned:
 
 
     def test_c8500_tier_and_size(self, engine):
-        """Sanity: Manus should be tier=nightlord, size=XL, expects_boss_arena.
+        """Sanity: Manus should be tier=night_boss, size=XL, expects_boss_arena.
 
         v0.26.x size_class correction: NpcParam.csv showed Manus at
         h=4.00 r=1.20, which is firmly XL (was previously tagged L
         in MMV pack — part of the v0.26.x bulk MMV undersizing audit
-        that surfaced 18 systematically-undersized chrs)."""
+        that surfaced 18 systematically-undersized chrs).
+
+        Tier was retagged nightlord -> night_boss in the MMV-import tier
+        normalization (all 19 MMV imports moved off the nightlord tier);
+        this sanity check tracks the post-retag value."""
         roster, tags = engine.load_data()
         t = tags['c8500']
-        assert t['tier'] == 'nightlord'
+        assert t['tier'] == 'night_boss'
         assert t['size_class'] == 'XL'
         assert t.get('expects_boss_arena') is True, (
             'c8500 should expects_boss_arena=True so the picker only '

@@ -6722,6 +6722,7 @@ V3_FRAGILE_SENSITIVE_TARGETS = {
 # retest pool. The 157 historical entries are kept as the empirical
 # playtest record they always were.
 V3_FRAGILE_SAFE_CONFIRMED = {
+    'c5193',  # Spider Scorpion (insectoid) — reclassified SAFE per Alaric (was unclassified, failing insectoid-uniformity check). v0.27.x.
     # === v0.20.48 BULK ADD: move_type=3 untested → SAFE_CONFIRMED ===
     # 87 c-prefixes added without individual playtest based on the
     # move_type=3 predictor (90% empirical safe rate). Rationale:
@@ -7972,7 +7973,6 @@ V3_NAV_INDEPENDENT_TARGETS = frozenset({
     'c5260',  # SoTE   L    Golem Smith
     'c5311',  # SoTE   M    Inquisitor (Candles)
     'c5312',  # SoTE   M    Inquisitor (Staff)
-    'c5320',  # SoTE   XL   Fat Inquisitor
     'c5360',  # SoTE   L    Giant Beast Skeleton
     'c5450',  # SoTE   L    Ram
     'c5511',  # SoTE   M    Shade
@@ -11579,7 +11579,7 @@ V3_UNIQUE_TARGET_CAPS = {
     # Bumping to cap=2 doubles the appearance budget while keeping
     # the bounded-failure safety property — 2 die rolls per seed
     # instead of 1, still recoverable if any chr is broken at scale.
-    'c8300': 2,  # Dragonslayer Armor (DS3 MMV)        — was NB-excluded; v0.25.3: 1→2
+    'c8300': 2,  # Dragonslayer Armor (DS3 MMV) — EXCLUDED, but cap kept: c8300 is a marquee NB / NB-caliber MMV, so the reservation policy (floor=1) requires a matching ceiling (floor⊆ceiling). Dormant while excluded; audit-allowlisted. v0.25.3: 1→2
     'c4511': 2,  # Lichdragon Fortissax (SoTE MMV)      — was globally excluded; v0.25.3: 1→2
     'c5030': 2,  # Romina, Saint of the Bud (SoTE MMV)  — was globally excluded; v0.25.3: 1→2
     'c5051': 2,  # Midra, Lord of Frenzied Flame (SoTE) — was globally excluded; v0.25.3: 1→2
@@ -11650,9 +11650,6 @@ V3_UNIQUE_TARGET_CAPS = {
     'c4811': 1,  # Erdtree Avatar Variant — 0 vanilla anchors (placement-
                  #   only via swap), variant sibling of c4810 Erdtree
                  #   Avatar (cap=2). cap=1 keeps the rare-variant feel.
-    'c4140': 1,  # Spiritcaller Snail (Great Church Boss) — 0 vanilla
-                 #   anchors, narratively a single Great Church encounter
-                 #   in vanilla NR; cap=1.
 
     # =================================================================
     # v0.26.x tier-collapse flood caps. Per sim_cap_distribution.py run
@@ -11788,7 +11785,7 @@ V3_RESERVATION_FLOORS = {
     'c5030': 1,  # Romina, Saint of the Bud    (SoTE MMV)
     'c5051': 1,  # Midra, Lord of Frenzied Flame (SoTE MMV)
     'c5200': 1,  # Metyr, Mother of Fingers    (SoTE MMV)
-    'c8300': 1,  # Dragonslayer Armor          (DS3 MMV)
+    'c8300': 1,  # Dragonslayer Armor          (DS3 MMV) — EXCLUDED, floor kept per marquee-NB / nb-caliber-mmv floor policy (resumes if un-excluded)
 }
 
 

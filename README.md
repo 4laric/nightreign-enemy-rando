@@ -70,3 +70,8 @@ you want; just keep the copyright notice; no warranty.
 as a convenience for people who own Nightreign. If you don't own a
 licensed copy, delete that folder and point the GUI at your own NR
 install. See [LICENSE](LICENSE) for the full note.
+
+## Dedication
+
+*In loving memory of Toast (2009–2026) — sixteen years of good company,
+asleep on my lap through every late-night build.*

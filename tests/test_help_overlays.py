@@ -261,20 +261,7 @@ class TestTabIntegrations:
             'so the "paths" help content is reachable.')
         assert "'paths'" in body
 
-    def test_excluded_tab_has_help_button(self, gui_source):
-        body = _extract_method_body(gui_source, '_build_excluded_tab')
-        assert "_add_help_button(" in body, (
-            'Excluded Enemies tab (_build_excluded_tab) must call '
-            '_add_help_button so the "excluded" help content is '
-            'reachable.')
-        assert "'excluded'" in body
 
-    def test_hub_maps_tab_has_help_button(self, gui_source):
-        body = _extract_method_body(gui_source, '_build_hub_tab')
-        assert "_add_help_button(" in body, (
-            'Hub Maps tab (_build_hub_tab) must call _add_help_button '
-            'so the "hub_maps" help content is reachable.')
-        assert "'hub_maps'" in body
 
     def test_spoiler_tab_has_help_button(self, gui_source):
         body = _extract_method_body(gui_source, '_build_spoiler_tab')

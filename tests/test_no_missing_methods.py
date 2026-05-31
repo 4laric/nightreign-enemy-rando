@@ -85,6 +85,21 @@ def test_class_has_no_missing_method_calls(class_name):
 
     called = collect_self_method_calls(cls)
     defined = collect_method_defs(cls)
+    # Also count methods provided by base classes (e.g. PoolsCapsPanelMixin
+    # from dev/pools_caps_panel.py, mixed into RandoGUI). The AST scan only
+    # sees methods defined directly in this class body, so a mixin-provided
+    # method (resolved at runtime via inheritance) would otherwise read as a
+    # false 'missing' positive.
+    import importlib, sys as _sys
+    if REPO_ROOT not in _sys.path:
+        _sys.path.insert(0, REPO_ROOT)
+    try:
+        _gui_mod = importlib.import_module('oops_rando_gui')
+        _cls_obj = getattr(_gui_mod, class_name, None)
+        if _cls_obj is not None:
+            defined |= set(dir(_cls_obj))
+    except Exception:
+        pass  # if the GUI can't import headless, fall back to AST-only defs
 
     missing = {name: lines for name, lines in called.items()
                if name not in defined}

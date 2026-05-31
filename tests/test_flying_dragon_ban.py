@@ -42,19 +42,19 @@ SAUCY_DRAGONS_KEPT = {
 class TestFlyingDragonBan:
     @pytest.mark.parametrize('cp,reason', list(BANNED_FLYING_DRAGONS.items()))
     def test_dragon_banned(self, cp, reason):
-        """Each of the three banned dragons must be in V3_EXCLUDE_PREFIXES.
+        """Each of the three banned dragons must be in V3_EXCLUDE_TARGET_PREFIXES.
         If one slips out, swap rolls will start landing on the
         uninteresting variants again."""
-        assert cp in oops_v3.V3_EXCLUDE_PREFIXES, (
-            f"{cp} ({reason}) must be in V3_EXCLUDE_PREFIXES.")
+        assert cp in oops_v3.V3_EXCLUDE_TARGET_PREFIXES, (
+            f"{cp} ({reason}) must be in V3_EXCLUDE_TARGET_PREFIXES.")
 
     @pytest.mark.parametrize('cp,name', list(SAUCY_DRAGONS_KEPT.items()))
     def test_saucy_dragon_still_eligible(self, cp, name):
         """The whole reason to ban the bland/oversized ones is to
         give the cool variants more swap presence. If any of these
         accidentally got banned, the change is self-defeating."""
-        assert cp not in oops_v3.V3_EXCLUDE_PREFIXES, (
-            f"{cp} ({name}) must NOT be in V3_EXCLUDE_PREFIXES — "
+        assert cp not in oops_v3.V3_EXCLUDE_TARGET_PREFIXES, (
+            f"{cp} ({name}) must NOT be in V3_EXCLUDE_TARGET_PREFIXES — "
             f"banning the saucy variants would defeat the whole "
             f"point of banning the bland ones.")
 
@@ -64,7 +64,7 @@ class TestFlyingDragonBan:
         added more bans without reviewing impact, or the saucy list
         in this test is stale."""
         remaining = [cp for cp in SAUCY_DRAGONS_KEPT
-                     if cp not in oops_v3.V3_EXCLUDE_PREFIXES]
+                     if cp not in oops_v3.V3_EXCLUDE_TARGET_PREFIXES]
         assert len(remaining) >= 6, (
             f'Only {len(remaining)} saucy dragons remain after bans: '
             f'{remaining}. Need at least 6 for healthy variety.')
@@ -79,7 +79,7 @@ class TestRationaleDocumented:
         """c4500 + c4505 ban rationale: 'no sauce'."""
         import inspect
         src = inspect.getsource(oops_v3)
-        exclude_idx = src.find('V3_EXCLUDE_PREFIXES = {')
+        exclude_idx = src.find('V3_EXCLUDE_TARGET_PREFIXES = {')
         c4500_idx = src.find("'c4500'", exclude_idx)
         assert exclude_idx != -1 and c4500_idx != -1
         # Look at the 1500 chars before c4500 — should contain rationale
@@ -94,7 +94,7 @@ class TestRationaleDocumented:
         """c4504 ban rationale: too big."""
         import inspect
         src = inspect.getsource(oops_v3)
-        exclude_idx = src.find('V3_EXCLUDE_PREFIXES = {')
+        exclude_idx = src.find('V3_EXCLUDE_TARGET_PREFIXES = {')
         c4504_idx = src.find("'c4504'", exclude_idx)
         assert exclude_idx != -1 and c4504_idx != -1
         context = src[max(0, c4504_idx - 1500):c4504_idx]
@@ -111,7 +111,7 @@ class TestRationaleDocumented:
         pool rather than just shrink it."""
         import inspect
         src = inspect.getsource(oops_v3)
-        exclude_idx = src.find('V3_EXCLUDE_PREFIXES = {')
+        exclude_idx = src.find('V3_EXCLUDE_TARGET_PREFIXES = {')
         c4500_idx = src.find("'c4500'", exclude_idx)
         context = src[max(0, c4500_idx - 1500):c4500_idx + 200]
         assert 'TODO' in context and 'dev/TODO.md' in context, (

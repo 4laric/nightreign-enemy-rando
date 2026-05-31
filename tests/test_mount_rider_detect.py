@@ -46,9 +46,10 @@ class TestMountClassConstants:
         # tier also tags riders like c4050).
         expected = {mount for _rider, mount in oops_v3.RIDER_MOUNT_PAIRS}
         assert oops_v3.V3_MOUNT_CLASS_POOL == expected
-        # sanity: the four known vanilla mounts, no riders
+        # sanity: the five known mounts (incl. c5890 Black Knight Horse,
+        # fabricated mounted pair added v0.27.13), no riders
         assert oops_v3.V3_MOUNT_CLASS_POOL == {'c3160', 'c3180',
-                                               'c4060', 'c4363'}
+                                               'c4060', 'c4363', 'c5890'}
         assert 'c4050' not in oops_v3.V3_MOUNT_CLASS_POOL  # Kaiden = rider
 
     def test_pilot_pairs_is_kaiden_only(self):

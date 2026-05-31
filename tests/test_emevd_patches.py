@@ -1426,9 +1426,10 @@ class TestNbArenaHoldTriggerV0_24_111:
         import emevd_patch
         body = emevd_patch._build_arena_hold_trigger_event_body()
         # OR-clause races duration against leaving
-        assert 'WaitFor(ElapsedSeconds(3) || !EntityInRadiusOfEntity(20000, anchorEntity, 5, 1));' in body
+        # v0.24.x tuning: hold-radius is 25 (was 5 in the original draft)
+        assert 'WaitFor(ElapsedSeconds(3) || !EntityInRadiusOfEntity(20000, anchorEntity, 25, 1));' in body
         # EndIf cancels if player left
-        assert 'EndIf(!EntityInRadiusOfEntity(20000, anchorEntity, 5, 1));' in body
+        assert 'EndIf(!EntityInRadiusOfEntity(20000, anchorEntity, 25, 1));' in body
 
     def test_event_body_idempotency_guards(self):
         """Two EndIf(EventFlag(triggerFlag)) guards: one at top (if

@@ -81,7 +81,7 @@ class TestMainTabCoreTooltips:
     def test_oops_all_target_combo(self, gui_source):
         found, _ = _has_tooltip_near(
             gui_source,
-            'self.oops_all_combo = AutocompleteCombobox(',
+            'self.oops_all_combo = ttk.Combobox(',
             window=700)
         assert found, ('Oops! All target picker has no Tooltip — '
                        'users won\'t know about the c-prefix-then-name '
@@ -90,7 +90,7 @@ class TestMainTabCoreTooltips:
     def test_oops_all_nb_target_combo(self, gui_source):
         found, _ = _has_tooltip_near(
             gui_source,
-            'self.oops_all_nb_combo = AutocompleteCombobox(',
+            'self.oops_all_nb_combo = ttk.Combobox(',
             window=700)
         assert found, 'Oops! All NB target picker has no Tooltip'
 

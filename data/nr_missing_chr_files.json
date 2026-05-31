@@ -363,15 +363,6 @@
       "proactive_ban": false
     },
     {
-      "c_prefix": "c4281",
-      "name": "Giant Ant (Skull Plate)",
-      "_source": "post_dlc_dump",
-      "symptom": "no_ai_brain",
-      "reason": "2 NpcParam variants; vanilla placement at m46_02_00_00 (Limveld). No per-chr battle script in any of script/nr, script/er, script/mmv. c4280 Giant Ant has a script — c4281 may parent-share, or may be a phantom. User-reported runtime breakage motivates the cap=1 safety net.",
-      "observed_version": "v0.25.0",
-      "proactive_ban": true
-    },
-    {
       "c_prefix": "c2272",
       "name": "Giant Black Crab",
       "_source": "post_dlc_dump",

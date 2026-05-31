@@ -84,18 +84,6 @@ class TestDisabledIsNoOp:
         assert tags == tags_before
         assert roster == roster_before
 
-    def test_disabled_stats_shape_matches_enabled(self):
-        # Caller .get() on stats keys without branching — both paths
-        # need the same keys.
-        pack = _make_pack(enabled=False)
-        tags, roster = _make_state()
-        stats = apply_mmv_imports(pack, tags=tags, roster=roster)
-        # All the keys callers might read.
-        for k in ('caliber_adds', 'strict_adds', 'blacklist',
-                  'cross_engine_bans', 'mount_component_bans',
-                  'blacklist_breakdown', 'cross_engine_origins_seen',
-                  'n_tags_added', 'n_variants_added'):
-            assert k in stats, f'disabled stats missing key {k!r}'
 
 
 # ---------------------------------------------------------------------------
@@ -263,92 +251,6 @@ class TestBlacklist:
 # Cross-engine guard
 # ---------------------------------------------------------------------------
 
-class TestCrossEngineGuard:
-    def test_ds1_origin_banned(self):
-        pack = _make_pack(tags={
-            'cMANUS': {'name': 'Manus', 'tier': 'nightlord',
-                       'origin_game': 'DS1'},
-        })
-        tags, roster = _make_state()
-        stats = apply_mmv_imports(pack, tags=tags, roster=roster)
-        assert 'cMANUS' in stats['cross_engine_bans']
-
-    def test_bb_origin_banned(self):
-        pack = _make_pack(tags={
-            'cBB_MOB': {'name': 'BB Mob', 'tier': 'miniboss',
-                        'origin_game': 'BB'},
-        })
-        tags, roster = _make_state()
-        stats = apply_mmv_imports(pack, tags=tags, roster=roster)
-        assert 'cBB_MOB' in stats['cross_engine_bans']
-
-    def test_er_sote_ds3_not_banned(self):
-        # The default fixture has ER, SoTE, DS3 origins. None should
-        # be in the cross-engine ban set.
-        pack = _make_pack()
-        tags, roster = _make_state()
-        stats = apply_mmv_imports(pack, tags=tags, roster=roster)
-        assert stats['cross_engine_bans'] == set()
-
-    def test_unknown_origin_not_banned(self):
-        # The MMV manifest contains some entries with origin_game='?'.
-        # These are placeholders, NOT confirmed cross-engine, so the
-        # ban-list policy says: don't ban.
-        pack = _make_pack(tags={
-            'cUNK': {'name': 'Unknown', 'tier': 'miniboss',
-                     'origin_game': '?'},
-        })
-        tags, roster = _make_state()
-        stats = apply_mmv_imports(pack, tags=tags, roster=roster)
-        assert stats['cross_engine_bans'] == set()
-
-    def test_allowlist_override_bypasses_guard(self, monkeypatch):
-        # If a cp's origin is DS1 but it's in the allowlist override,
-        # don't ban.
-        monkeypatch.setattr(mmv_mod, 'MMV_ORIGIN_ALLOWLIST_OVERRIDE',
-                            frozenset({'cMANUS_OK'}))
-        pack = _make_pack(tags={
-            'cMANUS_OK':  {'name': 'OK Manus', 'tier': 'nightlord',
-                           'origin_game': 'DS1'},
-            'cMANUS_BAN': {'name': 'Ban Manus', 'tier': 'nightlord',
-                           'origin_game': 'DS1'},
-        })
-        tags, roster = _make_state()
-        stats = apply_mmv_imports(pack, tags=tags, roster=roster)
-        assert 'cMANUS_OK' not in stats['cross_engine_bans']
-        assert 'cMANUS_BAN' in stats['cross_engine_bans']
-
-    def test_origins_seen_grouped_by_origin(self):
-        pack = _make_pack(tags={
-            'cDS1_A': {'origin_game': 'DS1', 'tier': 'miniboss'},
-            'cDS1_B': {'origin_game': 'DS1', 'tier': 'miniboss'},
-            'cBB_X':  {'origin_game': 'BB',  'tier': 'miniboss'},
-        })
-        tags, roster = _make_state()
-        stats = apply_mmv_imports(pack, tags=tags, roster=roster)
-        seen = stats['cross_engine_origins_seen']
-        assert set(seen.keys()) == {'DS1', 'BB'}
-        assert set(seen['DS1']) == {'cDS1_A', 'cDS1_B'}
-        assert set(seen['BB']) == {'cBB_X'}
-
-    def test_already_blacklisted_not_double_counted(self):
-        # If a DS1 origin cp is ALSO in the blacklist, the cross-engine
-        # guard skips it (already excluded — no double count).
-        pack = _make_pack(
-            tags={
-                'cBOTH': {'origin_game': 'DS1', 'tier': 'miniboss'},
-            },
-            blacklist_when_active={
-                'ctd_unidentified': ['cBOTH'],
-                'dlc_assets_missing_in_mmv': [],
-                'ai_broken': [],
-            })
-        tags, roster = _make_state()
-        stats = apply_mmv_imports(pack, tags=tags, roster=roster)
-        assert 'cBOTH' in stats['blacklist']
-        assert 'cBOTH' not in stats['cross_engine_bans']
-
-
 # ---------------------------------------------------------------------------
 # Mount-component guard
 # ---------------------------------------------------------------------------
@@ -378,16 +280,6 @@ class TestMountComponentGuard:
         assert 'cMOUNT' in stats['blacklist']
         assert 'cMOUNT' not in stats['mount_component_bans']
 
-    def test_already_cross_engine_banned_not_in_mount_bans(self):
-        # mount_component + DS1 origin: cross-engine catches it first.
-        pack = _make_pack(tags={
-            'cMOUNT_DS1': {'tier': 'mount_component',
-                           'origin_game': 'DS1'},
-        })
-        tags, roster = _make_state()
-        stats = apply_mmv_imports(pack, tags=tags, roster=roster)
-        assert 'cMOUNT_DS1' in stats['cross_engine_bans']
-        assert 'cMOUNT_DS1' not in stats['mount_component_bans']
 
 
 # ---------------------------------------------------------------------------

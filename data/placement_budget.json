@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "_engine_fingerprint": "v0.27.20",
+    "_engine_fingerprint": "v0.27.45",
     "_generator": "dev/extract_placement_budget.py",
     "_notes": [
       "Sparse: only c-prefixes with at least one non-default fact",
@@ -358,7 +358,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c2031": {
@@ -378,7 +378,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c2040": {
@@ -498,7 +498,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c2120": {
@@ -518,7 +518,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c2130": {
@@ -2268,7 +2268,7 @@
     "c4060": {
       "arena_only": false,
       "cap": 30,
-      "exclude": false,
+      "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,
@@ -2467,8 +2467,8 @@
     },
     "c4140": {
       "arena_only": false,
-      "cap": 4,
-      "exclude": false,
+      "cap": null,
+      "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,
@@ -2687,7 +2687,7 @@
     },
     "c4171": {
       "arena_only": false,
-      "cap": 40,
+      "cap": 4,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": true,
@@ -2702,7 +2702,7 @@
       "since": null,
       "source": "nr_placed",
       "tags": [],
-      "tier": "grunt",
+      "tier": "miniboss",
       "tier_override": false
     },
     "c4180": {
@@ -3031,8 +3031,8 @@
     },
     "c4281": {
       "arena_only": false,
-      "cap": null,
-      "exclude": true,
+      "cap": 40,
+      "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": true,
       "ghost_exclude": false,
@@ -3871,7 +3871,7 @@
     },
     "c4442": {
       "arena_only": false,
-      "cap": 40,
+      "cap": 4,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": true,
@@ -3886,7 +3886,7 @@
       "since": null,
       "source": "post_dlc_dump",
       "tags": [],
-      "tier": "grunt",
+      "tier": "miniboss",
       "tier_override": false
     },
     "c4450": {
@@ -3997,7 +3997,7 @@
     },
     "c4482": {
       "arena_only": false,
-      "cap": 40,
+      "cap": 4,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -4012,7 +4012,7 @@
       "since": null,
       "source": "post_dlc_dump",
       "tags": [],
-      "tier": "grunt",
+      "tier": "miniboss",
       "tier_override": false
     },
     "c4483": {
@@ -4247,7 +4247,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c4540": {
@@ -4679,7 +4679,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c4721": {
@@ -4699,7 +4699,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c4730": {
@@ -4719,7 +4719,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c4750": {
@@ -5129,7 +5129,7 @@
       "tier_override": false
     },
     "c5030": {
-      "arena_only": true,
+      "arena_only": false,
       "cap": 2,
       "exclude": false,
       "exclude_reason": null,
@@ -5145,7 +5145,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c5040": {
@@ -5185,7 +5185,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c5060": {
@@ -5210,7 +5210,7 @@
     },
     "c5061": {
       "arena_only": false,
-      "cap": 40,
+      "cap": 4,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -5225,7 +5225,7 @@
       "since": null,
       "source": "heritage",
       "tags": [],
-      "tier": "grunt",
+      "tier": "miniboss",
       "tier_override": false
     },
     "c5070": {
@@ -5290,8 +5290,8 @@
     },
     "c5090": {
       "arena_only": false,
-      "cap": 40,
-      "exclude": false,
+      "cap": null,
+      "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,
@@ -5345,7 +5345,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c5160": {
@@ -5390,10 +5390,10 @@
     },
     "c5190": {
       "arena_only": false,
-      "cap": null,
-      "exclude": true,
+      "cap": 40,
+      "exclude": false,
       "exclude_reason": null,
-      "fragile_sensitive": true,
+      "fragile_sensitive": false,
       "ghost_exclude": false,
       "history": [],
       "map_excludes": [],
@@ -5410,10 +5410,10 @@
     },
     "c5192": {
       "arena_only": false,
-      "cap": null,
-      "exclude": true,
+      "cap": 40,
+      "exclude": false,
       "exclude_reason": null,
-      "fragile_sensitive": true,
+      "fragile_sensitive": false,
       "ghost_exclude": false,
       "history": [],
       "map_excludes": [],
@@ -5430,10 +5430,10 @@
     },
     "c5193": {
       "arena_only": false,
-      "cap": null,
-      "exclude": true,
+      "cap": 40,
+      "exclude": false,
       "exclude_reason": null,
-      "fragile_sensitive": true,
+      "fragile_sensitive": false,
       "ghost_exclude": false,
       "history": [],
       "map_excludes": [],
@@ -5465,7 +5465,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c52000": {
@@ -5725,7 +5725,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c52309": {
@@ -5745,7 +5745,7 @@
       "since": null,
       "source": "post_dlc_dump",
       "tags": [],
-      "tier": "grunt",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c52312": {
@@ -5765,7 +5765,7 @@
       "since": null,
       "source": "post_dlc_dump",
       "tags": [],
-      "tier": "grunt",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c52313": {
@@ -5785,7 +5785,7 @@
       "since": null,
       "source": "post_dlc_dump",
       "tags": [],
-      "tier": "grunt",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c5240": {
@@ -5890,7 +5890,7 @@
     },
     "c5270": {
       "arena_only": false,
-      "cap": 4,
+      "cap": 40,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -5905,7 +5905,7 @@
       "since": null,
       "source": "heritage",
       "tags": [],
-      "tier": "miniboss",
+      "tier": "grunt",
       "tier_override": false
     },
     "c5271": {
@@ -5945,7 +5945,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c5311": {
@@ -6310,8 +6310,8 @@
     },
     "c5750": {
       "arena_only": false,
-      "cap": null,
-      "exclude": true,
+      "cap": 40,
+      "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,
@@ -6330,8 +6330,8 @@
     },
     "c5751": {
       "arena_only": false,
-      "cap": null,
-      "exclude": true,
+      "cap": 40,
+      "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,
@@ -6410,7 +6410,7 @@
     },
     "c5840": {
       "arena_only": false,
-      "cap": 4,
+      "cap": 30,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -6513,7 +6513,7 @@
     },
     "c5890": {
       "arena_only": false,
-      "cap": null,
+      "cap": 30,
       "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -6948,7 +6948,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c6201": {
@@ -7770,7 +7770,7 @@
       "since": null,
       "source": "post_dlc_dump",
       "tags": [],
-      "tier": "grunt",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c7932": {
@@ -7790,7 +7790,7 @@
       "since": null,
       "source": "post_dlc_dump",
       "tags": [],
-      "tier": "grunt",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c8000": {
@@ -7890,13 +7890,13 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c8300": {
       "arena_only": true,
       "cap": 2,
-      "exclude": false,
+      "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,
@@ -7910,7 +7910,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c8400": {
@@ -7930,7 +7930,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c8500": {
@@ -7950,7 +7950,7 @@
       "since": null,
       "source": "mmv_import",
       "tags": [],
-      "tier": "nightlord",
+      "tier": "night_boss",
       "tier_override": false
     },
     "c8910": {

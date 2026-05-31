@@ -99,6 +99,23 @@ BUILTIN_ALLOWLIST: list[dict] = [
     # at oops_v3.py line ~9445.
     {'category': 'sibling_same_tier_cap_divergence', 'c_prefix': 'c4353',
      'rationale': 'documented_safety_net_after_retier'},
+    # c4060/c5890 — mount-component chrs (Kaiden's Horse, Black Knight Horse).
+    # Excluded as standalone targets, but cap=30 is set dynamically in
+    # load_data() (oops_v3.py ~L3945) so their mount-ROLE slots can fill —
+    # the cap is live for the role-fill path, not dead code.
+    {'category': 'cap_shadowed_by_exclude', 'c_prefix': 'c4060',
+     'rationale': 'mount_role_cap_for_role_fill_path'},
+    {'category': 'cap_shadowed_by_exclude', 'c_prefix': 'c5890',
+     'rationale': 'mount_role_cap_for_role_fill_path'},
+    # c8300 Dragonslayer Armor (DS3 MMV) — EXCLUDED (re-excluded for freeze),
+    # but it is a marquee NB / NB-caliber MMV import, so the reservation-floor
+    # policy requires floor=1, and floor⊆ceiling requires a matching cap.
+    # The cap is dead for placement while excluded, but the entry is kept
+    # consistent (dormant) so the NB reservation invariants hold and it resumes
+    # cleanly if ever un-excluded. Not orphan cruft (cf. c4140, which had no
+    # floor/nb-caliber role and was removed).
+    {'category': 'cap_shadowed_by_exclude', 'c_prefix': 'c8300',
+     'rationale': 'excluded_nb_caliber_mmv_cap_floor_kept_consistent'},
 ]
 
 

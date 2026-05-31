@@ -40,7 +40,7 @@ class TestComposeNameFormat(unittest.TestCase):
     def test_vanilla_to_vanilla_uses_arrow(self):
         result = compose_name(
             'Tree Sentinel', 'Tibia Mariner', 'c4500', 'c4910',
-            self.POOL, 42)
+            self.POOL, 42, show_arrow_prefix=True)
         self.assertEqual(
             result, 'Tree Sentinel → Tibia Mariner, Naturalborn of the Void')
 
@@ -159,7 +159,7 @@ class TestComposeNameTemplates(unittest.TestCase):
         for seed in range(50):
             results.add(compose_name(
                 'Tree Sentinel', 'Tibia Mariner', 'c4500', 'c4910',
-                pool, seed))
+                pool, seed, show_arrow_prefix=True))
         # Over 50 seeds we should see both formats
         epithet_form = 'Tree Sentinel → Tibia Mariner, Beast of Night'
         template_form = 'The Dread Pirate Tibia Mariner'
@@ -178,7 +178,7 @@ class TestObjectEpithetForm(unittest.TestCase):
     def test_object_epithet_substitutes_original(self):
         result = compose_name(
             'Tree Sentinel', 'Tibia Mariner', 'c4500', 'c4910',
-            ['of {o} fame'], 42)
+            ['of {o} fame'], 42, show_arrow_prefix=True)
         self.assertEqual(
             result, 'Tree Sentinel → Tibia Mariner, of Tree Sentinel fame')
 

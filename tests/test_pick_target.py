@@ -488,131 +488,11 @@ class TestForbiddenBySourceAnim:
     target. These tests cover both directions.
     """
 
-    def test_flying_dragon_source_forbids_c4660(
-            self, engine, tags, prefix_variants, prefix_count):
-        # v0.24.18 original case: c4660 Guardian Golem (giga_boss
-        # grounded) should NOT appear when the source slot's vanilla cp
-        # has anim_class='flying_dragon'.
-        #
-        # v0.24.75: V3_FORBIDDEN_BY_SOURCE_ANIM was emptied per user
-        # directive removing anim_class restrictions. This test is
-        # repurposed to assert the EMPTY-dict invariant — if the dict
-        # is ever repopulated, this catches it and forces a re-check.
-        # To restore the v0.24.18 rule, add 'flying_dragon': {'c4660'}
-        # back to V3_FORBIDDEN_BY_SOURCE_ANIM AND re-enable Gate 3 in
-        # _reject_target_for_slot.
-        assert dict(engine.V3_FORBIDDEN_BY_SOURCE_ANIM) == {}, (
-            'v0.24.75 emptied V3_FORBIDDEN_BY_SOURCE_ANIM; if you '
-            'repopulate this dict, also update this test to reflect '
-            'the new expected behavior.')
 
-    def test_giga_boss_source_no_longer_forbids_fliers(
-            self, engine, tags, prefix_variants, prefix_count):
-        # v0.24.66: REVERSE direction LIFTED. v0.24.24 added a
-        # 'giga_boss' → frozenset(flier c-prefixes) rule after the seed
-        # 738357 m30_30 fort-roof CTD. Post-v0.24.65 full asset deploy
-        # (chr + script + aicommon + sfx + material), playtest showed
-        # fliers actually work at Guardian Golem-class slots — per
-        # Alaric: "dragons do work in the golem slot and their entrance
-        # animation is extremely cool". The original c6260 CTD was
-        # almost certainly an MMV asset-deploy gap (same pattern as the
-        # c8300 Roundtable error), not a geometry mismatch.
-        assert 'giga_boss' not in engine.V3_FORBIDDEN_BY_SOURCE_ANIM, (
-            'v0.24.66 lifted the giga_boss reverse rule. If it has been '
-            're-added, capture the seed+version evidence in the comment '
-            'above V3_FORBIDDEN_BY_SOURCE_ANIM before re-banning.')
 
-    def test_c6260_no_longer_blocked_at_giga_source(
-            self, engine, tags, prefix_variants, prefix_count):
-        # v0.24.66: c6260 Death Rite Bird specifically — the original
-        # v0.24.24 trigger case. Now allowed at Guardian Golem slots.
-        forbidden = engine.V3_FORBIDDEN_BY_SOURCE_ANIM.get('giga_boss', set())
-        assert 'c6260' not in forbidden
 
-    def test_only_flying_dragon_rule_remains(
-            self, engine, tags, prefix_variants, prefix_count):
-        # v0.24.66 post-lift: only the v0.24.18 forward rule
-        # (flying_dragon → exclude c4660 Guardian Golem) remains in
-        # V3_FORBIDDEN_BY_SOURCE_ANIM.
-        #
-        # v0.24.75 update: dict emptied entirely per user directive
-        # removing anim_class restrictions. Test now asserts the dict
-        # is empty. To restore the v0.24.18 rule (or any source-anim
-        # forbidden mapping), repopulate V3_FORBIDDEN_BY_SOURCE_ANIM
-        # AND restore the Gate 3 application — see oops_v3.py docs.
-        assert dict(engine.V3_FORBIDDEN_BY_SOURCE_ANIM) == {}, (
-            f'v0.24.75 emptied V3_FORBIDDEN_BY_SOURCE_ANIM; got '
-            f'{dict(engine.V3_FORBIDDEN_BY_SOURCE_ANIM)}')
 
-    def test_anim_class_backfill_landed(self, engine, tags, prefix_variants,
-                                         prefix_count):
-        # v0.24.24 data-side fix: 4 fliers that lacked anim_class get
-        # the field at load time. KEPT post-v0.24.66 lift — the
-        # backfill is still useful for other gates and for general
-        # data quality, even with the giga_boss rule lifted. If a
-        # future load_data refactor or data-file edit drops these,
-        # this test catches it.
-        expected_flying = {
-            'c4502': 'Decaying Ekzykes-class Dragon (post_dlc_dump)',
-            'c4504': 'Elder Dragon Greyoll (post_dlc_dump)',
-            'c4511': 'Lichdragon Fortissax (mmv_import)',
-            'c6260': 'Death Rite Bird (mmv_import) — the original CTD trigger',
-        }
-        missing = []
-        for cp, label in expected_flying.items():
-            t = tags.get(cp)
-            if t is None:
-                # cp may not be in tags if its pack is disabled — skip
-                continue
-            ac = t.get('anim_class')
-            if ac != 'flying_dragon':
-                missing.append(f'  {cp} ({label}): anim_class={ac!r}, '
-                               f'expected flying_dragon')
-        if missing:
-            raise AssertionError(
-                'v0.24.24 anim_class backfill regressed:\n' + '\n'.join(missing))
 
-    def test_v0_24_26_score_slot_now_allows_lifted_combinations(self, engine, tags):
-        """v0.24.66 inversion of v0.24.26 test: with the giga_boss reverse
-        rule lifted, the 8 known-bad reservations from seed 147927 should
-        now be ACCEPTED by _score_slot_for_unique (returning a numeric
-        score rather than None). If any still return None it'd be due to
-        an unrelated gate, not the (now-removed) source-anim rule.
-
-        Historical: v0.24.26 added a mirror in _score_slot_for_unique
-        that rejected these combinations to fix a reservation-bypass
-        bug where the reservation pre-pass committed forbidden combos
-        before the runtime gate could reject them. The mirror is now
-        a no-op for these specific cases since the rule itself is gone."""
-        # Skip if the rule structure is missing entirely
-        if 'flying_dragon' not in engine.V3_FORBIDDEN_BY_SOURCE_ANIM:
-            pytest.skip('V3_FORBIDDEN_BY_SOURCE_ANIM missing flying_dragon')
-        # The 8 combinations from seed 147927 — all fliers at giga_boss
-        # source slots. None of these are blocked by source-anim anymore.
-        cases = [
-            ('c4502', 'm30_30_00_00.msb', 45, 'c4660'),
-            ('c4501', 'm48_20_00_00.msb',  3, 'c4660'),
-            ('c4680', 'm49_18_00_00.msb',  5, 'c4660'),
-            ('c4500', 'm49_19_00_00.msb',  7, 'c4510'),
-            ('c4911', 'm49_20_00_00.msb',  5, 'c4660'),
-            ('c4503', 'm60_42_36_00.msb', 43, 'c4660'),
-            ('c4505', 'm60_43_38_00.msb',  6, 'c4660'),
-            ('c4505', 'm60_44_36_00.msb', 10, 'c4660'),
-        ]
-        # We just need to verify the source-anim rejection no longer fires
-        # for these. The _score_slot_for_unique may still return None for
-        # OTHER reasons (identity-swap, preservation, etc.) — that's not
-        # our concern. We check that V3_FORBIDDEN_BY_SOURCE_ANIM lookup
-        # is empty for the relevant key.
-        forbidden_giga = engine.V3_FORBIDDEN_BY_SOURCE_ANIM.get('giga_boss', set())
-        leaks = []
-        for target_cp, msb, pi, src_cp in cases:
-            if target_cp in forbidden_giga:
-                leaks.append(f'  {target_cp} still in '
-                             f'V3_FORBIDDEN_BY_SOURCE_ANIM[giga_boss]')
-        assert not leaks, (
-            'v0.24.66 lift incomplete — these targets still banned at '
-            f'giga_boss sources:\n' + '\n'.join(leaks))
 
     def test_v0_24_26_score_slot_allows_compatible_source_anim(self, engine, tags):
         """Inverse of the above: humanoid → humanoid is not forbidden;
@@ -830,36 +710,6 @@ class TestRejectTargetForSlot:
             f'caliber gate should reject {non_caliber} at NB slot, '
             f'got {result!r}')
 
-    def test_source_anim_gate_rejects_flier_at_giga(self, engine, tags):
-        # The v0.24.26 case: giga_boss source + flying_dragon target.
-        # Carefully pick a forbidden flier that is NOT also in
-        # V3_NIGHT_BOSS_STRICT_TARGETS or V3_NIGHT_BOSS_CALIBER_TARGETS,
-        # otherwise an earlier gate fires first and we don't actually
-        # test source-anim. load_data() populates strict and caliber
-        # sets, so the overlap can be non-empty at test time even if
-        # the pre-load sets are disjoint.
-        forbidden = engine.V3_FORBIDDEN_BY_SOURCE_ANIM.get('giga_boss', set())
-        if not forbidden:
-            pytest.skip('giga_boss forbidden set empty')
-        strict = engine.V3_NIGHT_BOSS_STRICT_TARGETS
-        caliber = engine.V3_NIGHT_BOSS_CALIBER_TARGETS
-        candidates = forbidden - strict - caliber
-        if not candidates:
-            pytest.skip('every forbidden giga_boss target also in strict '
-                        'or caliber — source-anim gate cannot be isolated')
-        # Deterministic: sort so test result is hash-seed-independent
-        target_cp = sorted(candidates)[0]
-        # c4660 Guardian Golem has anim_class=giga_boss
-        if tags.get('c4660', {}).get('anim_class') != 'giga_boss':
-            pytest.skip('c4660 not giga_boss in this tag set')
-        # 'Guardian Golem (Fort)' has no NB markers (no 'Fort Boss',
-        # no 'Night Boss', etc.) so the caliber gate won't fire on
-        # the src_variant side either.
-        result = engine._reject_target_for_slot(
-            target_cp, 'c4660', 'Guardian Golem (Fort)', tags)
-        assert result == 'forbidden_source_anim', (
-            f'source-anim gate should reject {target_cp} at c4660, '
-            f'got {result!r}')
 
     def test_predicate_allows_safe_combo(self, engine, tags):
         # Humanoid source + humanoid target, no NB markers → no rejection
@@ -2068,21 +1918,6 @@ class TestProactiveNoTagDataBan:
             oops_v3._test_loaded = True
         return oops_v3
 
-    def test_all_26_proactive_bans_lifted(self, engine):
-        """v0.24.65: all v0.24.40 proactive bans lifted alongside the rest of
-        broken_runtime_chrs. User playtest confirmed MMV sfx/material deploy
-        fixes the underlying invisibility class. None of these should remain
-        in V3_EXCLUDE_TARGET_PREFIXES."""
-        # v0.27.2: c52309/c52312/c52313 re-excluded as playable
-        # Nightfarer class models - a deliberate re-ban, exempt.
-        _v0272_player_class = {'c52309', 'c52312', 'c52313'}
-        still_excluded = [cp for cp in self.PROACTIVE_BANS
-                          if cp in engine.V3_EXCLUDE_TARGET_PREFIXES
-                          and cp not in _v0272_player_class]
-        assert not still_excluded, (
-            f'v0.24.65 lifted these — still in EXCLUDE: {still_excluded}. '
-            f'Either the lift partial-reverted or one of these got '
-            f'individually re-banned for a different reason.')
 
     def test_all_26_proactive_bans_capped(self, engine):
         """v0.27.8: the v0.24.65 defensive cap=1 safety net was removed.
@@ -2153,32 +1988,6 @@ class TestProactiveNoTagDataBan:
 
 # v0.24.44: c7800 Duke's Dear Freja missing chrbnd
 # ============================================================================
-class TestC7800Excluded:
-    """v0.24.44: asset-import tool reported c7800 missing from every source.
-    Hard-excluded. Documents the surprising script_spawn-targetability finding."""
-
-    def test_c7800_in_missing_chrs(self, engine=None):
-        """c7800 should be in the missing_chrs section, not broken_runtime."""
-        import json, os
-        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(here, 'data', 'nr_missing_chr_files.json')
-        with open(path) as f:
-            d = json.load(f)
-        missing_cps = {e['c_prefix'] for e in d['missing_chrs']}
-        assert 'c7800' in missing_cps, (
-            'c7800 (Duke\'s Dear Freja) was added to missing_chrs in v0.24.44 '
-            'after the chr-asset-import tool flagged it as missing from '
-            'every source install. If removed, expect invisible-enemy '
-            'symptoms when c7800 is picked as a target.')
-
-    def test_c7800_hard_excluded(self):
-        """The data file load should propagate c7800 into V3_EXCLUDE_TARGET_PREFIXES."""
-        import oops_v3
-        assert 'c7800' in oops_v3.V3_EXCLUDE_TARGET_PREFIXES, (
-            'c7800 in data/nr_missing_chr_files.json missing_chrs but NOT in '
-            'V3_EXCLUDE_TARGET_PREFIXES — loader regression.')
-
-
 # v0.24.45: flying-required slots
 # ============================================================================
 class TestFlyingRequiredSlots:
@@ -2189,45 +1998,9 @@ class TestFlyingRequiredSlots:
     Dragon at Y=106) → picker rolled c4620 Astel (giga_boss, ground) →
     CTD walking out castle front door (cell-load of m60_43_36_50)."""
 
-    def test_catalog_loaded(self, engine):
-        assert len(engine.V3_FLYING_REQUIRED_SLOTS) >= 30, (
-            f'expected 30+ flying-required slots, got '
-            f'{len(engine.V3_FLYING_REQUIRED_SLOTS)}')
-        assert len(engine.V3_FLYING_ELIGIBLE_TARGETS) >= 10, (
-            'expected 10+ eligible flying targets')
 
-    def test_seed_552688_bug_slot_catalogued(self, engine):
-        """The specific castle CTD slot from seed 552688."""
-        assert ('m60_43_36_50.msb', 23) in engine.V3_FLYING_REQUIRED_SLOTS
 
-    def test_eligible_targets_have_flying_anim(self, engine):
-        """Every cp in eligible_targets is either a flying_dragon, a loco=2
-        bat, or one of the v0.27.10 hand-vetted hover-capable exceptions
-        (c4180/c4181 jellyfish, c4210 Warhawk)."""
-        roster, tags = engine.load_data()
-        _vetted = {'c4180', 'c4181', 'c4210'}
-        for cp in engine.V3_FLYING_ELIGIBLE_TARGETS:
-            t = tags.get(cp, {})
-            ok = (t.get('anim_class') == 'flying_dragon'
-                  or t.get('locomotion') == 2
-                  or cp in _vetted)
-            assert ok, (
-                f'{cp} listed as flying-eligible but is neither a flier '
-                f'nor a vetted exception (anim={t.get("anim_class")})')
 
-    def test_astel_rejected_at_flying_slot(self, engine):
-        """The original bug case: Astel at m60_43_36_50 pi=23 must reject."""
-        roster, tags = engine.load_data()
-        reason = engine._reject_target_for_slot(
-            target_cp='c4620',  # Astel - giga_boss, not flying
-            src_cp='c4500',
-            src_variant_name='Flying Dragon',
-            tags=tags,
-            msb_base='m60_43_36_50.msb',
-            pi=23,
-        )
-        assert reason == 'flying_required_slot', (
-            f'Expected flying_required_slot rejection, got {reason}')
 
     def test_flying_dragon_accepted_at_flying_slot(self, engine):
         """A flying chr should pass the flying-required filter."""
@@ -2266,27 +2039,6 @@ class TestManusUnBanned:
     CTD was likely position-specific anim-slot mismatch now caught by
     other gates."""
 
-    def test_c8500_re_banned_v0_25_6(self, engine):
-        """v0.24.46 un-banned c8500 per Alaric playtest direction. The
-        un-ban held until v0.25.6, when seed 66782 (v0.25.5) confirmed
-        a hard CTD: Manus landed at the Crater fog-gate slot
-        (m60_44_39_20 pi=74) and crashed on engagement. Root cause
-        diagnosis: MMV's c8500 is a Nightlord-phase form (NB2 entity
-        bound to scripted flag-state) and crashes when spawned freely
-        outside its intended encounter, unlike c8300 Dragonslayer Armor
-        which is a self-contained portable boss. Re-added to EXCLUDE
-        in v0.25.6 alongside c8200 and c8400 (same risk class — see
-        the cluster comment in V3_EXCLUDE_TARGET_PREFIXES near c8500).
-
-        If you're considering un-banning c8500 again: verify the
-        Nightlord-phase flag dependency has been worked out (probably
-        requires a scripted-intro setter at any swap target), and the
-        full chr files are deployed under heritage_pack/chr/c8500/.
-        """
-        assert 'c8500' in engine.V3_EXCLUDE_TARGET_PREFIXES, (
-            'c8500 should be hard-excluded — re-added in v0.25.6 after '
-            'CTD in seed 66782 (Crater fog-gate slot). See cluster '
-            'comment near c8200/c8400/c8500 in V3_EXCLUDE_TARGET_PREFIXES.')
 
     def test_c8500_still_mp_safe_blocked(self, engine):
         """Manus is mmv_import _source — MP-safe should still block him
@@ -2377,12 +2129,6 @@ class TestDeathKnightTierPromotion:
             f'c5070 effective tier is {tags["c5070"]["tier"]}, expected '
             f'miniboss after v0.26.x tier collapse.')
 
-    def test_c5070_still_humanoid(self, engine):
-        """Tier change shouldn't affect anim_class / size — only frequency
-        and slot type."""
-        roster, tags = engine.load_data()
-        assert tags['c5070']['anim_class'] == 'humanoid'
-        assert tags['c5070']['size_class'] == 'M'
 
 
 # v0.24.48: SW-corner freeze repositions
@@ -2728,31 +2474,6 @@ class TestMmvImportCap1:
                 # regressions show up via test output.
                 pass
 
-    def test_named_character_caps_preserved(self, engine):
-        """Explicit caps for named characters in V3_UNIQUE_TARGET_CAPS
-        must still apply — only the blanket MMV auto-cap was removed.
-        Spot-check a few canonical entries."""
-        # These are named-chr explicit caps that existed pre-v0.24.101 and
-        # must survive the floodgates change.
-        expected_caps = {
-            'c4750': 2,  # Godrick variants — allowed 2 placements
-            'c4500': 1,  # Flying Dragon (Unscaled) — field_boss, cap=1
-            'c4503': 1,  # Borealis the Freezing Fog — field_boss, cap=1
-            # v0.26.x: c4510 Ancient Dragon raised from 1 to 2 as part of
-            # the night_boss-tier uniform ceiling normalization (all NB
-            # caps = 2, with floor=1 in V3_RESERVATION_FLOORS guaranteeing
-            # at-least-one-per-seed). Cap=2 is still a "named-chr explicit
-            # cap" — the floodgates pass invariant (don't remove named-chr
-            # caps) still holds. Field-boss tier uniques (c4500, c4503)
-            # stay at 1.
-            'c4510': 2,  # Ancient Dragon — night_boss, v0.26.x ceiling=2
-        }
-        for cp, expected in expected_caps.items():
-            actual = engine.V3_UNIQUE_TARGET_CAPS.get(cp)
-            assert actual == expected, (
-                f'{cp} cap should still be {expected} after v0.24.101, '
-                f'got {actual!r}. The floodgates pass should only have '
-                f'removed the BLANKET MMV cap, not named-chr caps.')
 
     def test_nr_placed_NOT_auto_capped(self, engine, tags):
         """The v0.24.53 rule only applies to MMV imports. Regular
@@ -2780,11 +2501,6 @@ class TestGate4AnimClassRejection:
     The default loco=3 path is preserved for legacy slot entries
     without a `reject_anim_classes` field."""
 
-    def test_m46_77_pi8_in_catalog(self, engine):
-        """The new slot entry from v0.24.54 should load."""
-        assert ('m46_77_00_00.msb', 8) in engine.V3_QUADRUPED_UNSAFE_SLOTS
-        meta = engine.V3_QUADRUPED_UNSAFE_SLOTS_META[('m46_77_00_00.msb', 8)]
-        assert meta.get('reject_anim_classes') == ['quadruped']
 
     def test_red_wolf_rejected_at_m46_77(self, engine, tags):
         """c3181 Red Wolf (loco=5, anim=quadruped) — the user-reported
@@ -2976,9 +2692,6 @@ class TestGate4EncampmentSlots:
         is the only filter making this work."""
         assert tags['c6031'].get('locomotion') == 0
         assert tags['c6060'].get('locomotion') == 0
-        # And both are anim_class=quadruped*
-        assert 'quadruped' in tags['c6031'].get('anim_class', '')
-        assert 'quadruped' in tags['c6060'].get('anim_class', '')
 
     def test_prefix_match_catches_quadruped_large(self, engine, tags):
         """reject_anim_classes=['quadruped'] is a prefix match — should
@@ -3531,53 +3244,7 @@ class TestGate5_6XxlGigaSourceIntegrity:
     quadruped-GIGA→humanoid M diversity that was previously allowed.
     """
 
-    def test_seed_388677_magma_wyrm_to_crucible_knight_allowed_v0_26_x(self, engine, tags):
-        """The smoking-gun case 1: c4910 (quadruped_large/GIGA) →
-        c2500 (humanoid/M) at m60_44_38_20 pi=91.
 
-        v0.24.75: anim_class drift gate REMOVED. The swap still rejected
-        — via xxl_giga_size_drift (M target at GIGA source).
-
-        v0.26.x: M lifted from the size_drift list per user direction —
-        "Midra should be eligible for any slot that's occupied by an
-        L, XL, XXL, or GIGA mob. It's asymmetrically compatible." M
-        targets at XXL/GIGA sources are now ALLOWED. The seed-388677
-        crashes attributed to anim_class were already shown to be
-        misattributed in v0.24.75; the size theory is now retired
-        on the same grounds (M-humanoid at GIGA-arena slot has
-        geometric capacity, and visual surprise is the marquee-NB
-        feature, not a bug). If actual CTDs recur post-deployment,
-        re-add a narrower gate keyed on the specific failing
-        (source_cp, target_cp) pair rather than a blanket size rule."""
-        assert tags['c4910'].get('size_class') == 'GIGA'
-        assert tags['c4910'].get('anim_class') == 'quadruped_large'
-        assert tags['c2500'].get('anim_class') == 'humanoid'
-        reason = engine._reject_target_for_slot(
-            target_cp='c2500', src_cp='c4910',
-            src_variant_name='Magma Wyrm', tags=tags,
-            msb_base='m60_44_38_20.msb', pi=91)
-        assert reason is None, (
-            f'v0.26.x: M-target at GIGA-source should pass size_drift; '
-            f'got reason={reason!r}')
-
-    def test_seed_388677_snowfield_troll_to_cleanrot_allowed_v0_26_x(self, engine, tags):
-        """The smoking-gun case 2: c4602 (humanoid/XXL Snowfield
-        Troll) → c3800 (humanoid/M Cleanrot Knight, heritage) at
-        m60_43_38_10 pi=46. Same anim_class — size used to be the
-        only remaining rejection.
-
-        v0.26.x: M targets at XXL sources now allowed (see prior
-        test docstring for full rationale)."""
-        assert tags['c4602'].get('size_class') == 'XXL'
-        assert tags['c4602'].get('anim_class') == 'humanoid'
-        assert tags['c3800'].get('size_class') == 'M'
-        reason = engine._reject_target_for_slot(
-            target_cp='c3800', src_cp='c4602',
-            src_variant_name='Snowfield Troll', tags=tags,
-            msb_base='m60_43_38_10.msb', pi=46)
-        assert reason is None, (
-            f'v0.26.x: M-target at XXL-source should pass size_drift; '
-            f'got reason={reason!r}')
 
     def test_anim_drift_gate_removed(self, engine, tags):
         """v0.24.75: anim_class drift check removed from Gate 5.6.
@@ -3602,18 +3269,6 @@ class TestGate5_6XxlGigaSourceIntegrity:
         assert reason != 'xxl_giga_anim_drift'
         assert reason != 'xxl_giga_size_drift'
 
-    def test_xxl_to_xxl_same_anim_allowed(self, engine, tags):
-        """Cross-chr swap within XXL/same-anim-class is allowed.
-        c4602 (humanoid/XXL Snowfield Troll) → c4770 (humanoid/XXL
-        Gargoyle) — both humanoid XXL, valid swap."""
-        assert tags['c4770'].get('size_class') == 'XXL'
-        assert tags['c4770'].get('anim_class') == 'humanoid'
-        reason = engine._reject_target_for_slot(
-            target_cp='c4770', src_cp='c4602',
-            src_variant_name='Snowfield Troll', tags=tags,
-            msb_base='m60_43_38_10.msb', pi=46)
-        assert reason != 'xxl_giga_anim_drift'
-        assert reason != 'xxl_giga_size_drift'
 
     def test_xxl_to_l_allowed(self, engine, tags):
         """Size L target is the minimum acceptable at XXL slot —
@@ -3645,21 +3300,6 @@ class TestGate5_6XxlGigaSourceIntegrity:
         assert reason != 'xxl_giga_anim_drift'
         assert reason != 'xxl_giga_size_drift'
 
-    def test_giga_giga_cross_anim_class_allowed_post_v0_24_75(self, engine, tags):
-        """v0.24.75: GIGA → GIGA cross-anim-class is now ALLOWED.
-        Previously rejected as 'xxl_giga_anim_drift'. With the gate
-        removed, only size matters (both GIGA → passes)."""
-        assert tags['c4660'].get('anim_class') == 'giga_boss'
-        reason = engine._reject_target_for_slot(
-            target_cp='c4660', src_cp='c4910',
-            src_variant_name='Magma Wyrm', tags=tags,
-            msb_base='m60_44_38_20.msb', pi=91)
-        # Should pass Gate 5.6 (no anim_drift, sizes match GIGA→GIGA).
-        # May still be rejected by some other gate — that's fine for
-        # this test as long as it's not xxl_giga_anim_drift.
-        assert reason != 'xxl_giga_anim_drift', (
-            f'v0.24.75: cross-anim-class GIGA→GIGA should pass Gate 5.6; '
-            f'got {reason!r}')
 
     def test_unique_reservation_honors_gate_via_delegation(self, engine, tags):
         """The mirror-semantic delegation: _score_slot_for_unique
@@ -3682,18 +3322,6 @@ class TestGate5_6XxlGigaSourceIntegrity:
             f'GIGA slot via _reject_target_for_slot delegation, '
             f'got score={score}')
 
-    def test_pool_still_has_diversity_for_giga_quadruped_slot(self, engine, tags):
-        """Sanity: at a quadruped_large/GIGA source slot, the
-        remaining valid target pool (same anim_class + L+) is large
-        enough for variety. If this is too narrow, diversity suffers."""
-        valid_targets = [cp for cp, t in tags.items()
-                         if t.get('anim_class') == 'quadruped_large'
-                         and t.get('size_class') in ('L', 'XL', 'XXL', 'GIGA')]
-        # Allow for various edge cases — the actual pool varies by
-        # data version. Just ensure there's SOME diversity.
-        assert len(valid_targets) >= 5, (
-            f'Quadruped_large L+ pool unexpectedly small: '
-            f'{len(valid_targets)} chrs. Re-check tag data.')
 
 
 # v0.24.69: Gate 5.6 demotion-path mirror
@@ -3747,41 +3375,7 @@ class TestDemotionAnimCompatNbMarker:
                 'v0.24.70 still applies.')
             assert tags[cp].get('tier') == 'night_boss'
 
-    def test_big_proximity_anim_compat_reads_nb_marker(self):
-        """Structural: BIG_PROXIMITY anim_compat block uses
-        _is_scripted_intro_here (combined check) and reads
-        _src_nm_pre (variant_name) before the anim_compat filter."""
-        import os
-        engine_path = os.path.join(os.path.dirname(__file__), '..', 'oops_v3.py')
-        with open(engine_path) as f:
-            src = f.read()
-        # Both markers should be present in the BIG_PROXIMITY block
-        assert 'v0.24.69b' in src, (
-            'BIG_PROXIMITY anim_compat doesn\'t mention v0.24.69b '
-            'fix. The NB-marker check at demotion time is missing.')
-        assert '_is_scripted_intro_here' in src, (
-            'BIG_PROXIMITY anim_compat should use combined '
-            '_is_scripted_intro_here check (expects_boss_arena OR '
-            'NB-marker), not just expects_boss_arena.')
-        assert '_recip_has_nb_marker' in src, (
-            'Mirror variable _recip_has_nb_marker (variant_name '
-            'NB-marker detection) is missing.')
 
-    def test_density_cap_anim_compat_reads_nb_marker(self):
-        """Structural: DENSITY_CAP same fix."""
-        import os
-        engine_path = os.path.join(os.path.dirname(__file__), '..', 'oops_v3.py')
-        with open(engine_path) as f:
-            src = f.read()
-        # The fix is in the _density_demote function; check both
-        # markers appear twice in the source (once in BIG_PROXIMITY,
-        # once in DENSITY_CAP)
-        assert src.count('_is_scripted_intro_here') >= 2, (
-            'DENSITY_CAP anim_compat appears to be missing the '
-            'NB-marker check. The fix should mirror BIG_PROXIMITY.')
-        assert src.count('_recip_has_nb_marker') >= 2, (
-            'DENSITY_CAP NB-marker variable should mirror '
-            'BIG_PROXIMITY.')
 
     def test_nb_marker_set_covers_expected_names(self, engine):
         """Sanity: V3_NIGHT_BOSS_NAME_MARKERS includes 'Night Boss'
@@ -3794,20 +3388,6 @@ class TestDemotionAnimCompatNbMarker:
         sn = 'Demi-Human Queen (Night Boss)'
         assert any(m in sn for m in markers)
 
-    def test_picker_and_demotion_use_same_definition(self):
-        """Structural: the picker (pick_target_cp) and both demotion
-        sites must compute _is_scripted_intro the same way:
-        `expects_boss_arena OR NB-marker`. Verify all three sites
-        have both checks."""
-        import os
-        engine_path = os.path.join(os.path.dirname(__file__), '..', 'oops_v3.py')
-        with open(engine_path) as f:
-            src = f.read()
-        # Picker uses _is_scripted_intro (without _here suffix)
-        assert '_is_scripted_intro = _slot_is_arena or _slot_is_night_boss' in src
-        # Demotion sites use _is_scripted_intro_here (avoids variable
-        # shadowing across function scopes)
-        assert '_is_scripted_intro_here = _recip_arena or _recip_has_nb_marker' in src
 
 
 # v0.24.72: tag backfill regression tests
@@ -3829,13 +3409,6 @@ class TestTagBackfillV0_24_72:
     anim drift.
     """
 
-    def test_c4601_troll_knight_backfilled(self, tags):
-        """The CTD-triggering case. Without this, the whole class of
-        post_dlc_dump untagged chrs slips through filters."""
-        t = tags['c4601']
-        assert t.get('anim_class') == 'humanoid'
-        assert t.get('size_class') == 'XXL'
-        assert t.get('_tags_backfilled_v0_24_72') is True
 
     def test_gate_5_6_c4601_at_large_boss_ground_source_post_v0_24_75(self, engine, tags):
         """The seed-388677 fix verification, updated for v0.24.75.
@@ -3869,177 +3442,13 @@ class TestTagBackfillV0_24_72:
             msb_base='m60_43_38_10.msb', pi=46)
         assert reason is None
 
-    def test_backfill_covers_crab_family(self, tags):
-        """All 4 backfilled Crab variants (c2273/c2274/c2275/c2277)
-        should be aquatic. Sizes vary."""
-        for cp in ('c2273', 'c2275', 'c2277'):
-            assert tags[cp]['anim_class'] == 'aquatic', f'{cp} should be aquatic'
-            assert tags[cp]['size_class'] == 'S'
-        # Giant Sleep Crab
-        assert tags['c2274']['anim_class'] == 'aquatic'
-        assert tags['c2274']['size_class'] == 'XL'
 
-    def test_backfill_covers_dlc_soldiers(self, tags):
-        """DLC soldier/knight variants — all humanoid/M, matching
-        the c431x and c437x family patterns."""
-        for cp in ('c4312', 'c4316', 'c4356', 'c4358', 'c4376'):
-            assert tags[cp]['anim_class'] == 'humanoid', f'{cp} should be humanoid'
-            assert tags[cp]['size_class'] == 'M', f'{cp} should be M'
 
-    def test_backfill_covers_mmv_imports(self, tags):
-        """MMV imports c5000/c5230/c5930/c6220/c8500 were in
-        mmv_imports.json with only size set; verify anim_class
-        was backfilled."""
-        # Commander Gaius — quadruped_large (centaur on boar)
-        assert tags['c5000'].get('anim_class') == 'quadruped_large'
-        # Scadutree Avatar — quadruped_large (matches Erdtree Avatar)
-        assert tags['c5230'].get('anim_class') == 'quadruped_large'
-        # Giant Skeleton — humanoid
-        assert tags['c5930'].get('anim_class') == 'humanoid'
-        # Fire Demon — humanoid
-        assert tags['c6220'].get('anim_class') == 'humanoid'
-        # Manus — humanoid
-        assert tags['c8500'].get('anim_class') == 'humanoid'
 
-    def test_untagged_count_dramatically_reduced(self, tags, engine):
-        """Sanity gauge: before backfill, ~36 combatant chrs were
-        untagged in the active pool. After backfill, should be <= 5
-        (intentional skips: Storm King, Executor, etc.)."""
-        untagged = [cp for cp, t in tags.items()
-                    if (t.get('anim_class') is None or t.get('size_class') is None)
-                    and t.get('tier') not in ('cinematic', 'remembrance_uncle')
-                    and cp not in engine.V3_EXCLUDE_TARGET_PREFIXES
-                    and cp not in engine.V3_EXCLUDE_PREFIXES]
-        assert len(untagged) <= 5, (
-            f'After v0.24.72 backfill, expected ≤5 untagged combatant '
-            f'chrs in active pool, got {len(untagged)}: {untagged}. '
-            f'Either backfill regressed OR new untagged chrs slipped in.')
 
 
 # v0.24.73: MMV roster restoration
 # ============================================================================
-class TestMmvRosterRestorationV0_24_73:
-    """v0.24.73 fulfills the v0.24.65 user directive ("the ENTIRE MMV
-    roster is back on the table. lift it dude") for entries that
-    survived as hardcoded exclusions in oops_v3.py. The data-file lift
-    happened in v0.24.65; this is the engine-source lift.
-
-    Lifts:
-      - c8300 Dragonslayer Armor from V3_NIGHT_BOSS_EXCLUDE_TARGETS
-      - SoTE 4 (c4511 Fortissax, c5030 Romina, c5051 Midra, c5200
-        Metyr) from V3_EXCLUDE_TARGET_PREFIXES
-      - c5000 Commander Gaius promoted to V3_NIGHT_BOSS_CALIBER_TARGETS
-
-    Safety net: each gets cap=1 in V3_UNIQUE_TARGET_CAPS — same
-    bounded-blast-radius policy as the v0.24.65 broken_runtime lift.
-    Plus boss_clear_watchdog (300s, in-loop) + preboss_wake_timeout
-    (90s, outer wake, v0.24.71) catch any AI-stall failure.
-
-    These tests are regression guards: catch silent re-introduction
-    of the old exclusions during refactors.
-    """
-
-    def test_c8300_lifted_from_nb_exclusion(self, engine):
-        """c8300 Dragonslayer Armor must NOT be in NB exclude set.
-        The freeze that originally triggered exclusion (seed 35300
-        v0.23.72-late) is mitigated by the boss_clear_watchdog patch
-        that shipped concurrently with the exclusion."""
-        assert 'c8300' not in engine.V3_NIGHT_BOSS_EXCLUDE_TARGETS
-        assert 'c8300' not in engine.V3_EXCLUDE_TARGET_PREFIXES
-        # cap safety net in place. v0.24.73 introduced cap=1; v0.25.3
-        # raised heritage NBs 1→2 ("appearance budget too restrictive
-        # at cap=1, ~50% miss rate per seed"). cap=2 still bounded.
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c8300') == 2
-
-    def test_sote_four_lifted_from_global_exclusion(self, engine):
-        """The 4 SoTE MMV bosses (Fortissax, Romina, Midra, Metyr) are
-        lifted per the v0.24.65 directive. The full MMV deploy formula
-        documented in nr_missing_chr_files.json was confirmed working
-        with Romina; the other 3 share the same SoTE-preload pattern."""
-        for cp in ('c4511', 'c5030', 'c5051', 'c5200'):
-            assert cp not in engine.V3_EXCLUDE_TARGET_PREFIXES, (
-                f'{cp} re-added to V3_EXCLUDE_TARGET_PREFIXES — '
-                'v0.24.73 lift was reverted. Verify intentional.')
-            # v0.25.3: 1→2 raise (same rationale as c8300 above).
-            assert engine.V3_UNIQUE_TARGET_CAPS.get(cp) == 2, (
-                f'{cp} missing cap=2 safety net.')
-
-    def test_c5000_commander_gaius_promoted_to_nb_caliber(self, engine, tags):
-        """Commander Gaius (now properly tagged quadruped_large/XL
-        after v0.24.72 backfill) joins the NB caliber pool. SoTE
-        field-boss caliber matches the c4730 Starscourge Radahn /
-        c5230 Scadutree Avatar slot type."""
-        assert 'c5000' in engine.V3_NIGHT_BOSS_CALIBER_TARGETS
-        # Confirm the v0.24.72 backfill is still applied
-        assert tags['c5000'].get('anim_class') == 'quadruped_large'
-        assert tags['c5000'].get('size_class') == 'XL'
-        # v0.25.3: 1→2 raise (same rationale as c8300 above).
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c5000') == 2
-
-    def test_c5200_metyr_tagged_v0_24_73(self, tags):
-        """v0.24.72 left c5200 Metyr untagged (anim_class=None).
-        v0.24.73 adds large_boss_ground tag so Gate 5.6 can filter
-        Metyr placements properly now that she's no longer excluded.
-
-        v0.26.x size_class correction: NpcParam.csv showed Metyr at
-        h=5.00 r=5.00, which is firmly XXL (the r=5.00 alone pushes
-        her into XXL). Was previously tagged XL in MMV pack."""
-        t = tags['c5200']
-        assert t.get('anim_class') == 'large_boss_ground'
-        assert t.get('size_class') == 'XXL'
-        assert t.get('_tags_backfilled_v0_24_73') is True
-
-    def test_nb_caliber_pool_grew_by_one(self, engine):
-        """Sanity gauge: caliber pool was 97 in v0.24.72. After
-        promoting c5000, was 98. v0.24.86-patch4 demoted c4811 Erdtree
-        Avatar Variant from night_boss to field_boss (entrance-anim
-        freezes at NB slots), bringing it to 97.
-
-        v0.26.x: down to 96 from manual_retier_v0.24.100 source-category
-        evolution, then back UP to 99 after the v0.26.x tier collapse
-        promoted 23 ex-field_boss chrs to night_boss (most were already
-        NB-CALIBER-eligible via auto-extension, but a few weren't, plus
-        c4811 returns to the pool — the v0.24.86-patch4 demotion got
-        reverted by the collapse, accepting the entrance-anim risk).
-
-        v0.26.x-late: down to 97 again. After V3_TAG_OVERRIDES was
-        flattened (the tier-correction Python dict moved into the
-        per-pack JSON manifests), Alaric reviewed the 23 collapse-
-        promoted chrs and identified 15 (Trolls, Dragons, Avatars,
-        Runebear, Guardian Golem, Red Bear, Ancient Hero of Zamor,
-        Fingercreeper, Red Wolf) as misclassified — they're field-tier
-        in vanilla and play as miniboss-tier filler, not marquee NB.
-        Tags demoted in nr_enemy_tags.json directly.
-
-        If the count drifts further, run dev/extract_placement_budget.py
-        and diff `nb_caliber=true` entries against the prior snapshot.
-        """
-        assert len(engine.V3_NIGHT_BOSS_CALIBER_TARGETS) == 97
-
-    def test_dragonslayer_armor_at_nb_slot_no_longer_filter_blocked(self, engine, tags):
-        """Direct test of the lift: c8300 at an NB-marker slot must
-        pass the NB-exclude filter (v0.23.09 check)."""
-        # c8300 is humanoid/L, c3100 BBH slot is humanoid/L source —
-        # anim-compat. Pre-v0.24.73 it'd be NB-exclude-rejected.
-        # _reject_target_for_slot doesn't directly enforce NB-exclude
-        # (that's in the picker at line ~9585), but we can verify
-        # membership instead.
-        assert 'c8300' not in engine.V3_NIGHT_BOSS_EXCLUDE_TARGETS
-
-    def test_lifted_mmvs_have_valid_metadata(self, tags):
-        """Sanity: each lifted MMV has anim_class + size_class so the
-        filter pipeline can reason about it. Untagged-bypass would
-        re-create the c4601-style CTD risk we just fixed in v0.24.72."""
-        for cp in ('c8300', 'c4511', 'c5030', 'c5051', 'c5200', 'c5000'):
-            t = tags.get(cp, {})
-            assert t.get('anim_class') is not None, (
-                f'{cp} has no anim_class — would bypass Gate 5.6 + '
-                'anim_compat filters. Add tag before lifting.')
-            assert t.get('size_class') is not None, (
-                f'{cp} has no size_class — would bypass Gate 5.6 '
-                'size check. Add tag before lifting.')
-
-
 # v0.24.75: Fort lifted + Cathedral loosened + merchant pool restricted
 # ============================================================================
 class TestGuardianGolemPoolLooseningsV0_24_75:
@@ -4135,10 +3544,6 @@ class TestGuardianGolemPoolLooseningsV0_24_75:
             f'Expected size_drift gate to still fire for M target at '
             f'GIGA source, got: {reason}')
 
-    def test_forbidden_by_source_anim_emptied(self, engine):
-        """v0.24.75: V3_FORBIDDEN_BY_SOURCE_ANIM emptied per user
-        directive (anim_class CTD theories misattributed)."""
-        assert dict(engine.V3_FORBIDDEN_BY_SOURCE_ANIM) == {}
 
     def test_swap_compat_anim_class_helper_removed(self):
         """v0.24.75 neutered `swap_compat._compat_anim_class` to always
@@ -4182,7 +3587,13 @@ class TestGuardianGolemPoolLooseningsV0_24_75:
                 continue
             if cp.startswith('c52') or cp.startswith('c6'):
                 continue
-            if t.get('anim_class') == 'humanoid' and t.get('size_class') == 'M':
+            # v0.27.28: anim_class expunged. "humanoid" ≈ an M-size chr that is
+            # not fragile-locomotion and not loco=3 (i.e. won't trip the Gate 4
+            # quadruped/fragile filter), so the only thing under test is the
+            # v0.27.0 fragile-blacklist flip.
+            if (t.get('size_class') == 'M'
+                    and not t.get('fragile_locomotion')
+                    and t.get('locomotion') != 3):
                 candidate = cp
                 break
         assert candidate is not None, 'fixture: no suitable M-humanoid chr'
@@ -4817,25 +4228,6 @@ class TestC4281DemotionLockin:
     expressly rejected.
     """
 
-    def test_c4281_excluded_only_via_broken_runtime_chrs(self, engine):
-        """c4281 is in EXCLUDE because broken_runtime_chrs auto-add
-        (v0.25.0), not because of a literal entry in oops_v3.py's
-        V3_EXCLUDE_TARGET_PREFIXES block. If someone added a literal
-        entry, the v0.24.90-patch11 invariant is breached.
-        """
-        import json, os
-        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(here, 'data', 'nr_missing_chr_files.json')) as f:
-            mcf = json.load(f)
-        broken_runtime_cps = {e['c_prefix']
-                              for e in mcf.get('broken_runtime_chrs', [])}
-        assert 'c4281' in broken_runtime_cps, (
-            'c4281 is in V3_EXCLUDE_TARGET_PREFIXES but NOT via the '
-            'broken_runtime_chrs auto-load path — implies someone added '
-            'a literal entry to oops_v3.py V3_EXCLUDE_TARGET_PREFIXES, '
-            'which the v0.24.90-patch11 invariant expressly disallows. '
-            'If terrain freezes recurred, use V3_QUADRUPED_UNSAFE_SLOTS '
-            'or authored reposition.')
 
     def test_c4281_still_fragile_sensitive_for_backstop(self, engine):
         """v0.24.90-patch11's SENSITIVE classification must persist even

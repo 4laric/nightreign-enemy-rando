@@ -69,8 +69,10 @@ class TestNonexistentPath:
     def test_nr_install_missing_dir(self, validate_path_kind, tmp_path):
         ghost = tmp_path / 'no_such_dir'
         state, detail = validate_path_kind(str(ghost), 'nr_install')
-        assert state == 'error'
-        assert 'does not exist' in detail.lower()
+        # v0.27.x: validation never returns 'error' (see test_never_returns_error);
+        # a missing path is a 'warn' that explains recovery via the Vanilla MSBs field.
+        assert state == 'warn'
+        assert 'not found' in detail.lower()
 
 
 # ---------------------------------------------------------------------
@@ -88,7 +90,7 @@ class TestNrInstall:
         state, detail = validate_path_kind(str(install), 'nr_install')
         assert state == 'ok'
         assert 'NR install OK' in detail
-        assert '2 MSBs' in detail
+        assert 'MSBs found' in detail
 
     def test_install_root_with_game_subdir(self, validate_path_kind, tmp_path):
         """User might pick the install ROOT (parent of Game/), not Game/.
@@ -108,7 +110,7 @@ class TestNrInstall:
         (install / 'map' / 'mapstudio').mkdir(parents=True)
         state, detail = validate_path_kind(str(install), 'nr_install')
         assert state == 'warn'
-        assert 'unpopulated' in detail.lower() or 'no .msb' in detail.lower()
+        assert 'map/mapstudio' in detail.lower()
 
     def test_no_mapstudio_at_all(self, validate_path_kind, tmp_path):
         """Path exists but has no map/mapstudio anywhere — wrong dir or
@@ -116,7 +118,8 @@ class TestNrInstall:
         not_an_install = tmp_path / 'random_folder'
         not_an_install.mkdir()
         state, detail = validate_path_kind(str(not_an_install), 'nr_install')
-        assert state == 'error'
+        # v0.27.x: never 'error' — warns and explains recovery via Vanilla MSBs field.
+        assert state == 'warn'
         assert 'map/mapstudio' in detail.lower() or 'mapstudio' in detail.lower()
 
 

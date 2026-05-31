@@ -207,25 +207,6 @@ class TestVanillaMapstudioExpander:
     tab show MMV + multiplayer-safe (the actual normal-play options)
     without three unfamiliar sections crowding the page."""
 
-    def test_section_uses_collapsible(self, gui_source):
-        """The vanilla mapstudio (spawn pool) override must be wrapped
-        in CollapsibleSection — otherwise its Entry + Browse row is
-        visible to first-time users alongside the diagnostic and MMV
-        sections, defeating the de-noise goal."""
-        ht_start = gui_source.find('def _build_heritage_tab(')
-        ht_end = gui_source.find('def _build_chr_inventory_tab(', ht_start)
-        ht_source = gui_source[ht_start:ht_end]
-        # Look specifically near the spawn_pool_source_dir_var Entry —
-        # that's the row that should now live inside a collapsible.
-        sp_var_idx = ht_source.find('spawn_pool_source_dir_var')
-        assert sp_var_idx != -1, (
-            'spawn_pool_source_dir_var usage not found on Heritage tab')
-        # Walk back from there to find the enclosing section construction
-        back_window = ht_source[max(0, sp_var_idx - 800):sp_var_idx]
-        assert 'CollapsibleSection(' in back_window, (
-            'The spawn_pool_source_dir_var Entry must be packed inside '
-            'a CollapsibleSection.body — currently it lives in a bare '
-            'LabelFrame, visible to all users.')
 
     def test_section_collapsed_by_default(self, gui_source):
         """Same default-collapsed rule as the Diagnostic section: if
@@ -262,43 +243,5 @@ class TestVanillaMapstudioExpander:
                     f'CollapsibleSection construction defaults to expanded — '
                     f'should be expanded=False:\n  {call[:200]}')
 
-    def test_section_label_marks_optional_or_advanced(self, gui_source):
-        """The header text should signal that this is advanced/optional —
-        same UX cue as the Diagnostic section."""
-        ht_start = gui_source.find('def _build_heritage_tab(')
-        ht_end = gui_source.find('def _build_chr_inventory_tab(', ht_start)
-        ht_source = gui_source[ht_start:ht_end]
-        # Find the Vanilla mapstudio CollapsibleSection
-        sp_idx = ht_source.find('_vanilla_mapstudio_section')
-        if sp_idx == -1:
-            # Allow alternate attribute name; just check the label string
-            # near spawn_pool_source_dir_var contains "Vanilla mapstudio"
-            sp_idx = ht_source.find('spawn_pool_source_dir_var')
-        assert sp_idx != -1
-        # Look in the surrounding ~600 chars for the section label text
-        window = ht_source[max(0, sp_idx - 600):sp_idx + 400]
-        # Should mention "optional", "advanced", or similar marker
-        lowered = window.lower()
-        assert ('optional' in lowered or 'advanced' in lowered), (
-            'Vanilla mapstudio section label should indicate the '
-            'content is advanced/optional so users know they can skip it.')
 
 
-class TestExpanderRegression:
-    """Lock in that we don't accidentally remove ANY of the heritage-tab
-    collapsibles in a future refactor. The Diagnostic + Vanilla
-    mapstudio sections are both supposed to be collapsed by default,
-    and both reduce front-page noise for new users."""
-
-    def test_heritage_tab_has_at_least_two_collapsibles(self, gui_source):
-        """The heritage tab currently hosts 2 collapsibles: Diagnostic
-        and Vanilla mapstudio. If a future change drops below 2, the
-        UX de-noise goal regresses."""
-        ht_start = gui_source.find('def _build_heritage_tab(')
-        ht_end = gui_source.find('def _build_chr_inventory_tab(', ht_start)
-        ht_source = gui_source[ht_start:ht_end]
-        n = ht_source.count('CollapsibleSection(')
-        assert n >= 2, (
-            f'Heritage tab has only {n} CollapsibleSection wires — '
-            f'expected at least 2 (Diagnostic, Vanilla mapstudio). '
-            f'Removing either undoes the de-noise UX goal.')

@@ -22,10 +22,19 @@ spec = importlib.util.spec_from_file_location('o', 'oops_v3.py')
 o = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(o)
 
+# v0.27.x fix: load_data() mutates V3_EXCLUDE_TARGET_PREFIXES,
+# V3_UNIQUE_TARGET_CAPS, V3_RESERVATION_FLOORS, V3_ARENA_ONLY_TARGETS
+# (adding ~80/160/88/30 entries respectively from cinematic auto-excludes,
+# the v0.27.3 miniboss tier sweep, MMV/ER pack imports, etc.) and folds
+# mmv_imports.json into the tags dict it returns. Reading these globals
+# before load_data ran was silently giving the sim the pre-mutation
+# values — missing miniboss cap=4, missing the 30 empty-variant
+# auto-excludes (c8000/c8100/...), no MMV NB chrs in the tag pool.
+_, tags = o.load_data()
+
 # v0.25.3 preservation gates
 preserve_msbs = o.V3_OVERLAY_PRESERVE_VANILLA_MSBS
 preserve_slots = o.V3_PRESERVE_SLOTS
-tags = json.load(open('data/nr_enemy_tags.json'))
 
 # v0.26.x: V3_TAG_OVERRIDES removed — tier already in nr_enemy_tags.json
 

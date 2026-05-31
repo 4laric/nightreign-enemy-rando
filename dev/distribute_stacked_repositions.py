@@ -109,6 +109,7 @@ RIDER_MOUNT_PAIRS = [
     ('c4050', 'c4060'),  # Kaiden Sellsword + Horse
     ('c4353', 'c4363'),  # Leyndell Knight + Lordsworn's Horse
     ('c3150', 'c3160'),  # Night's Cavalry + Funeral Steed
+    ('c5840', 'c5890'),  # Black Knight + Black Knight Horse (v0.27.13 fabricated mounted pair)
 ]
 
 # Two co-located entries are treated as a mounted pair only when their

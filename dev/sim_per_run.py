@@ -32,12 +32,26 @@ USAGE
   # Adjust seed count + RNG seed
   python3 dev/sim_per_run.py --seeds 500 --rng-seed 12345
 
-CALIBRATION ANCHOR
+CALIBRATION ANCHORS
 
-  c4353 Leyndell Knight (cap=6) is the canonical "miniboss appearance"
-  reference. In a freshly-tuned engine state, expect:
-    mean ~1.0/seed, max ~4, appears in ~60% of runs.
-  If Leyndell drifts well outside that band, something else changed.
+  c4353 Leyndell Knight (cap=4 from v0.27.3) is the canonical
+  "miniboss appearance" reference. Targets shift by mode:
+
+  Boss-only (--seeds 500):                     mean~0.82, max=4, appear~52%
+  Boss + grunts (--seeds 500 --grunts):        mean~0.74, max=4, appear~41%
+
+  The grunts-mode drop is the v0.28 hybrid-picker recycling at work:
+  big MSBs saturate the per-MSB distinct budget on grunt picks (median
+  4 vanilla cps/MSB), then later slots in that MSB skew toward already-
+  resident cps. The fresh branch also EXCLUDES resident cps while
+  under budget, so a chr that doesn't get picked early in an MSB tends
+  to get zero picks in that MSB — concentration per MSB up, variety
+  per MSB down, total picks per seed roughly flat.
+
+  Use --recycle-stats to see the kind totals (fresh/recycle/overflow).
+  Boss-only typically shows ~5% recycle (slots too sparse to saturate);
+  --grunts shows ~75% recycle (saturation hits within ~4 picks per MSB).
+  If Leyndell drifts well outside these bands, something else changed.
 """
 
 import argparse
@@ -55,6 +69,7 @@ PROJECT_ROOT = os.path.dirname(HERE)
 ENGINE_PATH = os.path.join(PROJECT_ROOT, 'oops_v3.py')
 TAGS_PATH = os.path.join(PROJECT_ROOT, 'data/nr_enemy_tags.json')
 ALL_SLOTS_PATH = os.path.join(PROJECT_ROOT, 'data/nr_all_slots.json')
+INVENTORY_PATH = os.path.join(PROJECT_ROOT, 'data/nr_slot_inventory.json')
 
 # Per-NR-mechanics weighting. If Alaric reports different observed rates
 # in playtest, edit these.
@@ -76,26 +91,30 @@ MMV_NB_FALLBACK = {
 
 
 def load_engine():
-    """Import oops_v3 fresh — picks up whatever the current state of
-    V3_TAG_OVERRIDES, V3_UNIQUE_TARGET_CAPS, V3_EXCLUDE_TARGET_PREFIXES,
-    and V3_BOSS_SLOT_CATALOG is on disk."""
+    """Import oops_v3 fresh AND run load_data() so the mutated module
+    globals (V3_EXCLUDE_TARGET_PREFIXES, V3_UNIQUE_TARGET_CAPS,
+    V3_RESERVATION_FLOORS, V3_ARENA_ONLY_TARGETS, etc.) reflect the
+    production state. Returns (o, tags) — tags is the post-load_data
+    dict that includes MMV/ER pack imports.
+
+    v0.27.x fix: previously this only ran exec_module, which left the
+    mutated sets at their pre-load_data sizes — sim was missing ~80
+    exclusions, ~160 caps, ~88 floors, and the MMV-augmented tag
+    entries. Cap-marked rows printed as 'cap=-' and excluded chrs
+    (c8000/c8100/c8110/etc) appeared in placement totals."""
     spec = importlib.util.spec_from_file_location('o', ENGINE_PATH)
     o = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(o)
-    return o
+    _, tags = o.load_data()
+    return o, tags
 
 
-def load_tags_with_overrides(o):
-    """Apply V3_TAG_OVERRIDES so the post-override tier is what the sim
-    sees, then inject MMV NB fallbacks."""
-    with open(TAGS_PATH) as f:
-        tags = json.load(f)
-    # v0.26.x: V3_TAG_OVERRIDES was removed — tiers now live directly in
-    # nr_enemy_tags.json. Guarded so the sim runs whether or not the
-    # engine carries the attribute.
-    for cp, override in getattr(o, 'V3_TAG_OVERRIDES', {}).items():
-        if cp in tags:
-            tags[cp].update(override)
+def load_tags_with_overrides(o, tags):
+    """Inject MMV NB fallbacks for chrs not in tags. After the
+    v0.27.x load_engine() fix, load_data's _PACK_LOADERS already fold
+    mmv_imports.json into `tags`, so this is normally a no-op — kept
+    as a defensive fallback for the case where mmv_imports.json is
+    absent or fails to load."""
     for cp, info in MMV_NB_FALLBACK.items():
         if cp not in tags:
             tags[cp] = info
@@ -158,16 +177,85 @@ def bucket_slots(o, tags, include_grunts=False):
     return slots_by_class
 
 
-def run_sim(o, tags, slots_by_class, n_seeds, rng_seed):
-    """Run N seeds with realistic per-run MSB weighting. Returns
-    (per_seed, pools): per_seed maps cp -> list of per-seed counts
-    (length N); pools maps tier -> candidate cp list."""
+def compute_msb_budgets(o, prefix_variants):
+    """v0.28: per-MSB distinct-c-prefix budget. Mirrors the pre-scan in
+    shuffle_msb_v3 (~line 14465 of oops_v3.py): count the distinct enemy
+    c-prefixes on SWAPPABLE slots in each MSB. Forced-vanilla slots
+    (excluded sources, no-variants, pinned, dead-npc) don't count —
+    their chrbnd is loaded vanilla-cheap and isn't charged against the
+    rando-introduced distinct chrbnd cap.
+
+    Returns {msb_name -> int budget}. The sim's _choose_with_budget call
+    will treat any MSB not in the dict as unbounded (legacy behavior).
+
+    NB this uses the full slot inventory, not just boss slots, so the
+    budget reflects what the real engine would compute even when the
+    sim is running in boss-only mode. Without this the boss-only loop
+    would saturate the budget far too rarely vs production."""
+    excl_pref = o.V3_EXCLUDE_PREFIXES
+    excl_src = o.V3_EXCLUDE_SOURCE_PREFIXES
+    pinned_va = getattr(o, 'V3_BINARY_SEARCH_VANILLA_PINS', set())
+    with open(INVENTORY_PATH) as f:
+        inv = json.load(f)
+    by_msb = defaultdict(set)
+    for r in inv:
+        cp = r.get('c_prefix')
+        npc = r.get('npc_param_id', 0)
+        if not (cp and cp.startswith('c') and len(cp) > 1 and cp[1].isdigit()):
+            continue
+        if npc == 0 or npc == 0xFFFFFFFF:
+            continue
+        if (r['map'][:-4] if r['map'].endswith('.msb') else r['map'],
+                r['part_index']) in pinned_va:
+            continue
+        if cp in excl_pref or cp in excl_src:
+            continue
+        if cp not in prefix_variants:
+            continue
+        by_msb[r['map']].add(cp)
+    return {msb: len(cps) for msb, cps in by_msb.items()}
+
+
+def run_sim(o, tags, slots_by_class, n_seeds, rng_seed,
+            track_recycle_kinds=False):
+    """Run N seeds with realistic per-run MSB weighting + the v0.28
+    hybrid distinct-budget/recycle picker. Returns (per_seed, pools[,
+    kind_totals]): per_seed maps cp -> list of per-seed counts (length
+    N); pools maps tier -> candidate cp list; kind_totals (when
+    track_recycle_kinds is set) maps 'fresh'/'recycle'/'overflow'/'none'
+    to total counts across all seeds — a diagnostic for how often
+    recycling fires.
+
+    v0.28 hybrid: per-MSB iteration with a distinct-c-prefix budget
+    (from compute_msb_budgets) and a resident set tracking which
+    c-prefixes have been committed in the current MSB. The
+    _choose_with_budget helper from oops_v3 is imported and used
+    verbatim — same code path the engine and simulate_engine.py run
+    through, so the variety/recycle behavior matches by construction."""
     caps = o.V3_UNIQUE_TARGET_CAPS
     excl = o.V3_EXCLUDE_TARGET_PREFIXES
     # Night-boss slots additionally subtract V3_NIGHT_BOSS_EXCLUDE_TARGETS
     # (chrs barred from NB arenas but still valid as field content) —
     # mirrors the engine's pool filter in shuffle_msb_v3.
     nb_excl = getattr(o, 'V3_NIGHT_BOSS_EXCLUDE_TARGETS', set())
+
+    # v0.28: shared picker so sim and engine pick the same way.
+    # Fallback to a local inline picker if the engine doesn't carry
+    # _choose_with_budget yet (running an older oops_v3).
+    _choose = getattr(o, '_choose_with_budget', None)
+    if _choose is None:
+        def _choose(chosen_pool, resident, budget, picker):
+            if not chosen_pool:
+                return None, None
+            fresh = [c for c in chosen_pool if c not in resident]
+            recyc = [c for c in chosen_pool if c in resident]
+            if len(resident) < budget and fresh:
+                return picker(sorted(fresh)), 'fresh'
+            if recyc:
+                return picker(sorted(recyc)), 'recycle'
+            if fresh:
+                return picker(sorted(fresh)), 'overflow'
+            return None, None
 
     def tier_pool(tier):
         extra = nb_excl if tier == 'night_boss' else set()
@@ -182,12 +270,21 @@ def run_sim(o, tags, slots_by_class, n_seeds, rng_seed):
     pools = {tier: tier_pool(tier) for tier in tiers_present}
     all_cps = set().union(*pools.values()) if pools else set()
 
+    # v0.28: per-MSB distinct-c-prefix budget, computed once from the
+    # full slot inventory (the engine's basis, not the sim's filtered
+    # slot view).
+    prefix_variants, _ = o.build_per_prefix_data(
+        json.load(open(os.path.join(PROJECT_ROOT,
+                                    'data/nr_enemy_roster.json'))))
+    msb_budgets = compute_msb_budgets(o, prefix_variants)
+
     castle_variants = sorted([sub for (cls, sub) in slots_by_class
                               if cls == 'castle'])
     if not castle_variants:
-        castle_variants = [None]  # graceful: no castle slots in catalog
+        castle_variants = [None]
 
     per_seed = defaultdict(list)
+    kind_totals = Counter()
     rng = random.Random(rng_seed)
     for _ in range(n_seeds):
         # Roll shifting earth
@@ -208,21 +305,42 @@ def run_sim(o, tags, slots_by_class, n_seeds, rng_seed):
                 seed_slots.extend(slots)
             elif cls == 'castle' and sub == active_castle:
                 seed_slots.extend(slots)
-        # Walk slots in random order, picker uses uniform sample with caps
-        rng.shuffle(seed_slots)
-        used = Counter()
-        placements = Counter()
-        for slot in seed_slots:
-            pool = pools.get(slot['src_tier'], ())
-            avail = [cp for cp in pool
-                     if caps.get(cp) is None or used[cp] < caps[cp]]
-            if not avail:
-                continue
-            pick = rng.choice(avail)
-            placements[pick] += 1
-            used[pick] += 1
+
+        # v0.28: group by MSB so recycling logic has a meaningful
+        # per-MSB scope. MSB iteration order is randomized; within
+        # each MSB slot order is randomized too (mirrors v0.27.13
+        # per-MSB random slot order in shuffle_msb_v3).
+        slots_by_msb = defaultdict(list)
+        for s in seed_slots:
+            slots_by_msb[s['msb']].append(s)
+        msb_order = list(slots_by_msb)
+        rng.shuffle(msb_order)
+
+        used = Counter()         # run-wide cap accumulator
+        placements = Counter()   # run-wide placement counts
+        for msb in msb_order:
+            msb_slots = slots_by_msb[msb][:]
+            rng.shuffle(msb_slots)
+            resident = set()
+            budget = msb_budgets.get(msb, 1 << 30)  # unbounded fallback
+            for slot in msb_slots:
+                pool = pools.get(slot['src_tier'], ())
+                avail = [cp for cp in pool
+                         if caps.get(cp) is None or used[cp] < caps[cp]]
+                pick, kind = _choose(avail, resident, budget, rng.choice)
+                if pick is None:
+                    if track_recycle_kinds:
+                        kind_totals['none'] += 1
+                    continue
+                placements[pick] += 1
+                used[pick] += 1
+                resident.add(pick)
+                if track_recycle_kinds:
+                    kind_totals[kind] += 1
         for cp in all_cps:
             per_seed[cp].append(placements[cp])
+    if track_recycle_kinds:
+        return per_seed, pools, kind_totals
     return per_seed, pools
 
 
@@ -422,6 +540,13 @@ def main():
                          'data/nr_all_slots.json) and print a separate '
                          'grunt distribution table. Off by default — '
                          'grunt slots are ~2600 vs ~120 boss slots.')
+    ap.add_argument('--recycle-stats', action='store_true',
+                    help='Print v0.28 hybrid-picker kind totals (fresh/'
+                         'recycle/overflow/none). Useful for confirming '
+                         'budget tuning — boss-only mode typically shows '
+                         'near-zero recycle since boss slots rarely '
+                         'saturate the per-MSB budget on their own; '
+                         '--grunts mode is where recycling actually fires.')
     args = ap.parse_args()
 
     if args.diff and args.against:
@@ -434,14 +559,27 @@ def main():
         return 0
 
     # Run a fresh sim
-    o = load_engine()
-    tags = load_tags_with_overrides(o)
+    o, tags = load_engine()
+    tags = load_tags_with_overrides(o, tags)
     slots_by_class = bucket_slots(o, tags, include_grunts=args.grunts)
-    per_seed, _ = run_sim(o, tags, slots_by_class,
-                          n_seeds=args.seeds, rng_seed=args.rng_seed)
+    if args.recycle_stats:
+        per_seed, _, kind_totals = run_sim(
+            o, tags, slots_by_class,
+            n_seeds=args.seeds, rng_seed=args.rng_seed,
+            track_recycle_kinds=True)
+    else:
+        per_seed, _ = run_sim(o, tags, slots_by_class,
+                              n_seeds=args.seeds, rng_seed=args.rng_seed)
+        kind_totals = None
     summary = summarize(per_seed, tags, o.V3_UNIQUE_TARGET_CAPS)
     result = build_result(o, args.seeds, args.rng_seed, summary,
                           slots_by_class, include_grunts=args.grunts)
+    if kind_totals is not None:
+        total = sum(kind_totals.values()) or 1
+        print('\nv0.28 hybrid-picker kind totals across all seeds:')
+        for k in ('fresh', 'recycle', 'overflow', 'none'):
+            n = kind_totals.get(k, 0)
+            print(f'  {k:9s} {n:>9d}  ({100*n/total:5.1f}%)')
 
     if args.diff:
         # Diff fresh-sim vs saved baseline

@@ -129,7 +129,8 @@ class TestLoaderStatsUniformShape:
 
 class TestExcludeTargetAddsIsTheUnion:
     """For mmv specifically, exclude_target_adds should be the union
-    of blacklist + cross_engine_bans + mount_component_bans.
+    of blacklist + mount_component_bans. (cross_engine_bans was folded
+    into blacklist in v0.26.x when origin_game auto-banning was dropped.)
     Validates the standardization didn't drop information."""
 
     def test_union_matches_components(self):
@@ -148,13 +149,16 @@ class TestExcludeTargetAddsIsTheUnion:
         }
         stats = apply_mmv_imports(pack,
                                   tags={}, roster={'all_variants': []})
+        # v0.26.x: cross_engine_bans was folded into 'blacklist' (the
+        # DS1/BB cross-engine bans now live there). exclude_target_adds is
+        # the union of blacklist (incl. cross-engine) and mount-component bans.
         expected = (
             stats['blacklist']
-            | stats['cross_engine_bans']
             | stats['mount_component_bans']
         )
         assert stats['exclude_target_adds'] == expected
-        # And the union is non-trivial — we should see all three classes.
-        assert 'cCTD' in stats['exclude_target_adds']
-        assert 'cDS1' in stats['exclude_target_adds']
-        assert 'cMOUNT' in stats['exclude_target_adds']
+        # And the union is non-trivial. NOTE: cDS1 (origin_game='DS1') is
+        # deliberately NOT here — v0.26.x deprecated origin_game auto-banning
+        # (MMV ships working cross-engine chrbnds), so DS1 chrs import normally.
+        assert 'cCTD' in stats['exclude_target_adds']   # blacklist (ctd)
+        assert 'cMOUNT' in stats['exclude_target_adds']  # mount-component

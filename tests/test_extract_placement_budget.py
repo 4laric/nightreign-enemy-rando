@@ -313,12 +313,11 @@ class TestLiveEngine:
         budget = extract_budget(engine, tags=tags)
         chrs = budget['chrs']
 
-        # c7800 Duke's Dear Freja — cap was dropped (chrbnd-missing), still
-        # excluded
-        assert chrs['c7800']['cap'] is None, (
-            'c7800 should have no cap entry after v0.26.x cleanup '
-            '(chr has no chrbnd on disk; excluded permanently)')
-        assert chrs['c7800']['exclude'] is True
+        # c7800 Duke's Dear Freja — re-enabled as a usable target (chrbnd now
+        # present, heritage-imported); no longer excluded, no cap. Locked here
+        # so it doesn't silently flip back to the v0.26.x excluded-permanently state.
+        assert chrs['c7800']['exclude'] is False
+        assert chrs['c7800']['cap'] is None
 
         # c4361 Godrick Knight's Horse — removed from _LIFTED_V0_24_65,
         # still excluded

@@ -32,7 +32,43 @@ def _load_inventory():
     return json.load(open(path))
 
 
-def simulate(seed, inventory, roster, tags, pv, pc):
+def _compute_msb_budgets(o, prefix_variants, inventory):
+    """v0.28 per-MSB distinct-c-prefix budget. Mirrors the pre-scan in
+    shuffle_msb_v3 (~line 14465): count the distinct enemy c-prefixes
+    among SWAPPABLE slots per MSB. Forced-vanilla slots (excluded
+    sources, no-variants, pinned) aren't charged — their chrbnd is
+    loaded vanilla-cheap. Working assumption from oops_v3 v0.28 notes:
+    rando-introduced distinct cps are the only thing the budget caps.
+
+    Pre-v0.28 simulate_engine.py omitted this and called begin_msb with
+    the default distinct_budget=0, which short-circuits in
+    pick_target_cp (`_budget = ... or (1 << 30)`) — silently disabling
+    recycling and running the picker in fresh-only mode forever."""
+    from collections import defaultdict
+    excl_pref = o.V3_EXCLUDE_PREFIXES
+    excl_src = o.V3_EXCLUDE_SOURCE_PREFIXES
+    pinned_va = getattr(o, 'V3_BINARY_SEARCH_VANILLA_PINS', set())
+    by_msb = defaultdict(set)
+    for r in inventory:
+        cp = r.get('c_prefix')
+        npc = r.get('npc_param_id', 0)
+        if not (cp and cp.startswith('c') and len(cp) > 1 and cp[1].isdigit()):
+            continue
+        if npc == 0 or npc == 0xFFFFFFFF:
+            continue
+        msb = r['map']
+        msb_base = msb[:-4] if msb.endswith('.msb') else msb
+        if (msb_base, r['part_index']) in pinned_va:
+            continue
+        if cp in excl_pref or cp in excl_src:
+            continue
+        if cp not in prefix_variants:
+            continue
+        by_msb[msb].add(cp)
+    return {msb: len(cps) for msb, cps in by_msb.items()}
+
+
+def simulate(seed, inventory, roster, tags, pv, pc, msb_budgets=None):
     """Run one MSB-free shuffle for `seed`. Returns a result dict."""
     rng = random.Random(seed)
     o._V3_RUN_SEED = seed  # v0.28: propagate seed to the per-slot hashed rolls
@@ -60,14 +96,28 @@ def simulate(seed, inventory, roster, tags, pv, pc):
             continue                         # hubs: pinned-only in prod
         msb_base = msb_name[:-4] if msb_name.endswith('.msb') else msb_name
 
-        # arm the v0.27.5 proximity/density gates with this MSB's caps
+        # arm the v0.27.5 proximity/density gates with this MSB's caps,
+        # AND the v0.28 distinct-c-prefix budget for recycling.
+        _budget = (msb_budgets or {}).get(msb_name, 0)
         if msb_name in o.V3_TUNNEL_MAPS:
             run_ctx.begin_msb(o.V3_TUNNEL_DENSITY_CAP_XL_PLUS,
-                              o.V3_TUNNEL_DENSITY_CAP_L_PLUS)
+                              o.V3_TUNNEL_DENSITY_CAP_L_PLUS,
+                              distinct_budget=_budget,
+                              caps=o.V3_UNIQUE_TARGET_CAPS)
         else:
             run_ctx.begin_msb(o.V3_DENSITY_CAP_XL_PLUS,
-                              o.V3_DENSITY_CAP_L_PLUS)
+                              o.V3_DENSITY_CAP_L_PLUS,
+                              distinct_budget=_budget,
+                              caps=o.V3_UNIQUE_TARGET_CAPS)
 
+        # v0.28: canonical part-index order. v0.27.13 had a per-MSB
+        # shuffle, but it was reverted in v0.28 because the per-slot
+        # hashed pick (_slot_decision_rng) makes the picked cp
+        # independent of visit order; canonical order then makes the
+        # order-dependent target_count cap consumption deterministic
+        # and identical between production and this sim. See the
+        # v0.28 comment block in shuffle_msb_v3 (~line 14523 of
+        # oops_v3.py) for the full rationale.
         for rec in sorted(by_msb[msb_name], key=lambda r: r['part_index']):
             pi = rec['part_index']
             cur_cp = rec['c_prefix']
@@ -161,13 +211,18 @@ def main():
     roster = json.load(open(os.path.join(_ROOT, 'data/nr_enemy_roster.json')))
     _roster2, tags = o.load_data()
     pv, pc = o.build_per_prefix_data(roster)
+    msb_budgets = _compute_msb_budgets(o, pv, inventory)
     print(f"loaded inventory: {len(inventory)} slots, "
-          f"{len(set(r['map'] for r in inventory))} MSBs\n")
+          f"{len(set(r['map'] for r in inventory))} MSBs; "
+          f"v0.28 per-MSB budgets: min={min(msb_budgets.values())} "
+          f"median={sorted(msb_budgets.values())[len(msb_budgets)//2]} "
+          f"max={max(msb_budgets.values())}\n")
 
     seeds = [int(a) for a in args]
     out_f = open(out_path, 'w') if out_path else None
     for seed in seeds:
-        r = simulate(seed, inventory, roster, tags, pv, pc)
+        r = simulate(seed, inventory, roster, tags, pv, pc,
+                     msb_budgets=msb_budgets)
         overcap = []
         for cp, n in r['placed_counts'].items():
             cap = o.V3_UNIQUE_TARGET_CAPS.get(cp)

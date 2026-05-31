@@ -23,9 +23,19 @@ spec = importlib.util.spec_from_file_location('o', 'oops_v3.py')
 o = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(o)
 
+# v0.27.x fix: load_data() must run before the sim reads
+# V3_UNIQUE_TARGET_CAPS / V3_EXCLUDE_TARGET_PREFIXES (and before tags
+# is consulted for tier info). Pre-load_data the caps dict only has
+# 77 entries; post-load_data it has 238 — and CAPS_v0_25_3 below
+# uses dict(o.V3_UNIQUE_TARGET_CAPS) as its baseline, so without
+# this the A/B "v0.25.3 capped" arm was running with a stale cap set
+# (no miniboss tier-wide cap=4, no grunt-tier cap=40, etc.) that
+# never matched any shipped engine version. Also gets MMV chrs into
+# `tags` via _PACK_LOADERS.
+_, tags = o.load_data()
+
 preserve_msbs = o.V3_OVERLAY_PRESERVE_VANILLA_MSBS
 preserve_slots = o.V3_PRESERVE_SLOTS
-tags = json.load(open('data/nr_enemy_tags.json'))
 # v0.26.x: V3_TAG_OVERRIDES removed — tier already in JSON
 
 MMV_NB_FALLBACK = {

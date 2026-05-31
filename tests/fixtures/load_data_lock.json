@@ -1,15 +1,15 @@
 {
   "everything_enabled": {
-    "arena_only_targets_count": 28,
-    "arena_only_targets_sha256": "d39fd347a8f7246d",
-    "avoid_variant_npc_ids_count": 116,
-    "avoid_variant_npc_ids_sha256": "8b088e19644c5f34",
-    "exclude_target_count": 136,
-    "exclude_target_sha256": "148996cdde8e0260",
-    "mp_safe_blocklist_count": 200,
-    "mp_safe_blocklist_sha256": "77f5239d300c5a0f",
-    "night_boss_caliber_count": 97,
-    "night_boss_caliber_sha256": "ab618f6f64a61cfd",
+    "arena_only_targets_count": 19,
+    "arena_only_targets_sha256": "21c841cc0ac8798f",
+    "avoid_variant_npc_ids_count": 279,
+    "avoid_variant_npc_ids_sha256": "a5be13e5b45ef97b",
+    "exclude_target_count": 129,
+    "exclude_target_sha256": "89159edcc50710fd",
+    "mp_safe_blocklist_count": 217,
+    "mp_safe_blocklist_sha256": "4a5d3fd65810f2cb",
+    "night_boss_caliber_count": 99,
+    "night_boss_caliber_sha256": "51cb1236af2cb686",
     "night_boss_strict_count": 0,
     "night_boss_strict_sha256": "4f53cda18c2baa0c",
     "sample_cps": {
@@ -47,29 +47,30 @@
       }
     },
     "source_breakdown": {
-      "heritage": 35,
+      "er_heritage_port_v0_27_0": 9,
+      "heritage": 45,
       "manual_retier_v0.24.100": 16,
       "manual_tag": 2,
-      "mmv_import": 41,
+      "mmv_import": 39,
       "nr_placed": 190,
       "post_dlc_dump": 106
     },
-    "tags_count": 390,
-    "tags_sha256": "56b1d1f23b154915",
-    "variants_count": 3391,
-    "variants_sha256": "bcebdf5e915cc2ea"
+    "tags_count": 407,
+    "tags_sha256": "17c8700292abeac2",
+    "variants_count": 3713,
+    "variants_sha256": "59d81d1728f0675b"
   },
   "vanilla_only": {
-    "arena_only_targets_count": 13,
-    "arena_only_targets_sha256": "b596f9e9b478fbff",
-    "avoid_variant_npc_ids_count": 116,
-    "avoid_variant_npc_ids_sha256": "8b088e19644c5f34",
-    "exclude_target_count": 125,
-    "exclude_target_sha256": "71663d68a3b17a37",
-    "mp_safe_blocklist_count": 118,
-    "mp_safe_blocklist_sha256": "e379070845d8e330",
+    "arena_only_targets_count": 11,
+    "arena_only_targets_sha256": "339d772e45a99661",
+    "avoid_variant_npc_ids_count": 275,
+    "avoid_variant_npc_ids_sha256": "c475ddcb30231cd0",
+    "exclude_target_count": 121,
+    "exclude_target_sha256": "89b812ed5c21d057",
+    "mp_safe_blocklist_count": 96,
+    "mp_safe_blocklist_sha256": "c8c5e23465b258f0",
     "night_boss_caliber_count": 82,
-    "night_boss_caliber_sha256": "1dfcac8a3bef7bb5",
+    "night_boss_caliber_sha256": "94571648e6c5ed65",
     "night_boss_strict_count": 0,
     "night_boss_strict_sha256": "4f53cda18c2baa0c",
     "sample_cps": {
@@ -108,25 +109,25 @@
     },
     "source_breakdown": {
       "manual_retier_v0.24.100": 12,
-      "nr_placed": 190,
-      "post_dlc_dump": 106
+      "nr_placed": 184,
+      "post_dlc_dump": 84
     },
-    "tags_count": 308,
-    "tags_sha256": "fff61233df30f3ea",
-    "variants_count": 2715,
-    "variants_sha256": "fda34755df9e51a9"
+    "tags_count": 280,
+    "tags_sha256": "a19238c25d5fe082",
+    "variants_count": 2475,
+    "variants_sha256": "247617aaefe0ee4a"
   },
   "vanilla_plus_heritage": {
-    "arena_only_targets_count": 13,
-    "arena_only_targets_sha256": "b596f9e9b478fbff",
-    "avoid_variant_npc_ids_count": 116,
-    "avoid_variant_npc_ids_sha256": "8b088e19644c5f34",
-    "exclude_target_count": 125,
-    "exclude_target_sha256": "71663d68a3b17a37",
-    "mp_safe_blocklist_count": 159,
-    "mp_safe_blocklist_sha256": "187a31070f7e70f7",
-    "night_boss_caliber_count": 82,
-    "night_boss_caliber_sha256": "1dfcac8a3bef7bb5",
+    "arena_only_targets_count": 11,
+    "arena_only_targets_sha256": "339d772e45a99661",
+    "avoid_variant_npc_ids_count": 278,
+    "avoid_variant_npc_ids_sha256": "a626dd5ec6ecc3db",
+    "exclude_target_count": 121,
+    "exclude_target_sha256": "89b812ed5c21d057",
+    "mp_safe_blocklist_count": 183,
+    "mp_safe_blocklist_sha256": "f8ae58376e33f71e",
+    "night_boss_caliber_count": 84,
+    "night_boss_caliber_sha256": "202fafbb62be53b9",
     "night_boss_strict_count": 0,
     "night_boss_strict_sha256": "4f53cda18c2baa0c",
     "sample_cps": {
@@ -164,15 +165,16 @@
       }
     },
     "source_breakdown": {
-      "heritage": 35,
+      "er_heritage_port_v0_27_0": 9,
+      "heritage": 48,
       "manual_retier_v0.24.100": 16,
       "manual_tag": 2,
       "nr_placed": 190,
-      "post_dlc_dump": 106
+      "post_dlc_dump": 108
     },
-    "tags_count": 349,
-    "tags_sha256": "cd8147b15ef987bb",
-    "variants_count": 3018,
-    "variants_sha256": "809966c6e48a73cc"
+    "tags_count": 373,
+    "tags_sha256": "317a8031e9ce4a83",
+    "variants_count": 3466,
+    "variants_sha256": "7fda0116576998f0"
   }
 }

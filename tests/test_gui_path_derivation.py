@@ -254,15 +254,16 @@ class TestApplyInstallAutodetect:
         # Read source and confirm the try/except contract is in place
         with open(os.path.join(here, 'oops_rando_gui.py')) as f:
             src = f.read()
-        # Extract the method body and check for try/except
-        start = src.find('def _apply_install_autodetect(')
-        end = src.find('def _save_root_paths(', start)
+        # v0.27.x: the install-discovery logic moved out of
+        # _apply_install_autodetect (now a thin delegator) into the
+        # module-level _autodetect_paths(). Check the try/except there.
+        start = src.find('def _autodetect_paths(')
+        end = src.find('def should_run_wizard(', start)
         body = src[start:end]
         assert 'try:' in body, (
-            '_apply_install_autodetect must wrap install_discovery '
-            'calls in try/except so a discovery failure does not '
-            'block GUI startup.')
-        assert 'except' in body, '_apply_install_autodetect needs except handler'
+            '_autodetect_paths must wrap install_discovery calls in '
+            'try/except so a discovery failure does not block GUI startup.')
+        assert 'except' in body, '_autodetect_paths needs except handler'
 
 
 # ---------------------------------------------------------------------
@@ -373,15 +374,14 @@ class TestAutodetectBadges:
     def test_autodetect_keys_tracked(self, gui_source):
         """_apply_install_autodetect must populate _autodetected_keys
         with each key it filled, so the UI can show the badge."""
-        start = gui_source.find('def _apply_install_autodetect(self, saved):')
-        end = gui_source.find('    def ', start + 1)
-        body = gui_source[start:end]
-        assert '_autodetected_keys' in body, (
-            '_apply_install_autodetect must record which fields it '
-            'filled (via self._autodetected_keys) so the UI knows '
-            'which to badge as auto-detected.')
-        assert ".add('game_install')" in body or '"game_install"' in body
-        assert ".add('er_install')" in body or '"er_install"' in body
+        # v0.27.x: tracking lives in _apply_install_autodetect
+        # (self._autodetected_keys |= filled) while the per-key fill lives
+        # in _autodetect_paths (filled.add('game_install')). Check the file.
+        assert '_autodetected_keys' in gui_source, (
+            'the autodetect path must record which fields it filled (via '
+            'self._autodetected_keys) so the UI knows which to badge.')
+        assert ".add('game_install')" in gui_source or '"game_install"' in gui_source
+        assert ".add('er_install')" in gui_source or '"er_install"' in gui_source
 
     def test_badge_refresh_method_exists(self, gui_source):
         assert 'def _refresh_autodetect_badges(self' in gui_source

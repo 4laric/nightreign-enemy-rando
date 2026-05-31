@@ -6833,6 +6833,123 @@ class RandoGUI(PoolsCapsPanelMixin):
         self.status_var.set("Cancelling at next checkpoint…")
         self.log_queue.put("\n--- Cancellation requested ---\n")
 
+    def _maybe_prefetch_vanilla(self, in_dir):
+        """Packed-install support. When the input dir has no map files but a
+        Nightreign install is available, read the vanilla map MSBs straight out
+        of the game's .bhd/.bdt archives (via vanilla_source/data_archive) into
+        a local cache, and return that cache's mapstudio dir as the new input —
+        so a UXM unpack isn't required to run the rando.
+
+        Returns the (possibly updated) input dir. On ANY problem it logs a note
+        and returns the original ``in_dir`` unchanged, so the normal input
+        validation/error path runs exactly as before; this never makes a
+        working setup worse.
+
+        The Vanilla event field (which gates the EMEVD/healthbar step) is filled
+        ONLY when it was already pointing at a path that doesn't exist — i.e. the
+        user opted into events but their install is packed. A blank event field
+        is left blank, so a packed install never silently turns event patching on.
+        """
+        # Unpacked install — input already has map files; nothing to do.
+        try:
+            if in_dir and os.path.isdir(in_dir) and any(
+                    f.endswith('.msb.dcx') or f.endswith('.msb')
+                    for f in os.listdir(in_dir)):
+                return in_dir
+        except OSError:
+            pass
+
+        # The .bhd/.bdt archives live in the NR install's Game/ dir.
+        game = ''
+        if hasattr(self, 'game_install_var'):
+            game = (self.game_install_var.get() or '').strip()
+        if not game or not os.path.isdir(game):
+            try:
+                import install_discovery
+                game = install_discovery.find_nightreign_install() or ''
+            except Exception:
+                game = ''
+        if not game or not os.path.isdir(game):
+            return in_dir  # no install found -> let the existing error fire
+
+        # User opted into the event step iff they set the field to a path that
+        # isn't a real dir (a packed install can't have a loose event/ folder).
+        ev = ''
+        if hasattr(self, 'vanilla_emevd_dir_var'):
+            ev = (self.vanilla_emevd_dir_var.get() or '').strip()
+        want_events = bool(ev) and not os.path.isdir(ev)
+
+        try:
+            from vanilla_source import VanillaSource, load_manifest
+        except Exception as e:
+            self._log(f"Packed-install reader unavailable ({e}); point the "
+                      f"input folder at an unpacked map/mapstudio dir.\n")
+            return in_dir
+
+        cache = os.path.join(HERE, '.vanilla_cache')
+        bundled_msbs = os.path.join(HERE, 'vanilla_msbs')
+        try:
+            man = load_manifest()
+            rels = list(man.get('mapstudio', []))
+            if want_events:
+                rels += list(man.get('event', []))
+            src = VanillaSource(
+                game,
+                loose_map_dir=bundled_msbs if os.path.isdir(bundled_msbs) else None,
+                loose_event_dir=ev if (want_events and os.path.isdir(ev)) else None)
+            if not src.has_archive:
+                self._log("Couldn't open the NR archives (keys/format) — using "
+                          "the input folder as-is.\n")
+                return in_dir
+
+            total = len(rels)
+            what = "map + event" if want_events else "map"
+            self._log(f"Packed install detected: reading vanilla {what} data "
+                      f"from the game archives ({total} files, one-time)…\n")
+            self.status_var.set(f"Reading vanilla {what} data… 0/{total}")
+            try:
+                self.root.update_idletasks()
+            except Exception:
+                pass
+
+            def _prog(n, tot, rel):
+                if n % 50 == 0 or n == tot:
+                    self.status_var.set(f"Reading vanilla {what} data… {n}/{tot}")
+                    try:
+                        self.root.update_idletasks()
+                    except Exception:
+                        pass
+
+            n_ok, failed = src.materialize(rels, cache, on_progress=_prog)
+        except Exception as e:
+            self._log(f"Vanilla prefetch failed ({e}); using the input folder "
+                      f"as-is.\n")
+            return in_dir
+
+        cache_map = os.path.join(cache, 'map', 'mapstudio')
+        cache_event = os.path.join(cache, 'event')
+        try:
+            got_maps = os.path.isdir(cache_map) and any(
+                f.endswith('.msb.dcx') for f in os.listdir(cache_map))
+        except OSError:
+            got_maps = False
+        if not got_maps:
+            self._log("Vanilla prefetch produced no map files; using the input "
+                      "folder as-is.\n")
+            return in_dir
+
+        self.input_dir_var.set(cache_map)
+        msg = f"Read {n_ok} vanilla files into {cache}\n"
+        if want_events and os.path.isdir(cache_event):
+            self.vanilla_emevd_dir_var.set(cache_event)
+            msg += f"Vanilla event folder set to {cache_event}\n"
+        if failed:
+            msg += (f"  {len(failed)} file(s) not in the base archives "
+                    f"(need the dlc01 key): {failed[:3]}"
+                    f"{' …' if len(failed) > 3 else ''}\n")
+        self._log(msg)
+        return cache_map
+
     def _run_shuffle(self):
         if self.worker_thread and self.worker_thread.is_alive():
             messagebox.showwarning("Already running",
@@ -6859,6 +6976,12 @@ class RandoGUI(PoolsCapsPanelMixin):
         in_dir = self.input_dir_var.get()
         out_dir = self.output_dir_var.get()
         mod_map_dir = self.mod_map_dir_var.get().strip()
+        # v0.27.x: packed-install support. If the input folder has no map files
+        # but a Nightreign install is configured, read the vanilla map (and,
+        # when the Vanilla event field is set-but-packed, event) data straight
+        # from the game's .bhd/.bdt archives into a local cache and use that.
+        # Silently no-ops to the existing behavior on any problem (see method).
+        in_dir = self._maybe_prefetch_vanilla(in_dir)
         if not os.path.isdir(in_dir):
             messagebox.showerror("Bad input directory",
                 f"Input directory does not exist:\n{in_dir or '(blank)'}\n\n"

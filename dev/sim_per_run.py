@@ -70,6 +70,7 @@ ENGINE_PATH = os.path.join(PROJECT_ROOT, 'oops_v3.py')
 TAGS_PATH = os.path.join(PROJECT_ROOT, 'data/nr_enemy_tags.json')
 ALL_SLOTS_PATH = os.path.join(PROJECT_ROOT, 'data/nr_all_slots.json')
 INVENTORY_PATH = os.path.join(PROJECT_ROOT, 'data/nr_slot_inventory.json')
+CLUSTERS_PATH = os.path.join(PROJECT_ROOT, 'data/slot_poi_clusters.json')
 
 # Per-NR-mechanics weighting. If Alaric reports different observed rates
 # in playtest, edit these.
@@ -177,27 +178,43 @@ def bucket_slots(o, tags, include_grunts=False):
     return slots_by_class
 
 
-def compute_msb_budgets(o, prefix_variants):
-    """v0.28: per-MSB distinct-c-prefix budget. Mirrors the pre-scan in
-    shuffle_msb_v3 (~line 14465 of oops_v3.py): count the distinct enemy
-    c-prefixes on SWAPPABLE slots in each MSB. Forced-vanilla slots
-    (excluded sources, no-variants, pinned, dead-npc) don't count —
-    their chrbnd is loaded vanilla-cheap and isn't charged against the
+def load_poi_lookup():
+    """Phase 1: load data/slot_poi_clusters.json and build a reverse
+    lookup `{(msb, part_index): cluster_id}` keyed for the hot loop.
+    Returns the dict; raises if the cluster file is absent."""
+    with open(CLUSTERS_PATH, encoding='utf-8') as f:
+        data = json.load(f)
+    lookup = {}
+    for msb, clist in data['clusters'].items():
+        for cluster_id, members in enumerate(clist):
+            for pi in members:
+                lookup[(msb, pi)] = cluster_id
+    return lookup
+
+
+def compute_budgets(o, prefix_variants, poi_lookup=None):
+    """v0.28 per-scope distinct-c-prefix budget. Same logic as the
+    pre-scan in shuffle_msb_v3, but keyed on either msb (MSB scope,
+    default) or (msb, cluster_id) (POI scope) depending on whether
+    a poi_lookup dict is provided. Forced-vanilla slots (excluded
+    sources, no-variants, pinned, dead-npc) don't count — their
+    chrbnd is loaded vanilla-cheap and isn't charged against the
     rando-introduced distinct chrbnd cap.
 
-    Returns {msb_name -> int budget}. The sim's _choose_with_budget call
-    will treat any MSB not in the dict as unbounded (legacy behavior).
+    Phase 1 of POI recycling: pass `poi_lookup` (from
+    load_poi_lookup()) to get per-cluster budgets; downstream code
+    (run_sim) reads the budget with the matching key type.
 
-    NB this uses the full slot inventory, not just boss slots, so the
-    budget reflects what the real engine would compute even when the
-    sim is running in boss-only mode. Without this the boss-only loop
-    would saturate the budget far too rarely vs production."""
+    Return shapes:
+      poi_lookup=None  -> {msb: int}
+      poi_lookup={...} -> {(msb, cluster_id): int}
+    """
     excl_pref = o.V3_EXCLUDE_PREFIXES
     excl_src = o.V3_EXCLUDE_SOURCE_PREFIXES
     pinned_va = getattr(o, 'V3_BINARY_SEARCH_VANILLA_PINS', set())
     with open(INVENTORY_PATH) as f:
         inv = json.load(f)
-    by_msb = defaultdict(set)
+    by_scope = defaultdict(set)
     for r in inv:
         cp = r.get('c_prefix')
         npc = r.get('npc_param_id', 0)
@@ -205,19 +222,31 @@ def compute_msb_budgets(o, prefix_variants):
             continue
         if npc == 0 or npc == 0xFFFFFFFF:
             continue
-        if (r['map'][:-4] if r['map'].endswith('.msb') else r['map'],
-                r['part_index']) in pinned_va:
+        msb = r['map']
+        pi = r['part_index']
+        msb_base = msb[:-4] if msb.endswith('.msb') else msb
+        if (msb_base, pi) in pinned_va:
             continue
         if cp in excl_pref or cp in excl_src:
             continue
         if cp not in prefix_variants:
             continue
-        by_msb[r['map']].add(cp)
-    return {msb: len(cps) for msb, cps in by_msb.items()}
+        if poi_lookup is None:
+            scope_key = msb
+        else:
+            cid = poi_lookup.get((msb, pi), -1)
+            scope_key = (msb, cid)
+        by_scope[scope_key].add(cp)
+    return {k: len(v) for k, v in by_scope.items()}
+
+
+# Back-compat alias for legacy callers / tests.
+def compute_msb_budgets(o, prefix_variants):
+    return compute_budgets(o, prefix_variants, poi_lookup=None)
 
 
 def run_sim(o, tags, slots_by_class, n_seeds, rng_seed,
-            track_recycle_kinds=False):
+            track_recycle_kinds=False, poi_lookup=None):
     """Run N seeds with realistic per-run MSB weighting + the v0.28
     hybrid distinct-budget/recycle picker. Returns (per_seed, pools[,
     kind_totals]): per_seed maps cp -> list of per-seed counts (length
@@ -270,13 +299,28 @@ def run_sim(o, tags, slots_by_class, n_seeds, rng_seed,
     pools = {tier: tier_pool(tier) for tier in tiers_present}
     all_cps = set().union(*pools.values()) if pools else set()
 
-    # v0.28: per-MSB distinct-c-prefix budget, computed once from the
+    # v0.28: per-scope distinct-c-prefix budget, computed once from the
     # full slot inventory (the engine's basis, not the sim's filtered
     # slot view).
+    #
+    # Phase 1: poi_lookup=None -> per-MSB scope (production v0.28
+    # default); poi_lookup={(msb,pi):cluster_id} -> per-POI scope
+    # (Phase 2 engine behavior with V3_POI_SCOPE_RECYCLE=True).
     prefix_variants, _ = o.build_per_prefix_data(
         json.load(open(os.path.join(PROJECT_ROOT,
                                     'data/nr_enemy_roster.json'))))
-    msb_budgets = compute_msb_budgets(o, prefix_variants)
+    budgets = compute_budgets(o, prefix_variants, poi_lookup=poi_lookup)
+
+    # Slot -> scope-key resolver. MSB scope: key = msb. POI scope:
+    # key = (msb, cluster_id) with -1 sentinel for slots missing
+    # from the cluster file (shouldn't happen but defensive).
+    if poi_lookup is None:
+        def scope_key(slot):
+            return slot['msb']
+    else:
+        def scope_key(slot):
+            cid = poi_lookup.get((slot['msb'], slot['pi']), -1)
+            return (slot['msb'], cid)
 
     castle_variants = sorted([sub for (cls, sub) in slots_by_class
                               if cls == 'castle'])
@@ -306,24 +350,25 @@ def run_sim(o, tags, slots_by_class, n_seeds, rng_seed,
             elif cls == 'castle' and sub == active_castle:
                 seed_slots.extend(slots)
 
-        # v0.28: group by MSB so recycling logic has a meaningful
-        # per-MSB scope. MSB iteration order is randomized; within
-        # each MSB slot order is randomized too (mirrors v0.27.13
-        # per-MSB random slot order in shuffle_msb_v3).
-        slots_by_msb = defaultdict(list)
+        # v0.28: group by scope (MSB or POI) so recycling logic has a
+        # meaningful per-scope resident set. Scope iteration order is
+        # randomized; within each scope slot order is randomized too
+        # (mirrors v0.27.13 per-MSB random slot order). In POI mode
+        # the grouping is one level finer (one cluster at a time).
+        slots_by_scope = defaultdict(list)
         for s in seed_slots:
-            slots_by_msb[s['msb']].append(s)
-        msb_order = list(slots_by_msb)
-        rng.shuffle(msb_order)
+            slots_by_scope[scope_key(s)].append(s)
+        scope_order = list(slots_by_scope)
+        rng.shuffle(scope_order)
 
         used = Counter()         # run-wide cap accumulator
         placements = Counter()   # run-wide placement counts
-        for msb in msb_order:
-            msb_slots = slots_by_msb[msb][:]
-            rng.shuffle(msb_slots)
+        for scope in scope_order:
+            scope_slots = slots_by_scope[scope][:]
+            rng.shuffle(scope_slots)
             resident = set()
-            budget = msb_budgets.get(msb, 1 << 30)  # unbounded fallback
-            for slot in msb_slots:
+            budget = budgets.get(scope, 1 << 30)  # unbounded fallback
+            for slot in scope_slots:
                 pool = pools.get(slot['src_tier'], ())
                 avail = [cp for cp in pool
                          if caps.get(cp) is None or used[cp] < caps[cp]]
@@ -366,7 +411,7 @@ def summarize(per_seed, tags, caps):
 
 
 def build_result(o, n_seeds, rng_seed, summary, slots_by_class,
-                 include_grunts=False):
+                 include_grunts=False, poi_scope=False):
     """Dict that gets saved as JSON. Includes enough metadata that a
     diff can sanity-check it's comparing comparable runs."""
     bucket_sizes = {f'{cls}:{sub}' if sub else cls: len(s)
@@ -381,6 +426,7 @@ def build_result(o, n_seeds, rng_seed, summary, slots_by_class,
             'rng_seed': rng_seed,
             'shifting_earth_prob_each': SHIFTING_EARTH_PROB_EACH,
             'include_grunts': include_grunts,
+            'poi_scope': poi_scope,
         },
         'bucket_sizes': bucket_sizes,
         'cprefixes': summary,
@@ -547,6 +593,15 @@ def main():
                          'near-zero recycle since boss slots rarely '
                          'saturate the per-MSB budget on their own; '
                          '--grunts mode is where recycling actually fires.')
+    ap.add_argument('--poi-scope', action='store_true',
+                    help='Phase 1 of POI recycling spec: scope the v0.28 '
+                         'distinct-budget + resident set per spatial POI '
+                         'cluster (from data/slot_poi_clusters.json) '
+                         'instead of per-MSB. Mirrors what '
+                         'V3_POI_SCOPE_RECYCLE=True in oops_v3 does at '
+                         'the engine level (Phase 2). Use with '
+                         '--recycle-stats + --save to compare scopes via '
+                         '--diff.')
     args = ap.parse_args()
 
     if args.diff and args.against:
@@ -562,21 +617,26 @@ def main():
     o, tags = load_engine()
     tags = load_tags_with_overrides(o, tags)
     slots_by_class = bucket_slots(o, tags, include_grunts=args.grunts)
+    poi_lookup = load_poi_lookup() if args.poi_scope else None
     if args.recycle_stats:
         per_seed, _, kind_totals = run_sim(
             o, tags, slots_by_class,
             n_seeds=args.seeds, rng_seed=args.rng_seed,
-            track_recycle_kinds=True)
+            track_recycle_kinds=True, poi_lookup=poi_lookup)
     else:
         per_seed, _ = run_sim(o, tags, slots_by_class,
-                              n_seeds=args.seeds, rng_seed=args.rng_seed)
+                              n_seeds=args.seeds, rng_seed=args.rng_seed,
+                              poi_lookup=poi_lookup)
         kind_totals = None
     summary = summarize(per_seed, tags, o.V3_UNIQUE_TARGET_CAPS)
     result = build_result(o, args.seeds, args.rng_seed, summary,
-                          slots_by_class, include_grunts=args.grunts)
+                          slots_by_class, include_grunts=args.grunts,
+                          poi_scope=args.poi_scope)
     if kind_totals is not None:
         total = sum(kind_totals.values()) or 1
-        print('\nv0.28 hybrid-picker kind totals across all seeds:')
+        scope_label = 'POI' if args.poi_scope else 'MSB'
+        print(f'\nv0.28 hybrid-picker kind totals across all seeds '
+              f'(scope: {scope_label}):')
         for k in ('fresh', 'recycle', 'overflow', 'none'):
             n = kind_totals.get(k, 0)
             print(f'  {k:9s} {n:>9d}  ({100*n/total:5.1f}%)')

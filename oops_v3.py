@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.27.42'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.45'  # MUST bump on each release — appears in spoilers
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -718,6 +718,38 @@ V3_EXCLUDE_SOURCE_PREFIXES = {
     # vendor / kneeling / sitting pose — visual only, not a CTD. Trade
     # accepted: the variety win from 341 randomized slots outweighs
     # occasional visual oddness at a small subset of those slots.
+
+    # v0.27.45 (merge fix): c4050 Kaiden Sellsword — the cluster-visual
+    # mounted-rider case, SOURCE-excluded (not both-ways) so its mounted
+    # vanilla Parts stay vanilla while it remains placeable as a TARGET
+    # elsewhere. Same failure mode as the c3150 Night's Cavalry RE-INTRODUCED
+    # note above: the horse model rides in on the rider's spawn CLUSTER, not
+    # as a separate mount Part, so swapping the rider leaves the visual horse
+    # anchored to the new chr. Evidence — spoiler _spoilers.json (v0.27.45)
+    # showed c4050 at m60_44_36_00 pi=28 -> c5270 Jar Innards (a Jar Innards
+    # visibly on the Kaiden horse); the file has ZERO c4060 Parts in 3779
+    # entries, confirming the mount is not a Part, so _detect_mount_rider_slots
+    # (Part-to-Part proximity) can never catch it and the v0.27.44 slot-level
+    # preserve never fires. ALL 21 c4050 source slots had randomized, and
+    # EVERY c4050 variant is isRideAtkTarget=1 (all mounted, scattered across
+    # the m60_44_xx overworld field tiles) — so the cluster-horse problem is
+    # broad for Kaiden, justifying the c-prefix-level source preserve. SOURCE-
+    # only: c4050 stays TARGET-eligible (still in compatible_pool); its solo
+    # target instances spawn fresh with no cluster, so no orphaned mount. The
+    # c4060 horse target-ban is unchanged.
+    #
+    # NOTE — c4353 Leyndell Knight is deliberately NOT here. Its only MOUNTED
+    # instances are the Tree Sentinel Night-Boss arena riders (m48_50/m48_60),
+    # which are ALREADY preserved surgically via V3_EXCLUDE_SOURCE_NPC_PARAMS
+    # (43531110 active rider + 43531400 spirit, plus horses 43630010/43630400)
+    # — verified: those four npc_params randomized 0 times in the spoiler, and
+    # 0 c4353/c4363 randomized in m48/m49. The c4353 instances that DO
+    # randomize are the foot variants (43530030 "Encampment- by tower",
+    # 43531030 "Encampment- middle", 43530130 "Night Horde", etc.) — no
+    # cluster horse to orphan. A blanket c4353 source-exclude would freeze
+    # those foot soldiers for no benefit, so it was removed. Per Alaric:
+    # mounted Leyndell Knights are confined to the m48/m49 arenas.
+    'c4050',  # Kaiden Sellsword — visual mount via spawn cluster (no c4060 Part)
 }
 
 # Position-aware source skip. When a Part's source c_prefix matches an entry
@@ -945,6 +977,19 @@ RIDER_MOUNT_PAIRS = {
                           #   c3150 and c3160 are already in
                           #   V3_EXCLUDE_SOURCE_PREFIXES; the collapse pass
                           #   skips them. Listed for completeness.
+    ('c5840', 'c5890'),  # Black Knight + Black Knight Horse (MMV/NR mounted pair).
+                          # v0.27.45: kept as defensive scaffolding only. c5840 is an
+                          # IMPORT with ZERO vanilla MSB Parts (confirmed in spoiler:
+                          # 0 c5840 sources, 0 c5890 anywhere), so the Part-to-Part
+                          # detector never finds this pair in vanilla maps — the entry
+                          # is inert today and would only fire if a future MSB authored
+                          # a real adjacent c5840+c5890 pair. NOTE: this is NOT the fix
+                          # for the reported "random enemy on a horse" — that was Kaiden
+                          # (c4050) / Leyndell Knight (c4353), whose mounts ride in on
+                          # the spawn CLUSTER with no mount Part at all, so the detector
+                          # cannot help them; they are handled by SOURCE-exclusion in
+                          # V3_EXCLUDE_SOURCE_PREFIXES instead. The c5890 target-ban and
+                          # the (inert) family swap below are unchanged.
 }
 
 # v0.26.15: Mount/rider feature (cut 1 - detection foundation).
@@ -964,6 +1009,71 @@ V3_MOUNT_CLASS_POOL = {mount_cp for _rider_cp, mount_cp in RIDER_MOUNT_PAIRS}
 # has said leave those vanilla. Detection still REPORTS those pairs
 # (pilot_active=False) so the audit trace is complete.
 V3_MOUNT_RIDER_PILOT_PAIRS = {('c4050', 'c4060')}
+
+
+# v0.27.43: rider<->mount TARGET families. Distinct from RIDER_MOUNT_PAIRS
+# (which catalogs the vanilla SOURCE clusters the rando reads): this is the
+# set of (rider_cp, mount_cp) that must co-place as a SWAP RESULT so the
+# mounted pair is internally consistent. A mismatched mounted pair — a rider
+# whose rig/saddle doesn't fit the mount, e.g. a Kaiden Sellsword sitting on
+# a Black Knight Horse — hard-CTDs in game (NOT merely cosmetic, as the
+# pre-v0.27.43 V3_RIDER_PREFIXES comment assumed). The role gate keeps a
+# rider on a rider slot and a mount on a mount slot but does not make a
+# cluster's two halves agree; under all-SOTE the per-role pools were
+# singletons so they always matched, but in non-SOTE the rider pool is
+# {c4050, c5840} while every mount slot is forced to c5890 (c4060 Kaiden's-
+# Horse is target-excluded), so ~half of Kaiden clusters produced the
+# CTD pairing. Co-placeability (below) restores the singleton invariant in
+# every mode. Currently the only swap family is the SoTE Black Knight pair.
+# v0.27.44 (Alaric): INERT. Two independent v0.27.44 changes make this family
+# dead: (1) c5890 is banned outright (V3_EXCLUDE_TARGET_PREFIXES), so the mount
+# half is never placeable and _selected_swap_family always returns None; and
+# (2) mounted rider+mount pairs are now PRESERVED VANILLA at the slot level
+# (_preserve_detected_rider_mount_pairs feeds the strict (msb, pi) gate), so a
+# paired rider/mount returns None long before the rider/mount pool gate that
+# would consult this family. Riders themselves (c4050/c5840) are NOT excluded —
+# their solo (dismounted) instances randomize like any other enemy. Kept as
+# defensive scaffolding only. WARNING: un-banning c5890 without first fixing the
+# fabricated-mount runtime CTD will resurrect the crash.
+V3_RIDER_MOUNT_TARGET_FAMILIES = {('c5840', 'c5890')}
+_RIDER_TO_FAMILY_MOUNT = {r: m for r, m in V3_RIDER_MOUNT_TARGET_FAMILIES}
+_MOUNT_TO_FAMILY_RIDER = {m: r for r, m in V3_RIDER_MOUNT_TARGET_FAMILIES}
+
+
+def _placeable_as_target(cp, prefix_variants, slot_msb_name=None):
+    """True if `cp` can be placed as a swap target right now. Mirrors the
+    target-side filters pick_target_cp applies before the rider/mount role
+    gate: has surviving variants, is not hard-excluded, (under all-SOTE mode)
+    is a SOTE chr, and — when slot_msb_name is given — is not map-excluded on
+    that slot's map. Used to test whether a rider/mount's family partner is
+    itself placeable so the pair can never be left half-swapped."""
+    if not cp or cp not in prefix_variants or not prefix_variants[cp]:
+        return False
+    if cp in V3_EXCLUDE_TARGET_PREFIXES or cp in V3_EXCLUDE_PREFIXES:
+        return False
+    if V3_SOTE_MODE and V3_SOTE_PREFIXES and cp not in V3_SOTE_PREFIXES:
+        return False
+    if slot_msb_name:
+        for _mp_prefix, _excl in V3_MAP_PREFIX_TARGET_EXCLUDES.items():
+            if slot_msb_name.startswith(_mp_prefix) and cp in _excl:
+                return False
+    return True
+
+
+def _selected_swap_family(prefix_variants, slot_msb_name=None):
+    """Return the single (rider_cp, mount_cp) swap family whose BOTH halves
+    are placeable at this slot, or None. The rider-source and mount-source
+    gates both consult this so they agree on whether a mounted cluster
+    becomes a swap pair or stays vanilla WITHOUT cross-slot coordination —
+    the decision depends only on global (map-aware) placeability, never on
+    per-slot RNG, so the two adjacent Parts (same map) always reach the same
+    verdict. Returns the first complete family; at most one family is ever
+    simultaneously placeable in the current roster."""
+    for fr, fm in V3_RIDER_MOUNT_TARGET_FAMILIES:
+        if (_placeable_as_target(fr, prefix_variants, slot_msb_name)
+                and _placeable_as_target(fm, prefix_variants, slot_msb_name)):
+            return (fr, fm)
+    return None
 
 
 def _is_part_npc_preserved(po, data):
@@ -1044,6 +1154,34 @@ def _detect_mount_rider_slots(data, parts, midx_to_cp,
             'pilot_active': (cp_a, expected_mount_cp) in V3_MOUNT_RIDER_PILOT_PAIRS,
         })
     return detected
+
+
+def _preserve_detected_rider_mount_pairs(detected, msb_key):
+    """v0.27.44 (Alaric): given _detect_mount_rider_slots output for one MSB
+    and that MSB's preserve-key base (e.g. 'm60_44_38_20.msb'), add BOTH the
+    rider Part and the mount Part of every detected pair to V3_PRESERVE_SLOTS,
+    so the strict (msb, pi) preserve gate (see ~line 13180) keeps exactly those
+    slots vanilla. This is the pair-LEVEL alternative to a c-prefix-wide source
+    exclude: only Parts the detector actually paired are frozen, so a SOLO
+    rider (Kaiden / Leyndell Knight / Albinauric Archer with no adjacent mount)
+    or a solo mount keeps randomizing. Already-present keys (manual
+    V3_PRESERVE_SLOTS entries, HP-bar auto-preserves, role-catalog preserves)
+    are left untouched. Returns the set of (msb_key, pi) keys newly added."""
+    added = set()
+    for d in detected:
+        for pi, role, partner_cp in (
+                (d['rider_pi'], 'rider', d['mount_cp']),
+                (d['mount_pi'], 'mount', d['rider_cp'])):
+            key = (msb_key, pi)
+            if key in V3_PRESERVE_SLOTS:
+                continue
+            other = 'mount' if role == 'rider' else 'rider'
+            V3_PRESERVE_SLOTS[key] = (
+                f"v0.27.44 rider+mount pair: {role} paired with {partner_cp} "
+                f"{other} at {d['dist']}u — keep the mounted pair vanilla "
+                f"(solo instances still randomize)")
+            added.add(key)
+    return added
 
 
 def _collapse_rider_mount_pairs(data, parts, midx_to_cp):
@@ -1157,6 +1295,17 @@ def _collapse_rider_mount_pairs(data, parts, midx_to_cp):
 # correctly when paired with a rider in a cluster — placed standalone, they
 # behave like inert objects with no combat AI.
 V3_EXCLUDE_TARGET_PREFIXES = {
+    # v0.27.44 (Alaric): ban c5890 "Black Knight Horse" outright. The MSB scan of
+    # vanilla ER SOTE confirmed c5890 is an MMV/NR fabrication (zero vanilla
+    # occurrences, no real rider-mount template); the matched c5840+c5890 pair
+    # CTDs at runtime. Target-excluding it means it is never placed as a swap
+    # result anywhere. With this ban the v0.27.43 c5840<->c5890 family swap
+    # (V3_RIDER_MOUNT_TARGET_FAMILIES) is inert (the mount half is unplaceable).
+    # Separately, genuine mounted rider+mount pairs are preserved VANILLA at the
+    # slot level (_preserve_detected_rider_mount_pairs), so c5890 is not needed to
+    # keep clusters coherent. NOTE: the riders (c4050/c5840) are NOT excluded —
+    # their solo instances still randomize.
+    'c5890',  # Black Knight Horse (fabricated mount; matched pair runtime-CTDs)
     'c4060',  # Kaiden's Horse — same mount-component failure mode as c3180 Albinauric Wolf; paired with c4050 Kaiden Sellsword
     'c5090',
     # v0.27.13: DLC SHADER GAP CLASS. Heritage chrs whose matbins'
@@ -2621,6 +2770,28 @@ V3_AVOID_VARIANT_NPC_IDS = {
     # impact, but the dead variants are avoid-listed for consistency so the
     # Kaiden->Black-Knight mount pairing always draws the working variant.
     58900001, 58900090, 58900093, 58900190,
+
+    # v0.27.43: trash-pool sponge variants. A per-chr hp_median audit of the
+    # starting-encampment trash pool (data/reconstructed_trash.json) masked
+    # high-HP variants — the median said "trash" while a minority variant was
+    # a damage sponge. Auditing spawnable hp_MAX per trash chr surfaced 16
+    # variants above the 400-HP trash line across 8 chrs. Every one has a
+    # normal-HP twin (Exile Soldier 51 variants @230, Misbegotten 17 @192,
+    # Bloodfiend 14 @224-346, ...), so all are banned rando-wide (none
+    # normalized) — a beefy variant adds nothing the normal twin doesn't.
+    # 7 are broken/special (the 63936-HP Exile Soldier debug rows, a Sparring
+    # Grounds Dummy Marionette, 9xxx scripted-slot Putrid Ancestral Follower /
+    # Demi-Human Shaman); 9 are legit-but-heavy (Bloodfiend 550, Man-Bat 430,
+    # Cemetery Shade 939). Banning rando-wide keeps them out of general scatter
+    # too, not just encampments. See data/trash_banned_variants.json.
+    30009900, 30009999,              # c3000 Exile Soldier — 63936hp debug rows
+    34500200,                        # c3450 Misbegotten — 2640hp
+    33619000,                        # c3361 Putrid Ancestral Follower — 2560hp (9000 slot)
+    36640030,                        # c3664 Cemetery Shade — 939hp
+    38502100,                        # c3850 Marionette — 640hp (Sparring Grounds Dummy)
+    41109000, 41109100,              # c4110 Demi-Human Shaman — 599hp (9x00 slots)
+    50800100, 50801100, 50801110,    # c5080 Bloodfiend — 550hp
+    42001000, 42001010, 42001100, 42001110, 42001200,  # c4200 Man-Bat — 430hp
 }
 
 
@@ -3873,10 +4044,22 @@ def load_data():
                              or _t.get('sote_eligible') is True)}
 
     # v0.27.13: rider/mount pools from the mount_role tag.
+    # v0.27.44 (Alaric): the RIDER pool is now intentionally left EMPTY. The
+    # rider-role restriction (`pool &= V3_RIDER_PREFIXES` in pick_target_cp)
+    # only existed to keep a SWAPPED mounted cluster's two halves coherent.
+    # Pairs are now PRESERVED vanilla at the SLOT level (see
+    # _preserve_detected_rider_mount_pairs + the strict (msb, pi) gate), and a
+    # preserved slot returns None long before the rider/mount gate is reached.
+    # So any rider that DOES reach the gate is SOLO — a dismounted Kaiden
+    # (c4050) or a foot Black Knight (c5840) — and must randomize like a normal
+    # enemy. Keeping it in the rider pool would freeze it vanilla now that the
+    # c5840<->c5890 swap family is banned (c5890): the rider branch would pin
+    # the pool to {recipient_cp} (or empty it under the unique cap) and the
+    # slot would never swap. The MOUNT pool stays populated: mounts
+    # (c4060/c5890) are still stripped from every non-role target pool below
+    # (the riderless-mount freeze/CTD guard) and pinned to vanilla as sources.
     global V3_RIDER_PREFIXES, V3_MOUNT_PREFIXES
-    V3_RIDER_PREFIXES = {_cp for _cp, _t in tags.items()
-                         if isinstance(_t, dict)
-                         and _t.get('mount_role') == 'rider'}
+    V3_RIDER_PREFIXES = set()
     V3_MOUNT_PREFIXES = {_cp for _cp, _t in tags.items()
                          if isinstance(_t, dict)
                          and _t.get('mount_role') == 'mount'}
@@ -8672,6 +8855,61 @@ def _load_starting_encampments():
  V3_STARTING_ENCAMPMENT_FILE_META) = _load_starting_encampments()
 
 
+# v0.27.43: STARTING-ENCAMPMENT TRASH GATE.
+# -----------------------------------------
+# When V3_STARTING_ENCAMPMENT_TRASH_GATE is True, pick_target_cp intersects
+# the target pool with V3_TRASH_PREFIXES for any slot whose MSB is in
+# V3_STARTING_ENCAMPMENT_MSBS — the spawn-adjacent asset MSBs instantiated
+# beside the player wagon at the start of a Limveld Expedition. The effect:
+# the player's very first fight can only roll trash-tier enemies, never a
+# miniboss/night-boss-strength occupant. (Vanilla camps are Wandering Nobles
+# + Foot Soldiers; before this gate a starting camp could randomize to e.g.
+# Man-Bat + Troll Knight + Skeleton — seed 612394.)
+#
+# Mechanism is the same lightweight pool-intersection as V3_SOTE_MODE and the
+# rider/mount restriction — no new pre-pass. It runs in pick_target_cp AFTER
+# the hard excludes (so a CTD-blacklisted trash chr stays out, its exclude
+# wins) and BEFORE the tier-preserve filter (a no-op here: every trash chr is
+# grunt/field-strength, so tier-preserve can't widen back out). If the
+# intersection empties the pool the slot falls through to the existing
+# `not pool` return and stays vanilla — and vanilla starting camps are
+# grunts, so that's a safe floor rather than a CTD risk.
+#
+# Variant safety is layered: the c-prefix set keeps the pool to trash chrs,
+# and the 16 sponge-variant npc_param_ids that those chrs also carry are in
+# V3_AVOID_VARIANT_NPC_IDS (variant-level, v0.27.43), so an in-pool trash chr
+# still can't roll its beefy variant. See data/reconstructed_trash.json.
+#
+# V3_TRASH_PREFIXES is file-backed (loaded at import, like the encampment
+# catalog above). It stays empty if the file is missing — in which case the
+# gate is inert and every starting-camp slot randomizes normally.
+V3_STARTING_ENCAMPMENT_TRASH_GATE = True
+
+
+def _load_trash_prefixes():
+    """Load the trash-tier c-prefix set from data/reconstructed_trash.json.
+
+    Returns a frozenset of c-prefixes (e.g. 'c3000'). Reads the flat
+    'trash_prefixes' list. Returns an empty frozenset on missing/malformed
+    file — the starting-encampment trash gate is inert without it.
+    """
+    path = _data_path('reconstructed_trash.json')
+    if not os.path.isfile(path):
+        return frozenset()
+    try:
+        with open(path, encoding='utf-8') as f:
+            raw = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return frozenset()
+    prefixes = raw.get('trash_prefixes', [])
+    if not isinstance(prefixes, list):
+        return frozenset()
+    return frozenset(p for p in prefixes if isinstance(p, str) and p.startswith('c'))
+
+
+V3_TRASH_PREFIXES = _load_trash_prefixes()
+
+
 # v0.24.31: quadruped-unsafe slot catalog. Per-(msb, pi) excludes for
 # locomotion=3 (quadruped) chr targets. Quadrupeds in NR/ER's engine
 # sample a wider spawn-time footprint than bipeds — body extends further
@@ -13168,8 +13406,91 @@ def pick_target_cp(recipient_cp, tags,
     # should not receive a non-rider.
     if recipient_cp in V3_RIDER_PREFIXES:
         pool = pool & V3_RIDER_PREFIXES
+        # v0.27.43: cross-slot family consistency. A mounted cluster's two
+        # halves are swapped by INDEPENDENT per-slot picks; the role gate
+        # keeps a rider on the rider slot and a mount on the mount slot but
+        # never made the two agree. Under all-SOTE the per-role pools were
+        # singletons so they always matched, but in non-SOTE the rider pool
+        # is {c4050, c5840} while every mount slot is forced to c5890 (c4060
+        # Kaiden's-Horse is target-excluded), so a c4050 draw produced a
+        # Kaiden on a Black Knight Horse — a mismatched rig that hard-CTDs
+        # in game. Fix: decide the whole cluster from GLOBAL placeability
+        # (both gates call _selected_swap_family with the same inputs, so
+        # they reach the same verdict without talking to each other). If a
+        # complete swap family is available, force this rider to the family
+        # rider; otherwise pin to the vanilla source rider so the cluster
+        # stays a matched vanilla pair (the mount gate pins to vanilla in
+        # lockstep). Restores the all-SOTE singleton invariant in every mode.
+        _fam = _selected_swap_family(prefix_variants, slot_msb_name)
+        if _fam is not None:
+            # Force the family rider, bypassing the unique-cap subtraction
+            # above: the mounted family must stay a matched pair (like the
+            # SOTE singletons, which run uncapped). _selected_swap_family
+            # already confirmed it passes the REAL target filters (excludes
+            # / SOTE / map), and it is compat with this rider source by
+            # design, so only the soft variety cap is bypassed — over-cap
+            # standalone Black Knights still stop appearing (the placed
+            # count keeps climbing and the general-slot filter still drops
+            # them) while the mount slot commits to the matching mount.
+            pool = {_fam[0]}
+        else:
+            pool = pool & {recipient_cp}
     elif recipient_cp in V3_MOUNT_PREFIXES:
         pool = pool & V3_MOUNT_PREFIXES
+        # v0.27.43: symmetric half of the family decision above. Same global
+        # verdict, applied to the mount: force the family mount (cap-bypassed,
+        # see rider branch) when a complete family is available, else pin to
+        # the vanilla source mount (c4060, which being target-excluded leaves
+        # the pool empty -> the slot keeps its vanilla Kaiden's-Horse), so the
+        # mount never lands on a slot whose rider half couldn't become its
+        # matching rider.
+        _fam = _selected_swap_family(prefix_variants, slot_msb_name)
+        if _fam is not None:
+            pool = {_fam[1]}
+        else:
+            pool = pool & {recipient_cp}
+    else:
+        # v0.27.43: symmetric completion of the gate above. A NON-role
+        # source slot must never draw a MOUNT. The horses (c4060/c5890,
+        # mount_role='mount') have no standalone AI brain — placed away
+        # from a paired rider they spawn frozen / float in place. The
+        # one-directional gate above only kept a *mount-source* slot
+        # restricted to mounts; it did nothing to stop a mount leaking
+        # onto an ordinary slot (Imp, Wolf, Wandering Noble, …), which is
+        # exactly the freeze/float placement that
+        # _ctd_check_mount_target_at_non_mount_source was flagging AFTER
+        # the fact (20+ findings/seed, doing nothing about them). Confining
+        # mounts to mount-source slots — where the vanilla mounted-pair
+        # adjacency supplies a rider — eliminates the leak at the source.
+        # Riders are deliberately NOT excluded here: c4050/c5840 (Kaiden
+        # Sellsword, Black Knight) are complete standalone enemies and
+        # stay broad-pool targets; only the riderless horse is the hazard.
+        if V3_MOUNT_PREFIXES:
+            pool = pool - V3_MOUNT_PREFIXES
+
+    # v0.27.43: starting-encampment trash gate. For slots in the spawn-
+    # adjacent Expedition camps, restrict the pool to the trash-tier set so
+    # the player's first fight can't roll a miniboss/night-boss-strength
+    # enemy. Same intersection mechanism as the SOTE / rider-mount blocks
+    # above: runs after the hard excludes, before the tier-preserve filter
+    # (a no-op for trash — all grunt/field-strength), and an empty result
+    # falls through to the `not pool` return leaving the slot vanilla (a
+    # vanilla starting camp is grunts, so that's a safe floor). Placed AFTER
+    # the v0.27.44 rider/mount family pinning on purpose: if that logic has
+    # pinned the pool to a mounted-pair family for a camp slot, intersecting
+    # with trash empties it and the slot stays its coherent vanilla pair
+    # rather than getting half-randomized — mounts/riders are not trash, so
+    # this is the correct interaction. The 16 sponge variants these chrs also
+    # carry are handled at the variant level by V3_AVOID_VARIANT_NPC_IDS, so
+    # an in-pool trash chr can't roll its beefy variant. slot_msb_name is the
+    # '.msb' basename here (the .dcx is already stripped upstream), matching
+    # V3_STARTING_ENCAMPMENT_MSBS — the same raw membership test the NB-arena
+    # gates use.
+    if (V3_STARTING_ENCAMPMENT_TRASH_GATE and V3_TRASH_PREFIXES
+            and slot_msb_name is not None
+            and slot_msb_name in V3_STARTING_ENCAMPMENT_MSBS):
+        pool = pool & V3_TRASH_PREFIXES
+
     if not pool:
         return None
 
@@ -13941,22 +14262,36 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
             'pairs': rider_mount_collapses,
         })
 
-    # v0.26.15: mount/rider pair detection (cut 1 - audit only). When the
-    # experimental mount_rider_swap toggle is on, detect mount/rider Part
-    # pairs and log them to the spoiler trace so they can be playtest-
-    # audited before the cut-2 coordinated swap is wired in. This does
-    # NOT change any swap target.
-    if mount_rider_swap:
-        _mr_detected = _detect_mount_rider_slots(data, parts, midx_to_cp)
-        if _mr_detected:
-            _V3_TRACE_BUFFER.append({
-                'event': 'MOUNT_RIDER_DETECT',
-                'msb': os.path.basename(input_path),
-                'n_pairs': len(_mr_detected),
-                'n_pilot_active': sum(1 for d in _mr_detected
-                                      if d['pilot_active']),
-                'pairs': _mr_detected,
-            })
+    # v0.27.44 (Alaric): preserve EVERY rider+mount pair at the SLOT level.
+    # Supersedes the v0.27.43 c5840<->c5890 coordinated-swap family AND avoids
+    # the blunt c-prefix source-exclude: those would freeze the FOOT instances
+    # of riders that also appear dismounted (Kaiden c4050, Leyndell/Lordsworn
+    # Knight c4353, Albinauric Archer c3170) vanilla too. Instead, detect the
+    # actual paired Parts (RIDER_MOUNT_PAIRS prefix combo + proximity; the
+    # detector's 2.0u threshold is validated against vanilla — every known
+    # pair sits <=1.78u apart) and add BOTH the rider Part and its mount Part
+    # to V3_PRESERVE_SLOTS for this MSB. The existing strict (msb, pi) preserve
+    # gate (see ~line 13180) then returns None for exactly those two slots, so
+    # they stay vanilla. A SOLO rider or SOLO mount is never matched, so it
+    # keeps randomizing normally. Runs every MSB (the old mount_rider_swap
+    # toggle only logged the detection; it never acted on it). Reuses the
+    # existing preserve gate, so spoiler/audit reporting stays consistent.
+    _mr_detected = _detect_mount_rider_slots(data, parts, midx_to_cp)
+    if _mr_detected:
+        _mr_msb_key = os.path.basename(input_path)
+        if _mr_msb_key.endswith('.dcx'):
+            _mr_msb_key = _mr_msb_key[:-4]
+        _mr_added = _preserve_detected_rider_mount_pairs(_mr_detected, _mr_msb_key)
+        _V3_TRACE_BUFFER.append({
+            'event': 'RIDER_MOUNT_PAIR_PRESERVE',
+            'msb': _mr_msb_key,
+            'n_pairs': len(_mr_detected),
+            'n_newly_preserved': len(_mr_added),
+            'preserved_pis': sorted(
+                {_d['rider_pi'] for _d in _mr_detected}
+                | {_d['mount_pi'] for _d in _mr_detected}),
+            'pairs': _mr_detected,
+        })
 
 
     # v0.26.13: cluster system removed. Every Part rolls independently.

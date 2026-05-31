@@ -65,7 +65,10 @@ class TestDeriveFromMe3GuardsAgainstClobber:
 
     GUARDED_VARS = [
         'output_dir_var',       # the user-reported case
-        'mod_map_dir_var',
+        # v0.27.15 (note 19): mod_map_dir_var removed — it is no longer
+        # auto-derived in _derive_from_me3 (it used to default to the same
+        # path as output_dir, a vestigial self-copy). It's now a blank
+        # optional override, so there's nothing to clobber-guard.
         'output_emevd_dir_var',
         'chr_target_dir_var',
     ]

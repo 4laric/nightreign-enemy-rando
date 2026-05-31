@@ -488,24 +488,34 @@ def validate_path_kind(path, kind):
             # a missing file as 'warn' (the binary is auto-discovered).
             pass
         elif kind == 'nr_install':
-            # The NR install path is a convenience for deriving the Input /
-            # Vanilla-event fields; it's not required (the bundle supplies
-            # MSBs, and inputs may be set elsewhere). A bad/empty path is a
-            # soft warn, not a fatal error.
-            return ('warn', f"Install path not found — fine if your Input / "
-                            f"Vanilla-event fields are set elsewhere or you "
-                            f"use the bundled maps. Path: {path}")
+            # v0.27.15: the NR install path is only a CONVENIENCE — setting
+            # it auto-fills the Vanilla MSBs and Vanilla event/ fields. It is
+            # NOT itself required, which is why this is a soft 'warn'. But be
+            # accurate about WHY it's non-fatal: the rando does NOT ship a
+            # bundled set of vanilla map MSBs (it only bundles event scripts
+            # + the msg/name BND). The actual requirement is that the
+            # "Vanilla MSBs" field point at a folder of m*.msb.dcx files —
+            # vanilla, or any prior shuffle / other mod's mapstudio. So a
+            # missing install path is fine ONLY if Vanilla MSBs is set on the
+            # Paths tab; otherwise the run fails the input check.
+            return ('warn', f"Install path not found — OK only if the "
+                            f"'Vanilla MSBs' field (Paths tab) already points "
+                            f"at a folder of m*.msb.dcx files. There is no "
+                            f"bundled map set; the rando needs real MSBs to "
+                            f"shuffle. Path: {path}")
         else:
             return ('error', f"Directory does not exist: {path}")
 
     if kind == 'nr_install':
-        # The install path is only a CONVENIENCE: it auto-derives the
-        # input (map/mapstudio) and vanilla-event (event/) dirs into their
-        # own fields. The actual run reads those fields — and the bundled
-        # vanilla_msbs/ supplies MSBs even when no install is set — so a
-        # missing map/mapstudio here is NOT fatal. Only flag it green when
-        # we find content; otherwise warn (the user may have pointed the
-        # Input / Vanilla-event fields elsewhere, or rely on the bundle).
+        # v0.27.15: the install path is only a CONVENIENCE — it auto-fills
+        # the Vanilla MSBs (map/mapstudio) and Vanilla event/ fields. The
+        # run reads THOSE fields, not this path. A missing map/mapstudio
+        # here is therefore non-fatal IF the user pointed Vanilla MSBs
+        # elsewhere. Important correction: the rando does NOT bundle a set
+        # of vanilla map MSBs — it only ships event scripts + the msg/name
+        # BND. So "no MSBs anywhere" is a real problem, not something a
+        # bundle silently covers. Flag green when we find content here;
+        # otherwise warn and name the field to fix.
         # Conventional UXM layout: <install>/Game/{map/mapstudio, event}/
         found = []
         roots = [path, os.path.join(path, 'Game')]
@@ -524,12 +534,14 @@ def validate_path_kind(path, kind):
             if has_evt:
                 bits.append('event scripts')
             return ('ok', f"NR install OK ({' + '.join(bits)} found)")
-        # Nothing under this path — but that's fine if MSBs/events are
-        # configured elsewhere or come from the bundle. Soft warn only.
-        return ('warn', "No map/mapstudio or event/ here — that's fine if "
-                        "your MSBs / event scripts are set in the Input / "
-                        "Vanilla-event fields or you're using the bundled "
-                        "maps. Only a problem if those are also empty.")
+        # Nothing under this path. Non-fatal ONLY if the Vanilla MSBs field
+        # is set elsewhere (Paths tab) — there is no bundled map fallback.
+        return ('warn', "No map/mapstudio or event/ here. OK only if the "
+                        "'Vanilla MSBs' field on the Paths tab points at a "
+                        "folder of m*.msb.dcx files (vanilla, or any prior "
+                        "shuffle / other mod's mapstudio). The rando has no "
+                        "bundled maps, so if that field is empty too the "
+                        "run will fail the input check.")
 
     if kind == 'er_install':
         candidates = [
@@ -747,7 +759,7 @@ class FirstLaunchWizard:
                    me3_package). Reflects whatever the user entered, even
                    if they closed the wizard mid-flow.
         completed  True iff user reached the Done screen and clicked
-                   'All set.' False if they closed via the X or Skip link.
+                   'Finish.' False if they closed via the X or Skip link.
     """
 
     SCREEN_NAMES = ['welcome', 'output', 'oodle', 'done']
@@ -763,7 +775,15 @@ class FirstLaunchWizard:
 
         self.top = tk.Toplevel(parent)
         self.top.title("4laric's Nightreign Rando — Setup")
-        self.top.geometry('700x460')
+        # v0.27.15 (note 1): the fixed 700x460 non-resizable window clipped
+        # / wrapped its content on Windows 11 (rounded-corner chrome eats a
+        # few px, and 125%/150% display scaling inflates the ttk widgets).
+        # Give it a touch more room, a minimum size so the nav row never
+        # gets pushed off, and let the user grow it if their DPI wraps a
+        # paragraph.
+        self.top.geometry('740x520')
+        self.top.minsize(700, 480)
+        self.top.resizable(True, True)
         # v0.26.x: don't bind transient(parent) when parent is/becomes
         # withdrawn — on Windows + some Linux WMs the wizard Toplevel
         # then never maps to the display, producing a silent hang (the
@@ -807,10 +827,21 @@ class FirstLaunchWizard:
         self.next_btn = ttk.Button(nav, text='Next →', command=self._on_next,
                                     style='Accent.TButton')
         self.next_btn.pack(side='right')
-        # Skip link — saves whatever's entered and drops into main GUI
-        skip = ttk.Label(nav, text='Skip — set up in main GUI later',
-                         style='Dim.TLabel', cursor='hand2')
+        # Skip link — saves whatever's entered and drops into main GUI.
+        # v0.27.15 (notes 2/3): the old dim-grey ttk.Label read as inert
+        # text, so testers didn't realize it was clickable — on every
+        # panel (the nav row is persistent, so this control shows on all
+        # four screens). Restyle it as an unmistakable link: accent color,
+        # underline, and a brighten-on-hover. Still a tk.Label, so the
+        # cursor='hand2' affordance and the existing click binding are
+        # preserved.
+        skip = tk.Label(
+            nav, text='Skip setup — I\'ll configure it in the app',
+            fg=THEME['accent'], bg=THEME['bg'],
+            font=(_pick_ui_font(), 10, 'underline'), cursor='hand2')
         skip.bind('<Button-1>', lambda *_: self._on_close())
+        skip.bind('<Enter>', lambda *_: skip.configure(fg=THEME['accent_hi']))
+        skip.bind('<Leave>', lambda *_: skip.configure(fg=THEME['accent']))
         skip.pack(side='right', padx=(0, 12))
 
         # Builder dispatch — methods named _build_{screen_name}
@@ -830,7 +861,11 @@ class FirstLaunchWizard:
         # Update nav buttons
         self.back_btn.configure(state='normal' if idx > 0 else 'disabled')
         if idx == len(self.SCREEN_NAMES) - 1:
-            self.next_btn.configure(text='All set.')
+            # v0.27.15 (note 6): 'All set.' read oddly as a button label.
+            # 'Finish' is a clearer call-to-action. (The wizard saves paths
+            # and opens the app — it doesn't "install" anything, so we don't
+            # call it Install.)
+            self.next_btn.configure(text='Finish')
         else:
             self.next_btn.configure(text='Next →')
         # Build screen
@@ -897,15 +932,38 @@ class FirstLaunchWizard:
         # Use a StringVar synced to self.config[key]
         var = tk.StringVar(value=self.config.get(key, ''))
 
+        # v0.27.15 (note 4): an inline detail line under the row. A yellow
+        # or red status should explain itself in-place — testers didn't
+        # hover the icon to read the tooltip, so the "why" was invisible.
+        # The reworded validate_path_kind details name the exact field/tab
+        # to fix (note 12), so surfacing them here is also the "where do I
+        # fix this" pointer. Only shown for warn/error; hidden when ok/blank.
+        detail_lbl = ttk.Label(parent, text='', style='Dim.TLabel',
+                               wraplength=620, justify='left')
+        _detail_shown = {'on': False}
+
+        def _set_detail(text, show):
+            detail_lbl.configure(text=text)
+            if show and not _detail_shown['on']:
+                detail_lbl.pack(fill='x', padx=(28, 0), pady=(0, 2),
+                                after=row)
+                _detail_shown['on'] = True
+            elif not show and _detail_shown['on']:
+                detail_lbl.pack_forget()
+                _detail_shown['on'] = False
+
         def _on_change(*_):
             self.config[key] = var.get().strip()
             state, detail = validate_path_kind(var.get().strip(), kind)
             # An empty optional path is a soft "unknown" not an error
             if optional and not var.get().strip():
-                indicator.set('unknown', f'{label} — optional, leave blank '
-                                          f'if not using heritage chrs')
+                state = 'unknown'
+                detail = (f'{label} — optional, leave blank '
+                          f'if not using heritage chrs')
+                indicator.set(state, detail)
             else:
                 indicator.set(state, detail)
+            _set_detail(detail, state in ('warn', 'error'))
         var.trace_add('write', _on_change)
         # Initial state
         _on_change()
@@ -1168,7 +1226,7 @@ class FirstLaunchWizard:
                       ).pack(side='left', fill='x', expand=True)
 
         ttk.Label(self.body,
-            text="Click 'All set.' to open the main GUI. You can revisit "
+            text="Click 'Finish' to open the main GUI. You can revisit "
                  "this wizard any time with `python3 oops_rando_gui.py --setup`.",
             wraplength=620, justify='left', style='Dim.TLabel',
             ).pack(anchor='w', pady=(16, 0))
@@ -1213,6 +1271,19 @@ def _classify_log_line(msg):
     Returns one of: 'error', 'warn', 'accent', 'success', 'info', None.
     """
     stripped = msg.lstrip()
+    # 0) v0.27.43: CTD-risk checker output. The engine emits a header
+    #    "*** CTD RISK CHECK: N finding(s) ... ***" followed by indented
+    #    per-finding lines "[ctd] ..." / "[warn] ...". A flagged placement
+    #    (e.g. a riderless mount that will freeze the game) is the single
+    #    most important thing in the log NOT to gloss over, yet the header's
+    #    '***' and the findings' leading spaces would otherwise route to
+    #    dim/info. Force ctd-severity red and warn-severity amber. The
+    #    "clean" all-clear line has no marker and falls through to dim.
+    if (stripped.startswith('*** CTD RISK CHECK')
+            or stripped.startswith('[ctd]')):
+        return 'error'
+    if stripped.startswith('[warn]'):
+        return 'warn'
     # 1) error: anchored prefix OR a nonzero failed/failures/errors count.
     if (stripped.startswith(_LOG_ERROR_PREFIXES)
             or _LOG_ERROR_COUNT_RE.search(msg)):
@@ -1239,6 +1310,165 @@ def _classify_log_line(msg):
         return 'info'
     # 6) Fall through to caller's default (dim).
     return None
+
+
+# ---------------------------------------------------------------------
+# v0.27.15 (note 18): settings export/import + run-output summary.
+# ---------------------------------------------------------------------
+# Two features sharing one canonical "run settings" dict:
+#   1. A short, copy-pasteable settings CODE (export/import) so a config
+#      can be shared or restored without re-toggling everything by hand.
+#   2. A prominent-but-terse summary printed at the top of every run,
+#      highlighting anything NON-DEFAULT — the point is to catch a setting
+#      the user forgot they left on (Oops! All mode, multiplayer-safe off,
+#      a diagnostic flag, MMV imports, etc.).
+# All pure / Tk-free so they're unit-testable; the GUI builds the input
+# dict from its Tk vars (see RandoGUI._collect_settings_dict) and feeds it
+# in. Seed and filesystem paths are deliberately EXCLUDED: a code should
+# port between machines and not pin a per-run seed.
+
+SETTINGS_CODE_PREFIX = 'NRR1-'   # NR-Rando settings, schema v1
+
+# (key, label, default). Booleans flag when != default; run_mode flags when
+# != 'Standard'. Order here is the display order in the run summary.
+_RUN_SETTING_FLAGS = [
+    ('run_mode',                  'Mode',                            'Standard'),
+    ('multiplayer_safe',          'Multiplayer-safe',                True),
+    ('mmv_enabled',               'MMV cross-game bosses',           False),
+    ('sote_mode',                 'All-SOTE mode',                   False),
+    ('chaos_mode',                'Cinematic Chaos',                 False),
+    ('merchant_model_swap',       'Merchant model swap',             True),
+    ('mount_rider_swap',          'Mount/rider swap',                False),
+    ('prefer_canonical_variants', 'Prefer canonical variants',       True),
+    ('randomize_safe_nb_arenas',  'Randomize "safe" NB arenas',      False),
+    ('randomize_all_nb_arenas',   'Randomize all NB arenas',         False),
+    ('disable_resilient_filter',  'DIAGNOSTIC: baseline-everywhere', False),
+]
+
+
+def normalize_run_settings(raw):
+    """Return a canonical settings dict with every known key present and
+    correctly typed, filling defaults for anything missing. Pure."""
+    d = dict(raw or {})
+    out = {}
+    for key, _label, default in _RUN_SETTING_FLAGS:
+        val = d.get(key, default)
+        if isinstance(default, bool):
+            val = bool(val)
+        out[key] = val
+    out['oops_all_target'] = (d.get('oops_all_target') or '').strip()
+    out['oops_all_nb_target'] = (d.get('oops_all_nb_target') or '').strip()
+    out['oops_all_nb_scope'] = (d.get('oops_all_nb_scope') or '').strip()
+    out['excluded'] = sorted(d.get('excluded') or [])
+    out['force_include'] = sorted(d.get('force_include') or [])
+    out['diagnostic_targets'] = sorted(d.get('diagnostic_targets') or [])
+    caps = d.get('unique_cap_overrides') or {}
+    try:
+        out['unique_cap_overrides'] = {str(k): int(v)
+                                       for k, v in sorted(caps.items())}
+    except (TypeError, ValueError, AttributeError):
+        out['unique_cap_overrides'] = {}
+    out['caliber_pool_extras'] = sorted(d.get('caliber_pool_extras') or [])
+    out['caliber_pool_removals'] = sorted(d.get('caliber_pool_removals') or [])
+    return out
+
+
+def encode_settings_code(raw):
+    """Encode a settings dict into a short copy-pasteable code. Pure.
+    Format: 'NRR1-' + urlsafe-base64(zlib(json)). The prefix makes a
+    pasted code self-identifying so decode can reject foreign text."""
+    import base64, zlib
+    d = normalize_run_settings(raw)
+    payload = json.dumps(d, separators=(',', ':'),
+                         sort_keys=True).encode('utf-8')
+    blob = base64.urlsafe_b64encode(zlib.compress(payload, 9)).decode('ascii')
+    return SETTINGS_CODE_PREFIX + blob
+
+
+def decode_settings_code(code):
+    """Decode a settings code back into a canonical dict. Pure. Raises
+    ValueError on anything that isn't a well-formed NRR1 code."""
+    import base64, zlib
+    if not isinstance(code, str):
+        raise ValueError('settings code must be a string')
+    code = code.strip()
+    if not code.startswith(SETTINGS_CODE_PREFIX):
+        raise ValueError("not a settings code (must start with "
+                         f"'{SETTINGS_CODE_PREFIX}')")
+    blob = code[len(SETTINGS_CODE_PREFIX):]
+    try:
+        raw = zlib.decompress(base64.urlsafe_b64decode(blob.encode('ascii')))
+        data = json.loads(raw.decode('utf-8'))
+    except Exception as e:
+        raise ValueError(f"corrupt settings code: {e}") from e
+    if not isinstance(data, dict):
+        raise ValueError('settings code did not decode to an object')
+    return normalize_run_settings(data)
+
+
+def summarize_run_settings(raw):
+    """Return (notable, all_default). `notable` is a list of human-readable
+    strings for every NON-DEFAULT setting (the ones a user might have left
+    on by accident); `all_default` is True when nothing deviates. Pure."""
+    d = normalize_run_settings(raw)
+    notable = []
+    for key, label, default in _RUN_SETTING_FLAGS:
+        val = d[key]
+        if key == 'run_mode':
+            if val != default:
+                extra = ''
+                if val.startswith('Oops! All NB') and d['oops_all_nb_target']:
+                    extra = (f" \u2192 {d['oops_all_nb_target']} "
+                             f"(scope={d['oops_all_nb_scope'] or 'broad'})")
+                elif val.startswith('Oops') and d['oops_all_target']:
+                    extra = f" \u2192 {d['oops_all_target']}"
+                notable.append(f"{label}: {val}{extra}")
+            continue
+        if isinstance(default, bool) and val != default:
+            notable.append(f"{label}: {'ON' if val else 'OFF'}")
+
+    def _preview(items, n=6):
+        head = ', '.join(items[:n])
+        return head + ('\u2026' if len(items) > n else '')
+
+    if d['force_include']:
+        notable.append(f"Force-include: {len(d['force_include'])} prefix(es) "
+                       f"({_preview(d['force_include'])})")
+    if d['diagnostic_targets']:
+        notable.append(f"Diagnostic test targets: "
+                       f"{_preview(d['diagnostic_targets'])}")
+    if d['excluded']:
+        notable.append(f"Pool exclusions: {len(d['excluded'])} prefix(es)")
+    if d['unique_cap_overrides']:
+        notable.append(f"Unique-cap overrides: "
+                       f"{len(d['unique_cap_overrides'])}")
+    if d['caliber_pool_extras']:
+        notable.append(f"Caliber-pool extras: "
+                       f"{len(d['caliber_pool_extras'])}")
+    if d['caliber_pool_removals']:
+        notable.append(f"Caliber-pool removals: "
+                       f"{len(d['caliber_pool_removals'])}")
+    return notable, (len(notable) == 0)
+
+
+def format_run_settings_block(raw, code=None):
+    """Return a list of (theme_tag, text) log lines for the run-output
+    settings summary. Pure — the caller maps tags to colors. Non-default
+    settings get the 'warn' tag so they pop; an all-default config is one
+    reassuring 'dim' line."""
+    notable, all_default = summarize_run_settings(raw)
+    lines = [('accent', '=== Active settings ===')]
+    if all_default:
+        lines.append(('dim', 'All default \u2014 standard randomization, '
+                             'multiplayer-safe ON, no diagnostics.'))
+    else:
+        lines.append(('dim', f'{len(notable)} non-default setting(s) '
+                             f'\u2014 confirm none were left on by accident:'))
+        for n in notable:
+            lines.append(('warn', f'  \u2022 {n}'))
+    if code:
+        lines.append(('dim', f'Settings code: {code}'))
+    return lines
 
 
 # v0.27.x: Pools & Caps panel. Self-contained module in dev/ (own widgets,
@@ -1537,10 +1767,22 @@ class RandoGUI(PoolsCapsPanelMixin):
                 game = os.path.join(game, 'Game')
                 self.game_install_var.set(game)
                 return
-            if hasattr(self, 'input_dir_var') and not self.input_dir_var.get().strip():
-                self.input_dir_var.set(os.path.join(game, 'map', 'mapstudio'))
-            if hasattr(self, 'vanilla_emevd_dir_var') and not self.vanilla_emevd_dir_var.get().strip():
-                self.vanilla_emevd_dir_var.set(os.path.join(game, 'event'))
+            # v0.27.15 (notes 14/15): only auto-fill a derived child path
+            # when the directory ACTUALLY EXISTS. Previously we'd set
+            # input_dir_var to "<game>/map/mapstudio" even when that folder
+            # was absent (install not UXM-unpacked, user pointed at the
+            # wrong place), which silently planted a dead path the run later
+            # choked on and made the field look configured when it wasn't.
+            derived_input = os.path.join(game, 'map', 'mapstudio')
+            if (hasattr(self, 'input_dir_var')
+                    and not self.input_dir_var.get().strip()
+                    and os.path.isdir(derived_input)):
+                self.input_dir_var.set(derived_input)
+            derived_event = os.path.join(game, 'event')
+            if (hasattr(self, 'vanilla_emevd_dir_var')
+                    and not self.vanilla_emevd_dir_var.get().strip()
+                    and os.path.isdir(derived_event)):
+                self.vanilla_emevd_dir_var.set(derived_event)
             # v0.24.47: REMOVED `chr_source_dir_var.set(game/chr)` here.
             # game_install is NIGHTREIGN's install — NR doesn't ship the
             # heritage chrs that chr_source_dir is supposed to point at.
@@ -1578,13 +1820,40 @@ class RandoGUI(PoolsCapsPanelMixin):
                 er = os.path.join(er, 'Game')
                 self.er_install_var.set(er)
                 return
-            if hasattr(self, 'chr_source_dir_var') and not self.chr_source_dir_var.get().strip():
-                self.chr_source_dir_var.set(os.path.join(er, 'chr'))
+            # v0.27.15 (note 15, "same for others"): same existence guard as
+            # _derive_from_game_install — don't plant a dead chr/ path when
+            # the ER install isn't UXM-unpacked or the folder is absent.
+            derived_chr = os.path.join(er, 'chr')
+            if (hasattr(self, 'chr_source_dir_var')
+                    and not self.chr_source_dir_var.get().strip()
+                    and os.path.isdir(derived_chr)):
+                self.chr_source_dir_var.set(derived_chr)
             _persist_root_paths()
 
         def _derive_from_me3(*_args):
             me3 = self.me3_package_var.get().strip()
             if not me3:
+                return
+            # v0.27.15 (note 8): if the user pointed this at the me3 PROFILE
+            # ROOT (the directory that holds the .me3 file) instead of the
+            # package subdir inside it, descend into the package the .me3
+            # declares via `source = "..."`. Otherwise output lands at
+            # <root>/map/mapstudio — one level too high — and me3 never
+            # loads it. Mirrors the Game/ auto-append in
+            # _derive_from_game_install: set the corrected path and return,
+            # re-firing this trace against the package dir (which has no
+            # .me3, so the descent runs at most once).
+            try:
+                import sys as _sys
+                _dev = os.path.join(HERE, 'dev')
+                if _dev not in _sys.path:
+                    _sys.path.insert(0, _dev)
+                import install_discovery as _idisc
+                _pkg = _idisc.find_me3_package_subdir(me3)
+            except Exception:
+                _pkg = None
+            if _pkg and os.path.normpath(_pkg) != os.path.normpath(me3):
+                self.me3_package_var.set(_pkg)
                 return
             # v0.24.43 BUGFIX: only derive child paths that are CURRENTLY EMPTY.
             # The previous behavior unconditionally overwrote output_dir,
@@ -1600,8 +1869,16 @@ class RandoGUI(PoolsCapsPanelMixin):
             # the user can clear the field manually.
             if hasattr(self, 'output_dir_var') and not self.output_dir_var.get().strip():
                 self.output_dir_var.set(os.path.join(me3, 'map', 'mapstudio'))
-            if hasattr(self, 'mod_map_dir_var') and not self.mod_map_dir_var.get().strip():
-                self.mod_map_dir_var.set(os.path.join(me3, 'map', 'mapstudio'))
+            # v0.27.15 (note 19): mod_map_dir_var is NO LONGER auto-derived.
+            # It used to default to the SAME path as output_dir (both
+            # <me3>/map/mapstudio), which made the post-run "copy to mod
+            # folder" step a no-op self-copy and the field pure clutter on
+            # the Paths tab. It now stays empty by default and is a purely
+            # optional override for the niche "write to a scratch folder,
+            # then copy into the profile" workflow. Output already writes
+            # straight into the me3 profile, so the common case needs
+            # nothing here. (Runtime still skips the copy if the two paths
+            # ever do resolve equal — belt and suspenders.)
             if hasattr(self, 'output_emevd_dir_var') and not self.output_emevd_dir_var.get().strip():
                 self.output_emevd_dir_var.set(os.path.join(me3, 'event'))
             if hasattr(self, 'chr_target_dir_var') and not self.chr_target_dir_var.get().strip():
@@ -1746,13 +2023,15 @@ class RandoGUI(PoolsCapsPanelMixin):
         # dcx_batch.rando_pipeline(randomize_safe_nb_arenas=...) still
         # have a defined input. Fixed False -- the all-NB flag covers it.
         self.randomize_safe_nb_arenas_var = tk.BooleanVar(value=False)
-        # v0.26.16 / v0.26.x: randomize ALL 25 night-boss arenas incl.
-        # the multi-entity ones. DEFAULT TRUE -- the multi-entity boss-
-        # init investigation is closed (resolved by the regulation.bin
-        # modification), so all-NB randomization is normal play now.
-        # Checkbox removed in v0.26.x (no longer a diagnostic opt-in);
-        # var kept declared since generate_run + dcx_batch read it.
-        self.randomize_all_nb_arenas_var = tk.BooleanVar(value=True)
+        # v0.26.16 / v0.27.43: randomize ALL 25 night-boss arenas incl.
+        # the multi-entity ones. DEFAULT FALSE -- NB arenas are preserved
+        # (held byte-vanilla) by default. The multi-entity boss-init /
+        # synchronized-wake choreography is fragile under a Part swap and
+        # the matching healthbar EMEVD is deliberately left vanilla, so
+        # randomizing them is experimental and off by default. The var +
+        # config plumbing remain so it can still be opted into (e.g. via a
+        # loaded settings code); there is no GUI checkbox for it.
+        self.randomize_all_nb_arenas_var = tk.BooleanVar(value=False)
         # v0.20.42: diagnostic batch — when non-empty, fragile slots are
         # restricted to ONLY this comma-separated list of c-prefixes. Used
         # to attribute CTDs to a small batch of candidates instead of
@@ -2944,6 +3223,30 @@ class RandoGUI(PoolsCapsPanelMixin):
         mode_combo.bind('<Button-5>', _eat_scroll)      # Linux scroll down
         self._mode_combo = mode_combo
 
+        # v0.27.15 (note 18): settings code export/import. A compact code
+        # captures mode + every toggle so a config can be shared or
+        # restored; the same summary is printed at the top of each run so a
+        # setting left on by accident gets caught.
+        code_row = ttk.Frame(f1); code_row.pack(fill='x', pady=(6, 0))
+        ttk.Label(code_row, text="Settings code:").pack(side='left')
+        export_btn = ttk.Button(code_row, text="Export\u2026",
+                                command=self._export_settings_code)
+        export_btn.pack(side='left', padx=(4, 0))
+        Tooltip(export_btn,
+                "Copy a shareable code of the current mode + toggles to the "
+                "clipboard (seed and folder paths are not included). The "
+                "same summary prints at the top of every run.")
+        import_btn = ttk.Button(code_row, text="Import\u2026",
+                                command=self._import_settings_code)
+        import_btn.pack(side='left', padx=(4, 0))
+        Tooltip(import_btn,
+                "Paste a settings code to restore its mode + toggles. "
+                "Pool/caliber/exclusion lists in a code are reported but "
+                "not auto-applied \u2014 set those on the Pools & Caps tab.")
+        ttk.Label(code_row,
+                  text="(mode + toggles; also printed atop each run)",
+                  style='Dim.TLabel').pack(side='left', padx=(8, 0))
+
         # (Multiplayer-safe / heritage controls live on their own tab now —
         # see _build_heritage_tab. The main tab focuses on the most-used
         # generation knobs.)
@@ -3293,13 +3596,16 @@ class RandoGUI(PoolsCapsPanelMixin):
         # === Vanilla side ===
         f_van = ttk.LabelFrame(parent, text="Vanilla (read)", padding=8)
         f_van.pack(fill='x', padx=16, pady=(8, 4))
-        for label, var, browse_cmd in [
+        # v0.27.15 (note 16): each row now carries a live status indicator
+        # (kind drives validate_path_kind), registered into the Paths-tab
+        # indicator list.
+        for label, var, browse_cmd, kind in [
             ("Vanilla MSBs:", self.input_dir_var,
-             lambda v=self.input_dir_var: self._browse_dir(v)),
+             lambda v=self.input_dir_var: self._browse_dir(v), 'mapstudio_dir'),
             ("Vanilla event/:", self.vanilla_emevd_dir_var,
-             lambda v=self.vanilla_emevd_dir_var: self._browse_dir(v)),
+             lambda v=self.vanilla_emevd_dir_var: self._browse_dir(v), 'event_dir'),
             ("Vanilla chr/:", self.chr_source_dir_var,
-             lambda v=self.chr_source_dir_var: self._browse_dir(v)),
+             lambda v=self.chr_source_dir_var: self._browse_dir(v), 'chr_dir'),
             # v0.24.109: removed "Vanilla msg:" row. vanilla_msg_bundle_var
             # now derives silently from game_install_var via
             # _discover_msg_bundle_basename + _apply_msg_basename_derivation
@@ -3311,6 +3617,9 @@ class RandoGUI(PoolsCapsPanelMixin):
         ]:
             row = ttk.Frame(f_van); row.pack(fill='x', pady=2)
             ttk.Label(row, text=label, width=16).pack(side='left')
+            indicator = StatusIndicator(row)
+            indicator.pack(side='left', padx=(0, 4))
+            self._register_pathstab_indicator(indicator, var, kind)
             ttk.Entry(row, textvariable=var).pack(
                 side='left', fill='x', expand=True, padx=4)
             ttk.Button(row, text="Browse...", command=browse_cmd).pack(side='left')
@@ -3318,24 +3627,46 @@ class RandoGUI(PoolsCapsPanelMixin):
         # === Mod side ===
         f_mod = ttk.LabelFrame(parent, text="Mod (write)", padding=8)
         f_mod.pack(fill='x', padx=16, pady=4)
-        for label, var, browse_cmd in [
+        # Mod-side dirs are write targets that may not exist until Run, so
+        # 'me3_profile' (exists-or-parent-exists) is the right kind — it
+        # warns rather than errors on a not-yet-created folder.
+        for label, var, browse_cmd, kind in [
             ("Output:", self.output_dir_var,
-             lambda v=self.output_dir_var: self._browse_dir(v)),
+             lambda v=self.output_dir_var: self._browse_dir(v), 'me3_profile'),
             ("Mod map/mapstudio:", self.mod_map_dir_var,
-             lambda v=self.mod_map_dir_var: self._browse_dir(v)),
+             lambda v=self.mod_map_dir_var: self._browse_dir(v), 'me3_profile'),
             ("Mod event/:", self.output_emevd_dir_var,
-             lambda v=self.output_emevd_dir_var: self._browse_dir(v)),
+             lambda v=self.output_emevd_dir_var: self._browse_dir(v), 'me3_profile'),
             ("Mod chr/:", self.chr_target_dir_var,
-             lambda v=self.chr_target_dir_var: self._browse_dir(v)),
+             lambda v=self.chr_target_dir_var: self._browse_dir(v), 'me3_profile'),
             # v0.24.109: removed "Mod msg:" row. mod_msg_bundle_var derives
             # silently from me3_package_var (see counterpart comment in
             # the Vanilla section above).
         ]:
             row = ttk.Frame(f_mod); row.pack(fill='x', pady=2)
             ttk.Label(row, text=label, width=16).pack(side='left')
+            indicator = StatusIndicator(row)
+            indicator.pack(side='left', padx=(0, 4))
+            self._register_pathstab_indicator(indicator, var, kind)
             ttk.Entry(row, textvariable=var).pack(
                 side='left', fill='x', expand=True, padx=4)
             ttk.Button(row, text="Browse...", command=browse_cmd).pack(side='left')
+
+        # v0.27.15 (note 19): clarify Output vs Mod map. They used to
+        # auto-fill to the same folder, making "Mod map" look mandatory and
+        # the auto-copy pointless. Spell out that Mod map is now an optional
+        # second copy target only.
+        ttk.Label(f_mod,
+            text="Output is where the rando writes shuffled MSBs — normally "
+                 "your me3 profile's map/mapstudio. 'Mod map/mapstudio' is an "
+                 "optional second copy target: only set it if Output points "
+                 "at a scratch folder and you want the .msb.dcx files copied "
+                 "into the profile afterward. Leave it blank otherwise.",
+            style='Dim.TLabel', wraplength=720, justify='left'
+            ).pack(anchor='w', pady=(6, 0))
+
+        # Paint initial indicator state now that the rows + vars exist.
+        self._refresh_pathstab_indicators()
 
         # === Fallback (when splice can't be done) ===
         # v0.24.105: removed. Fallback nameId is now hardwired ON with
@@ -4149,6 +4480,20 @@ class RandoGUI(PoolsCapsPanelMixin):
         self._setup_status_summary_ind = StatusIndicator(
             hdr, 'unknown', 'Environment readiness')
         self._setup_status_summary_ind.pack(side='left', padx=(0, 6))
+        # v0.27.15 (note 17): manual re-check. Discovery (Oodle DLL, me3,
+        # installs) reads the filesystem live and isn't memoized, but
+        # nothing re-triggers the checks when the user fixes something
+        # OUTSIDE the app mid-session (copies oo2core, installs me3,
+        # finishes a UXM unpack). This button forces a full re-evaluation.
+        # Packed before the expanding label so it claims the right edge.
+        recheck_btn = ttk.Button(
+            hdr, text='↻ Re-check', width=11,
+            command=self._recheck_environment)
+        recheck_btn.pack(side='right', padx=(6, 0))
+        Tooltip(recheck_btn,
+                'Re-run all environment checks. Use after installing me3, '
+                'copying the Oodle DLL, or finishing a UXM unpack while '
+                'this app is open.')
         self._setup_status_summary_label = ttk.Label(
             hdr, text='Environment checks', style='Dim.TLabel')
         self._setup_status_summary_label.pack(side='left', fill='x',
@@ -4303,6 +4648,24 @@ class RandoGUI(PoolsCapsPanelMixin):
         self._setup_status_collapsed = not self._setup_status_collapsed
         self._apply_setup_status_collapse()
 
+    def _recheck_environment(self, *_args):
+        """v0.27.15 (note 17): force a full re-evaluation of every
+        environment / path check. install_discovery isn't memoized, so
+        re-running the refreshers re-scans the filesystem and picks up
+        anything the user fixed outside the app this session. Wired to the
+        '↻ Re-check' button on the Setup Status header."""
+        # _refresh_path_indicators already cascades into _refresh_setup_status
+        # and _refresh_folders_collapse.
+        self._refresh_path_indicators()
+        if hasattr(self, '_refresh_pathstab_indicators'):
+            self._refresh_pathstab_indicators()
+        if hasattr(self, '_refresh_launch_button_state'):
+            self._refresh_launch_button_state()
+        if hasattr(self, '_refresh_autodetect_badges'):
+            self._refresh_autodetect_badges()
+        if hasattr(self, 'status_var'):
+            self.status_var.set('Re-checked environment.')
+
     # ------------------------------------------------------------------
     # v0.26.x: Live path-field validation indicators (#3 in Tier 1)
     # ------------------------------------------------------------------
@@ -4333,6 +4696,24 @@ class RandoGUI(PoolsCapsPanelMixin):
         # v0.27.0: drive the Folders box auto-collapse off the freshly
         # computed indicator states.
         self._refresh_folders_collapse()
+
+    # v0.27.15 (note 16): the Paths tab rows had no status indicators, so a
+    # wrong/dead derived path gave no feedback there. These rows get their
+    # OWN indicator list, deliberately separate from _path_indicators (the
+    # Folders box) — a red derived override on an advanced tab shouldn't
+    # force the front-page Folders box to expand via _folders_has_error.
+    def _register_pathstab_indicator(self, indicator, var, kind):
+        if not hasattr(self, '_pathstab_indicators'):
+            self._pathstab_indicators = []
+        self._pathstab_indicators.append((indicator, var, kind))
+        var.trace_add('write', self._refresh_pathstab_indicators)
+
+    def _refresh_pathstab_indicators(self, *_args):
+        if not hasattr(self, '_pathstab_indicators'):
+            return
+        for indicator, var, kind in self._pathstab_indicators:
+            state, detail = validate_path_kind(var.get().strip(), kind)
+            indicator.set(state, detail)
 
     # ------------------------------------------------------------------
     # v0.27.0: auto-collapsing Folders box
@@ -5694,6 +6075,162 @@ class RandoGUI(PoolsCapsPanelMixin):
             self._log(f"  (couldn't save settings: {e})\n", 'dim')
 
     # ========================================================================
+    # v0.27.15 (note 18): settings code export/import + run-output summary.
+    # _collect_settings_dict reads the run-relevant Tk vars into a plain
+    # dict; the module-level encode/decode/summarize helpers turn it into a
+    # shareable code and a run-log summary. Main-thread only (touches Tk).
+    # ========================================================================
+    def _collect_settings_dict(self):
+        """Read current run-relevant settings off the Tk vars into a plain
+        dict (no seed, no paths). Feeds both the settings code and the
+        run-output summary."""
+        def _b(attr):
+            try:
+                return bool(getattr(self, attr).get())
+            except Exception:
+                return False
+        try:
+            pc = self.pools_caps_engine_config() or {}
+        except Exception:
+            pc = {}
+        try:
+            diag = self._parse_diag_test_targets()
+        except Exception:
+            diag = None
+        return {
+            'run_mode': self.run_mode_var.get(),
+            'oops_all_target': self.oops_all_target_var.get().strip(),
+            'oops_all_nb_target': self.oops_all_nb_target_var.get().strip(),
+            'oops_all_nb_scope': self.oops_all_nb_scope_var.get().strip(),
+            'multiplayer_safe': _b('multiplayer_safe_var'),
+            'mmv_enabled': _b('mmv_enabled_var'),
+            'sote_mode': _b('sote_mode_var'),
+            'chaos_mode': _b('chaos_mode_var'),
+            'merchant_model_swap': _b('merchant_model_swap_var'),
+            'mount_rider_swap': _b('mount_rider_swap_var'),
+            'prefer_canonical_variants': _b('prefer_canonical_variants_var'),
+            'randomize_safe_nb_arenas': _b('randomize_safe_nb_arenas_var'),
+            'randomize_all_nb_arenas': _b('randomize_all_nb_arenas_var'),
+            'disable_resilient_filter': _b('disable_resilient_filter_var'),
+            'excluded': sorted(self.excluded)
+                        if getattr(self, 'excluded', None) else [],
+            'force_include': sorted(self.force_include_targets)
+                             if getattr(self, 'force_include_targets', None)
+                             else [],
+            'diagnostic_targets': sorted(diag) if diag else [],
+            'unique_cap_overrides': pc.get('unique_cap_overrides') or {},
+            'caliber_pool_extras': pc.get('caliber_pool_extras') or [],
+            'caliber_pool_removals': pc.get('caliber_pool_removals') or [],
+        }
+
+    def _apply_settings_dict(self, d):
+        """Apply a decoded settings dict to the Tk vars (reverse of
+        _collect_settings_dict). SCOPE: mode + targets/scope + the boolean
+        toggles only — i.e. exactly the "left on by accident" set. Pool /
+        caliber / cap / diagnostic collections are intentionally NOT applied
+        here: they live in panels whose UI would desync from a silent var
+        poke. The code still carries them (for sharing / forward-compat) and
+        the import dialog reports any it skipped. Returns the list of keys
+        applied."""
+        d = normalize_run_settings(d)
+        applied = []
+        if hasattr(self, 'run_mode_var'):
+            self.run_mode_var.set(d['run_mode'])
+            applied.append('run_mode')
+        for attr, key in (('oops_all_target_var', 'oops_all_target'),
+                          ('oops_all_nb_target_var', 'oops_all_nb_target'),
+                          ('oops_all_nb_scope_var', 'oops_all_nb_scope')):
+            if hasattr(self, attr) and d[key]:
+                getattr(self, attr).set(d[key])
+                applied.append(key)
+        for attr, key in (
+                ('multiplayer_safe_var', 'multiplayer_safe'),
+                ('mmv_enabled_var', 'mmv_enabled'),
+                ('sote_mode_var', 'sote_mode'),
+                ('chaos_mode_var', 'chaos_mode'),
+                ('merchant_model_swap_var', 'merchant_model_swap'),
+                ('mount_rider_swap_var', 'mount_rider_swap'),
+                ('prefer_canonical_variants_var', 'prefer_canonical_variants'),
+                ('randomize_safe_nb_arenas_var', 'randomize_safe_nb_arenas'),
+                ('randomize_all_nb_arenas_var', 'randomize_all_nb_arenas'),
+                ('disable_resilient_filter_var', 'disable_resilient_filter')):
+            if hasattr(self, attr):
+                getattr(self, attr).set(bool(d[key]))
+                applied.append(key)
+        # Mode change may need its picker/visibility refreshed.
+        if hasattr(self, '_on_mode_change'):
+            try:
+                self._on_mode_change()
+            except Exception:
+                pass
+        return applied
+
+    def _export_settings_code(self):
+        """Build the settings code for the current config, copy it to the
+        clipboard, and show it with a non-default summary so the user can
+        eyeball what they're sharing."""
+        sd = self._collect_settings_dict()
+        code = encode_settings_code(sd)
+        notable, all_default = summarize_run_settings(sd)
+        copied = False
+        try:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(code)
+            self.root.update()
+            copied = True
+        except tk.TclError:
+            pass
+        summary = ('All default.' if all_default
+                   else 'Non-default:\n  \u2022 ' + '\n  \u2022 '.join(notable))
+        messagebox.showinfo(
+            "Settings code",
+            f"{code}\n\n{summary}\n\n"
+            + ("Copied to clipboard." if copied else
+               "(Couldn't copy automatically \u2014 select and copy it "
+               "from here.)"),
+            parent=self.root)
+        self.status_var.set(
+            "Settings code exported" + (" (copied)" if copied else ""))
+
+    def _import_settings_code(self):
+        """Prompt for a pasted settings code, validate + apply it (mode +
+        toggles), and report anything the code carried that we don't
+        auto-apply."""
+        from tkinter.simpledialog import askstring
+        raw = askstring(
+            "Import settings code",
+            "Paste a settings code (starts with 'NRR1-'):",
+            parent=self.root)
+        if not raw:
+            return
+        try:
+            d = decode_settings_code(raw)
+        except ValueError as e:
+            messagebox.showerror(
+                "Invalid settings code",
+                f"Couldn't read that code:\n  {e}", parent=self.root)
+            return
+        self._apply_settings_dict(d)
+        carried = []
+        if d.get('excluded'):
+            carried.append(f"{len(d['excluded'])} pool exclusion(s)")
+        if d.get('force_include'):
+            carried.append(f"{len(d['force_include'])} force-include prefix(es)")
+        if d.get('unique_cap_overrides'):
+            carried.append("unique-cap overrides")
+        if d.get('caliber_pool_extras') or d.get('caliber_pool_removals'):
+            carried.append("caliber-pool edits")
+        if d.get('diagnostic_targets'):
+            carried.append("diagnostic test targets")
+        msg = "Applied: run mode + all toggles."
+        if carried:
+            msg += ("\n\nThe code also carried these, which are NOT "
+                    "auto-applied \u2014 set them on the Pools & Caps tab if "
+                    "you want them:\n  \u2022 " + "\n  \u2022 ".join(carried))
+        messagebox.showinfo("Settings imported", msg, parent=self.root)
+        self.status_var.set("Settings code imported")
+
+    # ========================================================================
     # v0.23.45: MMV manifest enabled-state — read/write helpers.
     # The JSON file IS the persistent store; the GUI checkbox is just a
     # convenience for editing that one field. Engine reads at load_data
@@ -6542,7 +7079,16 @@ class RandoGUI(PoolsCapsPanelMixin):
             'mount_rider_swap': bool(self.mount_rider_swap_var.get()),
             # v0.27.24: all-SOTE mode toggle.
             'sote_mode': bool(self.sote_mode_var.get()),
+            # v0.27.15 (note 18): snapshot the run-relevant settings (and a
+            # shareable code) on the main thread so the worker can print the
+            # "Active settings" summary without touching Tk vars.
+            'settings_dict': self._collect_settings_dict(),
         }
+        try:
+            config['settings_code'] = encode_settings_code(
+                config['settings_dict'])
+        except Exception:
+            config['settings_code'] = None
 
         # v0.20.89: clear any lingering cancel flag from a prior cancelled
         # run before starting the worker. Without this reset, the second
@@ -6579,6 +7125,18 @@ class RandoGUI(PoolsCapsPanelMixin):
             self.log_queue.put(f"Seed: {config['seed']}, mode: {mode_label}\n")
             self.log_queue.put(f"Input:  {config['in_dir']}\n")
             self.log_queue.put(f"Output: {config['out_dir']}\n")
+
+            # v0.27.15 (note 18): prominent, terse settings summary so any
+            # non-default toggle (Oops! All, multiplayer-safe off, a
+            # diagnostic flag, MMV, etc.) is caught before the run. Emitted
+            # as explicitly-tagged lines so non-defaults render in 'warn'.
+            try:
+                for _tag, _text in format_run_settings_block(
+                        config.get('settings_dict') or {},
+                        code=config.get('settings_code')):
+                    self.log_queue.put(('__LOGLINE__', (f"{_text}\n", _tag)))
+            except Exception as _e:
+                self.log_queue.put(f"(settings summary unavailable: {_e})\n")
 
             try:
                 oops_v3 = _import_backend()
@@ -7198,6 +7756,15 @@ class RandoGUI(PoolsCapsPanelMixin):
                         except Exception as e:
                             self._log(f"(summary render failed: {e})\n",
                                        'warn')
+                    elif tag == '__LOGLINE__':
+                        # v0.27.15 (note 18): explicitly-tagged log line from
+                        # the worker — (text, theme_tag). Lets the worker
+                        # force a color instead of relying on auto-classify.
+                        try:
+                            _text, _color = payload
+                            self._log(_text, _color)
+                        except Exception:
+                            self._log(str(payload))
                     else:
                         # Unknown tuple tag — log it for debugging
                         self._log(f"(unknown queue tag: {tag!r})\n", 'dim')

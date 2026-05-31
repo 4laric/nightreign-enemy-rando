@@ -352,10 +352,20 @@ class TestHasRewardPreservationGate:
         # Some chrs have has_reward absent (None / missing) — typically
         # cinematic/template chrs. These should NOT trigger the gate
         # (only has_reward is True triggers it).
+        # v0.27.44: restrict to NON-boss tiers. The tier filter (driven by
+        # recipient_is_boss) independently locks a BOSS-tier recipient to
+        # boss-tier targets, which are all has_reward=True — that masks the
+        # has_reward gate this test means to isolate. Before v0.27.44 the first
+        # match here was c5840 (miniboss); it only ever yielded an unrewarded
+        # result via its since-removed rider-role self-pin (c5840 was dropped
+        # from V3_RIDER_PREFIXES when mounted pairs moved to slot-level
+        # preservation). A grunt/trash recipient keeps unrewarded targets
+        # tier-eligible, so the ONLY thing that could restrict to rewarded-only
+        # is the gate itself.
         recipient = None
         for cp, t in tags.items():
             if t.get('has_reward') is None and t.get('tier') in (
-                    'miniboss', 'field_boss', 'night_boss', 'grunt', 'trash'):
+                    'grunt', 'trash'):
                 recipient = cp; break
         if recipient is None:
             pytest.skip('no recipient with has_reward=None available')
@@ -4979,3 +4989,275 @@ class TestVariantPruneList:
                     emptied.append(cp)
         assert not emptied, (
             f'prune list emptied the pickable pool for: {emptied}')
+
+
+# ============================================================================
+# v0.27.43: mount-role gate — mounts must never land at a non-mount source
+# ============================================================================
+class TestMountAtNonMountSourceGate:
+    """Regression for the riderless-mount freeze/float CTD.
+
+    The v0.27.13 rider/mount pool gate restricted a mount-SOURCE slot to
+    mount targets, but did NOT stop a mount (c4060/c5890 — the horses,
+    mount_role='mount') from leaking onto an ORDINARY slot via the general
+    compat pool. A horse has no standalone AI: placed away from a paired
+    rider it spawns frozen / floats. The post-generation CTD checker
+    (_ctd_check_mount_target_at_non_mount_source) was flagging 20+ of these
+    per seed but doing nothing about them. v0.27.43 completes the gate: a
+    non-role source slot drops V3_MOUNT_PREFIXES from its pool, confining
+    mounts to mount-source slots (where the vanilla pair supplies a rider).
+
+    Riders (c4050/c5840) are intentionally NOT gated — they are complete
+    standalone enemies and stay broad-pool targets.
+    """
+
+    # Real non-role source c-prefixes that the leak landed mounts on
+    # (observed in seed 789157's _ctd_risk findings). Used to find a
+    # recipient whose compat pool actually contains a mount, so the test
+    # exercises the gate instead of passing vacuously.
+    _CANDIDATE_NONROLE_SOURCES = [
+        'c4070', 'c4300', 'c3000', 'c4200', 'c4380', 'c4161', 'c4110',
+        'c2271', 'c4230', 'c4315', 'c4313', 'c3500', 'c3620', 'c3661',
+        'c4100', 'c4371', 'c4377', 'c4201', 'c3450',
+    ]
+
+    def _recipient_with_mount_in_pool(self, engine, tags):
+        mounts = set(engine.V3_MOUNT_PREFIXES)
+        for r in self._CANDIDATE_NONROLE_SOURCES:
+            if r not in tags:
+                continue
+            if r in mounts or r in engine.V3_RIDER_PREFIXES:
+                continue  # must be a NON-role source
+            if engine.compatible_pool(r, tags) & mounts:
+                return r
+        return None
+
+    def test_mount_prefixes_populated(self, engine):
+        """Sanity: the feature is active (else the gate is a no-op and the
+        rest of this class would pass vacuously)."""
+        assert engine.V3_MOUNT_PREFIXES, (
+            'V3_MOUNT_PREFIXES empty — mount-role pool feature inactive; '
+            'this regression test needs it loaded.')
+
+    def test_non_mount_source_never_draws_a_mount(
+            self, engine, tags, prefix_variants, prefix_count):
+        """The core regression: a non-role source whose compat pool DOES
+        contain a horse must still never be assigned one, across many
+        seeds. Pre-fix this returned a mount on a meaningful fraction of
+        seeds (the 24 leaks in seed 789157); post-fix it must be zero."""
+        recipient = self._recipient_with_mount_in_pool(engine, tags)
+        if recipient is None:
+            pytest.skip('no non-role recipient with a mount in its compat '
+                        'pool in the loaded data')
+        mounts = set(engine.V3_MOUNT_PREFIXES)
+        recipient_is_boss = oops_v3.is_boss_tier_prefix(
+            recipient, tags, prefix_variants)
+        saved = dict(engine._V3_UNIQUE_PLACED_COUNTS)
+        try:
+            for seed in range(80):
+                engine._V3_UNIQUE_PLACED_COUNTS.clear()
+                engine._V3_UNIQUE_PLACED_COUNTS.update(saved)
+                rng = random.Random(seed)
+                result = oops_v3.pick_target_cp(
+                    recipient, tags, prefix_variants, prefix_count,
+                    recipient_is_boss, rng, slot_variant_name=None)
+                assert result not in mounts, (
+                    f'seed {seed}: non-role source {recipient} drew mount '
+                    f'{result} — riderless-mount CTD leak is back '
+                    f'(v0.27.43 gate regression).')
+        finally:
+            engine._V3_UNIQUE_PLACED_COUNTS.clear()
+            engine._V3_UNIQUE_PLACED_COUNTS.update(saved)
+
+    def test_seed_ctd_check_clean_on_synthetic_nonmount_placement(self, engine):
+        """The CTD checker fires on a mount-at-non-mount-source entry (so
+        the audit half still works), but the gate prevents the picker from
+        producing such entries. Here we feed the checker a synthetic entry
+        directly to prove the check itself is correct + still wired."""
+        mounts = sorted(engine.V3_MOUNT_PREFIXES)
+        if not mounts:
+            pytest.skip('no mounts loaded')
+        mount = mounts[0]
+        entries = [{
+            'map': 'm60_42_36_00.msb', 'part_index': 7, 'entity_id': 0,
+            'original': {'c_prefix': 'c3080', 'name': 'Imp'},
+            'new': {'c_prefix': mount, 'name': 'Black Knight Horse'},
+        }]
+        findings = engine.run_seed_ctd_checks(entries, {})
+        assert any(f['check'] == 'mount_target_at_non_mount_source'
+                   and f['severity'] == 'ctd' for f in findings), (
+            'CTD checker should still flag a mount at a non-mount source.')
+
+
+class TestRiderMountFamilyConsistency:
+    """v0.27.44: rider+mount pairs are PRESERVED VANILLA at the slot level,
+    superseding the v0.27.43 c5840<->c5890 coordinated-swap family.
+
+    History: v0.27.43 made a swapped Kaiden cluster co-place as the matched
+    Black Knight pair (c5840 rider + c5890 mount) to avoid the mismatched
+    Kaiden-rig-on-Black-Knight-Horse CTD. An MSB scan of vanilla ER SOTE then
+    showed c5890 "Black Knight Horse" is an MMV/NR fabrication with no real
+    mount template, and the matched pair ALSO CTDs at runtime. So the approach
+    changed (Alaric): ban c5890 outright and keep every vanilla rider+mount
+    pair STOCK instead of swapping it. The pair is found by
+    _detect_mount_rider_slots (RIDER_MOUNT_PAIRS prefix combo + proximity) and
+    BOTH Parts are added to V3_PRESERVE_SLOTS via
+    _preserve_detected_rider_mount_pairs, so only the actual paired Parts stay
+    vanilla -- a SOLO rider (a dismounted Leyndell Knight c4353, or a foot
+    Kaiden c4050) keeps randomizing, which a c-prefix-wide source exclude
+    would have wrongly frozen.
+
+    The detector itself is covered by tests/test_mount_rider_detect.py
+    (including solo-rider and too-distant cases returning no pair); these tests
+    cover the c5890 ban, the now-inert family helpers, the preserve glue, and
+    the end-to-end gate behavior.
+    """
+
+    def _pick(self, engine, recipient, tags, prefix_variants, prefix_count,
+              seed, msb=None, pi=None, preload=None):
+        recipient_is_boss = oops_v3.is_boss_tier_prefix(
+            recipient, tags, prefix_variants)
+        saved = dict(engine._V3_UNIQUE_PLACED_COUNTS)
+        try:
+            engine._V3_UNIQUE_PLACED_COUNTS.clear()
+            if preload:
+                engine._V3_UNIQUE_PLACED_COUNTS.update(preload)
+            rng = random.Random(seed)
+            return oops_v3.pick_target_cp(
+                recipient, tags, prefix_variants, prefix_count,
+                recipient_is_boss, rng, slot_variant_name=None,
+                slot_msb_name=msb, slot_pi=pi)
+        finally:
+            engine._V3_UNIQUE_PLACED_COUNTS.clear()
+            engine._V3_UNIQUE_PLACED_COUNTS.update(saved)
+
+    def test_c5890_banned_and_unplaceable(self, engine, prefix_variants):
+        """c5890 Black Knight Horse is banned outright (fabricated mount; the
+        matched pair runtime-CTDs)."""
+        assert 'c5890' in engine.V3_EXCLUDE_TARGET_PREFIXES, (
+            'c5890 must be target-excluded (banned).')
+        import copy
+        pv = copy.copy(prefix_variants)
+        pv.setdefault('c5890', [58900000])  # ensure presence: the False is the BAN
+        assert not engine._placeable_as_target('c5890', pv), (
+            'c5890 is banned, so it must never be placeable as a target.')
+
+    def test_family_swap_now_inert(self, engine, prefix_variants):
+        """With c5890 banned the c5840<->c5890 swap family can never resolve:
+        the mount half is unplaceable, so _selected_swap_family returns None
+        even when the rider half (c5840) is placeable. The family machinery is
+        kept only as defensive scaffolding (see comment at its definition)."""
+        import copy
+        pv = copy.copy(prefix_variants)
+        pv.setdefault('c5840', [58401000])
+        pv.setdefault('c5890', [58900000])
+        assert engine._selected_swap_family(pv) is None, (
+            'c5890 is banned -> mount half unplaceable -> no family selected '
+            '(the swap is superseded by slot-level preservation).')
+
+    def test_no_family_when_a_half_unplaceable(self, engine, prefix_variants):
+        """Belt-and-suspenders: dropping either half also yields no family
+        (never a half-swap)."""
+        import copy
+        pv = copy.copy(prefix_variants)
+        pv.pop('c5890', None)
+        assert engine._selected_swap_family(pv) is None
+
+    def test_preserve_helper_adds_both_pair_slots(self):
+        """_preserve_detected_rider_mount_pairs freezes BOTH the rider Part and
+        the mount Part of each detected pair, keyed (msb, pi)."""
+        saved = dict(oops_v3.V3_PRESERVE_SLOTS)
+        try:
+            detected = [
+                {'rider_pi': 7, 'rider_cp': 'c4050', 'mount_pi': 8,
+                 'mount_cp': 'c4060', 'dist': 0.0, 'pilot_active': True},
+                {'rider_pi': 12, 'rider_cp': 'c4353', 'mount_pi': 13,
+                 'mount_cp': 'c4363', 'dist': 1.2, 'pilot_active': False},
+            ]
+            added = oops_v3._preserve_detected_rider_mount_pairs(
+                detected, 'm60_44_38_20.msb')
+            for pi in (7, 8, 12, 13):
+                assert ('m60_44_38_20.msb', pi) in oops_v3.V3_PRESERVE_SLOTS, (
+                    f'pi {pi} (a paired rider or mount) should be preserved.')
+            assert added == {('m60_44_38_20.msb', pi) for pi in (7, 8, 12, 13)}
+        finally:
+            oops_v3.V3_PRESERVE_SLOTS.clear()
+            oops_v3.V3_PRESERVE_SLOTS.update(saved)
+
+    def test_preserve_helper_idempotent_and_scoped(self):
+        """Second call adds nothing; a pre-existing key is never overwritten,
+        and unrelated (solo) slots are never touched."""
+        saved = dict(oops_v3.V3_PRESERVE_SLOTS)
+        try:
+            key_pre = ('m60_44_38_20.msb', 7)
+            oops_v3.V3_PRESERVE_SLOTS[key_pre] = 'MANUAL - do not overwrite'
+            detected = [{'rider_pi': 7, 'rider_cp': 'c4050', 'mount_pi': 8,
+                         'mount_cp': 'c4060', 'dist': 0.0, 'pilot_active': True}]
+            added = oops_v3._preserve_detected_rider_mount_pairs(
+                detected, 'm60_44_38_20.msb')
+            assert key_pre not in added, 'must not re-add a pre-existing key.'
+            assert oops_v3.V3_PRESERVE_SLOTS[key_pre] == 'MANUAL - do not overwrite'
+            assert ('m60_44_38_20.msb', 8) in added
+            assert ('m60_44_38_20.msb', 99) not in oops_v3.V3_PRESERVE_SLOTS
+            assert oops_v3._preserve_detected_rider_mount_pairs(
+                detected, 'm60_44_38_20.msb') == set(), 'second call is a no-op.'
+        finally:
+            oops_v3.V3_PRESERVE_SLOTS.clear()
+            oops_v3.V3_PRESERVE_SLOTS.update(saved)
+
+    def test_preserved_pair_slot_returns_none_from_picker(
+            self, engine, tags, prefix_variants, prefix_count):
+        """End-to-end: a slot the helper preserved makes pick_target_cp return
+        None, so the Part stays vanilla through the strict (msb, pi) gate.
+
+        We first find a recipient that normally yields a non-None target at the
+        test slot (proving no earlier gate short-circuits it), then preserve the
+        slot and confirm the picker now returns None -- isolating the effect to
+        the preserve gate the helper feeds."""
+        test_msb, test_pi = 'm99_99_99_99.msb', 3
+        recipient = baseline = None
+        for cand in sorted(tags):
+            r0 = self._pick(engine, cand, tags, prefix_variants, prefix_count,
+                            seed=0, msb=test_msb, pi=test_pi)
+            if r0 is not None:
+                recipient, baseline = cand, r0
+                break
+        if recipient is None:
+            pytest.skip('no recipient yields a target at the test slot')
+        saved = dict(oops_v3.V3_PRESERVE_SLOTS)
+        try:
+            detected = [{'rider_pi': test_pi, 'rider_cp': recipient,
+                         'mount_pi': test_pi + 1, 'mount_cp': 'c4060',
+                         'dist': 0.0, 'pilot_active': False}]
+            oops_v3._preserve_detected_rider_mount_pairs(detected, test_msb)
+            r = self._pick(engine, recipient, tags, prefix_variants,
+                           prefix_count, seed=0, msb=test_msb, pi=test_pi)
+            assert r is None, (
+                f'slot ({test_msb}, {test_pi}) was preserved but the picker '
+                f'returned {r!r} (baseline without preserve was {baseline!r}).')
+        finally:
+            oops_v3.V3_PRESERVE_SLOTS.clear()
+            oops_v3.V3_PRESERVE_SLOTS.update(saved)
+
+    def test_general_slot_still_excludes_mounts(
+            self, engine, tags, prefix_variants, prefix_count):
+        """A non-role source still never draws a horse (the riderless-mount
+        CTD guard is independent of the pairing approach)."""
+        mounts = set(engine.V3_MOUNT_PREFIXES)
+        if not mounts:
+            pytest.skip('no mount prefixes loaded')
+        recipient = None
+        for cand in ['c4070', 'c4300', 'c3000', 'c4200', 'c4380', 'c4110',
+                     'c4230', 'c3500', 'c3620', 'c4100']:
+            if (cand in tags and cand not in mounts
+                    and cand not in engine.V3_RIDER_PREFIXES
+                    and engine.compatible_pool(cand, tags) & mounts):
+                recipient = cand
+                break
+        if recipient is None:
+            pytest.skip('no non-role recipient with a mount in its compat pool')
+        for seed in range(40):
+            r = self._pick(engine, recipient, tags, prefix_variants,
+                           prefix_count, seed)
+            assert r not in mounts, (
+                f'seed {seed}: non-role source {recipient} drew mount {r!r}.')

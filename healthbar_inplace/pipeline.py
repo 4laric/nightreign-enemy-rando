@@ -61,7 +61,8 @@ import sys
 from emevd import EMEVD, extract_healthbar_callsites, rewrite_many
 from rewriter import (
     decide_rewrites, make_fmg_allocator, compute_byte_edits,
-    load_spoiler_entity_map, decisions_to_summary, DEFAULT_FMG_ID_BASE,
+    load_spoiler_entity_map, load_spoiler_entity_map_by_map,
+    decisions_to_summary, DEFAULT_FMG_ID_BASE,
     load_title_pool,
 )
 
@@ -205,7 +206,12 @@ def apply_to_dir(
     modded copy and me3 serves the vanilla emevd. Used for the night-boss
     arenas when test-mode arenas are off.
     """
-    spoiler = load_spoiler_entity_map(spoiler_path)
+    # v0.27.43: load the spoiler keyed BY MAP. NR reuses entity_ids across
+    # overworld map variations (m60_XX_YY_00/_10/_20, ...); a single global
+    # {eid: chr} map collapses them last-write-wins, mislabeling every
+    # healthbar in a non-last variation. Each .emevd below resolves its
+    # entities against its OWN map's sub-dict.
+    spoiler_by_map = load_spoiler_entity_map_by_map(spoiler_path)
     with open(chr_to_nameid_path) as f:
         chr_catalog = json.load(f)
 
@@ -264,10 +270,17 @@ def apply_to_dir(
             continue
         with open(in_path, 'rb') as f:
             raw = f.read()
+        # v0.27.43: resolve THIS file's healthbar entities against only its
+        # own map's placements. fname is e.g. 'm60_42_36_00.emevd' → mapcode
+        # 'm60_42_36_00', matching the spoiler's `map` (minus '.msb'). Files
+        # with no randomized entities (or non-map files) get an empty dict →
+        # every callsite stays 'unchanged' (vanilla), which is correct.
+        _mc = os.path.splitext(fname)[0]
+        file_spoiler = spoiler_by_map.get(_mc, {})
         try:
             new_raw, decisions, n_edits, n_callsites = patch_emevd_bytes(
                 raw,
-                spoiler_entity_map=spoiler,
+                spoiler_entity_map=file_spoiler,
                 chr_catalog=chr_catalog,
                 file_id=fname,
                 fmg_id_allocator=allocator,

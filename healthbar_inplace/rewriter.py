@@ -325,6 +325,36 @@ def compute_byte_edits(decisions, binary_callsites):
 # {entity_id: {c_prefix, name}} shape decide_rewrites wants.
 # ────────────────────────────────────────────────────────────────────
 
+def _spoiler_entry_to_info(e):
+    """Project one spoilers.json entry to the {c_prefix, name, npc_param_id,
+    old_c_prefix, old_name} info dict decide_rewrites consumes. Returns
+    None when the entry has no usable post-swap c_prefix.
+
+    v0.24.107: captures pre-swap (original) c_prefix and name too, so
+    `compose_name` in decide_rewrites can build "<original> → <new>,
+    <title>" mashup strings. Original may be absent on some entries
+    (EMEVD-direct-spawn dummies, etc.) — falls back to None / ''."""
+    new = e.get('new') or {}
+    if 'c_prefix' not in new:
+        return None
+    original = e.get('original') or {}
+    return {
+        'c_prefix': new.get('c_prefix'),
+        'name': new.get('name', ''),
+        'npc_param_id': new.get('npc_param_id'),
+        'old_c_prefix': original.get('c_prefix'),
+        'old_name': original.get('name', ''),
+    }
+
+
+def _mapcode(map_field):
+    """Strip a spoiler entry's `map` value (e.g. 'm60_42_36_00.msb') to the
+    bare map code ('m60_42_36_00'), which matches the basename of the
+    corresponding '.emevd' file. Tolerates a missing/None value."""
+    import os as _os
+    return _os.path.splitext(map_field or '')[0]
+
+
 def load_spoiler_entity_map(spoilers_json_path):
     """Read a spoilers.json and return {entity_id: {c_prefix, name, npc_param_id}}
     for every entry with a non-zero entity_id. Entries with entity_id=0
@@ -333,7 +363,15 @@ def load_spoiler_entity_map(spoilers_json_path):
 
     The dict is keyed by the AFTER-swap entity_id (which is the same as
     the BEFORE-swap entity_id in the rando — swaps preserve entity
-    bindings; that's the whole design)."""
+    bindings; that's the whole design).
+
+    WARNING — this FLATTENS across maps. NR's overworld is built from map
+    variations (m60_XX_YY_00/_10/_20, evergaol m20_* variants, ...) that
+    REUSE the same entity_id for DIFFERENT placements; collapsing them to a
+    single global dict means the last-written variation wins for all of
+    them. For the per-file healthbar pass use load_spoiler_entity_map_by_map
+    so each .emevd resolves entities against ITS OWN map. This flat form is
+    kept for backward compatibility and non-file-scoped callers/tests."""
     with open(spoilers_json_path) as f:
         data = json.load(f)
     out = {}
@@ -341,21 +379,41 @@ def load_spoiler_entity_map(spoilers_json_path):
         eid = e.get('entity_id') or 0
         if eid == 0:
             continue
-        new = e.get('new') or {}
-        if 'c_prefix' not in new:
+        info = _spoiler_entry_to_info(e)
+        if info is None:
             continue
-        # v0.24.107: capture pre-swap (original) c_prefix and name too, so
-        # `compose_name` in decide_rewrites can build "<original> → <new>,
-        # <title>" mashup strings. Original may be absent on some entries
-        # (EMEVD-direct-spawn dummies, etc.) — fall back to None / ''.
-        original = e.get('original') or {}
-        out[eid] = {
-            'c_prefix': new.get('c_prefix'),
-            'name': new.get('name', ''),
-            'npc_param_id': new.get('npc_param_id'),
-            'old_c_prefix': original.get('c_prefix'),
-            'old_name': original.get('name', ''),
-        }
+        out[eid] = info
+    return out
+
+
+def load_spoiler_entity_map_by_map(spoilers_json_path):
+    """Like load_spoiler_entity_map but keyed by map first:
+    {mapcode: {entity_id: info}}.
+
+    mapcode is the entry's `map` field with the `.msb` suffix stripped
+    (e.g. 'm60_42_36_00'), which equals the basename of the matching
+    '.emevd' file — so the pipeline can scope each file's entity lookups
+    to that file's own map.
+
+    WHY THIS EXISTS (v0.27.43): NR builds the overworld from map
+    variations that reuse entity_ids across variations for different
+    enemies. A single global {eid: chr} map (load_spoiler_entity_map)
+    collapses them to whichever entry is written last, so a healthbar
+    callsite in one variation resolves to a DIFFERENT variation's enemy
+    and the bar shows the wrong boss name (e.g. a Gaping Dragon labeled
+    "Centipede Demon"). Entity_ids are unique within a single map, so the
+    inner per-map dict has no such collisions."""
+    with open(spoilers_json_path) as f:
+        data = json.load(f)
+    out = {}
+    for e in data.get('entries', []):
+        eid = e.get('entity_id') or 0
+        if eid == 0:
+            continue
+        info = _spoiler_entry_to_info(e)
+        if info is None:
+            continue
+        out.setdefault(_mapcode(e.get('map')), {})[eid] = info
     return out
 
 

@@ -472,6 +472,58 @@ def find_me3_profile_for_package(package_dir: str) -> Optional[str]:
     return None
 
 
+# v0.27.15: the inverse of find_me3_profile_for_package. Given a path the
+# user picked for "me3 package", detect whether they actually picked the
+# PROFILE ROOT (the dir holding the .me3 file) rather than the package
+# subdir inside it. The rando writes into <package>/map/mapstudio/, so if
+# the field points at the profile root the output lands one level too high
+# and me3 never loads it. This lets the GUI auto-descend into the package
+# the same way _derive_from_game_install auto-appends Game/.
+_ME3_SOURCE_RE = re.compile(r'^\s*source\s*=\s*["\']([^"\']+)["\']',
+                            re.MULTILINE)
+
+
+def find_me3_package_subdir(profile_root: str) -> Optional[str]:
+    """If `profile_root` is an me3 profile ROOT (contains a .me3 file),
+    return the absolute path to the package directory the .me3 declares
+    via `source = "<id>"`, provided that subdir actually exists. Returns
+    None if `profile_root` isn't a profile root, has no parseable package
+    source, or the declared package dir doesn't exist.
+
+    Only the FIRST [[packages]] source is considered — that's the package
+    the rando writes into for a single-package scaffold. If a profile has
+    several packages the user picked the root of, we can't know which one
+    they mean, so we return the first whose directory exists and let the
+    user override on the Paths tab.
+
+    Pure-ish: filesystem reads only, never raises (any error → None).
+    """
+    if not profile_root or not os.path.isdir(profile_root):
+        return None
+    try:
+        entries = sorted(os.listdir(profile_root))
+    except OSError:
+        return None
+    me3_files = [e for e in entries if e.lower().endswith('.me3')]
+    if not me3_files:
+        return None  # not a profile root — probably already a package dir
+    for me3_name in me3_files:
+        try:
+            with open(os.path.join(profile_root, me3_name),
+                      encoding='utf-8') as fh:
+                text = fh.read()
+        except OSError:
+            continue
+        for m in _ME3_SOURCE_RE.finditer(text):
+            src = m.group(1).strip()
+            # `source` may be a bare id (a sibling dir of the .me3) or a
+            # relative path. Resolve against the profile root either way.
+            cand = os.path.join(profile_root, src)
+            if os.path.isdir(cand):
+                return os.path.abspath(cand)
+    return None
+
+
 # ---------------------------------------------------------------------
 # me3 profile scaffold (Tier 2 UX #7)
 # ---------------------------------------------------------------------

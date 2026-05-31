@@ -2122,7 +2122,7 @@
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 2.2,
     "hit_radius_median": 0.5,
     "hp_max": 99999,
@@ -2657,7 +2657,7 @@
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 7.0,
     "hit_radius_median": 3.5,
     "hp_max": 1048,
@@ -2669,7 +2669,7 @@
     "name": "Giant Putrid Flesh (Blood)",
     "size_class": "XXL",
     "team": 6,
-    "tier": "grunt",
+    "tier": "miniboss",
     "variants": 2,
     "weight_median": 100.0,
     "_tier_collapse_v0_27_8": "trash"
@@ -4005,9 +4005,9 @@
     "locomotion": 0,
     "name": "Land Squirt Variant",
     "size_class": "M",
-    "tier": "grunt",
+    "tier": "miniboss",
     "variants": 2,
-    "has_reward": false
+    "has_reward": true
   },
   "c4450": {
     "_backfill_justification": "known: Walking Mausoleum = huge slow crawler, large_boss_ground",
@@ -4127,9 +4127,9 @@
     "locomotion": 0,
     "name": "Giant Fading Miranda Sprout",
     "size_class": "XL",
-    "tier": "grunt",
+    "tier": "miniboss",
     "variants": 1,
-    "has_reward": false
+    "has_reward": true
   },
   "c4483": {
     "_backfill_justification": "family: Fading Miranda Sprout matches c4481 misc/M",
@@ -4840,7 +4840,7 @@
     "anim_bank": 48000,
     "anim_bank_count": 1,
     "expects_boss_arena": true,
-    "has_boss_reward": false,
+    "has_boss_reward": true,
     "has_drops": true,
     "has_reward": true,
     "hit_height_median": 4.0,
@@ -5474,7 +5474,7 @@
     "anim_bank": 52100,
     "anim_bank_count": 1,
     "expects_boss_arena": true,
-    "has_boss_reward": false,
+    "has_boss_reward": true,
     "has_drops": true,
     "has_reward": true,
     "hit_height_median": 7.0,
@@ -5625,9 +5625,9 @@
     "hp_median": 1551,
     "name": "Priestess (Duchess)",
     "size_class": "M",
-    "tier": "grunt",
+    "tier": "night_boss",
     "variants": 1,
-    "has_reward": false
+    "has_reward": true
   },
   "c52312": {
     "_backfill_justification": "known: Witch of the Wheel = wheel-bound humanoid, L due to wheel",
@@ -5640,9 +5640,9 @@
     "hp_median": 1551,
     "name": "Witch of the Wheel (Recluse Remembrance)",
     "size_class": "L",
-    "tier": "grunt",
+    "tier": "night_boss",
     "variants": 1,
-    "has_reward": false
+    "has_reward": true
   },
   "c52313": {
     "_confidence": "auto",
@@ -5652,9 +5652,9 @@
     "hp_max": 1551,
     "hp_median": 1551,
     "name": "Executor?",
-    "tier": "grunt",
+    "tier": "night_boss",
     "variants": 1,
-    "has_reward": false
+    "has_reward": true
   },
   "c5240": {
     "_heritage_imported": true,
@@ -5664,7 +5664,7 @@
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": true,
-    "has_reward": true,
+    "has_reward": false,
     "hit_height_median": 1.8,
     "hit_radius_median": 0.4,
     "hp_max": 163,
@@ -7164,9 +7164,9 @@
     "hp_max": 2880,
     "hp_median": 2880,
     "name": "c7931",
-    "tier": "grunt",
+    "tier": "night_boss",
     "variants": 1,
-    "has_reward": false
+    "has_reward": true
   },
   "c7932": {
     "_confidence": "auto",
@@ -7176,9 +7176,9 @@
     "hp_max": 2880,
     "hp_median": 2880,
     "name": "c7932",
-    "tier": "grunt",
+    "tier": "night_boss",
     "variants": 4,
-    "has_reward": false
+    "has_reward": true
   },
   "c8000": {
     "_confidence": "auto",
@@ -7606,7 +7606,7 @@
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 2.0,
     "hit_radius_median": 0.5,
     "hp_max": 1212,
@@ -7861,7 +7861,7 @@
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 3.5,
     "hit_radius_median": 1.0,
     "hp_max": 210,
@@ -7873,7 +7873,7 @@
     "name": "Lamprey (Large)",
     "size_class": "XL",
     "team": 6,
-    "tier": "grunt",
+    "tier": "miniboss",
     "variants": 7,
     "weight_median": 130.0,
     "sote_eligible": true,
@@ -7914,7 +7914,7 @@
     "expects_boss_arena": false,
     "has_boss_reward": false,
     "has_drops": false,
-    "has_reward": false,
+    "has_reward": true,
     "hit_height_median": 2.6,
     "hit_radius_median": 0.78,
     "hp_max": 666,
@@ -7926,7 +7926,7 @@
     "name": "Jar Innards (Large)",
     "size_class": "XL",
     "team": 6,
-    "tier": "grunt",
+    "tier": "miniboss",
     "variants": 16,
     "weight_median": 130.0,
     "sote_eligible": true,

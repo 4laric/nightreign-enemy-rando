@@ -3547,7 +3547,7 @@
         "m60_44_36_20"
       ],
       "variant_name": "Kaiden Sellsword",
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c4050",
@@ -3560,7 +3560,7 @@
         "m60_45_39_30"
       ],
       "variant_name": "Kaiden Sellsword (Remembrance)",
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c4050",
@@ -3571,7 +3571,7 @@
         "m60_44_38_20"
       ],
       "variant_name": "Kaiden Sellsword",
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c4050",
@@ -3584,7 +3584,7 @@
         "m60_45_39_30"
       ],
       "variant_name": "Kaiden Sellsword (Remembrance)",
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c4060",
@@ -4122,7 +4122,7 @@
         "m34_00_00_00"
       ],
       "variant_name": "Putrid Flesh (Large)",
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c4180",
@@ -8102,7 +8102,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8111,7 +8111,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8120,7 +8120,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8129,7 +8129,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8138,7 +8138,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8147,7 +8147,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8156,7 +8156,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8165,7 +8165,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8174,7 +8174,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8183,7 +8183,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8192,7 +8192,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8201,7 +8201,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8210,7 +8210,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8219,7 +8219,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8228,7 +8228,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8237,7 +8237,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8246,7 +8246,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8255,7 +8255,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8264,7 +8264,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8273,7 +8273,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8282,7 +8282,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8291,7 +8291,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8300,7 +8300,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8309,7 +8309,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8318,7 +8318,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8327,7 +8327,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8336,7 +8336,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8345,7 +8345,7 @@
       "variant_name": "Shadowpot",
       "hp": 163,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8354,7 +8354,7 @@
       "variant_name": "Shadowpot",
       "hp": 163,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8363,7 +8363,7 @@
       "variant_name": "Shadowpot",
       "hp": 163,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8372,7 +8372,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8381,7 +8381,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8390,7 +8390,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8399,7 +8399,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8408,7 +8408,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8417,7 +8417,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8426,7 +8426,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8435,7 +8435,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8444,7 +8444,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8453,7 +8453,7 @@
       "variant_name": "Shadowpot",
       "hp": 156,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8462,7 +8462,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8471,7 +8471,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8480,7 +8480,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8489,7 +8489,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8498,7 +8498,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8507,7 +8507,7 @@
       "variant_name": "Shadowpot",
       "hp": 156,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8516,7 +8516,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8525,7 +8525,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8534,7 +8534,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8543,7 +8543,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8552,7 +8552,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8561,7 +8561,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8570,7 +8570,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8579,7 +8579,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8588,7 +8588,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8597,7 +8597,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8606,7 +8606,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8615,7 +8615,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8624,7 +8624,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8633,7 +8633,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8642,7 +8642,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8651,7 +8651,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5240",
@@ -8660,7 +8660,7 @@
       "variant_name": "Shadowpot",
       "hp": 85,
       "_heritage_imported": true,
-      "has_reward": true
+      "has_reward": false
     },
     {
       "c_prefix": "c5241",
@@ -18257,7 +18257,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Kaiden Sellsword",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -18267,7 +18267,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -18277,7 +18277,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -18287,7 +18287,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Kaiden Sellsword",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -18297,7 +18297,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -18307,7 +18307,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Kaiden Sellsword",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -19117,7 +19117,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Putrid Flesh (Large)",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -24897,9 +24897,9 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Land Squirt (Unscaled, Field Boss)",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump",
-      "_think_fix_v0_27_26": "repointed think 44420000->44410000. 44420000 is absent from the regulation (Giant Rotten Land Squirt has no own think row). c4442 is mechanically the Giant Land Squirt (c4441) variant \u2014 identical HP (1429), same family, same behaviorVariationId-class behavior set (14 rows). think 44410000 = Giant Land Squirt (logicId=10000, battleGoalID=444100), the correct same-size same-family AI."
+      "_think_fix_v0_27_26": "repointed think 44420000->44410000. 44420000 is absent from the regulation (Giant Rotten Land Squirt has no own think row). c4442 is mechanically the Giant Land Squirt (c4441) variant — identical HP (1429), same family, same behaviorVariationId-class behavior set (14 rows). think 44410000 = Giant Land Squirt (logicId=10000, battleGoalID=444100), the correct same-size same-family AI."
     },
     {
       "c_prefix": "c4442",
@@ -24908,9 +24908,9 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Land Squirt (Unscaled, variant 010)",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump",
-      "_think_fix_v0_27_26": "repointed think 44420000->44410000. 44420000 is absent from the regulation (Giant Rotten Land Squirt has no own think row). c4442 is mechanically the Giant Land Squirt (c4441) variant \u2014 identical HP (1429), same family, same behaviorVariationId-class behavior set (14 rows). think 44410000 = Giant Land Squirt (logicId=10000, battleGoalID=444100), the correct same-size same-family AI."
+      "_think_fix_v0_27_26": "repointed think 44420000->44410000. 44420000 is absent from the regulation (Giant Rotten Land Squirt has no own think row). c4442 is mechanically the Giant Land Squirt (c4441) variant — identical HP (1429), same family, same behaviorVariationId-class behavior set (14 rows). think 44410000 = Giant Land Squirt (logicId=10000, battleGoalID=444100), the correct same-size same-family AI."
     },
     {
       "c_prefix": "c4450",
@@ -25239,7 +25239,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Giant Fading Miranda Sprout",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -29009,7 +29009,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -29019,7 +29019,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -29029,7 +29029,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -29039,7 +29039,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -29049,7 +29049,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -29779,7 +29779,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Priestess (Duchess)",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -29789,7 +29789,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Witch of the Wheel (Recluse Remembrance)",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -29799,7 +29799,7 @@
       "count": 1,
       "sample_maps": [],
       "variant_name": "Executor?",
-      "has_reward": false,
+      "has_reward": true,
       "_source": "post_dlc_dump"
     },
     {
@@ -32145,7 +32145,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32154,7 +32154,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32163,7 +32163,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32172,7 +32172,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32181,7 +32181,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32190,7 +32190,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32199,7 +32199,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32208,7 +32208,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32217,7 +32217,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32226,7 +32226,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32235,7 +32235,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32244,7 +32244,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32253,7 +32253,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32262,7 +32262,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32271,7 +32271,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32280,7 +32280,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32289,7 +32289,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32298,7 +32298,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32307,7 +32307,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32316,7 +32316,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32325,7 +32325,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32334,7 +32334,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32343,7 +32343,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32352,7 +32352,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32361,7 +32361,7 @@
       "variant_name": "Black Knight",
       "hp": 660,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32370,7 +32370,7 @@
       "variant_name": "Black Knight",
       "hp": 660,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32379,7 +32379,7 @@
       "variant_name": "Black Knight",
       "hp": 660,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32388,7 +32388,7 @@
       "variant_name": "Black Knight",
       "hp": 660,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32397,7 +32397,7 @@
       "variant_name": "Black Knight",
       "hp": 612,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32406,7 +32406,7 @@
       "variant_name": "Black Knight",
       "hp": 612,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32415,7 +32415,7 @@
       "variant_name": "Black Knight",
       "hp": 1212,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32424,7 +32424,7 @@
       "variant_name": "Black Knight",
       "hp": 1212,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32433,7 +32433,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32442,7 +32442,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32451,7 +32451,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32460,7 +32460,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32469,7 +32469,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5840",
@@ -32478,7 +32478,7 @@
       "variant_name": "Black Knight",
       "hp": 512,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5450",
@@ -34377,7 +34377,7 @@
       "variant_name": "Lamprey (Large)",
       "hp": 210,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5061",
@@ -34386,7 +34386,7 @@
       "variant_name": "Lamprey (Large)",
       "hp": 210,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5061",
@@ -34395,7 +34395,7 @@
       "variant_name": "Lamprey (Large)",
       "hp": 210,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5061",
@@ -34404,7 +34404,7 @@
       "variant_name": "Lamprey (Large)",
       "hp": 210,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5061",
@@ -34413,7 +34413,7 @@
       "variant_name": "Lamprey (Large)",
       "hp": 210,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5061",
@@ -34422,7 +34422,7 @@
       "variant_name": "Lamprey (Large)",
       "hp": 210,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5061",
@@ -34431,7 +34431,7 @@
       "variant_name": "Lamprey (Large)",
       "hp": 210,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5270",
@@ -34611,7 +34611,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34620,7 +34620,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34629,7 +34629,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34638,7 +34638,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34647,7 +34647,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34656,7 +34656,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34665,7 +34665,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34674,7 +34674,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34683,7 +34683,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34692,7 +34692,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34701,7 +34701,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34710,7 +34710,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34719,7 +34719,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34728,7 +34728,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34737,7 +34737,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     },
     {
       "c_prefix": "c5271",
@@ -34746,7 +34746,7 @@
       "variant_name": "Jar Innards (Large)",
       "hp": 666,
       "_heritage_imported": true,
-      "has_reward": false
+      "has_reward": true
     }
   ],
   "canonical_targets": [

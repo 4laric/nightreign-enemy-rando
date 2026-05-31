@@ -555,7 +555,7 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     fallback_nameid=None,
                     chr_to_nameid_path=None,
                     randomize_safe_nb_arenas=False,
-                    randomize_all_nb_arenas=True):
+                    randomize_all_nb_arenas=False):
     """Full pipeline: decompress → shuffle → recompress.
 
     Cluster modes (multi-Part encounters within 2m of each other):

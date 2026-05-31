@@ -216,14 +216,48 @@ def stage_imports(er_dir: Path,
     return would_copy, missing, warnings
 
 
+def _materialize_er_scripts(er_game, cache_root=None):
+    """Read the luabnd scripts named in IMPORT_PLAN out of a packed ER install's
+    archives into a cache dir, and return that cache's script/ subdir (usable as
+    --er-source). Returns None if the ER archives can't be opened. Scripts listed
+    in the plan but absent from the ER archives are simply skipped — the staging
+    step already reports those as missing_in_er."""
+    _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if _root not in sys.path:
+        sys.path.insert(0, _root)
+    try:
+        from er_source import EldenRingSource
+    except Exception:
+        return None
+    src = EldenRingSource(str(er_game))
+    if not src.has_archive:
+        return None
+    # IMPORT_PLAN basenames are '<id>_battle.luabnd'; ER archives hold the
+    # compressed '<id>_battle.luabnd.dcx'.
+    rels = []
+    for basenames in IMPORT_PLAN.values():
+        for b in basenames:
+            rels.append('/script/' + (b if b.endswith('.dcx') else b + '.dcx'))
+    rels = sorted(set(rels))
+    if cache_root is None:
+        cache_root = os.path.normpath(os.path.join(_root, '.er_cache'))
+    src.materialize(rels, cache_root)
+    return os.path.join(cache_root, 'script')
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description='Stage ER battle.luabnd scripts into heritage_pack overlay.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
-    parser.add_argument('--er-source', required=True, type=Path,
+    parser.add_argument('--er-source', required=False, type=Path, default=None,
                         help="Path to unpacked vanilla ER script/ dir containing NNNNNN_battle.luabnd[.dcx] files")
+    parser.add_argument('--source-game', type=Path, default=None,
+                        help="Packed Elden Ring install dir (.../ELDEN RING/Game). Read the "
+                             "luabnd scripts straight from ER's .bhd/.bdt archives instead of an "
+                             "unpacked --er-source (no UXM unpack needed); they're materialized "
+                             "into a local .er_cache/script, which then acts as --er-source.")
     parser.add_argument('--heritage-overlay', required=True, type=Path,
                         help="Path to heritage_pack's script/ overlay dir (target for staging)")
     parser.add_argument('--include', nargs='*', default=None,
@@ -240,6 +274,22 @@ def main() -> int:
                         help="Show plan without copying anything")
 
     args = parser.parse_args()
+
+    # --source-game: read the luabnd scripts straight from a packed ER install's
+    # archives into a cache, then proceed as if --er-source pointed at it.
+    if args.source_game and args.er_source is None:
+        _cache_script = _materialize_er_scripts(args.source_game)
+        if _cache_script is None:
+            print(f"error: couldn't read the ER archives at {args.source_game}; "
+                  "pass --er-source with an unpacked script/ dir instead.",
+                  file=sys.stderr)
+            return 2
+        args.er_source = Path(_cache_script)
+        print(f"Read luabnd scripts from ER archives \u2192 {_cache_script}")
+    if args.er_source is None:
+        print("error: pass --er-source (unpacked ER script/ dir) or --source-game "
+              "(packed ER Game dir).", file=sys.stderr)
+        return 2
 
     # Validate source/target
     if not args.er_source.is_dir():

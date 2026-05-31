@@ -89,3 +89,11 @@ oo2core_*.dll
 /_spoilers.json
 /_spoilers.md
 /apply_report.json
+
+# Local cache of vanilla map/event data read from the game archives
+# (data_archive/vanilla_source) on a packed install. Regenerable; never commit.
+/.vanilla_cache/
+
+# Local cache of ER chr/script/sfx read from the ER archives (er_source) for
+# heritage imports. Regenerable; never commit.
+/.er_cache/

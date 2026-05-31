@@ -307,10 +307,76 @@ def copy_bundled_aicommon(bundle_dir, target_script_dir,
     return result
 
 
+def _materialize_er_for_import(prefixes, er_game, regulation_csv=None, cache_root=None):
+    """Read the requested c-prefixes' chr files — PLUS their anim carriers — out
+    of a packed Elden Ring install's archives into a cache dir, and return that
+    cache's chr/ subdir (usable as --source). Returns None if the ER archives
+    can't be opened (caller should fall back to a real --source).
+
+    Carriers (shared-animation bundles a dependent retargets to, e.g. c5661->
+    c5660, or cross-family c5701->c4100) are materialized too, so the importer's
+    own build_carrier_map sees them and the dependent doesn't T-pose. Carrier
+    resolution mirrors build_carrier_map: RetargetReferenceChrId when a
+    regulation CSV is given, else the c[:-1] family heuristic over the set of ER
+    carriers (anibnd-only chrs) derived from the ER manifest.
+    """
+    # er_source / data_archive live at the repo root; this tool runs from dev/.
+    _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if _root not in sys.path:
+        sys.path.insert(0, _root)
+    try:
+        from er_source import EldenRingSource, load_manifest
+    except Exception:
+        return None
+    src = EldenRingSource(er_game)
+    if not src.has_archive:
+        return None
+
+    man = load_manifest()
+    by_prefix = {}
+    for p in man.get('chr', []):
+        m = CHR_FILE_RE.match(os.path.basename(p))
+        if m:
+            by_prefix.setdefault(m.group(1), set()).add(m.group(3))
+    # An anim carrier ships anibnd but not chrbnd/behbnd (matches build_carrier_map).
+    carriers = {c for c, kinds in by_prefix.items()
+                if 'anibnd' in kinds and 'chrbnd' not in kinds and 'behbnd' not in kinds}
+
+    retarget = {}
+    if regulation_csv and os.path.isfile(regulation_csv):
+        try:
+            from chr_asset_resolver import _read_retarget_map
+            retarget = _read_retarget_map(regulation_csv) or {}
+        except Exception:
+            retarget = {}
+    fam_carrier = {}
+    if not retarget:
+        for c in sorted(carriers):
+            fam_carrier.setdefault(c[:-1], c)  # first carrier in a family wins
+
+    want = set(prefixes)
+    for cp in prefixes:
+        carrier = retarget.get(cp) if retarget else fam_carrier.get(cp[:-1])
+        if carrier and carrier in carriers:
+            want.add(carrier)
+
+    if cache_root is None:
+        cache_root = os.path.normpath(os.path.join(_root, '.er_cache'))
+    rels = src.files_for_prefixes(sorted(want), kinds=('chr',))
+    src.materialize(rels, cache_root)
+    return os.path.join(cache_root, 'chr')
+
+
 def main():
     ap = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description=__doc__)
     ap.add_argument('--source', help="Source chr/ folder (e.g., unpacked ER chr/).")
+    ap.add_argument('--source-game',
+                     help="Packed Elden Ring install dir (.../ELDEN RING/Game). Read chr "
+                          "files straight from ER's .bhd/.bdt archives instead of an unpacked "
+                          "--source chr/ (no UXM unpack needed). The requested prefixes AND "
+                          "their anim carriers are materialized into a local .er_cache/chr, "
+                          "which then acts as --source. Falls back to --source if given.")
     ap.add_argument('--target', required=True,
                      help="Target chr/ folder (typically your me3 profile's chr/).")
     ap.add_argument('--regulation',
@@ -346,6 +412,29 @@ def main():
             for cp in missing:
                 print(f"  {cp}")
         return 0
+
+    # --source-game: read chr files straight from a packed ER install's archives
+    # (via er_source/data_archive) into a cache, then proceed as if --source
+    # pointed at that cache's chr/ dir. Requested prefixes + their anim carriers
+    # are materialized so build_carrier_map (below) detects the carriers.
+    if args.source_game and not args.source:
+        if args.from_spoiler:
+            _need = sorted(required_prefixes_from_spoiler(args.from_spoiler)
+                           - list_chr_prefixes(args.target))
+        elif args.prefixes:
+            _need = sorted(p.strip() for p in args.prefixes.split(',') if p.strip())
+        else:
+            ap.error("--source-game needs --prefixes or --from-spoiler")
+        if not _need:
+            print("Nothing to copy — target already has everything.")
+            return 0
+        _cache_chr = _materialize_er_for_import(
+            _need, args.source_game, regulation_csv=args.regulation)
+        if not _cache_chr:
+            ap.error(f"Couldn't read the ER archives at --source-game ({args.source_game}). "
+                     "Check the path/keys, or pass --source with an unpacked ER chr/ dir.")
+        args.source = _cache_chr
+        print(f"Read chr files from ER archives \u2192 {_cache_chr}")
 
     # Real copy modes need source
     if not args.source:

@@ -131,6 +131,23 @@ class RunContext:
     # frozen (legacy/test) -> the picker falls back to live cap computation.
     msb_blocked_cps: Optional[Set[str]] = None
 
+    # v0.28.x (Phase 2 POI recycling): nested POI scope inside MSB scope.
+    # When V3_POI_SCOPE_RECYCLE is on, shuffle_msb_v3 calls begin_poi() on
+    # each cluster transition so the resident set / distinct budget the
+    # picker reads come from the smaller per-cluster scope instead of the
+    # whole-MSB scope. Streaming-locality argument: a chr "resident" at
+    # one geographic cluster in an open-world MSB isn't free at a distant
+    # cluster — the game already unloaded it.
+    #
+    # current_poi_id: cluster_id currently in scope, or None when we're
+    #   between cluster transitions / POI scope disabled (picker falls
+    #   back to msb_* state).
+    # poi_resident_cps: cluster_id -> set of cps committed in this cluster.
+    # poi_distinct_budget: cluster_id -> distinct-cp budget for cluster.
+    current_poi_id: Optional[int] = None
+    poi_resident_cps: Dict[int, Set[str]] = field(default_factory=dict)
+    poi_distinct_budget: Dict[int, int] = field(default_factory=dict)
+
     # =====================================================================
     # Construction
     # =====================================================================
@@ -238,6 +255,56 @@ class RunContext:
     def end_msb(self) -> None:
         """Disarm the per-MSB size gates after a shuffle_msb_v3 call."""
         self.msb_size_gate_active = False
+        # v0.28.x: clear per-cluster POI state so the next MSB starts
+        # fresh. Repopulated by the next shuffle_msb_v3's pre-scan.
+        self.current_poi_id = None
+        self.poi_resident_cps.clear()
+        self.poi_distinct_budget.clear()
+
+    def begin_poi(self, poi_id: int, distinct_budget: int) -> None:
+        """Open a POI (spatial cluster) scope inside the current MSB.
+        Seeds the per-cluster budget and ensures a resident set exists
+        so the picker's active_*_cps helpers read this scope.
+
+        Idempotent in poi_id — calling begin_poi(7, ...) twice for the
+        same cluster doesn't clobber the resident set the first call
+        populated. shuffle_msb_v3 only calls this once per cluster but
+        tests may exercise re-entry."""
+        self.current_poi_id = poi_id
+        if poi_id not in self.poi_resident_cps:
+            self.poi_resident_cps[poi_id] = set()
+        self.poi_distinct_budget[poi_id] = distinct_budget
+
+    def end_poi(self) -> None:
+        """Close the current POI scope. Next pick_target_cp sees
+        current_poi_id=None and falls back to MSB-level resident/budget."""
+        self.current_poi_id = None
+
+    def active_resident_cps(self) -> Set[str]:
+        """Resident set the picker reads. POI-scope when a cluster is
+        active, MSB-scope otherwise."""
+        if self.current_poi_id is not None:
+            return self.poi_resident_cps.get(
+                self.current_poi_id, self.msb_resident_cps)
+        return self.msb_resident_cps
+
+    def active_distinct_budget(self) -> int:
+        """Distinct-cp budget the picker reads. POI-scope when a cluster
+        is active, MSB-scope otherwise."""
+        if self.current_poi_id is not None:
+            return self.poi_distinct_budget.get(
+                self.current_poi_id, self.msb_distinct_budget)
+        return self.msb_distinct_budget
+
+    def add_resident_cp(self, cp: str) -> None:
+        """Record `cp` as resident in whichever scope is active. Always
+        adds to msb_resident_cps; also adds to poi_resident_cps[
+        current_poi_id] when a POI scope is armed. Called from the
+        commit site in shuffle_msb_v3."""
+        self.msb_resident_cps.add(cp)
+        if self.current_poi_id is not None:
+            self.poi_resident_cps.setdefault(
+                self.current_poi_id, set()).add(cp)
 
     def register_big(self, size_class: str, pos) -> None:
         """Record a committed placement into per-MSB size state so later
@@ -268,3 +335,7 @@ class RunContext:
         self.msb_resident_cps = set()
         self.msb_distinct_budget = 0
         self.msb_blocked_cps = None
+        # v0.28.x POI scope.
+        self.current_poi_id = None
+        self.poi_resident_cps.clear()
+        self.poi_distinct_budget.clear()

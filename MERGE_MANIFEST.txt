@@ -1,0 +1,56 @@
+NIGHTREIGN ENEMY RANDO — MERGE MANIFEST
+========================================
+Base (destination): your v0.27.44-applied upload
+Merged in:          this session's encampment-gate / reward / think-cap work
+Result fingerprint: v0.27.45
+
+WHAT v0.27.44 ALREADY HAD (your work — preserved untouched):
+  * oops_v3.py rider/mount pairing overhaul (v0.27.43/.44 tags):
+      - V3_RIDER_MOUNT_TARGET_FAMILIES + _selected_swap_family cross-slot consistency
+      - c5890 "Black Knight Horse" outright ban; rider pool intentionally emptied
+      - slot-level rider+mount pair preservation (supersedes the coordinated-swap family)
+  * nr_enemy_tags.json: c4960 -> non_combat, c4961 -> grunt (tier authority)
+  * c4961 added to a target-exclusion list (line ~411)
+  These were NOT modified by the merge except where reward flags had to follow
+  the new tiers (see CONFLICT below).
+
+WHAT THE MERGE ADDED (this session's work):
+  oops_v3.py — 3 edits, all tagged v0.27.43, placed on YOUR v0.27.44 structure:
+    1. 16 trash sponge-variant bans appended to V3_AVOID_VARIANT_NPC_IDS
+    2. V3_STARTING_ENCAMPMENT_TRASH_GATE toggle + _load_trash_prefixes() + V3_TRASH_PREFIXES
+    3. the trash gate in pick_target_cp — HAND-PLACED after your rewritten
+       rider/mount cascade (the original 2-line anchor no longer existed), so it
+       runs after your family-pinning. A camp slot pinned to a mounted pair stays
+       a coherent vanilla pair instead of getting half-trashed (intersection empties
+       -> vanilla floor).
+  data/ (new files):
+    + reconstructed_trash.json     (117 trash chrs)
+    + trash_banned_variants.json   (16 bans, categorized)
+  data/ (merged):
+    ~ nr_enemy_tags.json    retier 10 chrs + has_reward (emit) + has_boss_reward (2 heritage NB)
+    ~ mmv_imports.json      has_reward (11 MMV bosses, chr-level) + has_boss_reward (35 MMV)
+    ~ nr_enemy_roster.json  has_reward variant flips (emit)
+  regulation_fixes/ (additive — you had no think patch):
+    + NpcThinkParam_aggro_fix_smithbox.csv  (657 rows: 590 base + 67 heritage/MMV NB caps)
+    + Bullet_lamprey_snipe_fix_smithbox.csv (3 rows)
+
+CONFLICT RESOLVED (the one real merge collision):
+  c4960 / c4961 — you demoted them (miniboss -> non_combat / grunt); my earlier
+  emit run had set has_reward=True on both (derived from the OLD miniboss tier).
+  Resolution: took YOUR tier as authority, then re-ran emit so has_reward
+  re-derived correctly -> both now has_reward=False (non-combat/grunt carry no
+  reward). Your tiers win; the derived flag follows them.
+
+VERIFICATION:
+  * oops_v3.py parses; full engine loads.
+  * 117 trash / 5 encampment MSBs / 16 bans live; your rider pool still empty.
+  * Functional gate test: 1,200 picks at m43_01 -> 0 non-trash leaks;
+    same seeds at a normal tile -> 200 non-trash (scoped, not global).
+  * Test suite vs your v0.27.44 baseline: BYTE-IDENTICAL failure set
+    (41 failed / 360 passed / 4 skipped) — zero regressions from the merge.
+
+OPEN ITEM (unchanged from before):
+  c5240 Shadowpot: emit flips it has_reward True->False (it drops only 100 souls,
+  no item lot, and it is a grunt — so per the tier rule that is correct). If you
+  set it True intentionally, add "c5240": true to has_reward_overrides.json and
+  re-run dev/emit_has_reward.py.

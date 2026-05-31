@@ -1,0 +1,102 @@
+{
+  "_doc": "Sponge variants of trash-tier chrs. Every one has a normal-HP twin, so all banned (none normalized). The ids are added to V3_AVOID_VARIANT_NPC_IDS in oops_v3.py \u2014 a rando-wide variant ban (keeps them out of general scatter too, not just encampments).",
+  "count": 16,
+  "variants": {
+    "30009900": {
+      "chr": "c3000",
+      "hp": 63936,
+      "name": "Exile Soldier",
+      "category": "broken_or_special"
+    },
+    "30009999": {
+      "chr": "c3000",
+      "hp": 63936,
+      "name": "Exile Soldier",
+      "category": "broken_or_special"
+    },
+    "33619000": {
+      "chr": "c3361",
+      "hp": 2560,
+      "name": "Putrid Ancestral Follower",
+      "category": "broken_or_special"
+    },
+    "34500200": {
+      "chr": "c3450",
+      "hp": 2640,
+      "name": "Misbegotten",
+      "category": "broken_or_special"
+    },
+    "36640030": {
+      "chr": "c3664",
+      "hp": 939,
+      "name": "Cemetery Shade",
+      "category": "legit_beefy"
+    },
+    "38502100": {
+      "chr": "c3850",
+      "hp": 640,
+      "name": "Marionette Soldier - Spears (Sparring Grounds Dummy)",
+      "category": "broken_or_special"
+    },
+    "41109000": {
+      "chr": "c4110",
+      "hp": 599,
+      "name": "Demi-Human Shaman",
+      "category": "broken_or_special"
+    },
+    "41109100": {
+      "chr": "c4110",
+      "hp": 599,
+      "name": "Demi-Human Shaman",
+      "category": "broken_or_special"
+    },
+    "42001000": {
+      "chr": "c4200",
+      "hp": 430,
+      "name": "Man-Bat",
+      "category": "legit_beefy"
+    },
+    "42001010": {
+      "chr": "c4200",
+      "hp": 430,
+      "name": "Man-Bat",
+      "category": "legit_beefy"
+    },
+    "42001100": {
+      "chr": "c4200",
+      "hp": 430,
+      "name": "Man-Bat",
+      "category": "legit_beefy"
+    },
+    "42001110": {
+      "chr": "c4200",
+      "hp": 430,
+      "name": "Man-Bat",
+      "category": "legit_beefy"
+    },
+    "42001200": {
+      "chr": "c4200",
+      "hp": 430,
+      "name": "Man-Bat",
+      "category": "legit_beefy"
+    },
+    "50800100": {
+      "chr": "c5080",
+      "hp": 550,
+      "name": "Bloodfiend",
+      "category": "legit_beefy"
+    },
+    "50801100": {
+      "chr": "c5080",
+      "hp": 550,
+      "name": "Bloodfiend",
+      "category": "legit_beefy"
+    },
+    "50801110": {
+      "chr": "c5080",
+      "hp": 550,
+      "name": "Bloodfiend",
+      "category": "legit_beefy"
+    }
+  }
+}

@@ -1,0 +1,640 @@
+{
+  "_meta": {
+    "format_version": 2,
+    "description": "Trash-tier pool for the starting-encampment gate. A chr qualifies if tier==grunt, 0<hp_median<=400, not a c8xxx system asset. Used by V3_TRASH_PREFIXES in oops_v3.py to restrict target pools for slots in V3_STARTING_ENCAMPMENT_MSBS.",
+    "line": "grunt-tier AND 0<hp_median<=400 AND not system(c8xxx) AND not in promotions",
+    "added_in": "v0.27.41 (starting-encampment gate)",
+    "note_variant_safety": "hp_median masks high-HP variants; the spawnable hp_max was audited per chr and 16 sponge variants (>400) found across 8 chrs. Those are listed in banned_sponge_variants and live in V3_AVOID_VARIANT_NPC_IDS so an in-pool trash chr cannot roll its beefy variant. After the ban, every trash chr has spawnable_max<=400."
+  },
+  "count": 117,
+  "trash_prefixes": [
+    "c2040",
+    "c2041",
+    "c2270",
+    "c2271",
+    "c2272",
+    "c2273",
+    "c2275",
+    "c2277",
+    "c3000",
+    "c3020",
+    "c3070",
+    "c3080",
+    "c3201",
+    "c3320",
+    "c3360",
+    "c3361",
+    "c3450",
+    "c3470",
+    "c3500",
+    "c3510",
+    "c3660",
+    "c3661",
+    "c3664",
+    "c3702",
+    "c3750",
+    "c3850",
+    "c3860",
+    "c4040",
+    "c4070",
+    "c4080",
+    "c4100",
+    "c4101",
+    "c4110",
+    "c4150",
+    "c4160",
+    "c4161",
+    "c4162",
+    "c4163",
+    "c4164",
+    "c4165",
+    "c4166",
+    "c4167",
+    "c4170",
+    "c4180",
+    "c4190",
+    "c4192",
+    "c4200",
+    "c4201",
+    "c4210",
+    "c4230",
+    "c4250",
+    "c4280",
+    "c4281",
+    "c4300",
+    "c4311",
+    "c4312",
+    "c4313",
+    "c4314",
+    "c4315",
+    "c4316",
+    "c4321",
+    "c4371",
+    "c4372",
+    "c4373",
+    "c4374",
+    "c4375",
+    "c4376",
+    "c4377",
+    "c4380",
+    "c4381",
+    "c4382",
+    "c4383",
+    "c4384",
+    "c4385",
+    "c4386",
+    "c4430",
+    "c4440",
+    "c4483",
+    "c4801",
+    "c5060",
+    "c5080",
+    "c5090",
+    "c5190",
+    "c5193",
+    "c5240",
+    "c5241",
+    "c5251",
+    "c5270",
+    "c5500",
+    "c5522",
+    "c5523",
+    "c5600",
+    "c5651",
+    "c5661",
+    "c5700",
+    "c5701",
+    "c5751",
+    "c5830",
+    "c5870",
+    "c5900",
+    "c6001",
+    "c6010",
+    "c6040",
+    "c6050",
+    "c6060",
+    "c6070",
+    "c6072",
+    "c6080",
+    "c6081",
+    "c6082",
+    "c6090",
+    "c6091",
+    "c6100",
+    "c6240",
+    "c7000",
+    "c7650",
+    "c7810"
+  ],
+  "chrs": {
+    "c2040": {
+      "hp_median": 85.0,
+      "name": "Juvenile Scholar"
+    },
+    "c2041": {
+      "hp_median": 77,
+      "name": "Kindred of Rot Larva"
+    },
+    "c2270": {
+      "hp_median": 357,
+      "name": "Giant Crab"
+    },
+    "c2271": {
+      "hp_median": 28.0,
+      "name": "Crab"
+    },
+    "c2272": {
+      "hp_median": 357.0,
+      "name": "Giant Black Crab"
+    },
+    "c2273": {
+      "hp_median": 28,
+      "name": "Crab (Maggots)"
+    },
+    "c2275": {
+      "hp_median": 28,
+      "name": "Crab (Clean)"
+    },
+    "c2277": {
+      "hp_median": 28,
+      "name": "Crab (Golden Tufts)"
+    },
+    "c3000": {
+      "hp_median": 230,
+      "name": "Exile Soldier"
+    },
+    "c3020": {
+      "hp_median": 314.0,
+      "name": "Large Exile Soldier"
+    },
+    "c3070": {
+      "hp_median": 233.0,
+      "name": "Dominula Celebrant"
+    },
+    "c3080": {
+      "hp_median": 172,
+      "name": "Imp"
+    },
+    "c3201": {
+      "hp_median": 169,
+      "name": "Frenzied Nomad (Marsh Group Boss)"
+    },
+    "c3320": {
+      "hp_median": 111,
+      "name": "Silver Tear (Unscaled)"
+    },
+    "c3360": {
+      "hp_median": 316,
+      "name": "Ancestral Follower"
+    },
+    "c3361": {
+      "hp_median": 316,
+      "name": "Putrid Ancestral Follower"
+    },
+    "c3450": {
+      "hp_median": 192.0,
+      "name": "Misbegotten"
+    },
+    "c3470": {
+      "hp_median": 247.0,
+      "name": "Albinauric"
+    },
+    "c3500": {
+      "hp_median": 148,
+      "name": "Large Skeleton (Spear)"
+    },
+    "c3510": {
+      "hp_median": 281.0,
+      "name": "Skeleton (Sword and Shield)"
+    },
+    "c3660": {
+      "hp_median": 105.0,
+      "name": "Commoner"
+    },
+    "c3661": {
+      "hp_median": 376,
+      "name": "Putrid Corpse"
+    },
+    "c3664": {
+      "hp_median": 305,
+      "name": "Cemetery Shade"
+    },
+    "c3702": {
+      "hp_median": 232,
+      "name": "Glintstone Sorcerer"
+    },
+    "c3750": {
+      "hp_median": 161.0,
+      "name": "Clayman - Spear"
+    },
+    "c3850": {
+      "hp_median": 179.0,
+      "name": "Marionette"
+    },
+    "c3860": {
+      "hp_median": 173.0,
+      "name": "Avionette"
+    },
+    "c4040": {
+      "hp_median": 105.0,
+      "name": "Slug"
+    },
+    "c4070": {
+      "hp_median": 78.0,
+      "name": "Wolf"
+    },
+    "c4080": {
+      "hp_median": 162,
+      "name": "Rat"
+    },
+    "c4100": {
+      "hp_median": 119.0,
+      "name": "Demi-Human"
+    },
+    "c4101": {
+      "hp_median": 233,
+      "name": "Large Demi-Human"
+    },
+    "c4110": {
+      "hp_median": 85,
+      "name": "Demi-Human Shaman"
+    },
+    "c4150": {
+      "hp_median": 338,
+      "name": "Basilisk"
+    },
+    "c4160": {
+      "hp_median": 197,
+      "name": "Large Stray"
+    },
+    "c4161": {
+      "hp_median": 162.0,
+      "name": "Stray"
+    },
+    "c4162": {
+      "hp_median": 197,
+      "name": "Large Braided Dog"
+    },
+    "c4163": {
+      "hp_median": 162,
+      "name": "Braided Dog"
+    },
+    "c4164": {
+      "hp_median": 197,
+      "name": "Large Bloodbane Stray"
+    },
+    "c4165": {
+      "hp_median": 162,
+      "name": "Bloodbane Stray"
+    },
+    "c4166": {
+      "hp_median": 197,
+      "name": "Large Rotten Stray"
+    },
+    "c4167": {
+      "hp_median": 162,
+      "name": "Mushroom Dog"
+    },
+    "c4170": {
+      "hp_median": 125.0,
+      "name": "Putrid Flesh"
+    },
+    "c4180": {
+      "hp_median": 223,
+      "name": "Spirit Jellyfish"
+    },
+    "c4190": {
+      "hp_median": 213,
+      "name": "Large Scarab"
+    },
+    "c4192": {
+      "hp_median": 271,
+      "name": "Large Scarab (variant)"
+    },
+    "c4200": {
+      "hp_median": 126.0,
+      "name": "Man-Bat"
+    },
+    "c4201": {
+      "hp_median": 373,
+      "name": "Operatic Bat"
+    },
+    "c4210": {
+      "hp_median": 155.0,
+      "name": "Warhawk"
+    },
+    "c4230": {
+      "hp_median": 115,
+      "name": "Small Land Octopus"
+    },
+    "c4250": {
+      "hp_median": 105.0,
+      "name": "Small Fingercreeper"
+    },
+    "c4280": {
+      "hp_median": 196,
+      "name": "Giant Ant"
+    },
+    "c4281": {
+      "hp_median": 327,
+      "name": "Skull Plate Giant Ant"
+    },
+    "c4300": {
+      "hp_median": 85.0,
+      "name": "Wandering Noble"
+    },
+    "c4311": {
+      "hp_median": 192.0,
+      "name": "Godrick Soldier"
+    },
+    "c4312": {
+      "hp_median": 192,
+      "name": "Raya Lucaria Soldier"
+    },
+    "c4313": {
+      "hp_median": 192,
+      "name": "Leyndell Soldier"
+    },
+    "c4314": {
+      "hp_median": 192,
+      "name": "Radahn Soldier"
+    },
+    "c4315": {
+      "hp_median": 192.0,
+      "name": "Mausoleum Soldier"
+    },
+    "c4316": {
+      "hp_median": 192,
+      "name": "Haligtree Soldier"
+    },
+    "c4321": {
+      "hp_median": 153,
+      "name": "Vulgar Militia"
+    },
+    "c4371": {
+      "hp_median": 147,
+      "name": "Godrick Foot Soldier"
+    },
+    "c4372": {
+      "hp_median": 147.0,
+      "name": "Raya Lucaria Foot Soldier"
+    },
+    "c4373": {
+      "hp_median": 147.0,
+      "name": "Leyndell Foot Soldier"
+    },
+    "c4374": {
+      "hp_median": 147.0,
+      "name": "Radahn Foot Soldier"
+    },
+    "c4375": {
+      "hp_median": 147.0,
+      "name": "Mausoleum Foot Soldier"
+    },
+    "c4376": {
+      "hp_median": 147,
+      "name": "Haligtree Foot Soldier"
+    },
+    "c4377": {
+      "hp_median": 147.0,
+      "name": "Highwayman"
+    },
+    "c4380": {
+      "hp_median": 162.0,
+      "name": "Starcaller"
+    },
+    "c4381": {
+      "hp_median": 162,
+      "name": "Guilty"
+    },
+    "c4382": {
+      "hp_median": 93,
+      "name": "Stonedigger"
+    },
+    "c4383": {
+      "hp_median": 70,
+      "name": "Glintstone Digger"
+    },
+    "c4384": {
+      "hp_median": 180,
+      "name": "Glintstone Digger"
+    },
+    "c4385": {
+      "hp_median": 162.0,
+      "name": "Disciple of Rot"
+    },
+    "c4386": {
+      "hp_median": 162,
+      "name": "c4386"
+    },
+    "c4430": {
+      "hp_median": 174,
+      "name": "Abnormal Stone Cluster"
+    },
+    "c4440": {
+      "hp_median": 366,
+      "name": "Land Squirt"
+    },
+    "c4483": {
+      "hp_median": 120,
+      "name": "Fading Miranda Sprout"
+    },
+    "c4801": {
+      "hp_median": 96,
+      "name": "Lord of Blood Spear"
+    },
+    "c5060": {
+      "hp_median": 159.0,
+      "name": "Lamprey"
+    },
+    "c5080": {
+      "hp_median": 346.0,
+      "name": "Bloodfiend"
+    },
+    "c5090": {
+      "hp_median": 143.0,
+      "name": "Gravebird"
+    },
+    "c5190": {
+      "hp_median": 168.0,
+      "name": "Spider Scorpion"
+    },
+    "c5193": {
+      "hp_median": 58.0,
+      "name": "Spider Scorpion"
+    },
+    "c5240": {
+      "hp_median": 85.0,
+      "name": "Shadowpot"
+    },
+    "c5241": {
+      "hp_median": 371.0,
+      "name": "Commoner"
+    },
+    "c5251": {
+      "hp_median": 141.0,
+      "name": "Horned Shaman"
+    },
+    "c5270": {
+      "hp_median": 397,
+      "name": "Jar Innards"
+    },
+    "c5500": {
+      "hp_median": 111.0,
+      "name": "Living Magma"
+    },
+    "c5522": {
+      "hp_median": 338.0,
+      "name": "Stray"
+    },
+    "c5523": {
+      "hp_median": 162.0,
+      "name": "Stray"
+    },
+    "c5600": {
+      "hp_median": 281.0,
+      "name": "Catacomb Skeleton"
+    },
+    "c5651": {
+      "hp_median": 147.0,
+      "name": "Messmer Foot Soldier"
+    },
+    "c5661": {
+      "hp_median": 153.0,
+      "name": "Shadow Militia"
+    },
+    "c5700": {
+      "hp_median": 119.0,
+      "name": "Demi-Human (SOTE)"
+    },
+    "c5701": {
+      "hp_median": 233.0,
+      "name": "Demi-Human Large (SOTE)"
+    },
+    "c5751": {
+      "hp_median": 150.0,
+      "name": "Living Jar"
+    },
+    "c5830": {
+      "hp_median": 192.0,
+      "name": "Messmer Soldier"
+    },
+    "c5870": {
+      "hp_median": 115.0,
+      "name": "Imp (Lion Head)"
+    },
+    "c5900": {
+      "hp_median": 192.0,
+      "name": "Man-Fly"
+    },
+    "c6001": {
+      "hp_median": 27,
+      "name": "Eagle"
+    },
+    "c6010": {
+      "hp_median": 55,
+      "name": "c6010"
+    },
+    "c6040": {
+      "hp_median": 27,
+      "name": "c6040"
+    },
+    "c6050": {
+      "hp_median": 82,
+      "name": "c6050"
+    },
+    "c6060": {
+      "hp_median": 82.0,
+      "name": "Goat"
+    },
+    "c6070": {
+      "hp_median": 27,
+      "name": "c6070"
+    },
+    "c6072": {
+      "hp_median": 27,
+      "name": "c6072"
+    },
+    "c6080": {
+      "hp_median": 17,
+      "name": "c6080"
+    },
+    "c6081": {
+      "hp_median": 17,
+      "name": "c6081"
+    },
+    "c6082": {
+      "hp_median": 17,
+      "name": "c6082"
+    },
+    "c6090": {
+      "hp_median": 378,
+      "name": "c6090"
+    },
+    "c6091": {
+      "hp_median": 378,
+      "name": "c6091"
+    },
+    "c6100": {
+      "hp_median": 27,
+      "name": "c6100"
+    },
+    "c6240": {
+      "hp_median": 187,
+      "name": "c6240"
+    },
+    "c7000": {
+      "hp_median": 115,
+      "name": "Fallen Hawks Soldier (Base)"
+    },
+    "c7650": {
+      "hp_median": 269,
+      "name": "Dreg Corpse"
+    },
+    "c7810": {
+      "hp_median": 77.0,
+      "name": "Freja Spiderling"
+    }
+  },
+  "promotions_to_miniboss": [
+    "c5061",
+    "c5271"
+  ],
+  "banned_sponge_variants": [
+    30009900,
+    30009999,
+    33619000,
+    34500200,
+    36640030,
+    38502100,
+    41109000,
+    41109100,
+    42001000,
+    42001010,
+    42001100,
+    42001110,
+    42001200,
+    50800100,
+    50801100,
+    50801110
+  ],
+  "evicted_mistags_retiered": {
+    "night_boss": [
+      "c7931",
+      "c7932",
+      "c52309",
+      "c52312",
+      "c52313"
+    ],
+    "miniboss": [
+      "c4171",
+      "c4442",
+      "c4482"
+    ],
+    "left_grunt_pool_excluded": [
+      "c3501",
+      "c8000",
+      "c8910"
+    ]
+  }
+}

@@ -28,7 +28,23 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.27.45'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.27.46'  # MUST bump on each release — appears in spoilers
+
+# v0.28.x (Phase 2 POI recycling): default on. Flip to False to revert
+# the per-cluster scope and restore the v0.27.45 per-MSB-only behavior
+# in shuffle_msb_v3's swap loop. The recycle logic itself is unchanged
+# — only the scope of "what counts as resident in this picker call".
+# See dev/POI_RECYCLING_SPEC.md for the design and Phase 1 measurements.
+V3_POI_SCOPE_RECYCLE = True
+
+# v0.28.x: lazy-loaded cluster table. {msb_name: [[part_index, ...], ...]}
+# where each inner list is one POI cluster (0-indexed by min part_index
+# within the MSB). Populated by load_data() from
+# data/slot_poi_clusters.json. Read by shuffle_msb_v3 to drive
+# cluster-grouped slot iteration. None when the file isn't present
+# (older installs / test environments without Phase 0 data) — engine
+# falls back to MSB scope in that case.
+_V3_SLOT_POI_CLUSTERS = None
 
 # Re-export primitives from oops_all_anyone (already validated, working)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -4157,6 +4173,32 @@ def load_data():
                     print(f"v0.27.24: think-param guard — fully no-target "
                           f"c-prefixes (all variants dead-think, stay vanilla): "
                           f"{', '.join(_fully_dead)}")
+
+    # v0.28.x (Phase 2 POI recycling): load the spatial cluster table.
+    # Optional — if data/slot_poi_clusters.json is absent (e.g. older
+    # data layouts, or fresh install before build_slot_poi_clusters.py
+    # has been run), the engine silently falls back to per-MSB scope.
+    # Format: {msb_name: [[part_index, ...], ...]} with each inner list
+    # being one cluster, 0-indexed by min part_index within the MSB.
+    global _V3_SLOT_POI_CLUSTERS
+    _clusters_path = _data_path('slot_poi_clusters.json')
+    if os.path.isfile(_clusters_path):
+        try:
+            with open(_clusters_path, encoding='utf-8') as f:
+                _clusters_data = json.load(f)
+            _V3_SLOT_POI_CLUSTERS = _clusters_data.get('clusters', {})
+            _n_msbs = _clusters_data.get('_meta', {}).get('n_msbs', '?')
+            _n_clusters = _clusters_data.get('_meta', {}).get('n_clusters_total', '?')
+            _radius = _clusters_data.get('_meta', {}).get('radius_m', '?')
+            print(f"v0.28.x POI scope: loaded {_n_clusters} clusters across "
+                  f"{_n_msbs} MSBs (R={_radius}m). V3_POI_SCOPE_RECYCLE="
+                  f"{V3_POI_SCOPE_RECYCLE}.")
+        except Exception as e:
+            print(f"v0.28.x POI scope: failed to load slot_poi_clusters.json "
+                  f"({e}); falling back to per-MSB scope.")
+            _V3_SLOT_POI_CLUSTERS = None
+    else:
+        _V3_SLOT_POI_CLUSTERS = None
 
     return roster, tags
 
@@ -14160,8 +14202,21 @@ def pick_target_cp(recipient_cp, tags,
     # v0.28 hybrid budget/recycle. No run_ctx or an unset (0) budget => an
     # empty resident set and an unbounded budget, which reduces this to the
     # plain hashed pick over sorted(chosen_pool) — identical to pre-v0.28.
-    _resident = getattr(run_ctx, 'msb_resident_cps', None) or set()
-    _budget = getattr(run_ctx, 'msb_distinct_budget', 0) or (1 << 30)
+    #
+    # v0.28.x Phase 2 (POI recycling): route through active_* helpers so
+    # when shuffle_msb_v3 has armed a cluster scope via run_ctx.begin_poi()
+    # the picker reads the per-cluster resident set and budget instead of
+    # the per-MSB ones. Picker code path unchanged — only the scope of
+    # "resident" changes. Falls back to the direct attr read for
+    # RunContext snapshots that predate the helpers.
+    if run_ctx is None:
+        _resident, _budget = set(), 1 << 30
+    elif hasattr(run_ctx, 'active_resident_cps'):
+        _resident = run_ctx.active_resident_cps() or set()
+        _budget = run_ctx.active_distinct_budget() or (1 << 30)
+    else:
+        _resident = getattr(run_ctx, 'msb_resident_cps', None) or set()
+        _budget = getattr(run_ctx, 'msb_distinct_budget', 0) or (1 << 30)
     result, _kind = _choose_with_budget(chosen_pool, _resident, _budget, _picker)
     if result is None:
         return None
@@ -14447,6 +14502,11 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
     # when the set is empty. v0.23.68: extracted to helper.
     if msb_base in V3_DIAGNOSTIC_INVENTORY_MSBS:
         _emit_msb_part_inventory_trace(data, parts, midx_to_cp, msb_base)
+    # v0.28.x Phase 2: default POI scope vars to None at the outer level
+    # so the slot loop below can reference them when run_ctx is None
+    # (legacy/test paths that don't arm per-MSB state at all).
+    _pi_to_cid = None
+    _cluster_budgets = None
     # v0.27.5: arm the placement-time proximity/density gates for this
     # MSB. Caps follow the tunnel-vs-default profile the DENSITY_CAP
     # post-pass used.
@@ -14466,6 +14526,29 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
         # budget. The budget counts only distinct enemy c-prefixes on
         # SWAPPABLE slots — how many distinct *rando* chrbnds this tile may
         # introduce. Preserved slots still keep vanilla in the output.
+        #
+        # v0.28.x Phase 2 POI recycling: when V3_POI_SCOPE_RECYCLE is on
+        # and slot_poi_clusters.json has an entry for this MSB, the same
+        # pre-scan loop also builds a per-cluster swappable-distinct set
+        # so the picker's resident/budget can scope to the smaller POI
+        # cluster instead of the whole MSB. _pi_to_cid is the inverse map
+        # from part_index to cluster_id within this MSB (-1 for slots
+        # outside the cluster file, typically non-enemy parts).
+        _poi_active = (V3_POI_SCOPE_RECYCLE
+                       and _V3_SLOT_POI_CLUSTERS is not None
+                       and _V3_SLOT_POI_CLUSTERS.get(msb_name) is not None)
+        if _poi_active:
+            _msb_clusters_for_iter = _V3_SLOT_POI_CLUSTERS[msb_name]
+            _pi_to_cid = {}
+            for _cid, _members in enumerate(_msb_clusters_for_iter):
+                for _pi_m in _members:
+                    _pi_to_cid[_pi_m] = _cid
+            _cluster_swappable = defaultdict(set)
+        else:
+            _msb_clusters_for_iter = None
+            _pi_to_cid = None
+            _cluster_swappable = None
+
         _swappable_distinct = set()
         for _pi, _po in enumerate(parts['entry_offsets']):
             try:
@@ -14487,7 +14570,14 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
                     or _ccp not in prefix_variants):
                 continue  # vanilla-kept: cheap, not charged against the budget
             _swappable_distinct.add(_ccp)
+            if _cluster_swappable is not None:
+                _cluster_swappable[_pi_to_cid.get(_pi, -1)].add(_ccp)
         _msb_budget = len(_swappable_distinct)
+        if _cluster_swappable is not None:
+            _cluster_budgets = {cid: len(cps)
+                                for cid, cps in _cluster_swappable.items()}
+        else:
+            _cluster_budgets = None
         if msb_base in V3_TUNNEL_MAPS:
             run_ctx.begin_msb(V3_TUNNEL_DENSITY_CAP_XL_PLUS,
                               V3_TUNNEL_DENSITY_CAP_L_PLUS,
@@ -14524,8 +14614,46 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
     # affects which enemy a slot gets, and a canonical order makes cap
     # consumption deterministic and identical to simulate_engine.py's
     # sorted(part_index) pass.
-    _slot_order = list(enumerate(parts['entry_offsets']))
+    #
+    # v0.28.x Phase 2 POI recycling: when POI scope is active, slots are
+    # reordered so same-cluster slots are adjacent. Order is still fully
+    # canonical: clusters in cluster_id order (which the builder assigns
+    # by min(part_index) within MSB), slots in pi order within cluster.
+    # 50/124 multi-cluster MSBs already have pi-contiguous clusters; the
+    # rest interleave (worst m60_42_36_50 at 60% pi-boundaries). The
+    # cluster-grouped order produces ONE begin_poi/end_poi pair per
+    # cluster instead of N inline transitions. -1 (slots outside the
+    # cluster file, e.g. non-enemy parts that get filtered out in the
+    # slot body anyway) is placed LAST so they pick up no POI scope.
+    if _pi_to_cid is not None:
+        _grouped = defaultdict(list)
+        for _pi_g, _po_g in enumerate(parts['entry_offsets']):
+            _grouped[_pi_to_cid.get(_pi_g, -1)].append((_pi_g, _po_g))
+        _slot_order = []
+        for _cid_o in sorted(_grouped, key=lambda c: (c == -1, c)):
+            _slot_order.extend(_grouped[_cid_o])
+    else:
+        _slot_order = list(enumerate(parts['entry_offsets']))
+    _current_cluster = None  # tracks POI scope transitions inside the loop
     for pi, po in _slot_order:
+        # v0.28.x Phase 2: cluster-transition detection. When the
+        # cluster_id for this pi differs from the active one, close the
+        # previous POI scope and open the new one. -1 (slots outside the
+        # cluster file) means no POI scope active — picker falls back
+        # to MSB-level resident/budget. With cluster-grouped order
+        # above, this fires exactly once per real cluster.
+        if _pi_to_cid is not None and run_ctx is not None:
+            _this_cluster = _pi_to_cid.get(pi, -1)
+            if _this_cluster != _current_cluster:
+                if (_current_cluster is not None and _current_cluster != -1
+                        and hasattr(run_ctx, 'end_poi')):
+                    run_ctx.end_poi()
+                if (_this_cluster != -1 and hasattr(run_ctx, 'begin_poi')
+                        and _cluster_budgets is not None):
+                    run_ctx.begin_poi(
+                        _this_cluster,
+                        _cluster_budgets.get(_this_cluster, _msb_budget))
+                _current_cluster = _this_cluster
         # v0.24.109 binary-search vanilla pins. For diagnostic A/B testing
         # of specific (msb, pi) slots — pinned slots skip the picker
         # entirely and remain vanilla in the output MSB. Used to bisect
@@ -15079,12 +15207,26 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
             # v0.28: record the committed c-prefix as resident so later
             # slots in this MSB can recycle it (and so it counts against
             # the distinct budget). Idempotent; covers every commit path.
-            run_ctx.msb_resident_cps.add(target_cp)
+            #
+            # v0.28.x Phase 2: add_resident_cp updates the per-cluster
+            # resident set too when a POI scope is armed (begin_poi() was
+            # called by the cluster-grouped swap loop). Falls back to a
+            # direct msb_resident_cps.add for older RunContext snapshots.
+            if hasattr(run_ctx, 'add_resident_cp'):
+                run_ctx.add_resident_cp(target_cp)
+            else:
+                run_ctx.msb_resident_cps.add(target_cp)
             _committed_sz = _effective_size_class(target_cp, tags)
             if _committed_sz in V3_DENSITY_L_SIZE_CLASSES:
                 run_ctx.register_big(_committed_sz, slot_pos)
 
     if run_ctx is not None:
+        # v0.28.x Phase 2: close any active POI scope before end_msb.
+        # end_msb() also clears POI state defensively, but closing
+        # explicitly here keeps current_poi_id=None for any code between
+        # the swap loop and end_msb that reads run_ctx state.
+        if _pi_to_cid is not None and hasattr(run_ctx, 'end_poi'):
+            run_ctx.end_poi()
         run_ctx.end_msb()  # v0.27.5: disarm per-MSB size gates
     if not swap_plan:
         with open(output_path, 'wb') as f: f.write(data)

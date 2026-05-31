@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "_engine_fingerprint": "v0.27.45",
+    "_engine_fingerprint": "v0.27.46",
     "_generator": "dev/extract_placement_budget.py",
     "_notes": [
       "Sparse: only c-prefixes with at least one non-default fact",

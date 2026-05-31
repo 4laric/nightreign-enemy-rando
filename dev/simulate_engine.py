@@ -68,8 +68,76 @@ def _compute_msb_budgets(o, prefix_variants, inventory):
     return {msb: len(cps) for msb, cps in by_msb.items()}
 
 
-def simulate(seed, inventory, roster, tags, pv, pc, msb_budgets=None):
-    """Run one MSB-free shuffle for `seed`. Returns a result dict."""
+def _load_poi_clusters():
+    """v0.28.x Phase 2: load slot_poi_clusters.json and return
+    (clusters_by_msb, pi_to_cid_by_msb). The first is the raw
+    {msb: [[pi,...], ...]} mapping; the second is the per-MSB reverse
+    lookup {pi: cluster_id} for the simulator's slot loop. Returns
+    (None, None) when the file isn't present (Phase 0 hasn't been
+    built or the install layout omits it)."""
+    from collections import defaultdict
+    path = os.path.join(_ROOT, 'data/slot_poi_clusters.json')
+    if not os.path.isfile(path):
+        return None, None
+    with open(path, encoding='utf-8') as f:
+        data = json.load(f)
+    clusters = data.get('clusters', {})
+    pi_to_cid_by_msb = {}
+    for msb, clist in clusters.items():
+        lut = {}
+        for cid, members in enumerate(clist):
+            for pi in members:
+                lut[pi] = cid
+        pi_to_cid_by_msb[msb] = lut
+    return clusters, pi_to_cid_by_msb
+
+
+def _compute_cluster_budgets(o, prefix_variants, inventory,
+                              pi_to_cid_by_msb):
+    """v0.28.x Phase 2: per-(MSB, cluster_id) distinct-cp budgets,
+    same logic as _compute_msb_budgets but keyed on the cluster bucket
+    each slot lives in. Slots whose (msb, pi) isn't in the cluster
+    file go to a cluster_id=-1 bucket; the simulator iterates that
+    bucket without arming a POI scope, so the picker falls back to
+    MSB-level state for those slots."""
+    from collections import defaultdict
+    excl_pref = o.V3_EXCLUDE_PREFIXES
+    excl_src = o.V3_EXCLUDE_SOURCE_PREFIXES
+    pinned_va = getattr(o, 'V3_BINARY_SEARCH_VANILLA_PINS', set())
+    by_scope = defaultdict(set)  # (msb, cid) -> set of cps
+    for r in inventory:
+        cp = r.get('c_prefix')
+        npc = r.get('npc_param_id', 0)
+        if not (cp and cp.startswith('c') and len(cp) > 1 and cp[1].isdigit()):
+            continue
+        if npc == 0 or npc == 0xFFFFFFFF:
+            continue
+        msb = r['map']
+        msb_base = msb[:-4] if msb.endswith('.msb') else msb
+        pi = r['part_index']
+        if (msb_base, pi) in pinned_va:
+            continue
+        if cp in excl_pref or cp in excl_src:
+            continue
+        if cp not in prefix_variants:
+            continue
+        cid = pi_to_cid_by_msb.get(msb, {}).get(pi, -1)
+        by_scope[(msb, cid)].add(cp)
+    return {k: len(v) for k, v in by_scope.items()}
+
+
+def simulate(seed, inventory, roster, tags, pv, pc, msb_budgets=None,
+             pi_to_cid_by_msb=None, cluster_budgets=None):
+    """Run one MSB-free shuffle for `seed`. Returns a result dict.
+
+    v0.28.x Phase 2: when pi_to_cid_by_msb is provided (Phase 0 clusters
+    file present + V3_POI_SCOPE_RECYCLE on in oops_v3), slots are
+    visited cluster-by-cluster inside each MSB, with begin_poi/end_poi
+    bracketing each cluster's run. The picker then reads per-cluster
+    resident/budget via run_ctx.active_*_cps(). Slots whose (msb, pi)
+    aren't in the cluster file go in a cluster_id=-1 trailing bucket
+    that runs without arming a POI scope — picker falls back to MSB
+    state for those."""
     rng = random.Random(seed)
     o._V3_RUN_SEED = seed  # v0.28: propagate seed to the per-slot hashed rolls
                            # (_field_slot_roll / _slot_decision_rng) so the
@@ -118,8 +186,41 @@ def simulate(seed, inventory, roster, tags, pv, pc, msb_budgets=None):
         # and identical between production and this sim. See the
         # v0.28 comment block in shuffle_msb_v3 (~line 14523 of
         # oops_v3.py) for the full rationale.
-        for rec in sorted(by_msb[msb_name], key=lambda r: r['part_index']):
+        #
+        # v0.28.x Phase 2: when POI scope is on, slots are grouped by
+        # cluster_id first (then pi within cluster). Still fully
+        # canonical — cluster_id is 0-indexed by min(pi) per the
+        # builder, so cluster order is deterministic. -1 (slots
+        # outside the cluster file) bucketed last.
+        _msb_recs = list(by_msb[msb_name])
+        if pi_to_cid_by_msb is not None:
+            _pi_to_cid = pi_to_cid_by_msb.get(msb_name, {})
+            _msb_recs.sort(key=lambda r: (_pi_to_cid.get(r['part_index'], -1)
+                                          == -1,
+                                          _pi_to_cid.get(r['part_index'], -1),
+                                          r['part_index']))
+        else:
+            _pi_to_cid = None
+            _msb_recs.sort(key=lambda r: r['part_index'])
+        _current_cluster = None
+        for rec in _msb_recs:
             pi = rec['part_index']
+            # v0.28.x Phase 2: cluster transition detection. Fires once
+            # per cluster with the cluster-grouped sort above.
+            if _pi_to_cid is not None:
+                _this_cluster = _pi_to_cid.get(pi, -1)
+                if _this_cluster != _current_cluster:
+                    if (_current_cluster is not None
+                            and _current_cluster != -1
+                            and hasattr(run_ctx, 'end_poi')):
+                        run_ctx.end_poi()
+                    if (_this_cluster != -1
+                            and hasattr(run_ctx, 'begin_poi')
+                            and cluster_budgets is not None):
+                        _cb = cluster_budgets.get((msb_name, _this_cluster),
+                                                  _budget)
+                        run_ctx.begin_poi(_this_cluster, _cb)
+                    _current_cluster = _this_cluster
             cur_cp = rec['c_prefix']
             npc = rec['npc_param_id']
             n_slots += 1
@@ -179,6 +280,12 @@ def simulate(seed, inventory, roster, tags, pv, pc, msb_budgets=None):
             if _sz in o.V3_DENSITY_L_SIZE_CLASSES:
                 run_ctx.register_big(_sz, slot_pos)
 
+        # v0.28.x Phase 2: close any active POI scope before end_msb.
+        # end_msb clears POI state defensively but closing explicitly
+        # keeps current_poi_id=None for any code between the inner loop
+        # and end_msb that reads run_ctx state.
+        if _pi_to_cid is not None and hasattr(run_ctx, 'end_poi'):
+            run_ctx.end_poi()
         run_ctx.end_msb()
 
     placed = Counter(t for _, _, t in swap_plan)
@@ -212,17 +319,38 @@ def main():
     _roster2, tags = o.load_data()
     pv, pc = o.build_per_prefix_data(roster)
     msb_budgets = _compute_msb_budgets(o, pv, inventory)
-    print(f"loaded inventory: {len(inventory)} slots, "
-          f"{len(set(r['map'] for r in inventory))} MSBs; "
-          f"v0.28 per-MSB budgets: min={min(msb_budgets.values())} "
-          f"median={sorted(msb_budgets.values())[len(msb_budgets)//2]} "
-          f"max={max(msb_budgets.values())}\n")
+    # v0.28.x Phase 2: load POI clusters and per-cluster budgets if
+    # the cluster file is present AND POI scope is on in oops_v3.
+    # Both must be true for the sim to mirror the engine's path.
+    if getattr(o, 'V3_POI_SCOPE_RECYCLE', False):
+        _clusters_raw, pi_to_cid_by_msb = _load_poi_clusters()
+    else:
+        _clusters_raw, pi_to_cid_by_msb = None, None
+    cluster_budgets = None
+    if pi_to_cid_by_msb is not None:
+        cluster_budgets = _compute_cluster_budgets(
+            o, pv, inventory, pi_to_cid_by_msb)
+        print(f"loaded inventory: {len(inventory)} slots, "
+              f"{len(set(r['map'] for r in inventory))} MSBs; "
+              f"v0.28 per-MSB budgets: min={min(msb_budgets.values())} "
+              f"median={sorted(msb_budgets.values())[len(msb_budgets)//2]} "
+              f"max={max(msb_budgets.values())}; "
+              f"v0.28.x Phase 2 POI scope ON: "
+              f"{len(cluster_budgets)} cluster budgets\n")
+    else:
+        print(f"loaded inventory: {len(inventory)} slots, "
+              f"{len(set(r['map'] for r in inventory))} MSBs; "
+              f"v0.28 per-MSB budgets: min={min(msb_budgets.values())} "
+              f"median={sorted(msb_budgets.values())[len(msb_budgets)//2]} "
+              f"max={max(msb_budgets.values())} (POI scope OFF)\n")
 
     seeds = [int(a) for a in args]
     out_f = open(out_path, 'w') if out_path else None
     for seed in seeds:
         r = simulate(seed, inventory, roster, tags, pv, pc,
-                     msb_budgets=msb_budgets)
+                     msb_budgets=msb_budgets,
+                     pi_to_cid_by_msb=pi_to_cid_by_msb,
+                     cluster_budgets=cluster_budgets)
         overcap = []
         for cp, n in r['placed_counts'].items():
             cap = o.V3_UNIQUE_TARGET_CAPS.get(cp)

@@ -1,3 +1,64 @@
+## v0.27.46
+
+Phase 2 of POI recycling (spec at dev/POI_RECYCLING_SPEC.md). Default
+ON; revert flag at `V3_POI_SCOPE_RECYCLE = False` in oops_v3.py:38.
+
+PROBLEM: v0.28's distinct-cp budget / recycle picker scopes "resident"
+per MSB. Correct for self-contained POI MSBs (forts, ruins, evergaols)
+but too coarse for open-world bases (m60_*, m32_*, m34_*) which span
+300-370m and contain multiple geographic POI clusters the game streams
+independently. The picker would happily "recycle" a chr across a tile
+the streaming engine already unloaded the asset for.
+
+CHANGE: nest a per-cluster scope inside the MSB scope. Same recycle
+algorithm; smaller bucket. New scope opens via `run_ctx.begin_poi()`
+on cluster transitions in shuffle_msb_v3; picker reads through
+`run_ctx.active_resident_cps()` / `active_distinct_budget()` helpers
+that return per-cluster state when a POI is armed, per-MSB otherwise.
+Cluster data from data/slot_poi_clusters.json (Phase 0 — 568 clusters
+across 195 MSBs at R=80m, built by dev/build_slot_poi_clusters.py).
+
+MEASURED IMPACT (500-seed sim, --grunts):
+- Recycle rate 75.8% → 65.5% (POI scope) — -10.3pp
+- Variety per seed: 0 → 11 grunt chrs appearing in ≥99.5% of seeds
+- Calibration anchor c4353 mean 0.77 → 0.85, appear 41.2% → 44.2%
+- Boss-only mode: 4.9% → 5.1% recycle (~unchanged, predicted)
+- Cap-overshoot count: unchanged (108/112 grunts hit cap=40 in both
+  modes; what POI changes is WHICH chrs hit cap on WHICH seed)
+
+DETERMINISM: cluster-grouped slot order is fully canonical — clusters
+0-indexed by min(part_index), slots in pi order within. The 5
+test_decision_determinism tests pass (swap_plan invariant under input
+reordering preserved, repeated runs identical, distinct seeds diverge).
+
+ROLLBACK: flip `V3_POI_SCOPE_RECYCLE = False` in oops_v3.py:38.
+No other code changes needed; engine reverts to v0.27.45 behavior.
+data/slot_poi_clusters.json stays useful independently (spoiler
+annotation, placement-validation tooling).
+
+ENGINE STATE: RunContext gained current_poi_id (Optional[int]),
+poi_resident_cps (Dict[int, Set[str]]), poi_distinct_budget
+(Dict[int, int]) plus begin_poi/end_poi/active_*_cps/add_resident_cp
+methods. end_msb clears POI state defensively.
+
+FILES TOUCHED:
+- engine/runctx.py — POI state + lifecycle methods
+- oops_v3.py — V3_POI_SCOPE_RECYCLE flag, _V3_SLOT_POI_CLUSTERS
+  cache, load_data() loader, pick_target_cp scope read (routes
+  through active_*), shuffle_msb_v3 cluster-grouped iteration with
+  inline begin_poi/end_poi on transitions, commit-site
+  add_resident_cp helper.
+- dev/simulate_engine.py — parallel POI wiring for sim parity.
+- dev/sim_per_run.py — `--poi-scope` flag for distribution measurement;
+  compute_budgets keyed on (msb, cluster_id) when POI on.
+- dev/build_slot_poi_clusters.py (new) — Phase 0 builder.
+- data/slot_poi_clusters.json (new) — 568 clusters, R=80m.
+
+REGRESSION: full test suite 1395 passed / 9 failed / 30 skipped —
+same counts as v0.27.45. The 9 failures are bundle-asset gaps in
+the test environment, not Phase 2 regressions. data/placement_budget.json
+regenerated to track the fingerprint bump.
+
 ## v0.27.36
 
 Three SOTE-mode roster additions (Alaric direction).

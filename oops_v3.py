@@ -1308,6 +1308,15 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     'c5890',  # Black Knight Horse (fabricated mount; matched pair runtime-CTDs)
     'c4060',  # Kaiden's Horse — same mount-component failure mode as c3180 Albinauric Wolf; paired with c4050 Kaiden Sellsword
     'c5090',
+    # v0.28 (Alaric): ban c4140 "Spiritcaller Snail" outright. DLC import
+    # (post_dlc_dump, 0 vanilla NR placements) and a summoner whose
+    # invulnerable-until-summon-killed mechanic doesn't survive randomization
+    # — the spirit-summon EMEVD doesn't fire in arbitrary field slots, so it's
+    # unkillable at best and CTDs during summon at worst (never observed
+    # working in play). Target-excluding it means it's never placed as a swap
+    # result. The _LIFTED_V0_24_65 entry and the miniboss cap on c4140 are now
+    # dead (the exclude wins).
+    'c4140',  # Spiritcaller Snail (summoner; never works when randomized)
     # v0.27.13: DLC SHADER GAP CLASS. Heritage chrs whose matbins'
     # ShaderPath fields reference DLC-only `.spx` shaders not in NR's
     # `shaderbdle.shaderbdlebnd.dcx`. Symptom: chr loads correctly but
@@ -6013,6 +6022,13 @@ V3_DENSITY_CAP_ENABLED = True
 V3_DENSITY_CAP_XL_PLUS = 3   # max XL/XXL/GIGA per MSB
 V3_DENSITY_CAP_L_PLUS = 10   # max L/XL/XXL/GIGA per MSB
 V3_DENSITY_L_SIZE_CLASSES = frozenset({'L', 'XL', 'XXL', 'GIGA'})
+
+# v0.28: master kill switch for the merchant model-swap post-pass. Off for
+# now — the model-only merchant swaps add chrbnd load for non-combat NPCs
+# (and showed up as "(still merchant — model only)" placements). Flip to
+# True to re-enable; the per-run --merchant-model-swap flag still gates it
+# on top of this, so both must be on for the swap to run.
+V3_MERCHANT_MODEL_SWAP_ENABLED = False
 
 # v0.23.63 TUNNEL DENSITY OVERRIDE
 # --------------------------------
@@ -12012,6 +12028,25 @@ def _reset_unique_run_state():
     _V3_UNIQUE_UNPLACED_LOG.clear()
 
 
+# v0.28: tiers whose enemies are big enough that an untagged (size_class
+# None) member must still be density-gated. Storm King (c7910) and the
+# other untagged night bosses live here — without this they were invisible
+# to the per-tile XL cap and recycle stacked them (13 Storm Kings/cell).
+V3_UNTAGGED_BIG_TIERS = frozenset({'night_boss', 'miniboss', 'boss', 'field_boss'})
+
+
+def _effective_size_class(cp, tags):
+    """size_class for the per-MSB density gate. Untagged boss-tier enemies
+    are treated as XL so they can't cluster via recycle past the tile cap;
+    untagged grunts stay None (small — cheap to repeat). Does NOT mutate the
+    tag data — only the density gate + register_big consult this."""
+    t = tags.get(cp) or {}
+    sz = t.get('size_class')
+    if sz is None and t.get('tier') in V3_UNTAGGED_BIG_TIERS:
+        return 'XL'
+    return sz
+
+
 def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
                              *, chaos_mode=False, msb_base=None, pi=None,
                              slot_pos=None, run_ctx=None):
@@ -12520,7 +12555,7 @@ def _reject_target_for_slot(target_cp, src_cp, src_variant_name, tags,
     # chaos-overrideable.
     if (run_ctx is not None
             and getattr(run_ctx, 'msb_size_gate_active', False)):
-        _gsz = (tags.get(target_cp, {}) or {}).get('size_class')
+        _gsz = _effective_size_class(target_cp, tags)
         if _gsz in V3_DENSITY_L_SIZE_CLASSES:  # L / XL / XXL / GIGA
             _is_xl = _gsz in V3_BIG_SIZE_CLASSES  # XL / XXL / GIGA
             # Gate 9: density
@@ -13193,6 +13228,41 @@ def _compute_unique_reservations(input_dir, tags, prefix_variants, rng,
         print(f"  Variant-group floor reservations: {_grp_reserved}")
 
 
+def _choose_with_budget(chosen_pool, resident, budget, picker):
+    """v0.28 hybrid pick: introduce fresh (new-to-tile) variety up to the
+    per-MSB distinct budget, then recycle assets already resident on the
+    tile (zero extra chrbnd load) instead of reverting to vanilla.
+
+      chosen_pool : already shape-gated + global-block-filtered candidates.
+      resident    : c-prefixes already committed in this MSB.
+      budget      : max distinct c-prefixes this MSB may load (vanilla count).
+      picker      : callable(sorted_seq) -> elem. The per-slot hashed RNG,
+                    so the choice stays a pure function of slot identity.
+
+    Returns (cp, kind) with kind in {'fresh','recycle','overflow'}, or
+    (None, None) if nothing is placeable (slot stays vanilla).
+
+    Pure — no globals, no mutation — so simulate_engine.py can import and
+    share it verbatim and engine/simulator parity holds. With an empty
+    resident and an unbounded budget this is exactly the plain hashed pick
+    over sorted(chosen_pool), i.e. identical to the pre-v0.28 picker.
+    """
+    if not chosen_pool:
+        return None, None
+    fresh = [cp for cp in chosen_pool if cp not in resident]
+    recyc = [cp for cp in chosen_pool if cp in resident]
+    if len(resident) < budget and fresh:
+        return picker(sorted(fresh)), 'fresh'        # variety while under budget
+    if recyc:
+        return picker(sorted(recyc)), 'recycle'      # budget hit -> reuse resident (free load)
+    if fresh:
+        # Budget hit but nothing resident fits this slot's shape (e.g. a
+        # flier slot in an all-ground tile). One fresh distinct beats a
+        # broken/vanilla slot, and vanilla would usually add load here too.
+        return picker(sorted(fresh)), 'overflow'
+    return None, None
+
+
 def pick_target_cp(recipient_cp, tags,
                     prefix_variants, prefix_count, recipient_is_boss, rng,
                     target_count=None,
@@ -13370,11 +13440,19 @@ def pick_target_cp(recipient_cp, tags,
     #
     # v0.27.13: skipped under V3_SOTE_MODE — SOTE runs are uncapped (the
     # SOTE set is small and meant to repeat freely).
-    if _placed_counts and not V3_SOTE_MODE:
-        _exhausted = {cp for cp, n in _placed_counts.items()
-                      if n >= V3_UNIQUE_TARGET_CAPS.get(cp, 0)}
-        if _exhausted:
-            pool = pool - _exhausted
+    if not V3_SOTE_MODE:
+        # v0.28: global-cap gate with MSB-boundary semantics. Use the set
+        # frozen at begin_msb (cps already at/over cap when this MSB
+        # started). A cp can overshoot its cap mid-MSB via free recycling
+        # and only gets blocked from the NEXT MSB on. Falls back to live
+        # computation when there is no frozen set (legacy callers / tests),
+        # preserving pre-v0.28 behavior exactly.
+        _blocked = getattr(run_ctx, 'msb_blocked_cps', None)
+        if _blocked is None and _placed_counts:
+            _blocked = {cp for cp, n in _placed_counts.items()
+                        if n >= V3_UNIQUE_TARGET_CAPS.get(cp, 0)}
+        if _blocked:
+            pool = pool - _blocked
     # v0.20.20: per-map-prefix target-side excludes. See
     # V3_MAP_PREFIX_TARGET_EXCLUDES for rationale (Limveld Maris-cluster
     # CTD).
@@ -14079,9 +14157,17 @@ def pick_target_cp(recipient_cp, tags,
     # deterministic. Falls back to the shared rng for callers that don't
     # supply slot identity (slot_msb_name/slot_pi).
     if slot_msb_name is not None and slot_pi is not None:
-        result = _slot_decision_rng(slot_msb_name, slot_pi).choice(sorted(chosen_pool))
+        _picker = _slot_decision_rng(slot_msb_name, slot_pi).choice
     else:
-        result = rng.choice(chosen_pool)
+        _picker = rng.choice  # sorting happens inside _choose_with_budget
+    # v0.28 hybrid budget/recycle. No run_ctx or an unset (0) budget => an
+    # empty resident set and an unbounded budget, which reduces this to the
+    # plain hashed pick over sorted(chosen_pool) — identical to pre-v0.28.
+    _resident = getattr(run_ctx, 'msb_resident_cps', None) or set()
+    _budget = getattr(run_ctx, 'msb_distinct_budget', 0) or (1 << 30)
+    result, _kind = _choose_with_budget(chosen_pool, _resident, _budget, _picker)
+    if result is None:
+        return None
     # v0.23.07: bump unique-cap counter for organic picks. Reserved picks
     # already pre-bumped during the reservation pre-pass; this catches
     # picks that landed on a capped cp via normal pool selection.
@@ -14368,12 +14454,53 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
     # MSB. Caps follow the tunnel-vs-default profile the DENSITY_CAP
     # post-pass used.
     if run_ctx is not None:
+        # v0.28: derive the per-MSB distinct budget + forced-vanilla
+        # resident seed from a cheap read-only pre-scan of the same slots
+        # the swap loop visits. budget = the count of distinct enemy
+        # c-prefixes vanilla loads here; the loop introduces no more than
+        # that, so the tile's chrbnd fan-out can't exceed vanilla's.
+        # _preserved = enemy c-prefixes the loop keeps vanilla (excluded /
+        # source-only / no-variants / pinned); they are already loaded, so
+        # they seed resident and count against the budget.
+        # v0.28: per-MSB rando-distinct budget. Working assumption: the
+        # engine loads its own vanilla assets cheaply (bundled with the map,
+        # not stressing the dynamic chr-registration path the respawn CTD
+        # overflowed), so forced-vanilla slots are NOT charged against the
+        # budget. The budget counts only distinct enemy c-prefixes on
+        # SWAPPABLE slots — how many distinct *rando* chrbnds this tile may
+        # introduce. Preserved slots still keep vanilla in the output.
+        _swappable_distinct = set()
+        for _pi, _po in enumerate(parts['entry_offsets']):
+            try:
+                _npc = struct.unpack_from('<I', data, _po + PART_OFF_NPC_PARAM)[0]
+                if _npc == 0 or _npc == 0xFFFFFFFF:
+                    continue
+                _midx = struct.unpack_from('<i', data, _po + PART_OFF_MODEL_INDEX)[0]
+            except struct.error:
+                continue
+            _ccp = midx_to_cp.get(_midx, '?')
+            if not (_ccp and _ccp[0] == 'c' and len(_ccp) > 1 and _ccp[1].isdigit()):
+                continue
+            if ((msb_base, _pi) in V3_BINARY_SEARCH_VANILLA_PINS
+                    or (pinned_only_in_hub
+                        and (msb_base, _pi) not in V3_BOSS_TIER_PINNED_SLOTS)
+                    or _ccp in V3_EXCLUDE_PREFIXES
+                    or _ccp in V3_EXCLUDE_SOURCE_PREFIXES
+                    or _npc in V3_EXCLUDE_SOURCE_NPC_PARAMS
+                    or _ccp not in prefix_variants):
+                continue  # vanilla-kept: cheap, not charged against the budget
+            _swappable_distinct.add(_ccp)
+        _msb_budget = len(_swappable_distinct)
         if msb_base in V3_TUNNEL_MAPS:
             run_ctx.begin_msb(V3_TUNNEL_DENSITY_CAP_XL_PLUS,
-                              V3_TUNNEL_DENSITY_CAP_L_PLUS)
+                              V3_TUNNEL_DENSITY_CAP_L_PLUS,
+                              distinct_budget=_msb_budget,
+                              caps=V3_UNIQUE_TARGET_CAPS)
         else:
             run_ctx.begin_msb(V3_DENSITY_CAP_XL_PLUS,
-                              V3_DENSITY_CAP_L_PLUS)
+                              V3_DENSITY_CAP_L_PLUS,
+                              distinct_budget=_msb_budget,
+                              caps=V3_UNIQUE_TARGET_CAPS)
     # v0.27.13: per-MSB random slot order. The swap loop previously
     # iterated parts in strict ascending pi. That gave low-pi slots a
     # systematic advantage in any order-sensitive per-MSB accounting —
@@ -14952,7 +15079,11 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
         # oops_all, NB-forced, pinned — since it follows the unified
         # swap_plan.append.
         if run_ctx is not None:
-            _committed_sz = (tags.get(target_cp, {}) or {}).get('size_class')
+            # v0.28: record the committed c-prefix as resident so later
+            # slots in this MSB can recycle it (and so it counts against
+            # the distinct budget). Idempotent; covers every commit path.
+            run_ctx.msb_resident_cps.add(target_cp)
+            _committed_sz = _effective_size_class(target_cp, tags)
             if _committed_sz in V3_DENSITY_L_SIZE_CLASSES:
                 run_ctx.register_big(_committed_sz, slot_pos)
 
@@ -15197,7 +15328,7 @@ def shuffle_msb_v3(input_path, output_path, rng, tags, prefix_variants, prefix_c
     # merchant continues to function as a merchant; it just looks
     # different. Optional, off by default.
     n_merchants_swapped = 0
-    if merchant_model_swap:
+    if merchant_model_swap and V3_MERCHANT_MODEL_SWAP_ENABLED:
         merchant_data, n_merchants_swapped = apply_merchant_model_swaps(
             bytes(out), rng,
             spoiler_entries=spoiler_entries,
@@ -16668,6 +16799,17 @@ def write_spoiler_logs(output_dir, entries, seed,
 
 
 if __name__ == '__main__':
+    # Determinism guard: pin the process hash seed so that set/dict
+    # iteration order is stable across runs. The shared seeded rng
+    # consumes that order during reservation scoring (rng.random()
+    # tiebreaks) and cap exhaustion, so without a fixed PYTHONHASHSEED the
+    # same --seed yields a different layout every process. Re-exec once
+    # with it set, before any placement work runs. (No effect under
+    # `python -m`; invoke the script by path.)
+    import os as _os, sys as _sys
+    if _os.environ.get('PYTHONHASHSEED') != '0':
+        _os.environ['PYTHONHASHSEED'] = '0'
+        _os.execv(_sys.executable, [_sys.executable, *_sys.argv])
     # v0.23.72-late: snapshot subcommand. Save/inspect pool snapshots from
     # the CLI without going through cmd_shuffle_v3.
     #   oops_v3.py snapshot save <path> [--name NAME] [--description TEXT]

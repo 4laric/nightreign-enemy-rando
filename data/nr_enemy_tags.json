@@ -6373,6 +6373,30 @@
     "variants": 8,
     "has_reward": false
   },
+  "c6200": {
+    "_manual_tag_v0_28": "Alaric: lift Slave Knight Gael to L night_boss w/ reward. c6200 is the NB2 phase forms (npc 62000000/62000001 = Gael P2/P1); was ABSENT from tags with tier=None, so it dodged BOTH tier logic and the size gate. tier=night_boss auto-joins V3_NIGHT_BOSS_CALIBER_TARGETS (routes to roaming NB-marker slots; arena=false like Night's Cavalry / Putrescent Knight). NOTE: these are phase-transition forms — standalone P1->P2 behavior depends on the imported EMEVD.",
+    "_source": "post_dlc_dump",
+    "expects_boss_arena": false,
+    "has_boss_reward": true,
+    "has_reward": true,
+    "locomotion": 0,
+    "name": "Slave Knight Gael",
+    "size_class": "L",
+    "tier": "night_boss",
+    "variants": 2
+  },
+  "c6210": {
+    "_manual_tag_v0_28": "Alaric: Corvian Knight is an L miniboss w/ reward. Was ABSENT from nr_enemy_tags so it placed tier-less + size-less (escaped the density gate). _source matched to sibling c62xx imports.",
+    "_source": "post_dlc_dump",
+    "expects_boss_arena": false,
+    "has_boss_reward": true,
+    "has_reward": true,
+    "locomotion": 0,
+    "name": "Corvian Knight",
+    "size_class": "L",
+    "tier": "miniboss",
+    "variants": 5
+  },
   "c6240": {
     "_confidence": "auto",
     "_source": "post_dlc_dump",

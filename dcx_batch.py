@@ -1418,4 +1418,12 @@ def main():
 
 
 if __name__ == '__main__':
+    # Determinism guard — see oops_v3.py. Pin the hash seed before the
+    # build runs so set/dict iteration (consumed by the shared seeded rng)
+    # is reproducible; same --seed -> same layout. (No effect under
+    # `python -m`; invoke by path.)
+    import os as _os, sys as _sys
+    if _os.environ.get('PYTHONHASHSEED') != '0':
+        _os.environ['PYTHONHASHSEED'] = '0'
+        _os.execv(_sys.executable, [_sys.executable, *_sys.argv])
     main()

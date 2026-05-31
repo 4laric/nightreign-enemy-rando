@@ -65,7 +65,7 @@ gates=None / run_ctx=None backwards-compat paths preserve all
 pre-existing callers verbatim.
 """
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 
 @dataclass
@@ -107,6 +107,29 @@ class RunContext:
     msb_l_count: int = 0
     msb_xl_cap: int = 999
     msb_l_cap: int = 999
+
+    # v0.28: c-prefixes already placed in the current MSB (the assets this
+    # tile already pays to load). A slot that hits the uniqueness cap
+    # recycles one of these instead of reverting to vanilla — zero extra
+    # chrbnd load, world stays non-vanilla. Reset by begin_msb(); appended
+    # to at each committed placement in shuffle_msb_v3.
+    msb_resident_cps: Set[str] = field(default_factory=set)
+
+    # v0.28: per-MSB distinct-c-prefix budget = how many distinct chrbnds
+    # vanilla loads in this MSB. The placement loop introduces at most this
+    # many, so a randomized tile never out-loads vanilla (this is the
+    # by-construction ceiling on the streamed-band fan-out crash). 0 = no
+    # budget (legacy/test paths) -> treated as unbounded by the picker.
+    msb_distinct_budget: int = 0
+
+    # v0.28: global-cap eligibility FROZEN at begin_msb. A c-prefix already
+    # at/over its V3_UNIQUE_TARGET_CAPS limit when the MSB started is in
+    # this set and hard-blocked for the whole MSB. A cp that crosses its
+    # cap DURING the MSB (free recycling onto resident slots) is NOT in
+    # here, so it stays placeable until the next begin_msb re-freezes the
+    # snapshot — the "overshoot now, respected next MSB" rule. None = not
+    # frozen (legacy/test) -> the picker falls back to live cap computation.
+    msb_blocked_cps: Optional[Set[str]] = None
 
     # =====================================================================
     # Construction
@@ -176,16 +199,41 @@ class RunContext:
         per-run state)."""
         return self.unique_placed_counts.get(cp, 0) >= cap
 
-    def begin_msb(self, xl_cap: int, l_cap: int) -> None:
+    def begin_msb(self, xl_cap: int, l_cap: int,
+                  distinct_budget: int = 0,
+                  caps: Optional[Dict[str, int]] = None,
+                  resident_seed: Optional[Set[str]] = None) -> None:
         """Reset per-MSB size state and arm the proximity/density gates
         at the start of a shuffle_msb_v3 call. xl_cap/l_cap are the
-        per-MSB caps (tunnel profile or global default)."""
+        per-MSB caps (tunnel profile or global default).
+
+        v0.28 hybrid budget/recycle args (optional; omitting them keeps the
+        pre-v0.28 picker behavior for legacy callers and tests):
+          distinct_budget — the MSB's vanilla distinct-c-prefix count.
+          caps            — V3_UNIQUE_TARGET_CAPS, used to freeze the
+                            global-cap block set at MSB entry (see
+                            msb_blocked_cps). None => no freeze (live cap
+                            computation in the picker).
+          resident_seed   — c-prefixes already loaded by forced-vanilla
+                            slots in this MSB (excluded / no-variants /
+                            pinned). They seed the resident set so recycle
+                            can reuse them and they count against the
+                            budget.
+        """
         self.msb_size_gate_active = True
         self.msb_big_positions = []
         self.msb_xl_count = 0
         self.msb_l_count = 0
         self.msb_xl_cap = xl_cap
         self.msb_l_cap = l_cap
+        self.msb_distinct_budget = distinct_budget
+        self.msb_resident_cps = set(resident_seed) if resident_seed else set()
+        if caps is None:
+            self.msb_blocked_cps = None  # no freeze -> picker uses live caps
+        else:
+            self.msb_blocked_cps = {
+                cp for cp, n in self.unique_placed_counts.items()
+                if n >= caps.get(cp, 1 << 30)}
 
     def end_msb(self) -> None:
         """Disarm the per-MSB size gates after a shuffle_msb_v3 call."""
@@ -217,3 +265,6 @@ class RunContext:
         self.msb_big_positions = []
         self.msb_xl_count = 0
         self.msb_l_count = 0
+        self.msb_resident_cps = set()
+        self.msb_distinct_budget = 0
+        self.msb_blocked_cps = None

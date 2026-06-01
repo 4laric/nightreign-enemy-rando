@@ -1763,21 +1763,6 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # which cross-references this entry — keep the two in sync). Distinct
     # from c3620 Oracle Envoy (Large; Cathedral), which stays placeable.
     'c3610',  # small Oracle Envoy — cluster_only standalone freeze
-    # Walking Mausoleum. c4450 carried a residual tier='field_boss' that
-    # the v0.26.x tier collapse missed (it was tagged field_boss by its
-    # post_dlc_dump source manifest, not via the old V3_TAG_OVERRIDES
-    # dict, so the flatten never touched it). Rather than re-tier it to
-    # miniboss/night_boss, it is parked here as a target exclusion: it is
-    # an XXL (~59m tall) ambient crawling structure with has_boss_reward=
-    # false and has_drops=false — not a combatant. Placed at any generic
-    # slot it clips through geometry. Already excluded as a SOURCE (and
-    # target) via V3_EXCLUDE_PREFIXES ("keep at home"); this entry makes
-    # the target exclusion explicit in the canonical set. Companion
-    # cleanup: c4450 dropped from V3_NIGHT_BOSS_CALIBER_TARGETS in the
-    # same change (a target-excluded chr can't be an NB-arena pick, so
-    # the caliber entry would be dead — would surface in
-    # dev/audit_placement_budget_consistency.py). Surfaced by
-    # test_pick_target::test_field_boss_tier_eliminated.
     'c4450',  # Walking Mausoleum — ~59m ambient structure, not a target
 }
 

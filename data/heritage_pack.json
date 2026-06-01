@@ -214,15 +214,15 @@
     },
     "c5190": {
       "name": "Spider Scorpion",
-      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=manual_retier_v0.24.100)"
+      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; rolling ball variant, large)"
     },
     "c5192": {
-      "name": "Spider Scorpion",
-      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+      "name": "Spider Scorpion (variant)",
+      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; large)"
     },
     "c5193": {
-      "name": "Spider Scorpion",
-      "_inferred_source": "four_set_diff_v0_27_0 (orig _source=heritage)"
+      "name": "Spider Scorpion (Small)",
+      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; small)"
     },
     "c5210": {
       "name": "Divine Beast Dancing Lion",
@@ -383,6 +383,314 @@
     "c5271": {
       "name": "Jar Innards (Large)",
       "_inferred_source": "manual_register_v0.27.12 (orig _source=heritage)"
+    },
+    "c2030": {
+      "name": "Rennala, Queen of the Full Moon",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c2031": {
+      "name": "Rennala (Phase 2)",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c2110": {
+      "name": "Beast Clergyman / Maliketh",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c2120": {
+      "name": "Malenia, Blade of Miquella",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c4511": {
+      "name": "Lichdragon Fortissax",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c4720": {
+      "name": "Godfrey, First Elden Lord",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c4721": {
+      "name": "Hoarah Loux",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c4730": {
+      "name": "Starscourge Radahn",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c5000": {
+      "name": "Commander Gaius",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c5030": {
+      "name": "Romina, Saint of the Bud",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c5051": {
+      "name": "Midra, Lord of Frenzied Flame",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c5130": {
+      "name": "Messmer the Impaler",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c5200": {
+      "name": "Metyr, Mother of Fingers",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c5230": {
+      "name": "Scadutree Avatar",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c5300": {
+      "name": "Rellana, Twin Moon Knight",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c5740": {
+      "name": "Kindred of Rot (MMV variant)",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c6201": {
+      "name": "Scarab",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c6231": {
+      "name": "Perfumer",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c6260": {
+      "name": "Death Rite Bird",
+      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+    },
+    "c5194": {
+      "name": "Spider Scorpion (Small, variant)",
+      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; small)"
+    },
+    "c5131": {
+      "name": "Messmer the Impaler (Phase 2)",
+      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer family completion)"
+    },
+    "c5132": {
+      "name": "Messmer the Impaler (Phase 2 variant)",
+      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer family completion)"
+    },
+    "c5140": {
+      "name": "Messmer: Base Serpent",
+      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer phase 2 serpent form, paired with c5131/c5132)"
+    },
+    "c5141": {
+      "name": "Messmer: Base Serpent (variant)",
+      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer phase 2 serpent form, paired with c5131/c5132)"
+    },
+    "c5120": {
+      "name": "Bayle the Dread",
+      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; legendary dragon, large footprint - shakedown carefully)"
+    },
+    "c5220": {
+      "name": "Promised Consort Radahn",
+      "_inferred_source": "heritage_register_v0.28.0 (real ER c-prefix; heritage import landed first-try; supersedes the c8400 MMV placeholder)"
+    },
+    "c5050": {
+      "name": "Midra (Phase 1)",
+      "_inferred_source": "manual_register_v0.28.0 (phase 1 Midra; grunt-tier downgrade per Alaric direction; c5051 boss form is separately imported as night_boss)"
+    },
+    "c6251": {
+      "name": "Tree Sentinel (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE Tree Sentinel; regulation already present in mod with 4 NpcParam + 6 ThinkParam + 55 behaviors; chr was unregistered in roster JSONs; shares cap with c3251 pending shared-cap mechanism)"
+    },
+    "c5800": {
+      "name": "Crucible Knight Devonia",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE Crucible Knight; named boss; regulation already present in mod with 3 NpcParam + ThinkParam + behaviors; chr was unregistered in roster JSONs; unique character — does NOT share cap with c2500 since Devonia is a named boss-tier identity, not a re-use)"
+    },
+    "c5790": {
+      "name": "Guardian Golem",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE ghost-chr wire-up batch; regulation already present in mod with 21 NpcParam variants; chr was unregistered in roster JSONs)"
+    },
+    "c5960": {
+      "name": "Ulcerated Tree Spirit",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE ghost-chr wire-up batch; regulation already present in mod with 6 NpcParam variants; chr was unregistered in roster JSONs)"
+    },
+    "c5780": {
+      "name": "Runebear",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE ghost-chr wire-up batch; regulation already present in mod with 6 NpcParam variants; chr was unregistered in roster JSONs)"
+    },
+    "c5970": {
+      "name": "Abductor Virgin",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE ghost-chr wire-up batch; regulation already present in mod with 10 NpcParam variants; chr was unregistered in roster JSONs)"
+    },
+    "c5620": {
+      "name": "Tibia Mariner",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE ghost-chr wire-up batch; regulation already present in mod with 2 NpcParam variants; chr was unregistered in roster JSONs)"
+    },
+    "c5980": {
+      "name": "Omenkiller",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE ghost-chr wire-up batch; regulation already present in mod with 8 NpcParam variants; chr was unregistered in roster JSONs)"
+    },
+    "c5950": {
+      "name": "Leonine Misbegotten",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE ghost-chr wire-up batch; regulation already present in mod with 4 NpcParam variants; chr was unregistered in roster JSONs)"
+    },
+    "c5730": {
+      "name": "Demi-Human Queen",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE ghost-chr wire-up batch; regulation already present in mod with 4 NpcParam variants; chr was unregistered in roster JSONs)"
+    },
+    "c5680": {
+      "name": "Wheeled Ballista",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE ghost-chr wire-up batch; regulation already present in mod with 3 NpcParam variants; chr was unregistered in roster JSONs)"
+    },
+    "c5690": {
+      "name": "Dragon-faced Flamethrower",
+      "_inferred_source": "manual_register_v0.28.0 (SoTE ghost-chr wire-up batch; regulation already present in mod with 2 NpcParam variants; chr was unregistered in roster JSONs)"
+    },
+    "c6210": {
+      "name": "Albinauric Archer (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (shares cap with c3170 (pending shared-cap mechanism))"
+    },
+    "c6220": {
+      "name": "Wolf (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (shares cap with c4070 (pending shared-cap mechanism))"
+    },
+    "c6232": {
+      "name": "Glintstone Sorcerer (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (shares cap with c3702 (pending shared-cap mechanism))"
+    },
+    "c6233": {
+      "name": "Page (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (shares cap with c3703 (pending shared-cap mechanism))"
+    },
+    "c6270": {
+      "name": "Royal Revenant (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (shares cap with c4020 (pending shared-cap mechanism))"
+    },
+    "c6290": {
+      "name": "Misbegotten (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (shares cap with c3450 (pending shared-cap mechanism))"
+    },
+    "c6291": {
+      "name": "Scaly Misbegotten (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (shares cap with c3451 (pending shared-cap mechanism))"
+    },
+    "c6300": {
+      "name": "Snail (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (shares cap with c4140 (pending shared-cap mechanism))"
+    },
+    "c6310": {
+      "name": "Fallingstar Beast (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (shares cap with c4680 (pending shared-cap mechanism))"
+    },
+    "c6320": {
+      "name": "Wandering Noble (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (shares cap with c4300 (pending shared-cap mechanism))"
+    },
+    "c5550": {
+      "name": "Fingercreeper",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5551": {
+      "name": "Fingercreeper (Large)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5560": {
+      "name": "Fingercreeper (Small)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5390": {
+      "name": "Troll (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5391": {
+      "name": "Troll Knight (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5530": {
+      "name": "Man-Bat",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5580": {
+      "name": "Flying Dragon (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5630": {
+      "name": "Giant Crayfish (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5640": {
+      "name": "Giant Crab (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5710": {
+      "name": "Demi-Human Shaman (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5720": {
+      "name": "Demi-Human Chief (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5760": {
+      "name": "Rat (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5761": {
+      "name": "Giant Rat (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5520": {
+      "name": "Stray (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5524": {
+      "name": "Braided Stray",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5526": {
+      "name": "Bloodbane Stray",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5570": {
+      "name": "Marionette Soldier (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5590": {
+      "name": "Putrid Flesh (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5591": {
+      "name": "Putrid Flesh Large (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5850": {
+      "name": "Giant Ram",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5871": {
+      "name": "Imp (Dragon Head)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5930": {
+      "name": "Giant Skeleton (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5931": {
+      "name": "Giant Beast Skeleton (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5940": {
+      "name": "Watcher Stones",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5990": {
+      "name": "Basilisk (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5380": {
+      "name": "Miranda Blossom (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5381": {
+      "name": "Miranda Sprout (SoTE)",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
+    },
+    "c5421": {
+      "name": "Red Bear",
+      "_inferred_source": "manual_register_v0.28.0_ghost_wireup (standard SoTE wire-up)"
     }
   }
 }

@@ -5,7 +5,7 @@
     "c_prefix_count": 41,
     "description": "More Map Variations chr imports â€” cross-game boss ports. REQUIRES the MMV mod (https://www.nexusmods.com/eldenringnightreign/mods/578) installed in your me3 profile. Without MMV's regulation + chr assets, enabling this will cause CTDs because the rando will reference chrs that don't exist in your active regulation.",
     "enable_instructions": "If you have MMV installed: set _meta.enabled=true and run normally. The 13 c-prefixes in blacklist_when_active are blocked because they CTD or have missing assets even WITH MMV â€” leave them. If you don't have MMV: leave _meta.enabled=false. The rando will run on vanilla NR + DLC content only.",
-    "enabled": true,
+    "enabled": false,
     "requires": "MMV mod installed in me3 profile",
     "requires_external_chr_assets": true,
     "source_mod": "More Map Variations 2.0.5 (Team Daybreak, Nexus #578)",
@@ -505,18 +505,6 @@
       "name": "Dragonslayer Armor",
       "origin_game": "DS3",
       "size_class": "L",
-      "tier": "night_boss",
-      "variants": 1,
-      "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
-      "has_reward": true,
-      "has_boss_reward": true
-    },
-    "c8400": {
-      "_confidence": "low",
-      "_source": "mmv_import",
-      "expects_boss_arena": true,
-      "name": "Unknown MMV import (likely Promised Consort Radahn)",
-      "origin_game": "?",
       "tier": "night_boss",
       "variants": 1,
       "_tier_note": "v0.27.38: retagged nightlord->night_boss. 'nightlord' is reserved for the 8 expedition bosses (c75xx/c76xx); these are imported world bosses. Treated as night_boss strength, field-eligible. Alaric direction.",
@@ -3979,16 +3967,6 @@
       "npc_param_id": 82000000,
       "sample_maps": [],
       "think_param_id": 82000000,
-      "variant_name": ""
-    },
-    {
-      "_source": "mmv_import",
-      "c_prefix": "c8400",
-      "count": 1,
-      "has_reward": true,
-      "npc_param_id": 84000000,
-      "sample_maps": [],
-      "think_param_id": 84000000,
       "variant_name": ""
     }
   ]

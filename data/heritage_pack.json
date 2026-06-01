@@ -466,23 +466,23 @@
     },
     "c5131": {
       "name": "Messmer the Impaler (Phase 2)",
-      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer family completion)"
+      "_inferred_source": "manual_register_v0.28.0_case_b_wireup (regulation data present in mod with 1 NpcParam variants; promoted from heritage_pack-only manifest entry into nr_enemy_tags + roster + placement_budget. Messmer phase 2 humanoid form; paired with c5140 serpent)"
     },
     "c5132": {
       "name": "Messmer the Impaler (Phase 2 variant)",
-      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer family completion)"
+      "_inferred_source": "manual_register_v0.28.0_case_b_wireup (regulation data present in mod with 1 NpcParam variants; promoted from heritage_pack-only manifest entry into nr_enemy_tags + roster + placement_budget. Messmer phase 2 variant; sibling to c5131)"
     },
     "c5140": {
       "name": "Messmer: Base Serpent",
-      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer phase 2 serpent form, paired with c5131/c5132)"
+      "_inferred_source": "manual_register_v0.28.0_case_b_wireup (regulation data present in mod with 3 NpcParam variants; promoted from heritage_pack-only manifest entry into nr_enemy_tags + roster + placement_budget. Messmer phase 2 serpent form, paired with c5131/c5132)"
     },
     "c5141": {
       "name": "Messmer: Base Serpent (variant)",
-      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer phase 2 serpent form, paired with c5131/c5132)"
+      "_inferred_source": "manual_register_v0.28.0_case_b_wireup (regulation data present in mod with 3 NpcParam variants; promoted from heritage_pack-only manifest entry into nr_enemy_tags + roster + placement_budget. Messmer phase 2 serpent variant; sibling to c5140)"
     },
     "c5120": {
       "name": "Bayle the Dread",
-      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; legendary dragon, large footprint - shakedown carefully)"
+      "_inferred_source": "manual_register_v0.28.0_case_b_wireup (regulation data present in mod with 3 NpcParam variants; promoted from heritage_pack-only manifest entry into nr_enemy_tags + roster + placement_budget. huge legendary dragon — XL footprint, complex multi-phase; shakedown carefully (Bayle has lightning fxr that may want shaders))"
     },
     "c5220": {
       "name": "Promised Consort Radahn",

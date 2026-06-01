@@ -39751,6 +39751,105 @@
       "hp": 681,
       "_heritage_imported": true,
       "has_reward": false
+    },
+    {
+      "c_prefix": "c5120",
+      "npc_param_id": 51200000,
+      "think_param_id": 51200000,
+      "variant_name": "Bayle the Dread",
+      "hp": 2712,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5120",
+      "npc_param_id": 51200001,
+      "think_param_id": 51200001,
+      "variant_name": "Bayle the Dread",
+      "hp": 2712,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5120",
+      "npc_param_id": 51200085,
+      "think_param_id": 51200085,
+      "variant_name": "Bayle the Dread",
+      "hp": 2712,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5131",
+      "npc_param_id": 51310000,
+      "think_param_id": 51310000,
+      "variant_name": "Messmer the Impaler (Phase 2)",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5132",
+      "npc_param_id": 51320000,
+      "think_param_id": 51320000,
+      "variant_name": "Messmer the Impaler (Phase 2 variant)",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5140",
+      "npc_param_id": 51400000,
+      "think_param_id": 51400000,
+      "variant_name": "Messmer: Base Serpent",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5140",
+      "npc_param_id": 51400001,
+      "think_param_id": 51400001,
+      "variant_name": "Messmer: Base Serpent",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5140",
+      "npc_param_id": 51400099,
+      "think_param_id": 51400099,
+      "variant_name": "Messmer: Base Serpent",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5141",
+      "npc_param_id": 51410000,
+      "think_param_id": 51410000,
+      "variant_name": "Messmer: Base Serpent (variant)",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5141",
+      "npc_param_id": 51410001,
+      "think_param_id": 51410001,
+      "variant_name": "Messmer: Base Serpent (variant)",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5141",
+      "npc_param_id": 51410099,
+      "think_param_id": 51410099,
+      "variant_name": "Messmer: Base Serpent (variant)",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
     }
   ],
   "canonical_targets": [
@@ -41283,4 +41382,4 @@
       "variants": 2
     }
   ]
-} 
+}

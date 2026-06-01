@@ -1,0 +1,44 @@
+{
+  "_meta": {
+    "description": "Cap-group definitions for V3_UNIQUE_TARGET_CAPS. When two or more c-prefixes share a 'cap group', the placement engine's count-toward-cap logic treats them as a single account: a placement of any member increments the group's count, the cap applies to the group sum, and reaching the cap blocks all members from subsequent slots.",
+    "motivation": "ER/SoTE re-use c-prefixes (c3251 Tree Sentinel / c6251 Tree Sentinel SoTE, c4191 Scarab / c6201 Scarab, etc.) represent the same chr identity from a player-recognition standpoint. Without a shared cap, both prefixes can place independently (e.g. 2 + 2 = 4 Tree Sentinels in a run), breaking the rarity contract per-prefix caps were chosen for.",
+    "schema": {
+      "groups": "dict from group name (string, snake_case) to a list of c-prefixes that share the cap. Group cap value is read from V3_UNIQUE_TARGET_CAPS — every member must have the same cap value in V3_UNIQUE_TARGET_CAPS, or a HIGH-severity audit finding fires.",
+      "name_format": "snake_case; lowercase; descriptive ('tree_sentinel_iconic', 'scarab_unified'); avoid version numbers.",
+      "membership": "Every cp in a group must (a) exist in nr_enemy_tags.json and (b) have an identical 'cap' value in V3_UNIQUE_TARGET_CAPS.",
+      "uniqueness": "Each cp may appear in AT MOST one group. The audit script enforces this.",
+      "carrying_cap": "The cap value lives on each member's V3_UNIQUE_TARGET_CAPS entry, NOT here. This file is purely the grouping. Rationale: keep cap-value tuning in one place (the existing dict) — this file only changes what counts the cap is *across*."
+    },
+    "engine_behavior": {
+      "accounting_key": "When evaluating cap-block / increment / reserve-against, the engine resolves each cp through _resolve_cap_group_key(cp) which returns the group name if cp is in a group, else cp itself. All cap reads and writes use the resolved key.",
+      "reservation_pass": "The reservation pre-pass iterates V3_RESERVATION_FLOORS unchanged. When the pre-pass tries to reserve N slots for cp X (which is in group G), it consults _placed_counts[G] (not [X]) and reserves up to (cap_G - placed_G - already_preserved_G) slots, where already_preserved_G is the sum of preserves for every cp in G.",
+      "msb_freeze": "begin_msb's frozen blocked set computes group counts; if a group is at/over cap, EVERY cp in the group is added to msb_blocked_cps.",
+      "telemetry": "Reservation log and audit_placement_budget_consistency report cap state by GROUP for grouped cps, by CP for ungrouped. Spoiler-format compatible: grouped placements still show their cp name, but cap-state summary lines list 'group=<name>: N/cap members={cp1, cp2, ...}'."
+    }
+  },
+  "groups": {
+    "tree_sentinel_iconic": {
+      "members": ["c3251", "c6251"],
+      "rationale": "Both are mounted Tree Sentinel — same chr identity. c3251 is the ER duo / Altus overworld variant; c6251 is the SoTE-area variant."
+    }
+  },
+  "_pending_after_other_cps_wired": {
+    "_note": "These c6xxx → c3xxx/c4xxx pairs are documented in heritage_pack.json and TODO_c6251_shared_cap.md but are NOT yet active groups because either (a) the c6xxx member hasn't been wired with a V3_UNIQUE_TARGET_CAPS entry, or (b) the user hasn't confirmed the grouping. Adding them is a copy-paste once each pair is ready. See pairings list in TODO_c6251_shared_cap.md.",
+    "candidate_pairings": [
+      {"group_name_suggestion": "albinauric_archer_iconic", "members": ["c3170", "c6210"]},
+      {"group_name_suggestion": "wolf_iconic",              "members": ["c4070", "c6220"]},
+      {"group_name_suggestion": "scarab_iconic",            "members": ["c4191", "c6201"]},
+      {"group_name_suggestion": "perfumer_iconic",          "members": ["c3701", "c6231"]},
+      {"group_name_suggestion": "glintstone_sorcerer_iconic", "members": ["c3702", "c6232"]},
+      {"group_name_suggestion": "page_iconic",              "members": ["c3703", "c6233"]},
+      {"group_name_suggestion": "tree_sentinel_overworld_iconic", "members": ["c3250", "c6251"]},
+      {"group_name_suggestion": "death_rite_bird_iconic",   "members": ["c4980", "c6260"]},
+      {"group_name_suggestion": "royal_revenant_iconic",    "members": ["c4020", "c6270"]},
+      {"group_name_suggestion": "misbegotten_iconic",       "members": ["c3450", "c6290"]},
+      {"group_name_suggestion": "scaly_misbegotten_iconic", "members": ["c3451", "c6291"]},
+      {"group_name_suggestion": "snail_iconic",             "members": ["c4140", "c6300"]},
+      {"group_name_suggestion": "fallingstar_beast_iconic", "members": ["c4680", "c6310"]},
+      {"group_name_suggestion": "wandering_noble_iconic",   "members": ["c4300", "c6320"]}
+    ]
+  }
+}

@@ -1,0 +1,3499 @@
+{
+  "_meta": {
+    "description": "NpcThinkParam gap analysis between vanilla ER and vanilla NR for chrs present in both. Each row indicates ThinkParam rows available in ER but absent in NR. Missing think rows correspond to per-variant AI tuning that selects specific behaviors (breath attacks, ranged options, phase-aware patterns). Sparse NpcThinkParam usually means a chr in NR retains its underlying moveset data but the AI never invokes the full set — chrs report-confirmed in this state include c4770 (Valiant Gargoyle missing poison breath, Alaric v0.28.0).",
+    "methodology": "For each c-prefix in NR roster, group ER and NR NpcThinkParam by c-prefix (ID // 10000). Diff ID sets; surface rows in ER not in NR."
+  },
+  "gaps": [
+    {
+      "cp": "c5600",
+      "name": "Catacomb Skeleton",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 20,
+      "missing_count": 20,
+      "missing_ids": [
+        56000000,
+        56000010,
+        56000100,
+        56000110,
+        56000111,
+        56000200,
+        56001000,
+        56001001,
+        56001100,
+        56002000,
+        56002010,
+        56002020,
+        56003000,
+        56003010,
+        56003100,
+        56003110,
+        56004000,
+        56004010,
+        56004100,
+        56009000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5651",
+      "name": "Messmer Foot Soldier",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 18,
+      "missing_count": 18,
+      "missing_ids": [
+        56510000,
+        56510010,
+        56510020,
+        56510030,
+        56510031,
+        56510040,
+        56510050,
+        56510100,
+        56510200,
+        56510210,
+        56510220,
+        56510300,
+        56510500,
+        56510510,
+        56510600,
+        56511000,
+        56511010,
+        56511020
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5360",
+      "name": "Giant Beast Skeleton",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 18,
+      "missing_count": 18,
+      "missing_ids": [
+        53600000,
+        53600010,
+        53600020,
+        53600030,
+        53601000,
+        53601010,
+        53601020,
+        53601021,
+        53601030,
+        53602000,
+        53602010,
+        53602030,
+        53603000,
+        53603010,
+        53603030,
+        53604000,
+        53604010,
+        53604030
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5840",
+      "name": "Black Knight",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 11,
+      "missing_count": 11,
+      "missing_ids": [
+        58400000,
+        58400010,
+        58400090,
+        58401000,
+        58401010,
+        58401090,
+        58402000,
+        58402050,
+        58402055,
+        58402100,
+        58402110
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5661",
+      "name": "Shadow Militia",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 10,
+      "missing_count": 10,
+      "missing_ids": [
+        56610000,
+        56610050,
+        56610100,
+        56610150,
+        56611000,
+        56611100,
+        56611150,
+        56612000,
+        56612100,
+        56612150
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5170",
+      "name": "Furnace Golem",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 10,
+      "missing_count": 10,
+      "missing_ids": [
+        51700000,
+        51700010,
+        51700090,
+        51701000,
+        51702000,
+        51702010,
+        51706000,
+        51709000,
+        51709084,
+        51709090
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5700",
+      "name": "Demi-Human (SOTE)",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 10,
+      "missing_count": 10,
+      "missing_ids": [
+        57000000,
+        57000100,
+        57000200,
+        57001000,
+        57001100,
+        57001200,
+        57002000,
+        57002100,
+        57002200,
+        57009000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5060",
+      "name": "Lamprey",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 7,
+      "missing_count": 7,
+      "missing_ids": [
+        50600000,
+        50600010,
+        50600200,
+        50600210,
+        50600300,
+        50601000,
+        50601100
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5500",
+      "name": "Living Magma",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 7,
+      "missing_count": 7,
+      "missing_ids": [
+        55000000,
+        55000001,
+        55000100,
+        55000200,
+        55000300,
+        55000301,
+        55009000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5740",
+      "name": "Kindred of Rot (MMV variant)",
+      "tier": "miniboss",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 6,
+      "missing_count": 6,
+      "missing_ids": [
+        57400000,
+        57400001,
+        57400010,
+        57400100,
+        57401000,
+        57403000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5513",
+      "name": "Cemetery Shade",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 6,
+      "missing_count": 6,
+      "missing_ids": [
+        55130000,
+        55130010,
+        55130020,
+        55130900,
+        55130912,
+        55130920
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5270",
+      "name": "Jar Innards",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 5,
+      "missing_count": 5,
+      "missing_ids": [
+        52700000,
+        52700010,
+        52700020,
+        52700030,
+        52700040
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6231",
+      "name": "Perfumer",
+      "tier": "grunt",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 5,
+      "missing_count": 5,
+      "missing_ids": [
+        62310000,
+        62310010,
+        62310020,
+        62310030,
+        62310900
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5251",
+      "name": "Horned Shaman",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 4,
+      "missing_count": 4,
+      "missing_ids": [
+        52512000,
+        52512010,
+        52512020,
+        52519000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5701",
+      "name": "Demi-Human Large (SOTE)",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 4,
+      "missing_count": 4,
+      "missing_ids": [
+        57010000,
+        57010050,
+        57010100,
+        57010200
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6260",
+      "name": "Death Rite Bird",
+      "tier": "miniboss",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 4,
+      "missing_count": 4,
+      "missing_ids": [
+        62600000,
+        62600100,
+        62600900,
+        62600950
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c2120",
+      "name": "Malenia, Blade of Miquella",
+      "tier": "night_boss",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 3,
+      "missing_count": 3,
+      "missing_ids": [
+        21200000,
+        21201000,
+        21201010
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c2110",
+      "name": "Beast Clergyman / Maliketh",
+      "tier": "night_boss",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 3,
+      "missing_count": 3,
+      "missing_ids": [
+        21100000,
+        21101000,
+        21102000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5260",
+      "name": "Golem Smith",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 3,
+      "missing_count": 3,
+      "missing_ids": [
+        52600000,
+        52601000,
+        52602000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6010",
+      "name": "c6010",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 3,
+      "missing_count": 3,
+      "missing_ids": [
+        60100000,
+        60100010,
+        60100050
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6050",
+      "name": "c6050",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        60500000,
+        60501000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c2031",
+      "name": "Rennala (Phase 2)",
+      "tier": "night_boss",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        20310000,
+        20310100
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5020",
+      "name": "Putrescent Knight",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        50200000,
+        50200001
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6072",
+      "name": "c6072",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        60720000,
+        60720100
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5450",
+      "name": "Ram",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        54500000,
+        54501000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6201",
+      "name": "Scarab",
+      "tier": "grunt",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        62010000,
+        62012000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c2030",
+      "name": "Rennala, Queen of the Full Moon",
+      "tier": "night_boss",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        20300000,
+        20300100
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c4720",
+      "name": "Godfrey, First Elden Lord",
+      "tier": "night_boss",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        47200000,
+        47200900
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c4721",
+      "name": "Hoarah Loux",
+      "tier": "night_boss",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        47210000,
+        47210900
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6040",
+      "name": "c6040",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        60400000,
+        60400050
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c52309",
+      "name": "Priestess (Duchess)",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        523090000,
+        523090010
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c52312",
+      "name": "Witch of the Wheel (Recluse Remembrance)",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        523120000,
+        523120040
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c4730",
+      "name": "Starscourge Radahn",
+      "tier": "night_boss",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        47300000,
+        47300100
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5271",
+      "name": "Jar Innards (Large)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        52710000,
+        52710010
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5000",
+      "name": "Commander Gaius",
+      "tier": "night_boss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        50000000,
+        50000010
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5512",
+      "name": "Shade",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        55120000,
+        55120100
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5511",
+      "name": "Shade",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        55110000,
+        55110100
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6100",
+      "name": "c6100",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 2,
+      "missing_count": 2,
+      "missing_ids": [
+        61000000,
+        61000010
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5220",
+      "name": "Promised Consort Radahn",
+      "tier": "night_boss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        52200000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6070",
+      "name": "c6070",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        60700000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6090",
+      "name": "c6090",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        60900000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c2040",
+      "name": "Juvenile Scholar",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        20400000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6080",
+      "name": "c6080",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        60800000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5050",
+      "name": "Midra (Phase 1)",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        50500000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5890",
+      "name": "Black Knight Horse",
+      "tier": "mount_component",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        58900000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6081",
+      "name": "c6081",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        60810000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c59999",
+      "name": "System",
+      "tier": "cinematic",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        599999999
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6031",
+      "name": "Bear",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        60310000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6082",
+      "name": "c6082",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        60820000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5030",
+      "name": "Romina, Saint of the Bud",
+      "tier": "night_boss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        50300000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5130",
+      "name": "Messmer the Impaler",
+      "tier": "night_boss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        51300000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c52000",
+      "name": "System",
+      "tier": "cinematic",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        520000000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5200",
+      "name": "Metyr, Mother of Fingers",
+      "tier": "night_boss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        52000000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5051",
+      "name": "Midra, Lord of Frenzied Flame",
+      "tier": "night_boss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        50510000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c4511",
+      "name": "Lichdragon Fortissax",
+      "tier": "night_boss",
+      "origin": "ER",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        45110000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5300",
+      "name": "Rellana, Twin Moon Knight",
+      "tier": "night_boss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        53000000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c52313",
+      "name": "Executor?",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        523130000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c6091",
+      "name": "c6091",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        60910000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5872",
+      "name": "Imp (Large)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        58720000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c5230",
+      "name": "Scadutree Avatar",
+      "tier": "night_boss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 0,
+      "er_thinkparam_count": 1,
+      "missing_count": 1,
+      "missing_ids": [
+        52300000
+      ],
+      "completely_empty_in_nr": true
+    },
+    {
+      "cp": "c3000",
+      "name": "Exile Soldier",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 14,
+      "er_thinkparam_count": 52,
+      "missing_count": 42,
+      "missing_ids": [
+        30000005,
+        30000006,
+        30000015,
+        30000020,
+        30000025,
+        30000030,
+        30000035,
+        30000105,
+        30000115,
+        30000140,
+        30000300,
+        30000310,
+        30000400,
+        30000500,
+        30000600,
+        30000700,
+        30000800,
+        30000900,
+        30001005,
+        30001010,
+        30001015,
+        30001200,
+        30001300,
+        30001800,
+        30001900,
+        30002005,
+        30002010,
+        30002015,
+        30002800,
+        30002900,
+        30003005,
+        30003010,
+        30003015,
+        30003020,
+        30003025,
+        30003030,
+        30003100,
+        30003200,
+        30003300,
+        30003400,
+        30003800,
+        30003900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4300",
+      "name": "Wandering Noble",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 14,
+      "er_thinkparam_count": 35,
+      "missing_count": 24,
+      "missing_ids": [
+        43000100,
+        43000500,
+        43000800,
+        43001500,
+        43001800,
+        43002110,
+        43002500,
+        43002700,
+        43002800,
+        43002900,
+        43003500,
+        43003600,
+        43003800,
+        43004500,
+        43004800,
+        43004850,
+        43005850,
+        43006100,
+        43006200,
+        43006850,
+        43007000,
+        43007500,
+        43007600,
+        43007700
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5240",
+      "name": "Shadowpot",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 10,
+      "er_thinkparam_count": 22,
+      "missing_count": 13,
+      "missing_ids": [
+        52400001,
+        52400020,
+        52400030,
+        52400040,
+        52401001,
+        52401030,
+        52401040,
+        52401050,
+        52401060,
+        52402001,
+        52402030,
+        52402040,
+        52403001
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4050",
+      "name": "Kaiden Sellsword",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 13,
+      "missing_count": 12,
+      "missing_ids": [
+        40500100,
+        40500900,
+        40501000,
+        40502000,
+        40507500,
+        40508000,
+        40508100,
+        40509000,
+        40509100,
+        40509200,
+        40509300,
+        40509900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3510",
+      "name": "Skeleton (Sword and Shield)",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 18,
+      "missing_count": 12,
+      "missing_ids": [
+        35100010,
+        35100110,
+        35100111,
+        35100200,
+        35101001,
+        35101100,
+        35102010,
+        35102020,
+        35103100,
+        35104010,
+        35104100,
+        35109000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3670",
+      "name": "Aged Albinauric (Scholar Remembrance)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 9,
+      "er_thinkparam_count": 17,
+      "missing_count": 12,
+      "missing_ids": [
+        36700100,
+        36701100,
+        36701110,
+        36701120,
+        36702100,
+        36702200,
+        36702220,
+        36703100,
+        36703200,
+        36703300,
+        36708000,
+        36709000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4660",
+      "name": "Guardian Golem",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 12,
+      "missing_count": 11,
+      "missing_ids": [
+        46600100,
+        46600200,
+        46600300,
+        46600301,
+        46600330,
+        46601000,
+        46601033,
+        46601050,
+        46601100,
+        46601133,
+        46601233
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5830",
+      "name": "Messmer Soldier",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 15,
+      "missing_count": 11,
+      "missing_ids": [
+        58300001,
+        58300021,
+        58300030,
+        58300040,
+        58300050,
+        58300051,
+        58300052,
+        58300060,
+        58300100,
+        58301010,
+        58301020
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3080",
+      "name": "Imp",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 15,
+      "missing_count": 11,
+      "missing_ids": [
+        30800020,
+        30800030,
+        30800040,
+        30800100,
+        30800110,
+        30800300,
+        30800400,
+        30800500,
+        30800600,
+        30800900,
+        30801000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4314",
+      "name": "Radahn Soldier",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 7,
+      "er_thinkparam_count": 18,
+      "missing_count": 11,
+      "missing_ids": [
+        43140020,
+        43140040,
+        43140110,
+        43140900,
+        43140910,
+        43141020,
+        43141100,
+        43142020,
+        43142040,
+        43143020,
+        43143021
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4620",
+      "name": "Astel- Stars of Darkness",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 11,
+      "missing_count": 10,
+      "missing_ids": [
+        46200100,
+        46200200,
+        46201000,
+        46201100,
+        46201200,
+        46201500,
+        46209000,
+        46209100,
+        46209200,
+        46209300
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4640",
+      "name": "Ulcerated Tree Spirit",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 10,
+      "missing_count": 9,
+      "missing_ids": [
+        46400007,
+        46400032,
+        46400033,
+        46400056,
+        46400062,
+        46400100,
+        46400800,
+        46400842,
+        46400900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3170",
+      "name": "Albinauric Archer",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 10,
+      "missing_count": 9,
+      "missing_ids": [
+        31700052,
+        31700053,
+        31700054,
+        31700055,
+        31700056,
+        31700057,
+        31700058,
+        31700059,
+        31709000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3010",
+      "name": "Banished Knight",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 21,
+      "er_thinkparam_count": 13,
+      "missing_count": 9,
+      "missing_ids": [
+        30100100,
+        30100200,
+        30100300,
+        30101100,
+        30101200,
+        30102200,
+        30106050,
+        30107050,
+        30108050
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3360",
+      "name": "Ancestral Follower",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 10,
+      "er_thinkparam_count": 12,
+      "missing_count": 8,
+      "missing_ids": [
+        33600100,
+        33600110,
+        33600600,
+        33600610,
+        33600664,
+        33600700,
+        33601100,
+        33602100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3660",
+      "name": "Commoner",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 30,
+      "er_thinkparam_count": 34,
+      "missing_count": 8,
+      "missing_ids": [
+        36600040,
+        36600041,
+        36600090,
+        36600140,
+        36600210,
+        36600240,
+        36601040,
+        36608000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4770",
+      "name": "Gargoyle",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 13,
+      "er_thinkparam_count": 17,
+      "missing_count": 8,
+      "missing_ids": [
+        47700011,
+        47700050,
+        47700200,
+        47700900,
+        47701200,
+        47702100,
+        47705900,
+        47705950
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5311",
+      "name": "Inquisitor (Candles)",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 11,
+      "missing_count": 7,
+      "missing_ids": [
+        53110001,
+        53110002,
+        53111001,
+        53111002,
+        53111003,
+        53111004,
+        53111005
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4070",
+      "name": "Wolf",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 7,
+      "er_thinkparam_count": 13,
+      "missing_count": 7,
+      "missing_ids": [
+        40700100,
+        40700200,
+        40700300,
+        40700500,
+        40700510,
+        40704052,
+        40708000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4354",
+      "name": "Redmane Knight",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 10,
+      "missing_count": 6,
+      "missing_ids": [
+        43540200,
+        43540210,
+        43541040,
+        43541200,
+        43542200,
+        43542300
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4100",
+      "name": "Demi-Human",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 20,
+      "er_thinkparam_count": 10,
+      "missing_count": 6,
+      "missing_ids": [
+        41000100,
+        41000200,
+        41001100,
+        41001200,
+        41002100,
+        41002200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3070",
+      "name": "Dominula Celebrant",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 11,
+      "missing_count": 6,
+      "missing_ids": [
+        30700100,
+        30701100,
+        30701200,
+        30702100,
+        30703100,
+        30704100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5751",
+      "name": "Living Jar",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 7,
+      "missing_count": 6,
+      "missing_ids": [
+        57510100,
+        57510200,
+        57510300,
+        57510400,
+        57510500,
+        57519000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4312",
+      "name": "Raya Lucaria Soldier",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 12,
+      "missing_count": 6,
+      "missing_ids": [
+        43120010,
+        43120020,
+        43121010,
+        43121020,
+        43122010,
+        43123010
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c10000",
+      "name": "Interactable Object",
+      "tier": "cinematic",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 7,
+      "missing_count": 6,
+      "missing_ids": [
+        100000010,
+        100000020,
+        100000030,
+        100000040,
+        100000050,
+        100000060
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3970",
+      "name": "Azula Beastman",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 16,
+      "er_thinkparam_count": 10,
+      "missing_count": 6,
+      "missing_ids": [
+        39701100,
+        39701200,
+        39702100,
+        39703100,
+        39703200,
+        39703300
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3181",
+      "name": "Red Wolf of Radagon",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 7,
+      "missing_count": 6,
+      "missing_ids": [
+        31810024,
+        31810052,
+        31810500,
+        31810510,
+        31810932,
+        31814000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4383",
+      "name": "Glintstone Digger",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 9,
+      "missing_count": 6,
+      "missing_ids": [
+        43830100,
+        43830200,
+        43830300,
+        43831100,
+        43831200,
+        43831300
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4311",
+      "name": "Godrick Soldier",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 8,
+      "er_thinkparam_count": 13,
+      "missing_count": 5,
+      "missing_ids": [
+        43110110,
+        43110120,
+        43112010,
+        43113900,
+        43114006
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4490",
+      "name": "Living Jar Warrior",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 6,
+      "missing_count": 5,
+      "missing_ids": [
+        44900040,
+        44900052,
+        44900100,
+        44900200,
+        44900300
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4080",
+      "name": "Rat",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 6,
+      "missing_count": 5,
+      "missing_ids": [
+        40800001,
+        40800002,
+        40800003,
+        40800004,
+        40800300
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4510",
+      "name": "Ancient Dragon",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 6,
+      "missing_count": 5,
+      "missing_ids": [
+        45100100,
+        45100200,
+        45100300,
+        45100900,
+        45100930
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c7100",
+      "name": "Ancient Hero of Zamor (Base)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 6,
+      "missing_count": 5,
+      "missing_ids": [
+        71000050,
+        71000051,
+        71000900,
+        71000950,
+        71009000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5750",
+      "name": "Living Jar Warrior",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 6,
+      "missing_count": 5,
+      "missing_ids": [
+        57500040,
+        57500052,
+        57500100,
+        57500200,
+        57500300
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4140",
+      "name": "Spiritcaller Snail (Great Church Boss)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 10,
+      "missing_count": 5,
+      "missing_ids": [
+        41402001,
+        41402002,
+        41402003,
+        41402903,
+        41403001
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4500",
+      "name": "Flying Dragon (Unscaled)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 6,
+      "missing_count": 5,
+      "missing_ids": [
+        45000001,
+        45000100,
+        45000900,
+        45000942,
+        45008000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3860",
+      "name": "Avionette",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 7,
+      "missing_count": 5,
+      "missing_ids": [
+        38600001,
+        38600011,
+        38600500,
+        38601001,
+        38601011
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3470",
+      "name": "Albinauric",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 16,
+      "er_thinkparam_count": 13,
+      "missing_count": 4,
+      "missing_ids": [
+        34702052,
+        34704052,
+        34705020,
+        34705052
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3150",
+      "name": "Night's Cavalry",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 8,
+      "er_thinkparam_count": 6,
+      "missing_count": 4,
+      "missing_ids": [
+        31500052,
+        31501052,
+        31502000,
+        31503000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4340",
+      "name": "Mad Pumpkin Head",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 8,
+      "missing_count": 4,
+      "missing_ids": [
+        43400110,
+        43400900,
+        43401200,
+        43401900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3750",
+      "name": "Clayman - Spear",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 9,
+      "er_thinkparam_count": 7,
+      "missing_count": 4,
+      "missing_ids": [
+        37500100,
+        37501100,
+        37501200,
+        37502100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4240",
+      "name": "Fingercreeper",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 5,
+      "missing_count": 4,
+      "missing_ids": [
+        42400020,
+        42400050,
+        42400100,
+        42400900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5312",
+      "name": "Inquisitor (Staff)",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 4,
+      "missing_count": 4,
+      "missing_ids": [
+        53122000,
+        53122002,
+        53122003,
+        53122004
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4960",
+      "name": "Giant Skeleton Torso",
+      "tier": "non_combat",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 5,
+      "missing_count": 4,
+      "missing_ids": [
+        49600050,
+        49600068,
+        49600900,
+        49600932
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4600",
+      "name": "Troll",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 11,
+      "er_thinkparam_count": 10,
+      "missing_count": 4,
+      "missing_ids": [
+        46000041,
+        46001000,
+        46005052,
+        46008000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4502",
+      "name": "Decaying Ekzykes-class Dragon",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 5,
+      "missing_count": 4,
+      "missing_ids": [
+        45020020,
+        45020900,
+        45020920,
+        45020922
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4910",
+      "name": "Magma Wyrm",
+      "tier": "field_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 6,
+      "missing_count": 4,
+      "missing_ids": [
+        49100900,
+        49100926,
+        49100932,
+        49100952
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5160",
+      "name": "Fire Knight",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 9,
+      "er_thinkparam_count": 11,
+      "missing_count": 4,
+      "missing_ids": [
+        51600100,
+        51600110,
+        51601100,
+        51602100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4321",
+      "name": "Vulgar Militia",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 7,
+      "missing_count": 4,
+      "missing_ids": [
+        43210100,
+        43211100,
+        43211150,
+        43212100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4650",
+      "name": "Dragonkin Soldier (Ice Lightning) (Unscaled)",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 6,
+      "missing_count": 4,
+      "missing_ids": [
+        46500100,
+        46500265,
+        46500300,
+        46500310
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4550",
+      "name": "Giant Dog",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 10,
+      "er_thinkparam_count": 8,
+      "missing_count": 4,
+      "missing_ids": [
+        45500040,
+        45500090,
+        45500200,
+        45500300
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4260",
+      "name": "Erdtree Burial Watchdog",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 7,
+      "missing_count": 4,
+      "missing_ids": [
+        42600200,
+        42600900,
+        42601100,
+        42601200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3610",
+      "name": "Oracle Envoy",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 5,
+      "missing_count": 4,
+      "missing_ids": [
+        36100010,
+        36100011,
+        36100020,
+        36100030
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3020",
+      "name": "Large Exile Soldier",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 5,
+      "missing_count": 4,
+      "missing_ids": [
+        30200005,
+        30200040,
+        30200800,
+        30200900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3810",
+      "name": "Kindred of Rot",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 6,
+      "missing_count": 4,
+      "missing_ids": [
+        38100001,
+        38100100,
+        38101000,
+        38103000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4384",
+      "name": "Glintstone Digger",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        43840100,
+        43840200,
+        43840300
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4374",
+      "name": "Radahn Foot Soldier",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 10,
+      "er_thinkparam_count": 13,
+      "missing_count": 3,
+      "missing_ids": [
+        43740500,
+        43740620,
+        43742000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3460",
+      "name": "Leonine Misbegotten",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 6,
+      "missing_count": 3,
+      "missing_ids": [
+        34600900,
+        34601000,
+        34602000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4371",
+      "name": "Godrick Foot Soldier",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 14,
+      "er_thinkparam_count": 13,
+      "missing_count": 3,
+      "missing_ids": [
+        43710030,
+        43710210,
+        43711010
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3702",
+      "name": "Glintstone Sorcerer",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 7,
+      "missing_count": 3,
+      "missing_ids": [
+        37020021,
+        37020022,
+        37020121
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5040",
+      "name": "Curseblade",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        50400400,
+        50400900,
+        50406000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4210",
+      "name": "Warhawk",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        42100050,
+        42100100,
+        42100200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3320",
+      "name": "Silver Tear (Unscaled)",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        33200100,
+        33200200,
+        33209000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4950",
+      "name": "Tibia Mariner",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        49500050,
+        49500900,
+        49500932
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c2150",
+      "name": "Lightning Ball",
+      "tier": "non_combat",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        21500010,
+        21500020,
+        21500030
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4811",
+      "name": "Erdtree Avatar Variant",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        48110040,
+        48110900,
+        48110952
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3560",
+      "name": "Godskin Apostle (Unscaled)",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 10,
+      "er_thinkparam_count": 5,
+      "missing_count": 3,
+      "missing_ids": [
+        35600200,
+        35600900,
+        35600942
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c2100",
+      "name": "Black Knife Assassin (Unscaled)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 5,
+      "missing_count": 3,
+      "missing_ids": [
+        21000001,
+        21000030,
+        21000052
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4491",
+      "name": "Small Jar Merchant",
+      "tier": "non_combat",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        44910100,
+        44910200,
+        44919000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3251",
+      "name": "Tree Sentinel (Unscaled)",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        32510100,
+        32510900,
+        32511000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4382",
+      "name": "Stonedigger",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 9,
+      "er_thinkparam_count": 10,
+      "missing_count": 3,
+      "missing_ids": [
+        43820100,
+        43820200,
+        43821100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5870",
+      "name": "Imp (Lion Head)",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 6,
+      "missing_count": 3,
+      "missing_ids": [
+        58700020,
+        58702010,
+        58702020
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4101",
+      "name": "Large Demi-Human",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        41010050,
+        41010100,
+        41010200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5523",
+      "name": "Stray",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        55230010,
+        55230101,
+        55230200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4980",
+      "name": "Death Bird",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 9,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        49800100,
+        49800900,
+        49800950
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3950",
+      "name": "Man-Serpent - Whip Cool",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 6,
+      "missing_count": 3,
+      "missing_ids": [
+        39500100,
+        39502100,
+        39509000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3252",
+      "name": "Royal Carian Knight",
+      "tier": "field_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        32520054,
+        32520100,
+        32520110
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4270",
+      "name": "Elder Lion",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 7,
+      "er_thinkparam_count": 5,
+      "missing_count": 3,
+      "missing_ids": [
+        42700100,
+        42701000,
+        42702000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3664",
+      "name": "Cemetery Shade",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 6,
+      "missing_count": 3,
+      "missing_ids": [
+        36640900,
+        36640912,
+        36640920
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3850",
+      "name": "Marionette",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 6,
+      "missing_count": 3,
+      "missing_ids": [
+        38500100,
+        38500110,
+        38500150
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4110",
+      "name": "Demi-Human Shaman",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        41100100,
+        41100200,
+        41109000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4680",
+      "name": "Full-Grown Fallingstar Beast (Unscaled)",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        46800001,
+        46800900,
+        46800930
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4670",
+      "name": "Ancestor Spirit",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        46700100,
+        46700200,
+        46700900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4690",
+      "name": "Grafted Scion",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 4,
+      "missing_count": 3,
+      "missing_ids": [
+        46900007,
+        46900032,
+        46900900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4380",
+      "name": "Starcaller",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 5,
+      "missing_count": 2,
+      "missing_ids": [
+        43800010,
+        43800110
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c2500",
+      "name": "Crucible Knight (Unscaled)",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 14,
+      "er_thinkparam_count": 15,
+      "missing_count": 2,
+      "missing_ids": [
+        25000050,
+        25001066
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4290",
+      "name": "Bloodhound Knight",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 7,
+      "missing_count": 2,
+      "missing_ids": [
+        42900011,
+        42909000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3330",
+      "name": "Giant Silver Tear (Unscaled)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        33300020,
+        33300062
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4470",
+      "name": "Abductor Virgin (Unscaled)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 6,
+      "missing_count": 2,
+      "missing_ids": [
+        44700100,
+        44700900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4810",
+      "name": "Erdtree Avatar",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        48100100,
+        48100900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4580",
+      "name": "Giant Wormface",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        45800100,
+        45800900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4603",
+      "name": "Stonedigger Troll",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        46030100,
+        46030200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3630",
+      "name": "c3630",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        36301000,
+        36301054
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3900",
+      "name": "Fire Monk",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 4,
+      "missing_count": 2,
+      "missing_ids": [
+        39000200,
+        39001200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5250",
+      "name": "Horned Warrior",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 13,
+      "er_thinkparam_count": 15,
+      "missing_count": 2,
+      "missing_ids": [
+        52500130,
+        52502000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3600",
+      "name": "Alabaster Lord (Unscaled)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 4,
+      "missing_count": 2,
+      "missing_ids": [
+        36000062,
+        36001100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4820",
+      "name": "Omenkiller",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        48200500,
+        48200900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c2140",
+      "name": "Omen",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 9,
+      "er_thinkparam_count": 4,
+      "missing_count": 2,
+      "missing_ids": [
+        21400900,
+        21401900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3704",
+      "name": "Battlemage",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 4,
+      "missing_count": 2,
+      "missing_ids": [
+        37040020,
+        37040900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4200",
+      "name": "Man-Bat",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 4,
+      "missing_count": 2,
+      "missing_ids": [
+        42000100,
+        42000200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c2275",
+      "name": "Crab (Clean)",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        22750010,
+        22750020
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5190",
+      "name": "Spider Scorpion",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 6,
+      "missing_count": 2,
+      "missing_ids": [
+        51900100,
+        51903100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3100",
+      "name": "Elemer of the Briar",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 4,
+      "missing_count": 2,
+      "missing_ids": [
+        31000931,
+        31001000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4352",
+      "name": "Cuckoo Knight (Scholar Remembrance)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 7,
+      "er_thinkparam_count": 5,
+      "missing_count": 2,
+      "missing_ids": [
+        43520100,
+        43521100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c6240",
+      "name": "c6240",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 4,
+      "missing_count": 2,
+      "missing_ids": [
+        62400020,
+        62400030
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c2274",
+      "name": "Giant Sleep Crab",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        22740100,
+        22740200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3570",
+      "name": "Godskin Noble (Unscaled)",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 9,
+      "er_thinkparam_count": 4,
+      "missing_count": 2,
+      "missing_ids": [
+        35700900,
+        35700910
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4601",
+      "name": "Troll Knight",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        46010020,
+        46010900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4602",
+      "name": "Snowfield Troll",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        46020050,
+        46021000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4161",
+      "name": "Stray",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        41610010,
+        41610101
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4280",
+      "name": "Giant Ant",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 4,
+      "missing_count": 2,
+      "missing_ids": [
+        42800100,
+        42800200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4120",
+      "name": "Demi-Human Chief",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 3,
+      "missing_count": 2,
+      "missing_ids": [
+        41200100,
+        41200200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4381",
+      "name": "Guilty",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 4,
+      "missing_count": 2,
+      "missing_ids": [
+        43810050,
+        43810150
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4373",
+      "name": "Leyndell Foot Soldier",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 11,
+      "er_thinkparam_count": 8,
+      "missing_count": 1,
+      "missing_ids": [
+        43731550
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c0100",
+      "name": "Standin Template",
+      "tier": "cinematic",
+      "origin": "?",
+      "nr_thinkparam_count": 12,
+      "er_thinkparam_count": 12,
+      "missing_count": 1,
+      "missing_ids": [
+        1007000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4503",
+      "name": "Borealis the Freezing Fog (Unscaled)",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        45030900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4040",
+      "name": "Slug",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        40400100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3361",
+      "name": "Putrid Ancestral Follower",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 5,
+      "missing_count": 1,
+      "missing_ids": [
+        33610110
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3180",
+      "name": "Albinauric Archer's Wolf",
+      "tier": "mount_component",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 3,
+      "missing_count": 1,
+      "missing_ids": [
+        31804000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4420",
+      "name": "Giant Crayfish",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        44201000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4385",
+      "name": "Disciple of Rot",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        43850040
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5810",
+      "name": "Demi-Human Swordmaster Onze",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 3,
+      "missing_count": 1,
+      "missing_ids": [
+        58100900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4090",
+      "name": "Giant Rat",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 3,
+      "missing_count": 1,
+      "missing_ids": [
+        40900001
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3200",
+      "name": "Nomadic Merchant",
+      "tier": "non_combat",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        32009000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3160",
+      "name": "Funeral Steed",
+      "tier": "mount_component",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        31600052
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4170",
+      "name": "Putrid Flesh",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        41700010
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4570",
+      "name": "Wormface",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 3,
+      "missing_count": 1,
+      "missing_ids": [
+        45700200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4241",
+      "name": "Giant Fingercreeper",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        42410050
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5522",
+      "name": "Stray",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        55220200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3060",
+      "name": "Giant Skeleton",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 8,
+      "er_thinkparam_count": 4,
+      "missing_count": 1,
+      "missing_ids": [
+        30600010
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5080",
+      "name": "Bloodfiend",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 5,
+      "missing_count": 1,
+      "missing_ids": [
+        50801010
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3500",
+      "name": "Large Skeleton (Spear)",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 23,
+      "er_thinkparam_count": 12,
+      "missing_count": 1,
+      "missing_ids": [
+        35001021
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4481",
+      "name": "Miranda Sprout",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 11,
+      "er_thinkparam_count": 11,
+      "missing_count": 1,
+      "missing_ids": [
+        44810500
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4353",
+      "name": "Leyndell Knight",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 12,
+      "er_thinkparam_count": 4,
+      "missing_count": 1,
+      "missing_ids": [
+        43532100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3451",
+      "name": "Scaly Misbegotten",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        34519000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4800",
+      "name": "Mohg- the Omen",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        48001000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3250",
+      "name": "Draconic Tree Sentinel (Unscaled)",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 4,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        32500900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4377",
+      "name": "Highwayman",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 7,
+      "er_thinkparam_count": 8,
+      "missing_count": 1,
+      "missing_ids": [
+        43770012
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4000",
+      "name": "Revenant Follower",
+      "tier": "non_combat",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 3,
+      "missing_count": 1,
+      "missing_ids": [
+        40000100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3701",
+      "name": "Perfumer",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 3,
+      "missing_count": 1,
+      "missing_ids": [
+        37010900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4060",
+      "name": "Kaiden Sellsword's Horse",
+      "tier": "mount_component",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        40609900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4630",
+      "name": "Runebear",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 4,
+      "missing_count": 1,
+      "missing_ids": [
+        46300052
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3700",
+      "name": "Depraved Perfumer",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 3,
+      "missing_count": 1,
+      "missing_ids": [
+        37000001
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4191",
+      "name": "Scarab",
+      "tier": "non_combat",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        41912000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4130",
+      "name": "Demi-Human Queen",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 4,
+      "missing_count": 1,
+      "missing_ids": [
+        41301900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4180",
+      "name": "Spirit Jellyfish",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        41809000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4560",
+      "name": "Giant Crow",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 6,
+      "er_thinkparam_count": 4,
+      "missing_count": 1,
+      "missing_ids": [
+        45609990
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5193",
+      "name": "Spider Scorpion",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        51930010
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4355",
+      "name": "Mausoleum Knight",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 4,
+      "missing_count": 1,
+      "missing_ids": [
+        43552100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4150",
+      "name": "Basilisk",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        41500100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5110",
+      "name": "Maris' Tendril",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        51101000
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3650",
+      "name": "Guardian",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        36500100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4020",
+      "name": "Royal Revenant",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        40200100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5241",
+      "name": "Commoner",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        52410010
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4450",
+      "name": "Walking Mausoleum",
+      "tier": "field_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        44500100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3703",
+      "name": "Page",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 5,
+      "er_thinkparam_count": 3,
+      "missing_count": 1,
+      "missing_ids": [
+        37030120
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3050",
+      "name": "Commander",
+      "tier": "night_boss",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        30500940
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c2270",
+      "name": "Giant Crab",
+      "tier": "grunt",
+      "origin": "?",
+      "nr_thinkparam_count": 2,
+      "er_thinkparam_count": 3,
+      "missing_count": 1,
+      "missing_ids": [
+        22700200
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3300",
+      "name": "Nox Swordstress (Unscaled)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        33000900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5090",
+      "name": "Gravebird",
+      "tier": "grunt",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 3,
+      "er_thinkparam_count": 4,
+      "missing_count": 1,
+      "missing_ids": [
+        50900011
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c3901",
+      "name": "Fire Monk",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 10,
+      "er_thinkparam_count": 3,
+      "missing_count": 1,
+      "missing_ids": [
+        39011100
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c4501",
+      "name": "Decaying Ekzykes (Unscaled)",
+      "tier": "miniboss",
+      "origin": "?",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        45010900
+      ],
+      "completely_empty_in_nr": false
+    },
+    {
+      "cp": "c5320",
+      "name": "Fat Inquisitor",
+      "tier": "miniboss",
+      "origin": "SoTE",
+      "nr_thinkparam_count": 1,
+      "er_thinkparam_count": 2,
+      "missing_count": 1,
+      "missing_ids": [
+        53200001
+      ],
+      "completely_empty_in_nr": false
+    }
+  ]
+}

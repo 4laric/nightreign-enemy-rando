@@ -1,0 +1,132 @@
+{
+  "_meta": {
+    "description": "Audit of c-prefixes whose regulation (NpcParam/ThinkParam/BehaviorParam) exists in the mod's regulation.bin and in vanilla ER, but which are unregistered in the rando's roster JSONs (nr_enemy_tags.json + nr_enemy_roster.json + heritage_pack.json + placement_budget.json). The Devonia (c5800) and SoTE Tree Sentinel (c6251) wirings done v0.28.x are the precedent — this is the systematic survey of everything else that fits that pattern.",
+    "scope": "Ghost c-prefixes filtered to range c2xxx-c8xxx, excluding (a) chrs already wired in v0.28.x sessions (c5050, c5120, c5131, c5132, c5140, c5141, c5194, c6251, c5800), (b) known dummies/TEMP NAME entries, (c) nightlord/cinematic-only slots.",
+    "total_ghost_chrs": 105,
+    "method": "set difference between mod regulation NpcParam c-prefixes and roster all_variants c_prefixes"
+  },
+  "tier_S_sote_reuse_with_er_sibling": {
+    "_note": "These are SoTE re-uses of ER chrs. Same shape as c6251/c3251 — should share a cap with the ER sibling once the shared-cap mechanism (see TODO_c6251_shared_cap.md) lands. 10 confirmed pairs; first one already wired (c6251 → c3251).",
+    "_priority": "low until shared-cap mechanism exists; then a one-shot batch wiring",
+    "entries": [
+      {"cp": "c6210", "er_sibling": "c3170", "mod_variants": 7, "name": "Albinauric Archer (SoTE)"},
+      {"cp": "c6220", "er_sibling": "c4070", "mod_variants": 3, "name": "Wolf (SoTE)"},
+      {"cp": "c6232", "er_sibling": "c3702", "mod_variants": 2, "name": "Glintstone Sorcerer (SoTE)"},
+      {"cp": "c6233", "er_sibling": "c3703", "mod_variants": 3, "name": "Page (SoTE)"},
+      {"cp": "c6270", "er_sibling": "c4020", "mod_variants": 9, "name": "Royal Revenant (SoTE)"},
+      {"cp": "c6290", "er_sibling": "c3450", "mod_variants": 15, "name": "Misbegotten (SoTE)"},
+      {"cp": "c6291", "er_sibling": "c3451", "mod_variants": 6, "name": "Scaly Misbegotten (SoTE)"},
+      {"cp": "c6300", "er_sibling": "c4140", "mod_variants": 8, "name": "Snail (SoTE)"},
+      {"cp": "c6310", "er_sibling": "c4680", "mod_variants": 3, "name": "Fallingstar Beast (SoTE)"},
+      {"cp": "c6320", "er_sibling": "c4300", "mod_variants": 14, "name": "Wandering Noble (SoTE)"}
+    ]
+  },
+  "tier_S_unidentified_c6xxx": {
+    "_note": "c6xxx-range chrs with no obvious ER sibling by name. Could be SoTE-only chrs without an ER counterpart, OR could be variants whose ER counterpart has been renamed. Worth investigating before wiring — if they're sibling-less they go in tier A instead.",
+    "entries": [
+      {"cp": "c6200", "mod_variants": 15, "er_variants": 14, "hp_max": 1650, "note": "Substantial variant count + medium HP — possibly a real chr identity"},
+      {"cp": "c6202", "mod_variants": 10, "er_variants": 10, "hp_max": 271, "note": "Low-HP swarm chr"},
+      {"cp": "c6221", "mod_variants": 2, "er_variants": 2, "hp_max": 973, "note": "Medium-HP, low count"},
+      {"cp": "c6020", "mod_variants": 1, "er_variants": 1, "hp_max": 116, "note": "Single low-HP variant — likely dummy/utility"}
+    ]
+  },
+  "tier_A_sote_additions_high_value_boss_or_field": {
+    "_note": "SoTE chrs with iconic moveset identities and no ER analog already in the rando. These are direct wins — same shape as c5800 Devonia wiring (4-file registration, no shared cap needed since they're unique to SoTE). Sorted by descending hp_max.",
+    "_recommendation": "Top 5-10 here are likely the most playable additions to the rando. Field-tier chrs are lower-risk than bosses (no phase mechanic concerns).",
+    "entries": [
+      {"cp": "c5790", "name": "Guardian Golem", "mod_variants": 21, "hp_max": 5236, "suggested_tier": "field_boss", "note": "XL roller siege engine"},
+      {"cp": "c5960", "name": "Ulcerated Tree Spirit", "mod_variants": 6, "hp_max": 2713, "suggested_tier": "night_boss", "note": "L; signature whip moveset"},
+      {"cp": "c5780", "name": "Runebear", "mod_variants": 6, "hp_max": 2585, "suggested_tier": "field_boss", "note": "XL berserker quadruped"},
+      {"cp": "c5970", "name": "Abductor Virgin", "mod_variants": 10, "hp_max": 1418, "suggested_tier": "miniboss", "note": "Iconic grab-and-impale; cool design"},
+      {"cp": "c5550", "name": "Fingercreeper", "mod_variants": 35, "hp_max": 747, "suggested_tier": "grunt", "note": "Spider crawler swarm"},
+      {"cp": "c5980", "name": "Omenkiller", "mod_variants": 8, "hp_max": 429, "suggested_tier": "miniboss", "note": "Dual cleaver moveset"},
+      {"cp": "c5390", "name": "Troll (SoTE)", "mod_variants": 10, "hp_max": 1901, "suggested_tier": "field_boss", "note": "L brute; ER siblings c4600-c4604"},
+      {"cp": "c5391", "name": "Troll Knight", "mod_variants": 6, "hp_max": 1901, "suggested_tier": "field_boss", "note": "Armed troll variant"},
+      {"cp": "c5620", "name": "Tibia Mariner", "mod_variants": 2, "hp_max": 1918, "suggested_tier": "field_boss", "note": "Summons skeletons"},
+      {"cp": "c5950", "name": "Leonine Misbegotten", "mod_variants": 4, "hp_max": 564, "suggested_tier": "miniboss", "note": "Cleaver bruiser"},
+      {"cp": "c5730", "name": "Demi-Human Queen", "mod_variants": 4, "hp_max": 1222, "suggested_tier": "miniboss", "note": "Field boss caliber"},
+      {"cp": "c5680", "name": "Wheeled Ballista", "mod_variants": 3, "hp_max": 679, "suggested_tier": "miniboss", "note": "Siege weapon enemy"},
+      {"cp": "c5690", "name": "Dragon-faced Flamethrower", "mod_variants": 2, "hp_max": 441, "suggested_tier": "miniboss", "note": "Siege weapon"},
+      {"cp": "c5990", "name": "Basilisk", "mod_variants": 7, "hp_max": 338, "suggested_tier": "grunt", "note": "Death-mist breath; pair with c5350 Eyes"},
+      {"cp": "c5350", "name": "Basilisk Eyes", "mod_variants": 2, "hp_max": 0, "suggested_tier": "exclude", "note": "Hazard projectile, not a chr"},
+      {"cp": "c5580", "name": "Flying Dragon (SoTE)", "mod_variants": 6, "hp_max": 2704, "suggested_tier": "field_boss"},
+      {"cp": "c5630", "name": "Giant Crayfish", "mod_variants": 7, "hp_max": 876, "suggested_tier": "grunt"},
+      {"cp": "c5640", "name": "Giant Crab", "mod_variants": 7, "hp_max": 357, "suggested_tier": "grunt"},
+      {"cp": "c5930", "name": "Giant Skeleton", "mod_variants": 4, "hp_max": 671, "suggested_tier": "grunt", "note": "Tibia summon brood"},
+      {"cp": "c5931", "name": "Giant Beast Skeleton", "mod_variants": 6, "hp_max": 671, "suggested_tier": "grunt"},
+      {"cp": "c5570", "name": "Marionette Soldier", "mod_variants": 10, "hp_max": 179, "suggested_tier": "grunt", "note": "Explosive on death"},
+      {"cp": "c5851", "name": "Giant Ram", "mod_variants": 8, "hp_max": 448, "suggested_tier": "grunt", "note": "Charging brute"},
+      {"cp": "c5940", "name": "Watcher Stones", "mod_variants": 12, "hp_max": 174, "suggested_tier": "grunt", "note": "Statue ambush"},
+      {"cp": "c5530", "name": "Man-Bat", "mod_variants": 19, "hp_max": 430, "suggested_tier": "grunt", "note": "Flying nuisance"},
+      {"cp": "c5710", "name": "Demi-Human Shaman", "mod_variants": 5, "hp_max": 599, "suggested_tier": "grunt"},
+      {"cp": "c5720", "name": "Demi-Human Chief", "mod_variants": 4, "hp_max": 534, "suggested_tier": "miniboss"},
+      {"cp": "c5871", "name": "Imp (Dragon Head)", "mod_variants": 5, "hp_max": 172, "suggested_tier": "grunt"},
+      {"cp": "c5590", "name": "Putrid Flesh", "mod_variants": 17, "hp_max": 275, "suggested_tier": "grunt", "note": "Environmental hazard"},
+      {"cp": "c5591", "name": "Putrid Flesh (Large)", "mod_variants": 7, "hp_max": 1893, "suggested_tier": "miniboss", "note": "Bigger hazard"},
+      {"cp": "c5551", "name": "Fingercreeper (Large)", "mod_variants": 3, "hp_max": 1493, "suggested_tier": "miniboss"},
+      {"cp": "c5560", "name": "Fingercreeper (Small)", "mod_variants": 8, "hp_max": 296, "suggested_tier": "grunt"},
+      {"cp": "c5760", "name": "Rat", "mod_variants": 11, "hp_max": 162, "suggested_tier": "grunt"},
+      {"cp": "c5761", "name": "Giant Rat", "mod_variants": 10, "hp_max": 556, "suggested_tier": "grunt"},
+      {"cp": "c5380", "name": "Miranda Blossom", "mod_variants": 10, "hp_max": 1939, "suggested_tier": "grunt", "note": "Sleep-pollen plant"},
+      {"cp": "c5381", "name": "Miranda Sprout", "mod_variants": 15, "hp_max": 119, "suggested_tier": "grunt"},
+      {"cp": "c5520", "name": "Stray", "mod_variants": 4, "hp_max": 338, "suggested_tier": "grunt"},
+      {"cp": "c5524", "name": "Braided Stray", "mod_variants": 4, "hp_max": 338, "suggested_tier": "grunt"},
+      {"cp": "c5526", "name": "Bloodbane Stray", "mod_variants": 4, "hp_max": 338, "suggested_tier": "grunt"},
+      {"cp": "c5421", "name": "Red Bear", "mod_variants": 14, "hp_max": 681, "suggested_tier": "miniboss"}
+    ],
+    "_animal_subset": {
+      "_note": "Pure ambient SoTE wildlife. Low individual interest but useful as filler/atmosphere. Could be tagged as ghost_exclude or a low-cap grunt tier so they don't dominate slots.",
+      "entries": [
+        {"cp": "c5480", "name": "Turtle", "mod_variants": 19},
+        {"cp": "c5440", "name": "Boar", "mod_variants": 31},
+        {"cp": "c5410", "name": "Deer", "mod_variants": 31},
+        {"cp": "c5401", "name": "Eagle", "mod_variants": 27},
+        {"cp": "c5430", "name": "Owl", "mod_variants": 18},
+        {"cp": "c5460", "name": "Murre", "mod_variants": 6},
+        {"cp": "c5490", "name": "Springhare", "mod_variants": 26},
+        {"cp": "c5470", "name": "Dragonfly", "mod_variants": 9},
+        {"cp": "c5471", "name": "Yellow Dragonfly", "mod_variants": 6},
+        {"cp": "c5472", "name": "Great Dragonfly", "mod_variants": 5},
+        {"cp": "c5541", "name": "Wolf (SoTE variant)", "mod_variants": 4}
+      ]
+    }
+  },
+  "tier_B_major_bosses_high_risk_high_reward": {
+    "_note": "Iconic ER/SoTE bosses absent from NR roster. Phase mechanics, EMEVD entanglement, multi-arena requirements make these expensive to wire correctly. Each is a multi-session project, not a batch-wire candidate.",
+    "_recommendation": "Pick 1-2 to attempt; do not batch.",
+    "entries": [
+      {"cp": "c4710", "name": "God-Devouring Serpent / Rykard, Lord of Blasphemy", "hp_max": 12216, "mod_variants": 6, "complexity": "phase transition c4710 → c4711 corpse"},
+      {"cp": "c4760", "name": "Fire Giant", "hp_max": 6592, "mod_variants": 6, "complexity": "XL footprint, two-phase, hp-threshold transition"},
+      {"cp": "c4520", "name": "Dragonlord Placidusax", "hp_max": 3782, "mod_variants": 3, "complexity": "Teleporting; arena-bound; complex SFX"},
+      {"cp": "c2200", "name": "Elden Beast", "hp_max": 3140, "mod_variants": 2, "complexity": "Arena-required (golden floor); final boss aesthetic"},
+      {"cp": "c5370", "name": "Ancient Dragon Senessax", "hp_max": 3128, "mod_variants": 9, "complexity": "Standard ancient dragon moveset; lowest risk of group"},
+      {"cp": "c5920", "name": "Magma Wyrm (SoTE)", "hp_max": 2968, "mod_variants": 3, "complexity": "Lava SFX; sibling to c4910 already in NR"}
+    ]
+  },
+  "tier_C_skip_or_investigate_only": {
+    "_note": "NPCs, cinematic chrs, vehicle entities. Most have no useful combat moveset or are heavily scripted. Skip unless a specific need surfaces.",
+    "examples": [
+      "c2010 Blaidd — full combat moveset but heavily scripted in ER",
+      "c4604 War Counselor Iji — siege variant",
+      "c3171 Phillia — rebalanced Albinauric NPC fight",
+      "c3665 Gostoc, c3666 Noble Goldmask — rare uniques",
+      "c2050/c2160/c2170 — quest NPCs",
+      "c3710 Azur, c3720 Lusat — cinematic figures",
+      "c5910 Hornsent Grandam, c5330 St. Trina — NPC dialogue only",
+      "c8120 Merciless Chariot — vehicle, hp=0"
+    ]
+  },
+  "tier_D_quick_wins_unsure_identity": {
+    "_note": "Single-variant or low-count ghost cps with unknown names. Could be discarded prototype content, dummies, or genuine unidentified chrs. Each needs an in-game spawn test to identify before wiring.",
+    "entries": [
+      {"cp": "c3640", "mod_variants": 1, "hp_max": 194, "note": "Single low-HP variant"},
+      {"cp": "c4610", "mod_variants": 1, "hp_max": 6208, "note": "Single VERY high-HP variant — suspicious, might be a boss test slot"},
+      {"cp": "c5310", "mod_variants": 3, "hp_max": 2239, "note": "Mid-HP, mid count — possibly a forgotten SoTE chr (between c5300 Rellana and c5311 Inquisitor)"},
+      {"cp": "c5581", "mod_variants": 1, "hp_max": 1019, "note": "Adjacent to c5580 Flying Dragon — variant?"},
+      {"cp": "c5501", "mod_variants": 9, "hp_max": 111, "note": "Adjacent to c5500 Living Magma — small variant?"},
+      {"cp": "c5392", "mod_variants": 1, "hp_max": 1135, "note": "Adjacent to c5390/c5391 Troll family"},
+      {"cp": "c5670", "mod_variants": 2, "note": "Adjacent to c5651 Messmer Foot Soldier, c5661 Shadow Militia"},
+      {"cp": "c5770", "mod_variants": 3, "note": "Mid-c57xx range"}
+    ]
+  }
+}

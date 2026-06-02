@@ -1701,6 +1701,13 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     'c7660',  # Dreg Wormface                 (post_dlc_dump, no file)
     'c7720',  # Knight Artorias               (post_dlc_dump, no file)
     'c7930',  # Demon from Below              (post_dlc_dump, no file)
+    # v0.28.x (Alaric): same class as the c7651/c7660/c7720/c7930 block above
+    # — c79xx post_dlc_dump entries that have no deployed chr files. Caught
+    # by the v0.23.71 all-empty-variant-name auto-exclude already, but recording
+    # them here in the static set too for visibility and so the auto-exclude pass
+    # could be retired without re-exposing these chrs to the placement pool.
+    'c7931',  # c7931 (unnamed)               (post_dlc_dump, no file)
+    'c7932',  # c7932 (unnamed)               (post_dlc_dump, no file)
 
     # v0.25.6: MMV Nightlord-phase chrs with hard scripted-context
     # dependencies. Confirmed crash in seed 66782 v0.25.5 for c8500
@@ -1778,6 +1785,20 @@ V3_EXCLUDE_TARGET_PREFIXES = {
     # from c3620 Oracle Envoy (Large; Cathedral), which stays placeable.
     'c3610',  # small Oracle Envoy — cluster_only standalone freeze
     'c4450',  # Walking Mausoleum — ~59m ambient structure, not a target
+    # v0.28.x (Alaric): SR-pattern / story-NPC c-prefix excludes.
+    # Cleaner than relying on variant_prune_empirical.json variant-level
+    # bans for these two:
+    #   c3670 Aged Albinauric — its sole canonical variant 36708100
+    #     (Scholar Remembrance) is being pruned in v0.28.x, which leaves the
+    #     canonical-prefer filter soft-falling to ghost-render variants of
+    #     c3670 (sample_maps=[] siblings, untested-asset rendering). Target-
+    #     excluding the whole c-prefix avoids the ghost fallback entirely.
+    #   c2030 Rennala Phase 1 — scripted-arena boss whose context-locked
+    #     variant 20300100 (tt=26 cinematic, byte-identical SpEffects to combat
+    #     sibling) was surfaced by the v0.28.x SR sweep. Has no business being
+    #     placed at random field/arena slots regardless of variant choice.
+    'c3670',  # Aged Albinauric — sole canonical variant is (Scholar Remembrance)
+    'c2030',  # Rennala, Queen of the Full Moon — Phase 1, scripted-arena boss
 }
 
 
@@ -13629,6 +13650,27 @@ def pick_target_cp(recipient_cp, tags,
 
     pool = compatible_pool(recipient_cp, tags)
     pool = pool - _exclude - _exclude_target - _ghost_exclude
+
+    # v0.28.x+: hoisted slot-catalog-tier resolution. The original
+    # computation lived ~440 lines below at line 14093 (post-tier-filter,
+    # pre-arena-only gate). It's needed earlier now for two reasons:
+    #   1. Cap-block exemption for nightboss-catalogued slots (the
+    #      cap-block gate sits right below) — climactic encounters are
+    #      rare to actually face in a seed, so the unique-placement caps
+    #      shouldn't shrink the eligible pool for them.
+    #   2. Tier-aware fallback for nightboss-catalogued slots — never
+    #      degrade an NB slot below field_boss, even when the candidate
+    #      pool empties after downstream gates.
+    # Cheap dict lookup; safe to compute eagerly. The downstream block
+    # that previously did this resolution now reads the value computed
+    # here (no duplicate work).
+    _slot_catalog_tier = None
+    if slot_msb_name is not None and slot_pi is not None:
+        _slot_catalog_tier = V3_BOSS_SLOT_CATALOG.get(
+            (slot_msb_name, slot_pi), {}).get('tier')
+    _is_catalogued_boss_arena = _slot_catalog_tier in V3_CATALOG_BOSS_ARENA_TIERS
+    _is_nightboss_slot = (_slot_catalog_tier == 'nightboss')
+
     # v0.23.07: Subtract cap-exhausted unique-target c-prefixes. Any cp
     # that has already hit its V3_UNIQUE_TARGET_CAPS limit can't be
     # picked at non-reserved slots. Reserved slots already early-returned
@@ -13636,7 +13678,14 @@ def pick_target_cp(recipient_cp, tags,
     #
     # v0.27.13: skipped under V3_SOTE_MODE — SOTE runs are uncapped (the
     # SOTE set is small and meant to repeat freely).
-    if not V3_SOTE_MODE:
+    #
+    # v0.28.x+: also skipped at nightboss-catalogued slots. NB encounters
+    # are climactic Day-3 events; the player only sees one per seed in
+    # actual play, so capping NB-eligible placements globally over-
+    # restricts the per-slot pool. The cap-bump at the end of this
+    # function is correspondingly gated by the same condition so that NB
+    # placements don't burn cap room for non-NB placements either.
+    if not V3_SOTE_MODE and not _is_nightboss_slot:
         # v0.28: global-cap gate with MSB-boundary semantics. Use the set
         # frozen at begin_msb (cps already at/over cap when this MSB
         # started). A cp can overshoot its cap mid-MSB via free recycling
@@ -13825,6 +13874,42 @@ def pick_target_cp(recipient_cp, tags,
             if _cand:
                 tier_pool = _cand
                 break
+    elif _is_nightboss_slot:
+        # v0.28.x+: tighter tier filter for nightboss-catalogued slots.
+        # The user-facing principle: an NB slot is a climactic encounter,
+        # and reaching down to miniboss for the swap target makes the
+        # encounter feel like a field fight in a boss arena. So this
+        # branch restricts the candidate pool to night_boss + nightlord
+        # (both climactic-tier) as primary, then field_boss as a one-
+        # step downstep, and HARD-STOPS there: if all three are empty
+        # after the upstream excludes/cap-block, we return None (preserve
+        # vanilla) rather than fall to miniboss/grunt.
+        #
+        # Contrast with the generic V3_BOSS_STRENGTH_TIERS branch below,
+        # which includes miniboss as a peer of NB/FB. That branch is
+        # appropriate for non-NB boss-arena slots (named_boss, fieldboss,
+        # remembrance, etc.) where a miniboss-tier swap is in-character;
+        # at NB slots specifically, it isn't.
+        #
+        # Nightlord stays in the primary bucket: it's the heaviest tier
+        # (true Nightlords + arena-bound MMV boss imports like Messmer/
+        # Rellana). The spoiler analysis showed nightlord chrs filling
+        # NB slots prolifically — by design — so keeping them at peer
+        # priority with night_boss preserves that behavior.
+        _nb_primary = {cp for cp in pool
+                       if tags.get(cp, {}).get('tier')
+                       in ('night_boss', 'nightlord')}
+        if _nb_primary:
+            tier_pool = _nb_primary
+        else:
+            _nb_fallback = {cp for cp in pool
+                            if tags.get(cp, {}).get('tier') == 'field_boss'}
+            if _nb_fallback:
+                tier_pool = _nb_fallback
+            else:
+                # No NB/nightlord/FB candidate fits this slot. Preserve
+                # vanilla rather than degrade to a miniboss-tier swap.
+                return None
     elif src_tier in V3_BOSS_STRENGTH_TIERS:
         tier_pool = {cp for cp in pool
                      if tags.get(cp, {}).get('tier') in V3_BOSS_STRENGTH_TIERS}
@@ -14069,12 +14154,12 @@ def pick_target_cp(recipient_cp, tags,
     # promotions are the marker-missing tiers. Narrow: catalog membership at
     # a boss-arena tier only — cannot loosen gating at field/grunt/terrain
     # slots, which are absent from the catalog or in the excluded tiers.
-    _slot_catalog_tier = None
-    if slot_msb_name is not None and slot_pi is not None:
-        _slot_catalog_tier = V3_BOSS_SLOT_CATALOG.get(
-            (slot_msb_name, slot_pi), {}).get('tier')
-    _is_catalogued_boss_arena = _slot_catalog_tier in V3_CATALOG_BOSS_ARENA_TIERS
-
+    #
+    # v0.28.x+: _slot_catalog_tier and _is_catalogued_boss_arena are now
+    # hoisted to the cap-block gate above; this block originally computed
+    # them locally. Kept as in-place comments instead of re-assigning to
+    # avoid duplicating the dict lookup. _is_nightboss_slot (same hoist)
+    # is used by the new NB-tier filter and cap-exemption gates.
     _slot_is_arena = bool(slot_variant_name) and any(
         m in slot_variant_name for m in V3_BOSS_NAME_MARKERS)
     if not _slot_is_arena and slot_msb_name is not None and slot_pi is not None:
@@ -14387,7 +14472,20 @@ def pick_target_cp(recipient_cp, tags,
     # v0.23.07: bump unique-cap counter for organic picks. Reserved picks
     # already pre-bumped during the reservation pre-pass; this catches
     # picks that landed on a capped cp via normal pool selection.
-    if result in V3_UNIQUE_TARGET_CAPS:
+    #
+    # v0.28.x+: NB-slot placements are exempt from the cap. Skipping the
+    # bump here pairs with the cap-block-skip at the top of this function
+    # (see the hoisted _is_nightboss_slot block) so that NB placements
+    # neither shrink the pool for later non-NB slots nor get blocked when
+    # the cp's non-NB count is already at cap. Climactic encounters are
+    # rare in actual play (one per seed at most), and the spoiler
+    # analysis showed cap exhaustion was actively starving the NB pool
+    # at indoor-tunnel slots (m47/m48 DS-heritage cluster) — the chrs
+    # with cap room left at run-time were mostly oversized/flying NB
+    # bosses that couldn't fit the slot terrain, so the slot fell to
+    # miniboss. Exempting NB-slot placements keeps eligible NB chrs in
+    # the pool for the duration of the seed.
+    if result in V3_UNIQUE_TARGET_CAPS and not _is_nightboss_slot:
         _placed_counts[result] = _placed_counts.get(result, 0) + 1
     return result
 

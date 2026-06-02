@@ -74,6 +74,14 @@ _OWNED_MODULE_FIELDS = (
     'V3_HUB_MAPS',
     'V3_UNIQUE_TARGET_CAPS',
     'V3_NIGHT_BOSS_CALIBER_TARGETS',
+    # v0.28.x: per-run promotion rates (Boutique Pool tab). Float scalars,
+    # not collections. apply_run_overrides sets them directly when the
+    # corresponding kwarg is non-None, then __exit__ restores. See
+    # comment block at oops_v3.V3_FIELD_UPGRADE_MINIBOSS_PCT for semantics.
+    'V3_FIELD_UPGRADE_MINIBOSS_PCT',
+    'V3_FIELD_UPGRADE_FIELDBOSS_PCT',
+    'V3_FIELD_UPGRADE_NIGHTBOSS_PCT',
+    'V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT',
 )
 
 
@@ -120,6 +128,10 @@ def apply_run_overrides(
     hub_maps=None,
     multiplayer_safe=False,
     force_include_targets=None,
+    field_upgrade_miniboss_pct=None,
+    field_upgrade_fieldboss_pct=None,
+    field_upgrade_nightboss_pct=None,
+    fieldboss_to_nightboss_promote_pct=None,
     log=print,
 ):
     """Apply per-run overrides to `module` gate state, restore on exit.
@@ -147,6 +159,21 @@ def apply_run_overrides(
           V3_EXCLUDE_TARGET_PREFIXES and V3_GHOST_EXCLUDE_TARGET_PREFIXES.
           Applied LAST so user-explicit force-includes win over
           multiplayer_safe's heritage block.
+
+      field_upgrade_miniboss_pct, field_upgrade_fieldboss_pct,
+      field_upgrade_nightboss_pct (float | None):
+          v0.28.x: per-slot field-roll upgrade probabilities for the
+          non-catalogued field-grunt population (~3400 slots/seed). Each
+          must be in [0.0, 1.0] independently, and their SUM must be
+          <= 1.0 (the remainder is P(grunt)). Set on the module as
+          V3_FIELD_UPGRADE_{MINIBOSS,FIELDBOSS,NIGHTBOSS}_PCT. When all
+          three are None, the engine defaults apply unchanged.
+
+      fieldboss_to_nightboss_promote_pct (float | None):
+          v0.28.x: conditional probability that a rolled field_boss
+          upgrades to night_boss. Must be in [0.0, 1.0]. Stored as
+          module.V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT. None = engine
+          default unchanged.
 
       log (callable):
           Function used for operational printing. Defaults to print();
@@ -213,6 +240,46 @@ def apply_run_overrides(
                 set(module.V3_GHOST_EXCLUDE_TARGET_PREFIXES) - force_set)
             log(f"Force-include: {len(force_set)} c-prefix(es) bypassing "
                 f"target excludes — {sorted(force_set)}")
+
+        # ----- promotion rates (v0.28.x Boutique Pool) -----
+        # Apply each in turn; validate the combined invariant after all
+        # four have landed so the validation sees the user's full
+        # intent, not partial state. Each kwarg None = no change.
+        _PROMO_KW_TO_FIELD = (
+            (field_upgrade_miniboss_pct,         'V3_FIELD_UPGRADE_MINIBOSS_PCT'),
+            (field_upgrade_fieldboss_pct,        'V3_FIELD_UPGRADE_FIELDBOSS_PCT'),
+            (field_upgrade_nightboss_pct,        'V3_FIELD_UPGRADE_NIGHTBOSS_PCT'),
+            (fieldboss_to_nightboss_promote_pct, 'V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT'),
+        )
+        any_promo_set = False
+        for kw_val, field_name in _PROMO_KW_TO_FIELD:
+            if kw_val is None:
+                continue
+            kw_val = float(kw_val)
+            if not (0.0 <= kw_val <= 1.0):
+                raise ValueError(
+                    f'{field_name}: {kw_val!r} out of range [0.0, 1.0]')
+            setattr(module, field_name, kw_val)
+            any_promo_set = True
+        if any_promo_set:
+            # Validate the cumulative invariant: the three field-roll
+            # probabilities sum to at most 1.0 (the remainder is
+            # P(grunt)). The fourth field (promote_pct) is a conditional
+            # probability and is range-checked above, not in the sum.
+            triple_sum = (module.V3_FIELD_UPGRADE_MINIBOSS_PCT
+                          + module.V3_FIELD_UPGRADE_FIELDBOSS_PCT
+                          + module.V3_FIELD_UPGRADE_NIGHTBOSS_PCT)
+            if triple_sum > 1.0 + 1e-9:
+                raise ValueError(
+                    f'V3_FIELD_UPGRADE_*_PCT sum {triple_sum:.4f} > 1.0 '
+                    f'(miniboss={module.V3_FIELD_UPGRADE_MINIBOSS_PCT}, '
+                    f'fieldboss={module.V3_FIELD_UPGRADE_FIELDBOSS_PCT}, '
+                    f'nightboss={module.V3_FIELD_UPGRADE_NIGHTBOSS_PCT}) — '
+                    f'these are partition probabilities, P(grunt) = 1 - sum')
+            log(f"Promotion rates: miniboss={module.V3_FIELD_UPGRADE_MINIBOSS_PCT:.4f} "
+                f"fieldboss={module.V3_FIELD_UPGRADE_FIELDBOSS_PCT:.4f} "
+                f"nightboss={module.V3_FIELD_UPGRADE_NIGHTBOSS_PCT:.4f} "
+                f"fb→nb_promote={module.V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT:.4f}")
 
         # Take an "after overrides" snapshot. Yields what the run
         # ACTUALLY sees, not what it was asked to see — invaluable for

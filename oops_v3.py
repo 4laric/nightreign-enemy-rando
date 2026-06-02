@@ -10094,7 +10094,11 @@ def cmd_shuffle_v3(input_dir, output_dir, seed,
                     oops_all_nb_pinned_slot=None,
                     unique_cap_overrides=None,
                     caliber_pool_extras=None,
-                    caliber_pool_removals=None):
+                    caliber_pool_removals=None,
+                    field_upgrade_miniboss_pct=None,
+                    field_upgrade_fieldboss_pct=None,
+                    field_upgrade_nightboss_pct=None,
+                    fieldboss_to_nightboss_promote_pct=None):
     """v0.20.27: excluded_prefixes / hub_maps / multiplayer_safe moved
     engine-side. Previously the GUI mutated module-level V3_* sets
     directly with a save-and-restore wrapper, which leaked state on
@@ -10211,7 +10215,11 @@ def cmd_shuffle_v3(input_dir, output_dir, seed,
                 excluded_prefixes=excluded_prefixes,
                 hub_maps=hub_maps,
                 multiplayer_safe=multiplayer_safe,
-                force_include_targets=force_include_targets) as effective_gates:
+                force_include_targets=force_include_targets,
+                field_upgrade_miniboss_pct=field_upgrade_miniboss_pct,
+                field_upgrade_fieldboss_pct=field_upgrade_fieldboss_pct,
+                field_upgrade_nightboss_pct=field_upgrade_nightboss_pct,
+                fieldboss_to_nightboss_promote_pct=fieldboss_to_nightboss_promote_pct) as effective_gates:
             return _cmd_shuffle_v3_impl(
                 input_dir, output_dir, seed,
                 oops_all_target_cp=oops_all_target_cp,

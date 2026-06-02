@@ -556,7 +556,11 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     fallback_nameid=None,
                     chr_to_nameid_path=None,
                     randomize_safe_nb_arenas=False,
-                    randomize_all_nb_arenas=False):
+                    randomize_all_nb_arenas=False,
+                    field_upgrade_miniboss_pct=None,
+                    field_upgrade_fieldboss_pct=None,
+                    field_upgrade_nightboss_pct=None,
+                    fieldboss_to_nightboss_promote_pct=None):
     """Full pipeline: decompress → shuffle → recompress.
 
     Cluster modes (multi-Part encounters within 2m of each other):
@@ -797,7 +801,12 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                                 oops_all_nb_marker_scope=oops_all_nb_marker_scope,
                                 unique_cap_overrides=unique_cap_overrides,
                                 caliber_pool_extras=caliber_pool_extras,
-                                caliber_pool_removals=caliber_pool_removals)
+                                caliber_pool_removals=caliber_pool_removals,
+                                # v0.28.x: Boutique Pool promotion rates
+                                field_upgrade_miniboss_pct=field_upgrade_miniboss_pct,
+                                field_upgrade_fieldboss_pct=field_upgrade_fieldboss_pct,
+                                field_upgrade_nightboss_pct=field_upgrade_nightboss_pct,
+                                fieldboss_to_nightboss_promote_pct=fieldboss_to_nightboss_promote_pct)
 
         if not WALK_ROUTE_REWRITE_ENABLED:
             print(f"\n=== Step 2a/3: walk_route_rewrite DISABLED (v0.24.93-patch14) ===")

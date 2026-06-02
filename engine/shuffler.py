@@ -150,8 +150,12 @@ def shuffle_msb_v3(ns, input_path, output_path, rng, tags, prefix_variants, pref
     # oops_v3 underscore helpers:
     _classify_variant_source = ns['_classify_variant_source']
     _detect_mount_rider_slots = ns['_detect_mount_rider_slots']
-    _effective_nb_target_cp = ns['_effective_nb_target_cp']
-    _effective_scope = ns['_effective_scope']
+    # v0.28.x: _effective_nb_target_cp and _effective_scope were
+    # previously pre-loaded here, but they are NOT module globals on
+    # oops_v3 — they're walrus-assigned (`:=`) locals introduced at
+    # lines 951/954 inside the NB-target elif branch. Pre-loading them
+    # raised KeyError at every call to shuffle_msb_v3. The walrus
+    # creates the locals at use-site; no binding-header entry needed.
     _effective_size_class = ns['_effective_size_class']
     _emit_msb_part_inventory_trace = ns['_emit_msb_part_inventory_trace']
     _is_spawn_pool_rotation_source = ns['_is_spawn_pool_rotation_source']

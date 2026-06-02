@@ -1501,7 +1501,29 @@ except Exception as _e:  # noqa: BLE001
                     'caliber_pool_removals': None}
 
 
-class RandoGUI(PoolsCapsPanelMixin):
+# v0.28.x: Boutique Pool panel — promotion-rate controls. Same dev/-sys.path
+# trick as PoolsCapsPanelMixin above so the import works from a packaged
+# install too. Stubbed if import fails so RandoGUI stays importable.
+try:
+    from boutique_pool_panel import BoutiquePoolPanelMixin  # noqa: E402
+    BoutiquePoolPanelMixin._BP_AVAILABLE = True
+except Exception as _e:  # noqa: BLE001
+    print(f"Boutique Pool panel unavailable ({_e!r}) — tab will be hidden.")
+
+    class BoutiquePoolPanelMixin:  # minimal stub
+        _BP_AVAILABLE = False
+
+        def _boutique_init_state(self, *a, **k):
+            pass
+
+        def boutique_pool_engine_config(self):
+            return {'field_upgrade_miniboss_pct': None,
+                    'field_upgrade_fieldboss_pct': None,
+                    'field_upgrade_nightboss_pct': None,
+                    'fieldboss_to_nightboss_promote_pct': None}
+
+
+class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
     # ------------------------------------------------------------------
     # v0.26.x: Recommended expedition guidance
     # ------------------------------------------------------------------
@@ -2098,6 +2120,11 @@ class RandoGUI(PoolsCapsPanelMixin):
         # per-chr caps). Seeds self._pc_* and re-uses self.excluded as the
         # canonical exclude set. Must run before _build_ui so the tab renders.
         self._pc_init_state()
+
+        # v0.28.x: Boutique Pool panel state (promotion rates). Seeds
+        # self._bp_* tk.DoubleVars from saved settings (or engine defaults).
+        # Must run before _build_ui so the tab renders.
+        self._boutique_init_state()
 
         # Worker thread state for non-blocking shuffle
         self.log_queue = queue.Queue()
@@ -3026,6 +3053,15 @@ class RandoGUI(PoolsCapsPanelMixin):
             nb.add(tab_pc, text='  Pools & Caps  ')
             self._progress_callback('Building Pools & Caps tab…')
             self._build_pools_caps_tab(tab_pc)
+
+        # v0.28.x: Boutique Pool tab — promotion-rate controls (per-tier
+        # whitelist UI to follow per dev/BOUTIQUE_RUN_SPEC.md). Hidden
+        # stub if the panel import failed.
+        if getattr(self, '_BP_AVAILABLE', False):
+            tab_bp = ttk.Frame(nb)
+            nb.add(tab_bp, text='  Boutique Pool  ')
+            self._progress_callback('Building Boutique Pool tab…')
+            self._build_boutique_pool_tab(tab_bp)
 
         # Tab 3: heritage / multiplayer
         tab_h = ttk.Frame(nb)
@@ -7183,6 +7219,12 @@ class RandoGUI(PoolsCapsPanelMixin):
             # a run with the tab untouched is byte-identical to a pre-panel
             # run. (Pool membership rides via 'excluded' above.)
             **self.pools_caps_engine_config(),
+            # v0.28.x: promotion-rate overrides from the Boutique Pool tab.
+            # Unpacks 4 keys: field_upgrade_{miniboss,fieldboss,nightboss}_pct
+            # and fieldboss_to_nightboss_promote_pct. The stub mixin returns
+            # all-None when the tab is unavailable, so non-panel runs match
+            # engine defaults exactly.
+            **self.boutique_pool_engine_config(),
             'hub_maps': set(self.hub_maps),
             'oops_all_target_cp': oops_all_target_cp,
             'oops_all_nb_target_cp': oops_all_nb_target_cp,
@@ -7392,6 +7434,13 @@ class RandoGUI(PoolsCapsPanelMixin):
                 unique_cap_overrides=config.get('unique_cap_overrides'),
                 caliber_pool_extras=config.get('caliber_pool_extras'),
                 caliber_pool_removals=config.get('caliber_pool_removals'),
+                # v0.28.x: Boutique Pool — per-run promotion-rate overrides.
+                # Defaults to None when the Boutique Pool panel didn't load,
+                # so non-GUI callers and broken-tab scenarios both no-op.
+                field_upgrade_miniboss_pct=config.get('field_upgrade_miniboss_pct'),
+                field_upgrade_fieldboss_pct=config.get('field_upgrade_fieldboss_pct'),
+                field_upgrade_nightboss_pct=config.get('field_upgrade_nightboss_pct'),
+                fieldboss_to_nightboss_promote_pct=config.get('fieldboss_to_nightboss_promote_pct'),
             )
 
             # Temporarily redirect the backend's prints to our log queue

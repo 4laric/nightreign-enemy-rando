@@ -504,6 +504,20 @@ V3_EXCLUDE_PREFIXES = {
     'c4363',  # Lordsworn Knight's Horse (NB-variant mount)
     'c3610',  # Oracle Envoy -- Maris cluster member; floats frozen off-cluster
     'c4450',  # Walking Mausoleum -- 59m tall, clips everything; keep at home
+    # v0.28.x: Messmer phase-2 alt prefixes. c5130 (Phase 1) and c5140 (Phase 2,
+    # the serpent) are the two canonical Messmer entries surfaced to the rando;
+    # c5131/c5132 are alternate humanoid Phase 2 model variants and c5141 is a
+    # serpent model variant. Their assets ship in heritage_pack for completeness
+    # (so any reference in ER MSBs imported via heritage doesn't break), but
+    # from the rando's perspective they're redundant with c5130/c5140 and would
+    # just clutter the roster. Excluded as both source AND target — never picked
+    # for a swap, slot containing them stays vanilla. Companion data-side fix
+    # removes them from nr_enemy_tags / nr_enemy_roster / placement_budget; this
+    # set is the engine-level backstop so future data edits can't accidentally
+    # surface them.
+    'c5131',  # Messmer Phase 2 (humanoid alt — redundant with c5140)
+    'c5132',  # Messmer Phase 2 (humanoid alt variant)
+    'c5141',  # Messmer Phase 2 (serpent model variant — redundant with c5140)
 }
 
 # C-prefixes excluded as SOURCES only (slot stays vanilla) but allowed as targets.
@@ -3406,6 +3420,30 @@ def _assemble_exclude_target_prefixes(tags, roster, loader_stats):
               f"tag data but no roster variants from target pool "
               f"({sorted(_no_variant)})")
         resolved |= _no_variant
+
+    # (6) v0.28.x: MMV-source chrs that should be excluded when MMV is
+    # disabled. Today this is a curated list of one — c6200 Slave Knight
+    # Gael (DS3 MMV). When MMV is disabled the chr has no tags/variants
+    # so the picker can't pick him anyway, but adding him to the exclude
+    # set explicitly:
+    #   - makes the intent legible to auditors / spoilers,
+    #   - protects against future code paths or data edits that try to
+    #     place him without MMV present,
+    #   - resists the cap-without-data dead-entry footgun that motivated
+    #     V3_RESERVATION_FLOORS / V3_UNIQUE_TARGET_CAPS dead-entry audits.
+    # Pattern: probe mmv_imports.json loader stats for the enabled flag.
+    # If absent or False, fold the MMV-only-required c-prefixes into the
+    # exclude set. Extend this list if other purely-MMV chrs surface.
+    _mmv_stats = loader_stats.get('mmv_imports.json', {})
+    _mmv_enabled = bool(_mmv_stats.get('enabled', False))
+    if not _mmv_enabled:
+        _mmv_only_cps = {'c6200'}  # Slave Knight Gael (DS3 MMV)
+        _new_mmv_excludes = _mmv_only_cps - resolved
+        if _new_mmv_excludes:
+            print(f"v0.28.x: MMV disabled — excluded {len(_new_mmv_excludes)} "
+                  f"MMV-only c-prefixes from target pool "
+                  f"({sorted(_new_mmv_excludes)})")
+            resolved |= _new_mmv_excludes
 
     return resolved
 
@@ -8750,6 +8788,41 @@ V3_NIGHT_BOSS_ARENA_MSBS = _load_night_boss_arena_msbs()
 V3_PRESERVE_NIGHT_BOSS_ARENAS = True
 
 
+# v0.28.x: third NB-arena randomization opt-in path, finer-grained than
+# V3_RANDOMIZE_ALL_NB_ARENAS / V3_RANDOMIZE_SAFE_NB_ARENAS. Reads the
+# canonical whitelist at data/nb_encounter_whitelist.json -- the SAME
+# file the param-side emitter (dev/emit_nb_encounter_whitelist.py)
+# consumes when generating the LotResultSmallBaseAndSpot patch CSV that
+# constrains the game's overlay lottery. Lock-step coupling: the game
+# can only ever route to a whitelisted arena, and inside that arena the
+# engine swaps the boss using the existing NB-caliber pool with all
+# current safety filters applied (V3_NIGHT_BOSS_EXCLUDE_TARGETS for
+# known-broken chrs, the Margit-fix anim-family compat filter for
+# scripted-intro slots, unique-cap reservation).
+#
+# Non-empty whitelist -> randomize-at-whitelist is active. Empty
+# whitelist (or missing file) -> V3_NB_RANDOMIZE_WHITELIST is empty,
+# the third _force_rando_nb clause never fires, NB arenas stay
+# preserved -- same as today's v0.27.x default. No new flag; the
+# whitelist file's contents IS the flag.
+def _load_nb_randomize_whitelist():
+    """Return frozenset of '<stem>.msb' for whitelisted NB arenas.
+    Source of truth shared with the param-side emitter."""
+    path = _data_path('nb_encounter_whitelist.json')
+    if not os.path.isfile(path):
+        return frozenset()
+    try:
+        with open(path, encoding='utf-8') as f:
+            raw = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return frozenset()
+    stems = list(raw.get('nb1', [])) + list(raw.get('nb2', []))
+    return frozenset(f'{s}.msb' for s in stems)
+
+
+V3_NB_RANDOMIZE_WHITELIST = _load_nb_randomize_whitelist()
+
+
 # v0.26.16: safe single-boss N1/N2 arenas — eligible for MSB
 # randomization under VANILLA emevd.
 #
@@ -10779,16 +10852,57 @@ V3_FIELD_STRENGTH_TIERS = {'grunt', 'trash', 'cluster_member',
 # has no compat-fitting candidate.
 #
 # ~3400 field slots, so expected upgrades ~= pct * 3400. Defaults are
-# deliberately low: 1.5% miniboss (~50/seed), 0.2% night_boss (~7/seed,
-# on top of the 23 dedicated NB-arena slots). Tune by direct module
-# edit — same workflow as the OOPS_ALL_NB_* knobs.
+# deliberately low: 1.5% miniboss (~50/seed), 0.5% field_boss (~17/seed),
+# 0.2% night_boss (~7/seed, on top of the 23 dedicated NB-arena slots).
+# Tune by direct module edit — same workflow as the OOPS_ALL_NB_* knobs.
+#
+# v0.28.x: FIELD_BOSS tier separation. The night_boss tier was historically
+# overloaded — it carried both true arena-class bosses (Margit, Maliketh,
+# Malenia, Bayle, Rellana, Godfrey, Mohg, etc.) AND overworld boss-fight
+# encounters (Tree Sentinel, Tibia Mariner, Magma Wyrm, Borealis, Death
+# Bird, Ulcerated Tree Spirit, Hippopotamus Golden Wings, Putrescent Knight,
+# Furnace Golem, etc.). The split moves ~24 of those overworld encounters
+# to field_boss tier, separating the "scary thing you find walking around"
+# from the "Day 3 climactic arena fight." The field roll gains a dedicated
+# field_boss% so those chrs surface at field slots at a tunable rate, and a
+# secondary FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT lets a field_boss roll
+# upgrade to night_boss with a configurable chance — the "rare moment when
+# a field encounter turns out to be a real fight" knob. Setting that to
+# 0.0 keeps the two tiers entirely independent; raising it gradually blurs
+# the line.
+#
+# Probability model (all 4 constants, summed):
+#   miniboss_pct + fieldboss_pct + nightboss_pct must be <= 1.0
+#   fieldboss_to_nightboss_promote_pct must be in [0.0, 1.0]
+#
+#   P(grunt)       = 1 - miniboss_pct - fieldboss_pct - nightboss_pct
+#   P(miniboss)    = miniboss_pct
+#   P(field_boss)  = fieldboss_pct * (1 - fieldboss_to_nightboss_promote_pct)
+#   P(night_boss)  = nightboss_pct
+#                  + fieldboss_pct * fieldboss_to_nightboss_promote_pct
+#
+# Default totals: P(grunt)≈97.8%, P(miniboss)=1.5%, P(field_boss)≈0.5%,
+# P(night_boss)≈0.2% (promote=0.0 by default → independence).
 #
 # Excludes still apply: pick_target_cp subtracts V3_EXCLUDE_TARGET_
 # PREFIXES from the pool BEFORE this tier filter, so dropping a chr
 # (e.g. c6200 while its MMV import is incomplete) into that set keeps
 # it out of every roll outcome — no separate field-pool plumbing needed.
 V3_FIELD_UPGRADE_MINIBOSS_PCT = 0.015
+V3_FIELD_UPGRADE_FIELDBOSS_PCT = 0.005   # v0.28.x: field_boss tier dedicated roll
 V3_FIELD_UPGRADE_NIGHTBOSS_PCT = 0.002
+
+# v0.28.x: when a field_boss tier is rolled (by the FIELDBOSS_PCT slice),
+# this is the conditional chance it promotes upward to night_boss tier.
+# Set to 0.0 (default) to keep field_boss and night_boss tiers fully
+# independent — a field_boss roll always picks from the field_boss-tier
+# pool. Setting to 1.0 collapses field_boss back into night_boss
+# (every field_boss roll becomes a night_boss roll); intermediate values
+# blur the line in proportion. Use cases: 0.05–0.20 for "occasional
+# scary encounter," 0.5+ for "field bosses feel as menacing as night
+# bosses." Tuned by direct module edit; reproducible per (seed, msb, pi)
+# via the existing _field_slot_roll digest.
+V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT = 0.0
 
 # v0.27.35: per-slot field-tier PINS. A non-catalogued field slot listed
 # here skips the random field roll and is assigned the pinned effective
@@ -10851,10 +10965,23 @@ def _slot_decision_rng(slot_msb_name, slot_pi):
     return random.Random(h)
 
 def field_roll_tier_for(slot_msb_name, slot_pi):
-    """Rolled effective tier ('grunt'|'miniboss'|'night_boss') for a
-    non-catalogued field slot, or None if the slot IS catalogued (a
-    boss/terrain/POI slot — left to its own catalog handling). Shared by
-    pick_target_cp and the spoiler writer so both agree on the outcome."""
+    """Rolled effective tier for a non-catalogued field slot.
+
+    Returns one of 'grunt' | 'miniboss' | 'field_boss' | 'night_boss', or
+    None if the slot IS catalogued (a boss/terrain/POI slot — left to its
+    own catalog handling). Shared by pick_target_cp and the spoiler
+    writer so both agree on the outcome.
+
+    v0.28.x: 4-tier ladder. The roll first slices into
+    {grunt, miniboss, field_boss, night_boss} using the three PCT
+    constants. If the field_boss slice is hit, a second roll consults
+    V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT — if it passes, the result
+    upgrades to night_boss (the "field encounter turns out to be a real
+    fight" knob). The promote draw is keyed off a distinct namespace so
+    adding/removing FIELDBOSS_PCT doesn't shift any pre-existing slot's
+    grunt/miniboss/night_boss outcome. Same reproducibility guarantees
+    as the primary roll.
+    """
     if slot_msb_name is None or slot_pi is None:
         return None
     if (slot_msb_name, slot_pi) in V3_BOSS_SLOT_CATALOG:
@@ -10864,10 +10991,36 @@ def field_roll_tier_for(slot_msb_name, slot_pi):
     if _pin is not None:
         return _pin
     r = _field_slot_roll(slot_msb_name, slot_pi)
-    if r < V3_FIELD_UPGRADE_NIGHTBOSS_PCT:
+    # Order: night_boss → miniboss → field_boss → grunt fall-through.
+    # Layout in the unit interval (cumulative):
+    #   [0,                                NB)                  → night_boss
+    #   [NB,                               NB + MB)             → miniboss
+    #   [NB + MB,                          NB + MB + FB)        → field_boss (possibly promoted)
+    #   [NB + MB + FB,                     1)                   → grunt
+    #
+    # Why this order? It places NB at the low end (stable: bumping NB% only
+    # steals from MB+FB+grunt territory in that priority order), MB in the
+    # middle (also stable wrt smaller changes), and FB just before grunt so
+    # that BUMPING FB% only steals from grunt — never reclassifies an
+    # already-rolled NB or MB outcome. This makes the "make field encounters
+    # more common" knob safe to tune without disturbing the boss-tier rates.
+    nb = V3_FIELD_UPGRADE_NIGHTBOSS_PCT
+    mb = V3_FIELD_UPGRADE_MINIBOSS_PCT
+    fb = V3_FIELD_UPGRADE_FIELDBOSS_PCT
+    if r < nb:
         return 'night_boss'
-    if r < V3_FIELD_UPGRADE_NIGHTBOSS_PCT + V3_FIELD_UPGRADE_MINIBOSS_PCT:
+    if r < nb + mb:
         return 'miniboss'
+    if r < nb + mb + fb:
+        # Conditional promote: a second roll keyed off a distinct namespace.
+        # The 'fbpromote' tag ensures this draw doesn't collide with the
+        # primary field roll or the picker's _slot_decision_rng.
+        import hashlib
+        key = (f"{_V3_RUN_SEED}|fbpromote|{slot_msb_name}|{slot_pi}").encode()
+        h = int.from_bytes(hashlib.sha1(key).digest()[:8], 'big')
+        if random.Random(h).random() < V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT:
+            return 'night_boss'
+        return 'field_boss'
     return 'grunt'
 
 # v0.20.8: Arena-only target c-prefixes. These enemies need flat boss-arena
@@ -11129,18 +11282,26 @@ V3_NIGHT_BOSS_STRICT_TARGETS: set = set()
 # (python3 dev/emit_getsoul_overrides.py).
 V3_GETSOUL_TIER_FLOORS = {
     'nightlord':  4375,
-    'night_boss': 3750,
-    # v0.27.13: field_boss 2500 -> 1605. Re-derived (placement-weighted
-    # vanilla median per tier) after the field_boss tier collapse pulled
-    # c4021 Royal Revenant (-> miniboss) and c5170 Furnace Golem (->
-    # night_boss) out of the tier. The only field_boss-tagged chr left
-    # in nr_enemy_tags.json is c4450 Walking Mausoleum (target-excluded),
-    # so the derived median is now just c4450's placement-weighted value.
-    # field_boss is effectively a dead tier post-collapse — see
-    # docs/OPEN_ISSUES.md for the question of dropping it from the floor
-    # system entirely. Surfaced by
-    # test_getsoul_overrides::test_floors_match_placement_weighted_medians.
-    'field_boss': 1605,
+    # v0.28.x: night_boss 3750 -> 2910. Re-derived (placement-weighted
+    # vanilla median per tier) after the tier-separation pass demoted
+    # 24 chrs from night_boss to field_boss. The demoted set included
+    # the high-rune-value overworld encounters (Tree Sentinel, Tibia
+    # Mariner, Death Bird, Hippopotamus Golden Wings, Putrescent
+    # Knight, Furnace Golem, Borealis, Ancient Dragon, Fallingstar
+    # Beast, Magma Wyrm, Ulcerated Tree Spirit, Dragonkin Soldier),
+    # so removing them drops night_boss to the climactic arena bosses
+    # only. c2500 Crucible Knight (the m46_60 Alabaster Evergaol; 17
+    # placements at rep=2910 rune value) anchors the new weighted
+    # median. Test surface: test_getsoul_overrides::test_floors_match_
+    # placement_weighted_medians.
+    'night_boss': 2910,
+    # v0.28.x: field_boss 1605 -> 4687. Re-derived after the tier-
+    # separation pass moved 24 chrs INTO field_boss. The demoted set
+    # carries higher rune values than the pre-v0.28.x field_boss
+    # residual (c4450 Walking Mausoleum only), so the placement-
+    # weighted median jumps. c4680 Full-Grown Fallingstar Beast (18
+    # placements, rep=5000) anchors the new median.
+    'field_boss': 4687,
     # v0.27.13: miniboss 475 -> 450. Re-derived (placement-weighted
     # vanilla median per tier — see test_getsoul_overrides.py) after
     # c4050 Kaiden Sellsword and c5840 Black Knight were bumped into
@@ -11415,6 +11576,11 @@ V3_UNIQUE_TARGET_CAPS = {
     # c3252 variants collectively.
     'c3250': 2,  # Draconic Tree Sentinel
     'c3251': 2,  # Tree Sentinel
+    'c6251': 2,  # Tree Sentinel (SoTE re-import) — paired with c3251 under
+                 # cap_groups.tree_sentinel_iconic so the cap is SHARED across
+                 # both prefixes (placement of either decrements the same
+                 # counter). v0.28.x: matched value to c3251 to satisfy the
+                 # cap_groups audit's same-cap-across-members rule.
     # v0.26.x: c3252 cap removed — chr excluded from target pool as a
     # redundant archetype (c3251 Tree Sentinel + c3250 Draconic Tree
     # Sentinel cover the XL-quadruped_large knight-on-horse archetype,
@@ -13374,17 +13540,23 @@ def pick_target_cp(recipient_cp, tags,
     # v0.26.16: NB-arena randomization override. Exempts an arena from
     # ALL THREE NB preservation gates below so its boss Part gets
     # swapped; EMEVD stays vanilla either way (the healthbar step
-    # preserves NB-arena EMEVD separately). Two scopes, OR-combined:
-    #   V3_RANDOMIZE_SAFE_NB_ARENAS — the 12 single-boss arenas only.
-    #   V3_RANDOMIZE_ALL_NB_ARENAS  — all 25, incl. the multi-entity
+    # preserves NB-arena EMEVD separately). Three scopes, OR-combined:
+    #   V3_RANDOMIZE_SAFE_NB_ARENAS   -- the 12 single-boss arenas only.
+    #   V3_RANDOMIZE_ALL_NB_ARENAS    -- all 25, incl. the multi-entity
     #     arenas whose synchronized boss-init is known to break (the
     #     experimental switch).
+    #   V3_NB_RANDOMIZE_WHITELIST     -- v0.28.x finer-grained gate. The
+    #     specific arenas in data/nb_encounter_whitelist.json, paired
+    #     with the param-side LotResultSmallBaseAndSpot patch that
+    #     constrains the game's overlay lottery to the same set. See
+    #     block comment near V3_NB_RANDOMIZE_WHITELIST for context.
     _force_rando_nb = (
         slot_msb_name is not None
         and ((V3_RANDOMIZE_ALL_NB_ARENAS
               and slot_msb_name in V3_NIGHT_BOSS_ARENA_MSBS)
              or (V3_RANDOMIZE_SAFE_NB_ARENAS
-                 and slot_msb_name in V3_SAFE_NB_RANDOMIZE_MSBS)))
+                 and slot_msb_name in V3_SAFE_NB_RANDOMIZE_MSBS)
+             or slot_msb_name in V3_NB_RANDOMIZE_WHITELIST))
 
     # v0.25.1: arena-chr-role catalog whole-MSB vanilla preservation.
     # MSBs in V3_OVERLAY_PRESERVE_VANILLA_MSBS are flagged
@@ -13631,7 +13803,14 @@ def pick_target_cp(recipient_cp, tags,
         # what makes the c6200 hawk-route CTD structurally impossible
         # rather than merely improbable — no field slot, of any roll
         # outcome, can admit it.
+        # v0.28.x: 4-tier ladder. field_boss falls back via field_boss →
+        # miniboss → grunt. night_boss is unchanged: a night_boss roll
+        # tries night_boss first, falls to miniboss, then grunt. A
+        # field_boss roll never falls UP to night_boss (the conditional
+        # promote is handled in field_roll_tier_for instead — by the time
+        # the fallback ladder sees 'field_boss', the dice are settled).
         _ladder = {'night_boss': ('night_boss', 'miniboss', 'grunt'),
+                   'field_boss': ('field_boss', 'miniboss', 'grunt'),
                    'miniboss':   ('miniboss', 'grunt'),
                    'grunt':      ('grunt',)}[_field_roll_tier]
         tier_pool = pool

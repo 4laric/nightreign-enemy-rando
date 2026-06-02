@@ -154,7 +154,7 @@ def bucket_slots(o, tags, include_grunts=False):
         if not cp:
             continue
         src_tier = tags.get(cp, {}).get('tier', '?')
-        if src_tier not in ('night_boss', 'miniboss'):
+        if src_tier not in ('night_boss', 'field_boss', 'miniboss'):
             continue
         cls, sub = classify_msb(msb, o)
         slots_by_class[(cls, sub)].append({
@@ -464,14 +464,14 @@ def print_summary(result, focus_cps=None):
     # Boss tiers and grunt tier print as separate tables — grunt means
     # run ~10-50x boss means, so a shared sort would bury the bosses.
     boss = sorted([cp for cp in summary
-                   if summary[cp]['tier'] in ('night_boss', 'miniboss')],
+                   if summary[cp]['tier'] in ('night_boss', 'field_boss', 'miniboss')],
                   key=lambda cp: (summary[cp]['tier'],
                                   -summary[cp]['mean']))
     grunt = sorted([cp for cp in summary
                     if summary[cp]['tier'] == 'grunt'],
                    key=lambda cp: -summary[cp]['mean'])
     if boss:
-        print('BOSS-SLOT distribution (night_boss + miniboss):')
+        print('BOSS-SLOT distribution (night_boss + field_boss + miniboss):')
         _print_table(summary, boss[:60])
     if grunt:
         print(f'\nGRUNT-SLOT distribution ({len(grunt)} chrs):')

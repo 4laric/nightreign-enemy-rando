@@ -1,12 +1,12 @@
 {
   "_doc": "Nightreign arena structure: full mapping of Nightlords, expeditions, Night Boss arenas, and per-expedition NB1/NB2 pool selection.",
-  "_version": "v0.24.74",
-  "_provenance": "Cross-reference of (a) prior session enumeration of 22 NB arena MSBs from MSB inspection, (b) Sean Martin's PC Gamer per-expedition NB1/NB2 table dated 2025-05-29, (c) EMEVD survey of the v0.24.74 patched bundle.",
+  "_version": "v0.28.x",
+  "_provenance": "Cross-reference of (a) MSB Part enumeration across the m47/m48/m49 NB arena MSBs, (b) Sean Martin's PC Gamer per-expedition NB1/NB2 table dated 2025-05-29, (c) EMEVD survey of the v0.24.74 patched bundle. v0.28.x correction: the previous version incorrectly described 22 arena MSBs and tagged 6 DS-ported bosses as script-spawned overlays without dedicated MSBs. MSB inspection shows all 28 NB arenas (including the DS ports) are normal MSBs with the boss as an MSB Part; nothing is EMEVD-spawned.",
 
   "_terminology": {
     "_disclaimer": "Nightreign uses 'Night Boss' and 'Nightlord' to mean two very different things that sound almost identical. This trips up everyone, including Claude. Keep them straight:",
     "Nightlord": "The Day-3 final boss. 8 total. FIXED per expedition — pick the Tricephalos expedition, you fight Gladius. Each Nightlord has a dedicated arena map (not in m48/m49 range — separate prefix not yet surveyed). C-prefixes: c4900 (Caligo), c7500 (Gladius/Tricephalos), c7510/c7511 (Adel), c7520 (Gnoster), c7540 (Maris), c7560/c7561/c7570 (Libra), c7580 (Heolstor), c7600 (Fulghor).",
-    "Night Boss": "The Day-1 or Day-2 encounter. 22 dedicated arena MSBs across m47/m48/m49. POOL-SELECTED per expedition — different runs of the same Nightlord can give different Night 1 / Night 2 fights. Some Dark Souls bosses (Dancer, Nameless King, Smelter Demon, Gaping Dragon, Duke's Dear Freja, Centipede Demon) are script-spawned overlays onto these same 22 arenas, not dedicated MSBs.",
+    "Night Boss": "The Day-1 or Day-2 encounter. 28 dedicated arena MSBs across m47/m48/m49, including the 6 DS-port arenas (Gaping Dragon at m47_80, Centipede Demon at m47_90, Duke's Dear Freja at m48_00, Smelter Demon at m48_10, Nameless King at m48_20, Dancer at m48_30). POOL-SELECTED per expedition — different runs of the same Nightlord can give different Night 1 / Night 2 fights. Each NB arena is an 'overlay MSB' in the map-loading sense (layered on top of a base region at runtime), but the boss is a normal MSB Part inside that MSB — same swap target as any other NB.",
     "Expedition": "A full run. Player picks the expedition (= which Nightlord) at the Roundtable. The expedition name and the Nightlord name often differ (e.g. Tricephalos = expedition, Gladius = Nightlord c-prefix c7500). This is also confusing.",
     "Everdark Sovereign": "Harder version of a Nightlord, unlocked after beating the base version. Same arena, upgraded movesets, +Phase 3."
   },
@@ -23,37 +23,52 @@
   },
 
   "night_boss_arenas": {
-    "_doc": "All 22 dedicated Night Boss arena MSBs. NR's expedition scheduler picks one for Night 1 and one for Night 2 per run from each expedition's pool.",
+    "_doc": "All 28 dedicated Night Boss arena MSBs (22 base NR + 6 DS-port arenas). NR's expedition scheduler picks one for Night 1 and one for Night 2 per run from each expedition's pool. The DS-port arenas (m47_80 through m48_30) follow the same MSB-Part structure as every other NB arena — the boss lives in the MSB; nothing is EMEVD-spawned.",
 
-    "m47_70_00_00": { "entity_id": "47700800", "c_prefix": "c4950",        "boss": "Tibia Mariner",                            "tier": "solo" },
-    "m48_40_00_00": { "entity_id": "48400800", "c_prefix": "c2130",        "boss": "Morgott (Fell Omen)",                      "tier": "solo" },
-    "m48_50_00_00": { "entity_id": "48500800", "c_prefix": "c3250",        "boss": "Draconic Tree Sentinel + 2 Royal Cavalryman", "tier": "boss_plus_grunts" },
-    "m48_60_00_00": { "entity_id": "48600800", "c_prefix": "c3251",        "boss": "Tree Sentinel + 2 Royal Cavalryman",       "tier": "boss_plus_grunts" },
-    "m48_70_00_00": { "entity_id": "48700800", "c_prefix": "c3560",        "boss": "Godskin Apostle (Duo)",                    "tier": "duo" },
-    "m48_80_00_00": { "entity_id": "48800800", "c_prefix": "c3570+c3560",  "boss": "Godskin Noble + Godskin Apostle (Duo)",    "tier": "duo" },
-    "m48_90_00_00": { "entity_id": "48900800", "c_prefix": "c4580",        "boss": "Large Wormface",                           "tier": "solo" },
-    "m49_10_00_00": { "entity_id": "49100800", "c_prefix": "c4750",        "boss": "Grafted Monarch",                          "tier": "solo" },
-    "m49_17_00_00": { "entity_id": "49170800", "c_prefix": "c4770",        "boss": "Valiant Gargoyle",                         "tier": "solo" },
-    "m49_18_00_00": { "entity_id": "49180800", "c_prefix": "c4911",        "boss": "Great Wyrm Theodorix (Magma Wyrm)",        "tier": "solo" },
-    "m49_19_00_00": { "entity_id": "49190800", "c_prefix": "c4510",        "boss": "Ancient Dragon",                           "tier": "solo" },
-    "m49_20_00_00": { "entity_id": "49200800", "c_prefix": "c4680",        "boss": "Full Grown Fallingstar Beast",             "tier": "solo" },
-    "m49_21_00_00": { "entity_id": "49210800", "c_prefix": "c4980",        "boss": "Death Rite Bird",                          "tier": "solo" },
-    "m49_23_00_00": { "entity_id": "49230800", "c_prefix": "c4650",        "boss": "Dragonkin Soldier",                        "tier": "solo" },
-    "m49_24_00_00": { "entity_id": "49240800", "c_prefix": "c3100",        "boss": "Bell Bearing Hunter",                      "tier": "solo" },
-    "m49_25_00_00": { "entity_id": "49250800", "c_prefix": "c2500+c5011",  "boss": "Crucible Knight + Golden Hippopotamus",    "tier": "duo" },
-    "m49_26_00_00": { "entity_id": "49260800", "c_prefix": "c3050",        "boss": "Outland Commander (Lightning/Frostbite)",  "tier": "solo" },
-    "m49_27_00_00": { "entity_id": "49270800", "c_prefix": "c3050",        "boss": "Battlefield Commander (Scarlet Rot)",      "tier": "solo" },
-    "m49_28_00_00": { "entity_id": "49280800", "c_prefix": "c3150+c3160",  "boss": "Night's Cavalry (Glaive + Flail, mounted)","tier": "duo_mounted" },
-    "m49_29_00_00": { "entity_id": "49290800", "c_prefix": "c4130+c5810",  "boss": "Demi-Human Queen + Demi-Human Swordmaster","tier": "duo" },
-    "m49_30_00_00": { "entity_id": "49300800", "c_prefix": "c4021",        "boss": "Royal Revenant",                           "tier": "solo" },
-    "m49_90_00_00": { "entity_id": "49900800", "c_prefix": "c4640",        "boss": "Ulcerated Tree Spirit",                    "tier": "solo" }
+    "m47_70_00_00": { "entity_id": "47700800", "c_prefix": "c4950",        "boss": "Tibia Mariner",                                "tier": "solo" },
+    "m47_80_00_00": { "entity_id": "47800800", "c_prefix": "c7700",        "boss": "Gaping Dragon (DS1 port)",                     "tier": "solo" },
+    "m47_90_00_00": { "entity_id": "47900800", "c_prefix": "c7710",        "boss": "Centipede Demon (DS1 port)",                   "tier": "solo" },
+    "m48_00_00_00": { "entity_id": "48000800", "c_prefix": "c7800",        "boss": "Duke's Dear Freja (DS2 port; +Freja Spiderlings c7810)", "tier": "boss_plus_grunts" },
+    "m48_10_00_00": { "entity_id": "48100800", "c_prefix": "c7820",        "boss": "Smelter Demon (DS2 port)",                     "tier": "solo" },
+    "m48_20_00_00": { "entity_id": "48200800", "c_prefix": "c7910+c7900",  "boss": "Nameless King (DS3 port; mounted on Storm King c7910)", "tier": "solo_mounted" },
+    "m48_30_00_00": { "entity_id": "48300800", "c_prefix": "c7920",        "boss": "Dancer of the Boreal Valley (DS3 port)",       "tier": "solo" },
+    "m48_40_00_00": { "entity_id": "48400800", "c_prefix": "c2130",        "boss": "Morgott (Fell Omen)",                          "tier": "solo" },
+    "m48_50_00_00": { "entity_id": "48500800", "c_prefix": "c3250",        "boss": "Draconic Tree Sentinel + 2 Royal Cavalryman",  "tier": "boss_plus_grunts" },
+    "m48_60_00_00": { "entity_id": "48600800", "c_prefix": "c3251",        "boss": "Tree Sentinel + 2 Royal Cavalryman",           "tier": "boss_plus_grunts" },
+    "m48_70_00_00": { "entity_id": "48700800", "c_prefix": "c3560",        "boss": "Godskin Apostle (Duo)",                        "tier": "duo" },
+    "m48_80_00_00": { "entity_id": "48800800", "c_prefix": "c3570+c3560",  "boss": "Godskin Noble + Godskin Apostle (Duo)",        "tier": "duo" },
+    "m48_90_00_00": { "entity_id": "48900800", "c_prefix": "c4580",        "boss": "Large Wormface",                               "tier": "solo" },
+    "m49_10_00_00": { "entity_id": "49100800", "c_prefix": "c4750",        "boss": "Grafted Monarch",                              "tier": "solo" },
+    "m49_17_00_00": { "entity_id": "49170800", "c_prefix": "c4770",        "boss": "Valiant Gargoyle",                             "tier": "solo" },
+    "m49_18_00_00": { "entity_id": "49180800", "c_prefix": "c4911",        "boss": "Great Wyrm Theodorix (Magma Wyrm)",            "tier": "solo" },
+    "m49_19_00_00": { "entity_id": "49190800", "c_prefix": "c4510",        "boss": "Ancient Dragon",                               "tier": "solo" },
+    "m49_20_00_00": { "entity_id": "49200800", "c_prefix": "c4680",        "boss": "Full Grown Fallingstar Beast",                 "tier": "solo" },
+    "m49_21_00_00": { "entity_id": "49210800", "c_prefix": "c4980",        "boss": "Death Rite Bird",                              "tier": "solo" },
+    "m49_23_00_00": { "entity_id": "49230800", "c_prefix": "c4650",        "boss": "Dragonkin Soldier",                            "tier": "solo" },
+    "m49_24_00_00": { "entity_id": "49240800", "c_prefix": "c3100",        "boss": "Bell Bearing Hunter",                          "tier": "solo" },
+    "m49_25_00_00": { "entity_id": "49250800", "c_prefix": "c2500+c5011",  "boss": "Crucible Knight + Golden Hippopotamus",        "tier": "duo" },
+    "m49_26_00_00": { "entity_id": "49260800", "c_prefix": "c3050",        "boss": "Outland Commander (Lightning/Frostbite)",      "tier": "solo" },
+    "m49_27_00_00": { "entity_id": "49270800", "c_prefix": "c3050",        "boss": "Battlefield Commander (Scarlet Rot)",          "tier": "solo" },
+    "m49_28_00_00": { "entity_id": "49280800", "c_prefix": "c3150+c3160",  "boss": "Night's Cavalry (Glaive + Flail, mounted)",    "tier": "duo_mounted" },
+    "m49_29_00_00": { "entity_id": "49290800", "c_prefix": "c4130+c5810",  "boss": "Demi-Human Queen + Demi-Human Swordmaster",    "tier": "duo" },
+    "m49_30_00_00": { "entity_id": "49300800", "c_prefix": "c4021",        "boss": "Royal Revenant",                               "tier": "solo" },
+    "m49_90_00_00": { "entity_id": "49900800", "c_prefix": "c4640",        "boss": "Ulcerated Tree Spirit",                        "tier": "solo" }
   },
 
-  "_dark_souls_overlays": {
-    "_doc": "Per PC Gamer's table, the following Dark Souls bosses appear at NB slots but are NOT mapped to dedicated MSB arenas — they're EMEVD-script-spawned overlays onto the 22 arena MSBs above. The rando doesn't see them as MSB Parts so they're outside the swap pool.",
-    "DS1": ["Gaping Dragon", "Centipede Demon"],
-    "DS2": ["Duke's Dear Freja", "Smelter Demon"],
-    "DS3": ["Dancer of the Boreal Valley", "Nameless King"],
+  "_dark_souls_port_bosses": {
+    "_doc": "Six bosses ported from Dark Souls 1/2/3 that appear at NB slots. Previously documented as 'script-spawned overlays without MSBs' — that was incorrect. Each has a dedicated NB arena MSB and a normal MSB Part for the boss chr, indistinguishable in structure from any other NB (Morgott, Grafted Monarch, etc). Listed below for categorical reference only; full arena entries are in night_boss_arenas above.",
+    "DS1": [
+      { "boss": "Gaping Dragon",   "arena": "m47_80", "c_prefix": "c7700" },
+      { "boss": "Centipede Demon", "arena": "m47_90", "c_prefix": "c7710" }
+    ],
+    "DS2": [
+      { "boss": "Duke's Dear Freja", "arena": "m48_00", "c_prefix": "c7800" },
+      { "boss": "Smelter Demon",     "arena": "m48_10", "c_prefix": "c7820" }
+    ],
+    "DS3": [
+      { "boss": "Dancer of the Boreal Valley", "arena": "m48_30", "c_prefix": "c7920" },
+      { "boss": "Nameless King",               "arena": "m48_20", "c_prefix": "c7910+c7900" }
+    ],
     "_note": "Nox Dragonkin Soldier is a variant of the existing Dragonkin Soldier (c4650), not a separate chr."
   },
 
@@ -76,8 +91,8 @@
     "gaping_jaw": {
       "nb1_pool": [
         { "boss": "Wormface",          "arena": "m48_90?",  "c_prefix": "c4580",         "_note": "PC Gamer says 'Wormface' which may be Large Wormface at m48_90" },
-        { "boss": "Duke's Dear Freja", "arena": "OVERLAY",  "c_prefix": "(DS2 script-spawn, no MSB)" },
-        { "boss": "Gaping Dragon",     "arena": "OVERLAY",  "c_prefix": "(DS1 script-spawn, no MSB)" },
+        { "boss": "Duke's Dear Freja", "arena": "m48_00", "c_prefix": "c7800" },
+        { "boss": "Gaping Dragon", "arena": "m47_80", "c_prefix": "c7700" },
         { "boss": "Valiant Gargoyle",  "arena": "m49_17",   "c_prefix": "c4770" }
       ],
       "nb2_pool": [
@@ -90,7 +105,7 @@
     "sentient_pest": {
       "nb1_pool": [
         { "boss": "Battlefield Commander (Scarlet Rot)", "arena": "m49_27",  "c_prefix": "c3050" },
-        { "boss": "Centipede Demon",                     "arena": "OVERLAY", "c_prefix": "(DS1 script-spawn, no MSB)" }
+        { "boss": "Centipede Demon", "arena": "m47_90", "c_prefix": "c7710" }
       ],
       "nb2_pool": [
         { "boss": "Draconic Tree Sentinel + 2 Royal Cavalryman", "arena": "m48_50", "c_prefix": "c3250" },
@@ -102,7 +117,7 @@
       "nb1_pool": [
         { "boss": "Wormface",        "arena": "m48_90?", "c_prefix": "c4580" },
         { "boss": "Grafted Monarch", "arena": "m49_10",  "c_prefix": "c4750" },
-        { "boss": "Gaping Dragon",   "arena": "OVERLAY", "c_prefix": "(DS1 script-spawn, no MSB)" }
+        { "boss": "Gaping Dragon", "arena": "m47_80", "c_prefix": "c7700" }
       ],
       "nb2_pool": [
         { "boss": "Godskin Noble + Godskin Apostle", "arena": "m48_80", "c_prefix": "c3570+c3560" },
@@ -114,7 +129,7 @@
       "nb1_pool": [
         { "boss": "Battlefield Commander (Scarlet Rot)",         "arena": "m49_27",  "c_prefix": "c3050" },
         { "boss": "Tibia Mariner (Those Who Live in Death)",     "arena": "m47_70",  "c_prefix": "c4950" },
-        { "boss": "Centipede Demon",                              "arena": "OVERLAY", "c_prefix": "(DS1 script-spawn, no MSB)" }
+        { "boss": "Centipede Demon", "arena": "m47_90", "c_prefix": "c7710" }
       ],
       "nb2_pool": [
         { "boss": "Crucible Knight + Golden Hippopotamus", "arena": "m49_25", "c_prefix": "c2500+c5011" },
@@ -126,18 +141,18 @@
     "darkdrift_knight": {
       "nb1_pool": [
         { "boss": "Wormface",      "arena": "m48_90?", "c_prefix": "c4580" },
-        { "boss": "Gaping Dragon", "arena": "OVERLAY", "c_prefix": "(DS1 script-spawn, no MSB)" }
+        { "boss": "Gaping Dragon", "arena": "m47_80", "c_prefix": "c7700" }
       ],
       "nb2_pool": [
         { "boss": "Outland Commander (Lightning/Frostbite)", "arena": "m49_26", "c_prefix": "c3050" },
-        { "boss": "Nameless King",                            "arena": "OVERLAY", "c_prefix": "(DS3 script-spawn, no MSB)" }
+        { "boss": "Nameless King", "arena": "m48_20", "c_prefix": "c7910+c7900" }
       ]
     },
 
     "fissure_in_the_fog": {
       "nb1_pool": [
-        { "boss": "Duke's Dear Freja", "arena": "OVERLAY", "c_prefix": "(DS2 script-spawn, no MSB)" },
-        { "boss": "Smelter Demon",     "arena": "OVERLAY", "c_prefix": "(DS2 script-spawn, no MSB)" }
+        { "boss": "Duke's Dear Freja", "arena": "m48_00", "c_prefix": "c7800" },
+        { "boss": "Smelter Demon", "arena": "m48_10", "c_prefix": "c7820" }
       ],
       "nb2_pool": [
         { "boss": "Draconic Tree Sentinel + 2 Royal Cavalryman", "arena": "m48_50", "c_prefix": "c3250" },
@@ -149,15 +164,15 @@
       "_note": "Final expedition, unlocked after 4 prior clears. Has the largest pool — pulls from many other expeditions' rosters.",
       "nb1_pool": [
         { "boss": "Night's Cavalry (Glaive + Flail, mounted)",      "arena": "m49_28", "c_prefix": "c3150+c3160" },
-        { "boss": "Smelter Demon",                                   "arena": "OVERLAY", "c_prefix": "(DS2 script-spawn, no MSB)" },
-        { "boss": "Centipede Demon",                                 "arena": "OVERLAY", "c_prefix": "(DS1 script-spawn, no MSB)" },
+        { "boss": "Smelter Demon", "arena": "m48_10", "c_prefix": "c7820" },
+        { "boss": "Centipede Demon", "arena": "m47_90", "c_prefix": "c7710" },
         { "boss": "Valiant Gargoyle",                                "arena": "m49_17", "c_prefix": "c4770" },
         { "boss": "Demi-Human Queen + Demi-Human Swordmaster",       "arena": "m49_29", "c_prefix": "c4130+c5810" }
       ],
       "nb2_pool": [
         { "boss": "Great Wyrm (Magma Wyrm)",   "arena": "m49_18",  "c_prefix": "c4911" },
         { "boss": "Fell Omen (Morgott)",       "arena": "m48_40",  "c_prefix": "c2130" },
-        { "boss": "Dancer of the Boreal Valley","arena": "OVERLAY","c_prefix": "(DS3 script-spawn, no MSB)" },
+        { "boss": "Dancer of the Boreal Valley", "arena": "m48_30", "c_prefix": "c7920" },
         { "boss": "Nox Dragonkin Soldier",     "arena": "m49_23?", "c_prefix": "c4650 variant" },
         { "boss": "Ancient Dragon",            "arena": "m49_19",  "c_prefix": "c4510" }
       ]
@@ -173,7 +188,9 @@
   "_open_questions": [
     "Q: Where do the actual Nightlord (Day 3 final boss) arenas live? Not in m47/m48/m49 (those are Night Boss arenas). Probably a different prefix not yet surveyed.",
     "Q: Forsaken Hollows DLC expanded the NB pools? Per Fextralife, post-DLC Bell Bearing Hunter is listed as 'Night Boss for Tricephalos AND Night Aspect' — so BBH was added to Night Aspect's pool post-DLC. Other DLC-era additions not captured by the May 2025 PC Gamer article.",
-    "Q: Is m49_30 (Royal Revenant) used in any expedition? Same question for m49_90 (Ulcerated Tree Spirit).",
-    "Q: For Dark Souls overlay bosses (Dancer, Nameless King, Smelter, Freja, Gaping Dragon, Centipede Demon) — which of the 22 MSB arenas hosts each as its script-overlay? This affects rando placement at those MSBs since the script-spawned boss appears 'on top of' MSB placeholder entities."
+    "Q: Is m49_30 (Royal Revenant) used in any expedition? Same question for m49_90 (Ulcerated Tree Spirit)."
+  ],
+  "_resolved_questions": [
+    "[v0.28.x] RESOLVED: 'For Dark Souls overlay bosses — which of the 22 MSB arenas hosts each as its script-overlay?' — premise was wrong. Each DS-ported boss has its own dedicated arena MSB (Gaping Dragon m47_80, Centipede Demon m47_90, Duke's Dear Freja m48_00, Smelter Demon m48_10, Nameless King m48_20, Dancer m48_30). No script-overlay step; the boss is a normal MSB Part inside its arena's MSB."
   ]
 }

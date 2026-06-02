@@ -3126,26 +3126,52 @@ class TestGate5_5GruntTrashAtBossBar:
             msb_base='m32_00_00_00.msb', pi=31)
         assert reason is None
 
-    def test_field_boss_tier_eliminated(self, engine, tags):
-        """v0.26.x: field_boss tier was collapsed entirely into miniboss
-        and night_boss. Every previously field_boss-tagged chr is now
-        either reassigned via V3_TAG_OVERRIDES or in V3_EXCLUDE_TARGET_
-        PREFIXES (label-only residual).
+    def test_field_boss_tier_active(self, engine, tags):
+        """v0.28.x: field_boss tier RE-INTRODUCED as a distinct user-
+        facing tier between miniboss and night_boss.
 
-        This test originally verified that field_boss-tier passed the
-        gate (sister to the miniboss/night_boss/grunt cases above).
-        Post-collapse it's inverted to a lockin: any chr still tier=
-        field_boss must be in the exclude set, otherwise the collapse
-        regressed.
+        History:
+          v0.26.x: field_boss tier was collapsed entirely into
+                   miniboss and night_boss. Reasoning then was that
+                   the tier was ambiguous in practice and the picker
+                   was simpler with three tiers (grunt / miniboss /
+                   night_boss + nightlord) instead of four. The old
+                   test (`test_field_boss_tier_eliminated`) asserted
+                   no chr could carry tier=field_boss outside the
+                   exclude set.
+
+          v0.28.x: separation reversed. The night_boss tier was
+                   overloaded — it carried both true arena bosses
+                   (Margit, Maliketh, Malenia, Godfrey, Rellana, Mohg,
+                   Bayle, Promised Consort Radahn, etc.) AND open-
+                   world boss-fight encounters (Tree Sentinel, Tibia
+                   Mariner, Magma Wyrm, Borealis, Death Bird,
+                   Ulcerated Tree Spirit, Putrescent Knight, Furnace
+                   Golem, Hippo Phase 2). The separation puts the
+                   overworld encounters at field_boss tier and leaves
+                   night_boss to the arena climax fights. A
+                   configurable promote knob
+                   (V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT) lets a
+                   field_boss roll upgrade to night_boss at a tunable
+                   rate, providing the "rare moment when a field
+                   encounter is actually a real fight" experience.
+
+        This test verifies:
+          - At least one chr carries tier=field_boss (the tier is
+            actually populated, not just a label nobody uses).
+          - The fallback ladder in pick_target_cp accepts field_boss
+            as a valid rolled tier outcome.
         """
         fb_tagged = [cp for cp, t in tags.items() if t.get('tier') == 'field_boss']
-        leaked = [cp for cp in fb_tagged
-                  if cp not in engine.V3_EXCLUDE_TARGET_PREFIXES]
-        assert not leaked, (
-            f'After v0.26.x tier collapse, no active (non-excluded) chr '
-            f'should have tier=field_boss. Leaked: {leaked}. Add a '
-            f'V3_TAG_OVERRIDES entry assigning each to miniboss or '
-            f'night_boss.')
+        assert len(fb_tagged) > 0, (
+            'After v0.28.x tier separation, at least one chr should '
+            'carry tier=field_boss. None found — either the data has '
+            'regressed (tier was un-introduced) or the demotion pass '
+            'never ran.')
+        # Confirm field_boss is recognized by the engine's tier sets
+        assert 'field_boss' in engine.V3_BOSS_STRENGTH_TIERS, (
+            'field_boss must be in V3_BOSS_STRENGTH_TIERS so the tier-'
+            'preserve gate admits it at boss-strength slots.')
 
     def test_night_boss_tier_unaffected(self, engine, tags):
         """night_boss-tier targets pass — they're authored for boss-bar
@@ -3360,24 +3386,53 @@ class TestDemotionAnimCompatNbMarker:
 
     def test_c4130_expects_boss_arena_is_false(self, tags):
         """The trigger condition: c4130 has expects_boss_arena=False
-        despite being a night_boss tier chr at a real NB arena slot.
-        This is the data-tag quirk that the v0.23.05.2 filter
-        original missed."""
+        despite landing at NB arena slots. This is the data-tag quirk
+        that the v0.23.05.2 filter original missed.
+
+        v0.28.x note: c4130 was demoted from night_boss → field_boss
+        as part of the tier-separation pass. The NB-marker check the
+        v0.24.70 fix introduced still covers chrs in this state — the
+        gate uses expects_boss_arena, not the tier, so the protection
+        is preserved regardless of which boss-strength tier c4130
+        carries. The 3 chrs flagged for review (c3100 Elemer, c4130
+        Demi-Human Queen, c3570 Godskin Noble) carry _review_note
+        entries in their tags documenting this — they may be promoted
+        back to night_boss after playtest if they feel underplaced or
+        out-of-place at field_boss.
+        """
         assert tags['c4130'].get('expects_boss_arena') == False, (
             'If c4130 gets expects_boss_arena=True, the v0.24.70 '
             'fix is no longer needed for this specific case — but '
             'keep the NB-marker check anyway for c3100, c5810, etc.')
-        assert tags['c4130'].get('tier') == 'night_boss'
+        # v0.28.x: tier is now field_boss (demoted from night_boss
+        # alongside the tier-separation pass). Either tier is
+        # acceptable here — the test invariant is the arena-flag quirk,
+        # not the tier label. Permissive assertion keeps the test
+        # protecting against the actual bug (the engine treating an
+        # arena-False chr as arena-required) even if c4130's tier
+        # shifts again in the future.
+        assert tags['c4130'].get('tier') in ('night_boss', 'field_boss')
 
     def test_c3100_and_c5810_same_quirk(self, tags):
         """Bell Bearing Hunter (c3100) and Demi-Human Swordmaster
-        (c5810) have the same data-tag quirk: night_boss tier but
-        expects_boss_arena=False. The NB-marker check covers them."""
+        (c5810) have the same data-tag quirk: boss-strength tier but
+        expects_boss_arena=False. The NB-marker check covers them.
+
+        v0.28.x note: both were demoted from night_boss → field_boss
+        in the tier-separation pass. c3100 is flagged for review
+        (carries _review_note in tags) — it's arguably a remembrance-
+        grade boss; revisit after playtest if it feels under-tiered.
+        c5810 stays field_boss confidently.
+        """
         for cp in ('c3100', 'c5810'):
             assert tags[cp].get('expects_boss_arena') == False, (
                 f'{cp} expects_boss_arena changed — verify '
                 'v0.24.70 still applies.')
-            assert tags[cp].get('tier') == 'night_boss'
+            # v0.28.x: tier shifted to field_boss for both. Same
+            # permissive assertion as test_c4130 above — the invariant
+            # is the quirk being present at boss-strength tier, not
+            # which specific tier label.
+            assert tags[cp].get('tier') in ('night_boss', 'field_boss')
 
 
 
@@ -4657,3 +4712,142 @@ class TestRiderMountFamilyConsistency:
                            prefix_count, seed)
             assert r not in mounts, (
                 f'seed {seed}: non-role source {recipient} drew mount {r!r}.')
+
+
+# ============================================================================
+# v0.28.x: FIELD-TIER ROLL with field_boss outcome + promote knob
+# ============================================================================
+
+class TestFieldRollTierWithFieldBoss:
+    """v0.28.x: the field-tier roll for non-catalogued slots gained a fourth
+    outcome (field_boss) alongside the existing grunt/miniboss/night_boss.
+    A separate V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT knob conditionally
+    upgrades a field_boss roll into a night_boss roll — the configurable
+    'field encounter is actually a real fight' knob.
+
+    These tests verify:
+      - The four outcomes are reachable from the roll function.
+      - The promote knob shifts the field_boss → night_boss split as
+        documented in the probability model.
+      - The roll function preserves its determinism (same seed + slot
+        returns the same outcome, including under the promote knob).
+    """
+
+    def _sweep(self, engine, n=10000):
+        """Roll over n synthetic slots and return tier→count distribution."""
+        engine._V3_RUN_SEED = 0xCAFEBABE
+        from collections import Counter
+        counts = Counter()
+        for i in range(n):
+            msb = f"m{i % 99:02d}_{(i // 99) % 99:02d}_00_00.msb"
+            pi = i % 999
+            t = engine.field_roll_tier_for(msb, pi)
+            counts[t] += 1
+        return counts
+
+    def test_four_outcomes_reachable_at_defaults(self, engine):
+        """At default constants, the roll can produce grunt / miniboss /
+        field_boss / night_boss outcomes. Sweep size is large enough that
+        each outcome should appear at least once with high confidence:
+          grunt P=97.8% (will dominate)
+          miniboss P=1.5% (expect ~150 in 10k)
+          field_boss P=0.5% (expect ~50 in 10k)
+          night_boss P=0.2% (expect ~20 in 10k)
+        """
+        counts = self._sweep(engine, n=20000)
+        for tier in ('grunt', 'miniboss', 'field_boss', 'night_boss'):
+            assert counts[tier] > 0, (
+                f'tier {tier!r} unreachable in 20k field rolls — '
+                f'expected non-zero count at default constants. '
+                f'Distribution: {dict(counts)}')
+
+    def test_promote_zero_field_boss_stays_field_boss(self, engine):
+        """With promote=0.0 (default), a field_boss roll should never
+        upgrade to night_boss. Verified by checking that night_boss count
+        matches V3_FIELD_UPGRADE_NIGHTBOSS_PCT (no contribution from
+        promoted field_boss rolls)."""
+        engine.V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT = 0.0
+        try:
+            counts = self._sweep(engine, n=50000)
+            total = sum(counts.values())
+            nb_rate = counts['night_boss'] / total
+            # Expected ~0.2% with some sampling tolerance
+            assert 0.001 < nb_rate < 0.004, (
+                f'promote=0.0: night_boss rate {nb_rate:.4f} is outside '
+                f'tolerance for V3_FIELD_UPGRADE_NIGHTBOSS_PCT=0.002. '
+                f'Distribution: {dict(counts)}')
+        finally:
+            engine.V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT = 0.0
+
+    def test_promote_one_all_field_boss_becomes_night_boss(self, engine):
+        """With promote=1.0, EVERY field_boss roll upgrades to
+        night_boss. So night_boss count should approximately equal
+        (V3_FIELD_UPGRADE_NIGHTBOSS_PCT + V3_FIELD_UPGRADE_FIELDBOSS_PCT)
+        of total rolls, and field_boss count should be 0."""
+        engine.V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT = 1.0
+        try:
+            counts = self._sweep(engine, n=50000)
+            total = sum(counts.values())
+            assert counts['field_boss'] == 0, (
+                f'promote=1.0 should leave field_boss empty — got '
+                f'{counts["field_boss"]} field_boss rolls.')
+            # Expected: ~(0.002 + 0.005) = 0.7%
+            nb_rate = counts['night_boss'] / total
+            assert 0.005 < nb_rate < 0.011, (
+                f'promote=1.0: night_boss rate {nb_rate:.4f} is outside '
+                f'tolerance for sum of NB + FB pct (~0.7%). '
+                f'Distribution: {dict(counts)}')
+        finally:
+            engine.V3_FIELDBOSS_TO_NIGHTBOSS_PROMOTE_PCT = 0.0
+
+    def test_roll_is_deterministic_per_slot(self, engine):
+        """Same (run seed, msb, pi) gives the same tier across calls.
+        Reproducibility is a load-bearing property of the field roll —
+        the spoiler writer and the picker call this function separately
+        and must agree on the outcome."""
+        engine._V3_RUN_SEED = 0xCAFEBABE
+        msb = 'm60_44_38_00.msb'
+        pi = 17
+        first = engine.field_roll_tier_for(msb, pi)
+        for _ in range(20):
+            second = engine.field_roll_tier_for(msb, pi)
+            assert second == first, (
+                f'field roll is non-deterministic: {first!r} vs {second!r} '
+                f'for same (seed, msb, pi)')
+
+    def test_promote_draw_independent_of_primary_roll(self, engine):
+        """The promote knob uses a distinct hash namespace ('fbpromote')
+        so changing V3_FIELD_UPGRADE_FIELDBOSS_PCT must not shift any
+        slot's NB/MB/grunt outcome. Verify by snapshotting outcomes,
+        bumping FIELDBOSS_PCT, and confirming non-FB slots stay where
+        they were."""
+        engine._V3_RUN_SEED = 0xDEADBEEF
+        # Snapshot
+        before = {}
+        for i in range(2000):
+            msb = f'm{i % 99:02d}_00_00_00.msb'
+            pi = i
+            before[(msb, pi)] = engine.field_roll_tier_for(msb, pi)
+        # Bump FIELDBOSS_PCT (steal from grunt territory)
+        orig_fb = engine.V3_FIELD_UPGRADE_FIELDBOSS_PCT
+        engine.V3_FIELD_UPGRADE_FIELDBOSS_PCT = 0.02  # 2% — way up from 0.5%
+        try:
+            for (msb, pi), prev in before.items():
+                now = engine.field_roll_tier_for(msb, pi)
+                # Permitted: grunt → field_boss (a slot whose primary r
+                # was inside the new wider FB window). Forbidden: any other
+                # tier flipping (NB stays NB, MB stays MB).
+                if prev == 'grunt':
+                    assert now in ('grunt', 'field_boss'), (
+                        f'{msb} pi={pi}: grunt → {now!r} not allowed '
+                        f'(only grunt or field_boss possible after FB% bump)')
+                elif prev == 'miniboss':
+                    assert now == 'miniboss', (
+                        f'{msb} pi={pi}: miniboss → {now!r} — '
+                        f'FB% bump should not affect MB outcomes')
+                elif prev == 'night_boss':
+                    assert now == 'night_boss', (
+                        f'{msb} pi={pi}: night_boss → {now!r} — '
+                        f'FB% bump should not affect NB outcomes')
+        finally:
+            engine.V3_FIELD_UPGRADE_FIELDBOSS_PCT = orig_fb

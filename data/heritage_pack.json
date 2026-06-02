@@ -430,7 +430,7 @@
     },
     "c5130": {
       "name": "Messmer the Impaler",
-      "_inferred_source": "mmv_to_heritage_v0.28.0 (parallel; mmv still authoritative)"
+      "_inferred_source": "manual_register_v0.28.0_messmer_phase_1 (canonical Phase 1 entry; paired with c5140 Phase 2 in the roster. From the rando's perspective c5130 and c5140 are independent placements with no phase-transition relationship.)"
     },
     "c5200": {
       "name": "Metyr, Mother of Fingers",
@@ -466,23 +466,23 @@
     },
     "c5131": {
       "name": "Messmer the Impaler (Phase 2)",
-      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer family completion)"
+      "_inferred_source": "manual_register_v0.28.0_messmer_alt (Phase 2 humanoid alt of c5130; engine-excluded via V3_EXCLUDE_PREFIXES — model exists in heritage_pack asset deployment for completeness but is never picked as a swap target. Phase 2 representation in the rando is c5140.)"
     },
     "c5132": {
       "name": "Messmer the Impaler (Phase 2 variant)",
-      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer family completion)"
+      "_inferred_source": "manual_register_v0.28.0_messmer_alt (Phase 2 humanoid alt of c5130 — second visual variant; same exclusion rationale as c5131.)"
     },
     "c5140": {
       "name": "Messmer: Base Serpent",
-      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer phase 2 serpent form, paired with c5131/c5132)"
+      "_inferred_source": "manual_register_v0.28.0_messmer_phase_2 (canonical Phase 2 entry — the serpent form. Promoted from \"Base Serpent\" naming to be the user-visible Phase 2 in the roster. Paired with c5130 Phase 1 but independent from the rando's perspective; no phase-transition coupling.)"
     },
     "c5141": {
       "name": "Messmer: Base Serpent (variant)",
-      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; Messmer phase 2 serpent form, paired with c5131/c5132)"
+      "_inferred_source": "manual_register_v0.28.0_messmer_alt (model variant of c5140 serpent; engine-excluded via V3_EXCLUDE_PREFIXES — asset stays for completeness but Phase 2 representation in the rando is c5140 alone.)"
     },
     "c5120": {
       "name": "Bayle the Dread",
-      "_inferred_source": "manual_register_v0.28.0 (heritage import; SoTE; legendary dragon, large footprint - shakedown carefully)"
+      "_inferred_source": "manual_register_v0.28.0_case_b_wireup (regulation data present in mod with 3 NpcParam variants; promoted from heritage_pack-only manifest entry into nr_enemy_tags + roster + placement_budget. huge legendary dragon — XL footprint, complex multi-phase; shakedown carefully (Bayle has lightning fxr that may want shaders))"
     },
     "c5220": {
       "name": "Promised Consort Radahn",

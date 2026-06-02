@@ -116,6 +116,17 @@ BUILTIN_ALLOWLIST: list[dict] = [
     # floor/nb-caliber role and was removed).
     {'category': 'cap_shadowed_by_exclude', 'c_prefix': 'c8300',
      'rationale': 'excluded_nb_caliber_mmv_cap_floor_kept_consistent'},
+    # c6200 Slave Knight Gael (DS3 MMV) — v0.28.x added a CONDITIONAL exclude:
+    # when MMV is disabled at load time, c6200 is folded into
+    # V3_EXCLUDE_TARGET_PREFIXES by _assemble_exclude_target_prefixes() step (6).
+    # When MMV is enabled, the conditional does not fire and the cap=1 entry
+    # is active for placement. The cap is "shadowed by exclude" in MMV-disabled
+    # state, "live" in MMV-enabled state. Keeping the cap entry preserves the
+    # marquee-NB / nb-caliber-mmv invariants the same way c8300 does, so when
+    # MMV is enabled (the documented use case where Gael actually exists in
+    # the roster) his cap is in force. Not a dead cap.
+    {'category': 'cap_shadowed_by_exclude', 'c_prefix': 'c6200',
+     'rationale': 'mmv_conditional_exclude_cap_active_when_mmv_enabled'},
 ]
 
 

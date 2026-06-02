@@ -33347,7 +33347,7 @@
     {
       "c_prefix": "c5512",
       "npc_param_id": 55120098,
-      "think_param_id": 55120098,
+      "think_param_id": 55120000,
       "variant_name": "Shade",
       "hp": 626,
       "_heritage_imported": true,
@@ -33365,7 +33365,7 @@
     {
       "c_prefix": "c5512",
       "npc_param_id": 55120198,
-      "think_param_id": 55120198,
+      "think_param_id": 55120000,
       "variant_name": "Shade",
       "hp": 626,
       "_heritage_imported": true,
@@ -33383,7 +33383,7 @@
     {
       "c_prefix": "c5513",
       "npc_param_id": 55130081,
-      "think_param_id": 55130081,
+      "think_param_id": 55130000,
       "variant_name": "Cemetery Shade",
       "hp": 305,
       "_heritage_imported": true,
@@ -33392,7 +33392,7 @@
     {
       "c_prefix": "c5513",
       "npc_param_id": 55130083,
-      "think_param_id": 55130083,
+      "think_param_id": 55130000,
       "variant_name": "Cemetery Shade",
       "hp": 305,
       "_heritage_imported": true,
@@ -33401,7 +33401,7 @@
     {
       "c_prefix": "c5513",
       "npc_param_id": 55130090,
-      "think_param_id": 55130090,
+      "think_param_id": 55130000,
       "variant_name": "Cemetery Shade",
       "hp": 305,
       "_heritage_imported": true,
@@ -34139,7 +34139,7 @@
     {
       "c_prefix": "c5890",
       "npc_param_id": 58900001,
-      "think_param_id": 58900001,
+      "think_param_id": 58900000,
       "variant_name": "Black Knight Horse",
       "hp": 448,
       "_heritage_imported": true,
@@ -34148,7 +34148,7 @@
     {
       "c_prefix": "c5890",
       "npc_param_id": 58900090,
-      "think_param_id": 58900090,
+      "think_param_id": 58900000,
       "variant_name": "Black Knight Horse",
       "hp": 448,
       "_heritage_imported": true,
@@ -34157,7 +34157,7 @@
     {
       "c_prefix": "c5890",
       "npc_param_id": 58900093,
-      "think_param_id": 58900093,
+      "think_param_id": 58900000,
       "variant_name": "Black Knight Horse",
       "hp": 448,
       "_heritage_imported": true,
@@ -34166,7 +34166,7 @@
     {
       "c_prefix": "c5890",
       "npc_param_id": 58900190,
-      "think_param_id": 58900190,
+      "think_param_id": 58900000,
       "variant_name": "Black Knight Horse",
       "hp": 448,
       "_heritage_imported": true,
@@ -35282,7 +35282,7 @@
       "has_reward": true,
       "npc_param_id": 51300000,
       "think_param_id": 51300000,
-      "variant_name": "Messmer the Impaler",
+      "variant_name": "Messmer the Impaler (Phase 1)",
       "_heritage_imported": true
     },
     {
@@ -35290,7 +35290,7 @@
       "has_reward": true,
       "npc_param_id": 51300001,
       "think_param_id": 51300000,
-      "variant_name": "Messmer the Impaler",
+      "variant_name": "Messmer the Impaler (Phase 1)",
       "_heritage_imported": true
     },
     {
@@ -35298,7 +35298,7 @@
       "has_reward": true,
       "npc_param_id": 51300099,
       "think_param_id": 51300000,
-      "variant_name": "Messmer the Impaler",
+      "variant_name": "Messmer the Impaler (Phase 1)",
       "_heritage_imported": true
     },
     {
@@ -35306,7 +35306,7 @@
       "has_reward": true,
       "npc_param_id": 51300100,
       "think_param_id": 51300000,
-      "variant_name": "Messmer the Impaler GH Castle",
+      "variant_name": "Messmer the Impaler (Phase 1) GH Castle",
       "_heritage_imported": true
     },
     {
@@ -35314,7 +35314,7 @@
       "has_reward": true,
       "npc_param_id": 51301000,
       "think_param_id": 51300000,
-      "variant_name": "Messmer the Impaler",
+      "variant_name": "Messmer the Impaler (Phase 1)",
       "_heritage_imported": true
     },
     {
@@ -35322,7 +35322,7 @@
       "has_reward": true,
       "npc_param_id": 51301099,
       "think_param_id": 51300000,
-      "variant_name": "Messmer the Impaler (Boss)",
+      "variant_name": "Messmer the Impaler (Phase 1) (Boss)",
       "_heritage_imported": true
     },
     {
@@ -35330,7 +35330,7 @@
       "has_reward": true,
       "npc_param_id": 51300200,
       "think_param_id": 51300000,
-      "variant_name": "Messmer the Impaler (Phase 1) (NB2)",
+      "variant_name": "Messmer the Impaler (Phase 1) (Phase 1) (NB2)",
       "_heritage_imported": true
     },
     {
@@ -36155,7 +36155,7 @@
     {
       "c_prefix": "c6251",
       "npc_param_id": 62510093,
-      "think_param_id": 62510093,
+      "think_param_id": 62510000,
       "variant_name": "Tree Sentinel (SoTE, Halberd)",
       "hp": 1745,
       "_heritage_imported": true,
@@ -36173,7 +36173,7 @@
     {
       "c_prefix": "c6251",
       "npc_param_id": 62511093,
-      "think_param_id": 62511093,
+      "think_param_id": 62510000,
       "variant_name": "Tree Sentinel (SoTE, Mace)",
       "hp": 1454,
       "_heritage_imported": true,
@@ -36191,7 +36191,7 @@
     {
       "c_prefix": "c5800",
       "npc_param_id": 58000001,
-      "think_param_id": 58000001,
+      "think_param_id": 58000000,
       "variant_name": "Crucible Knight Devonia",
       "hp": 840,
       "_heritage_imported": true,
@@ -36200,7 +36200,7 @@
     {
       "c_prefix": "c5800",
       "npc_param_id": 58000094,
-      "think_param_id": 58000094,
+      "think_param_id": 58000000,
       "variant_name": "Crucible Knight Devonia",
       "hp": 840,
       "_heritage_imported": true,
@@ -36218,7 +36218,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57900090,
-      "think_param_id": 57900090,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 5236,
       "_heritage_imported": true,
@@ -36227,7 +36227,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57900095,
-      "think_param_id": 57900095,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 5236,
       "_heritage_imported": true,
@@ -36254,7 +36254,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57901090,
-      "think_param_id": 57901090,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 2442,
       "_heritage_imported": true,
@@ -36263,7 +36263,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57901094,
-      "think_param_id": 57901094,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 2442,
       "_heritage_imported": true,
@@ -36272,7 +36272,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57901095,
-      "think_param_id": 57901095,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 2442,
       "_heritage_imported": true,
@@ -36290,7 +36290,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57902000,
-      "think_param_id": 57902000,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 5236,
       "_heritage_imported": true,
@@ -36299,7 +36299,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57902100,
-      "think_param_id": 57902100,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 5236,
       "_heritage_imported": true,
@@ -36308,7 +36308,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57903000,
-      "think_param_id": 57903000,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 2442,
       "_heritage_imported": true,
@@ -36317,7 +36317,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57903100,
-      "think_param_id": 57903100,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 2442,
       "_heritage_imported": true,
@@ -36326,7 +36326,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57904000,
-      "think_param_id": 57904000,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 5236,
       "_heritage_imported": true,
@@ -36335,7 +36335,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57904100,
-      "think_param_id": 57904100,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 5236,
       "_heritage_imported": true,
@@ -36344,7 +36344,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57905000,
-      "think_param_id": 57905000,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 2442,
       "_heritage_imported": true,
@@ -36353,7 +36353,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57905100,
-      "think_param_id": 57905100,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 2442,
       "_heritage_imported": true,
@@ -36362,7 +36362,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57906000,
-      "think_param_id": 57906000,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 5236,
       "_heritage_imported": true,
@@ -36371,7 +36371,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57907000,
-      "think_param_id": 57907000,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 2442,
       "_heritage_imported": true,
@@ -36380,7 +36380,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57908000,
-      "think_param_id": 57908000,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 5236,
       "_heritage_imported": true,
@@ -36389,7 +36389,7 @@
     {
       "c_prefix": "c5790",
       "npc_param_id": 57909000,
-      "think_param_id": 57909000,
+      "think_param_id": 57900000,
       "variant_name": "Guardian Golem",
       "hp": 2442,
       "_heritage_imported": true,
@@ -36407,7 +36407,7 @@
     {
       "c_prefix": "c5960",
       "npc_param_id": 59600081,
-      "think_param_id": 59600081,
+      "think_param_id": 59600000,
       "variant_name": "Ulcerated Tree Spirit",
       "hp": 2713,
       "_heritage_imported": true,
@@ -36416,7 +36416,7 @@
     {
       "c_prefix": "c5960",
       "npc_param_id": 59600088,
-      "think_param_id": 59600088,
+      "think_param_id": 59600000,
       "variant_name": "Ulcerated Tree Spirit",
       "hp": 2713,
       "_heritage_imported": true,
@@ -36443,7 +36443,7 @@
     {
       "c_prefix": "c5960",
       "npc_param_id": 59600198,
-      "think_param_id": 59600198,
+      "think_param_id": 59600000,
       "variant_name": "Ulcerated Tree Spirit",
       "hp": 2713,
       "_heritage_imported": true,
@@ -36461,7 +36461,7 @@
     {
       "c_prefix": "c5780",
       "npc_param_id": 57800090,
-      "think_param_id": 57800090,
+      "think_param_id": 57800000,
       "variant_name": "Runebear",
       "hp": 2585,
       "_heritage_imported": true,
@@ -36470,7 +36470,7 @@
     {
       "c_prefix": "c5780",
       "npc_param_id": 57800095,
-      "think_param_id": 57800095,
+      "think_param_id": 57800000,
       "variant_name": "Runebear",
       "hp": 2585,
       "_heritage_imported": true,
@@ -36479,7 +36479,7 @@
     {
       "c_prefix": "c5780",
       "npc_param_id": 57800100,
-      "think_param_id": 57800100,
+      "think_param_id": 57800000,
       "variant_name": "Runebear",
       "hp": 2585,
       "_heritage_imported": true,
@@ -36488,7 +36488,7 @@
     {
       "c_prefix": "c5780",
       "npc_param_id": 57800200,
-      "think_param_id": 57800200,
+      "think_param_id": 57800000,
       "variant_name": "Runebear",
       "hp": 2585,
       "_heritage_imported": true,
@@ -36497,7 +36497,7 @@
     {
       "c_prefix": "c5780",
       "npc_param_id": 57800700,
-      "think_param_id": 57800700,
+      "think_param_id": 57800000,
       "variant_name": "Runebear",
       "hp": 2585,
       "_heritage_imported": true,
@@ -36515,7 +36515,7 @@
     {
       "c_prefix": "c5970",
       "npc_param_id": 59700083,
-      "think_param_id": 59700083,
+      "think_param_id": 59700000,
       "variant_name": "Abductor Virgin",
       "hp": 1418,
       "_heritage_imported": true,
@@ -36524,7 +36524,7 @@
     {
       "c_prefix": "c5970",
       "npc_param_id": 59700090,
-      "think_param_id": 59700090,
+      "think_param_id": 59700000,
       "variant_name": "Abductor Virgin",
       "hp": 1418,
       "_heritage_imported": true,
@@ -36533,7 +36533,7 @@
     {
       "c_prefix": "c5970",
       "npc_param_id": 59700190,
-      "think_param_id": 59700190,
+      "think_param_id": 59700000,
       "variant_name": "Abductor Virgin",
       "hp": 1418,
       "_heritage_imported": true,
@@ -36551,7 +36551,7 @@
     {
       "c_prefix": "c5970",
       "npc_param_id": 59701100,
-      "think_param_id": 59701100,
+      "think_param_id": 59700000,
       "variant_name": "Abductor Virgin",
       "hp": 829,
       "_heritage_imported": true,
@@ -36560,7 +36560,7 @@
     {
       "c_prefix": "c5970",
       "npc_param_id": 59701190,
-      "think_param_id": 59701190,
+      "think_param_id": 59700000,
       "variant_name": "Abductor Virgin",
       "hp": 829,
       "_heritage_imported": true,
@@ -36569,7 +36569,7 @@
     {
       "c_prefix": "c5970",
       "npc_param_id": 59701290,
-      "think_param_id": 59701290,
+      "think_param_id": 59700000,
       "variant_name": "Abductor Virgin",
       "hp": 829,
       "_heritage_imported": true,
@@ -36587,7 +36587,7 @@
     {
       "c_prefix": "c5970",
       "npc_param_id": 59702090,
-      "think_param_id": 59702090,
+      "think_param_id": 59700000,
       "variant_name": "Abductor Virgin",
       "hp": 1418,
       "_heritage_imported": true,
@@ -36605,7 +36605,7 @@
     {
       "c_prefix": "c5620",
       "npc_param_id": 56200084,
-      "think_param_id": 56200084,
+      "think_param_id": 56200000,
       "variant_name": "Tibia Mariner",
       "hp": 1918,
       "_heritage_imported": true,
@@ -36623,7 +36623,7 @@
     {
       "c_prefix": "c5980",
       "npc_param_id": 59800090,
-      "think_param_id": 59800090,
+      "think_param_id": 59800000,
       "variant_name": "Omenkiller",
       "hp": 429,
       "_heritage_imported": true,
@@ -36641,7 +36641,7 @@
     {
       "c_prefix": "c5980",
       "npc_param_id": 59808000,
-      "think_param_id": 59808000,
+      "think_param_id": 59800000,
       "variant_name": "Omenkiller",
       "hp": 429,
       "_heritage_imported": true,
@@ -36650,7 +36650,7 @@
     {
       "c_prefix": "c5980",
       "npc_param_id": 59808100,
-      "think_param_id": 59808100,
+      "think_param_id": 59800000,
       "variant_name": "Omenkiller",
       "hp": 429,
       "_heritage_imported": true,
@@ -36659,7 +36659,7 @@
     {
       "c_prefix": "c5980",
       "npc_param_id": 59809090,
-      "think_param_id": 59809090,
+      "think_param_id": 59800000,
       "variant_name": "Omenkiller",
       "hp": 429,
       "_heritage_imported": true,
@@ -36668,7 +36668,7 @@
     {
       "c_prefix": "c5980",
       "npc_param_id": 59809190,
-      "think_param_id": 59809190,
+      "think_param_id": 59800000,
       "variant_name": "Omenkiller",
       "hp": 429,
       "_heritage_imported": true,
@@ -36677,7 +36677,7 @@
     {
       "c_prefix": "c5980",
       "npc_param_id": 59809290,
-      "think_param_id": 59809290,
+      "think_param_id": 59800000,
       "variant_name": "Omenkiller",
       "hp": 429,
       "_heritage_imported": true,
@@ -36695,7 +36695,7 @@
     {
       "c_prefix": "c5950",
       "npc_param_id": 59500087,
-      "think_param_id": 59500087,
+      "think_param_id": 59500000,
       "variant_name": "Leonine Misbegotten",
       "hp": 564,
       "_heritage_imported": true,
@@ -36713,7 +36713,7 @@
     {
       "c_prefix": "c5950",
       "npc_param_id": 59501087,
-      "think_param_id": 59501087,
+      "think_param_id": 59500000,
       "variant_name": "Leonine Misbegotten",
       "hp": 564,
       "_heritage_imported": true,
@@ -36731,7 +36731,7 @@
     {
       "c_prefix": "c5730",
       "npc_param_id": 57300083,
-      "think_param_id": 57300083,
+      "think_param_id": 57300000,
       "variant_name": "Demi-Human Queen",
       "hp": 911,
       "_heritage_imported": true,
@@ -36749,7 +36749,7 @@
     {
       "c_prefix": "c5730",
       "npc_param_id": 57301993,
-      "think_param_id": 57301993,
+      "think_param_id": 57300000,
       "variant_name": "Demi-Human Queen",
       "hp": 1222,
       "_heritage_imported": true,
@@ -36794,7 +36794,7 @@
     {
       "c_prefix": "c5690",
       "npc_param_id": 56900090,
-      "think_param_id": 56900090,
+      "think_param_id": 56900000,
       "variant_name": "Dragon-faced Flamethrower",
       "hp": 441,
       "_heritage_imported": true,
@@ -36812,7 +36812,7 @@
     {
       "c_prefix": "c6210",
       "npc_param_id": 62100005,
-      "think_param_id": 62100005,
+      "think_param_id": 62100000,
       "variant_name": "Albinauric Archer (SoTE)",
       "hp": 1200,
       "_heritage_imported": true,
@@ -36830,7 +36830,7 @@
     {
       "c_prefix": "c6210",
       "npc_param_id": 62100015,
-      "think_param_id": 62100015,
+      "think_param_id": 62100000,
       "variant_name": "Albinauric Archer (SoTE)",
       "hp": 1200,
       "_heritage_imported": true,
@@ -36839,7 +36839,7 @@
     {
       "c_prefix": "c6210",
       "npc_param_id": 62100020,
-      "think_param_id": 62100020,
+      "think_param_id": 62100000,
       "variant_name": "Albinauric Archer (SoTE)",
       "hp": 1200,
       "_heritage_imported": true,
@@ -36848,7 +36848,7 @@
     {
       "c_prefix": "c6210",
       "npc_param_id": 62100092,
-      "think_param_id": 62100092,
+      "think_param_id": 62100000,
       "variant_name": "Albinauric Archer (SoTE)",
       "hp": 487,
       "_heritage_imported": true,
@@ -36875,7 +36875,7 @@
     {
       "c_prefix": "c6220",
       "npc_param_id": 62200092,
-      "think_param_id": 62200092,
+      "think_param_id": 62200000,
       "variant_name": "Wolf (SoTE)",
       "hp": 774,
       "_heritage_imported": true,
@@ -36893,7 +36893,7 @@
     {
       "c_prefix": "c6232",
       "npc_param_id": 62322000,
-      "think_param_id": 62322000,
+      "think_param_id": 62320000,
       "variant_name": "Glintstone Sorcerer (SoTE)",
       "hp": 267,
       "_heritage_imported": true,
@@ -36902,7 +36902,7 @@
     {
       "c_prefix": "c6232",
       "npc_param_id": 62322082,
-      "think_param_id": 62322082,
+      "think_param_id": 62320000,
       "variant_name": "Glintstone Sorcerer (SoTE)",
       "hp": 267,
       "_heritage_imported": true,
@@ -36920,7 +36920,7 @@
     {
       "c_prefix": "c6233",
       "npc_param_id": 62330082,
-      "think_param_id": 62330082,
+      "think_param_id": 62330000,
       "variant_name": "Page (SoTE)",
       "hp": 353,
       "_heritage_imported": true,
@@ -36929,7 +36929,7 @@
     {
       "c_prefix": "c6233",
       "npc_param_id": 62331000,
-      "think_param_id": 62331000,
+      "think_param_id": 62330000,
       "variant_name": "Page (SoTE)",
       "hp": 582,
       "_heritage_imported": true,
@@ -36947,7 +36947,7 @@
     {
       "c_prefix": "c6270",
       "npc_param_id": 62700003,
-      "think_param_id": 62700003,
+      "think_param_id": 62700000,
       "variant_name": "Royal Revenant (SoTE)",
       "hp": 679,
       "_heritage_imported": true,
@@ -36956,7 +36956,7 @@
     {
       "c_prefix": "c6270",
       "npc_param_id": 62700084,
-      "think_param_id": 62700084,
+      "think_param_id": 62700000,
       "variant_name": "Royal Revenant (SoTE)",
       "hp": 679,
       "_heritage_imported": true,
@@ -36974,7 +36974,7 @@
     {
       "c_prefix": "c6270",
       "npc_param_id": 62708000,
-      "think_param_id": 62708000,
+      "think_param_id": 62700000,
       "variant_name": "Royal Revenant (SoTE)",
       "hp": 679,
       "_heritage_imported": true,
@@ -36983,7 +36983,7 @@
     {
       "c_prefix": "c6270",
       "npc_param_id": 62708100,
-      "think_param_id": 62708100,
+      "think_param_id": 62700000,
       "variant_name": "Royal Revenant (SoTE)",
       "hp": 679,
       "_heritage_imported": true,
@@ -36992,7 +36992,7 @@
     {
       "c_prefix": "c6270",
       "npc_param_id": 62708200,
-      "think_param_id": 62708200,
+      "think_param_id": 62700000,
       "variant_name": "Royal Revenant (SoTE)",
       "hp": 679,
       "_heritage_imported": true,
@@ -37001,7 +37001,7 @@
     {
       "c_prefix": "c6270",
       "npc_param_id": 62708300,
-      "think_param_id": 62708300,
+      "think_param_id": 62700000,
       "variant_name": "Royal Revenant (SoTE)",
       "hp": 679,
       "_heritage_imported": true,
@@ -37010,7 +37010,7 @@
     {
       "c_prefix": "c6270",
       "npc_param_id": 62708400,
-      "think_param_id": 62708400,
+      "think_param_id": 62700000,
       "variant_name": "Royal Revenant (SoTE)",
       "hp": 679,
       "_heritage_imported": true,
@@ -37028,7 +37028,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62900090,
-      "think_param_id": 62900090,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37037,7 +37037,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62900095,
-      "think_param_id": 62900095,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37055,7 +37055,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62900200,
-      "think_param_id": 62900200,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37064,7 +37064,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62900290,
-      "think_param_id": 62900290,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37082,7 +37082,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62901090,
-      "think_param_id": 62901090,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37091,7 +37091,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62901095,
-      "think_param_id": 62901095,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37100,7 +37100,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62901100,
-      "think_param_id": 62901100,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37109,7 +37109,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62902000,
-      "think_param_id": 62902000,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37118,7 +37118,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62902090,
-      "think_param_id": 62902090,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37127,7 +37127,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62902100,
-      "think_param_id": 62902100,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37136,7 +37136,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62909000,
-      "think_param_id": 62909000,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37145,7 +37145,7 @@
     {
       "c_prefix": "c6290",
       "npc_param_id": 62909100,
-      "think_param_id": 62909100,
+      "think_param_id": 62900000,
       "variant_name": "Misbegotten (SoTE)",
       "hp": 192,
       "_heritage_imported": true,
@@ -37163,7 +37163,7 @@
     {
       "c_prefix": "c6291",
       "npc_param_id": 62910090,
-      "think_param_id": 62910090,
+      "think_param_id": 62910000,
       "variant_name": "Scaly Misbegotten (SoTE)",
       "hp": 531,
       "_heritage_imported": true,
@@ -37172,7 +37172,7 @@
     {
       "c_prefix": "c6291",
       "npc_param_id": 62910095,
-      "think_param_id": 62910095,
+      "think_param_id": 62910000,
       "variant_name": "Scaly Misbegotten (SoTE)",
       "hp": 531,
       "_heritage_imported": true,
@@ -37181,7 +37181,7 @@
     {
       "c_prefix": "c6291",
       "npc_param_id": 62910100,
-      "think_param_id": 62910100,
+      "think_param_id": 62910000,
       "variant_name": "Scaly Misbegotten (SoTE)",
       "hp": 531,
       "_heritage_imported": true,
@@ -37190,7 +37190,7 @@
     {
       "c_prefix": "c6291",
       "npc_param_id": 62910200,
-      "think_param_id": 62910200,
+      "think_param_id": 62910000,
       "variant_name": "Scaly Misbegotten (SoTE)",
       "hp": 531,
       "_heritage_imported": true,
@@ -37217,7 +37217,7 @@
     {
       "c_prefix": "c6300",
       "npc_param_id": 63000094,
-      "think_param_id": 63000094,
+      "think_param_id": 63000000,
       "variant_name": "Snail (SoTE)",
       "hp": 126,
       "_heritage_imported": true,
@@ -37244,7 +37244,7 @@
     {
       "c_prefix": "c6300",
       "npc_param_id": 63002100,
-      "think_param_id": 63002100,
+      "think_param_id": 63000000,
       "variant_name": "Snail (SoTE)",
       "hp": 190,
       "_heritage_imported": true,
@@ -37271,7 +37271,7 @@
     {
       "c_prefix": "c6300",
       "npc_param_id": 63009000,
-      "think_param_id": 63009000,
+      "think_param_id": 63000000,
       "variant_name": "Snail (SoTE)",
       "hp": 1070,
       "_heritage_imported": true,
@@ -37289,7 +37289,7 @@
     {
       "c_prefix": "c6310",
       "npc_param_id": 63101000,
-      "think_param_id": 63101000,
+      "think_param_id": 63100000,
       "variant_name": "Fallingstar Beast (SoTE)",
       "hp": 1893,
       "_heritage_imported": true,
@@ -37298,7 +37298,7 @@
     {
       "c_prefix": "c6310",
       "npc_param_id": 63101093,
-      "think_param_id": 63101093,
+      "think_param_id": 63100000,
       "variant_name": "Fallingstar Beast (SoTE)",
       "hp": 1893,
       "_heritage_imported": true,
@@ -37316,7 +37316,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63202009,
-      "think_param_id": 63202009,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37325,7 +37325,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63202082,
-      "think_param_id": 63202082,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37334,7 +37334,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63202200,
-      "think_param_id": 63202200,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37343,7 +37343,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63202300,
-      "think_param_id": 63202300,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37352,7 +37352,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63202382,
-      "think_param_id": 63202382,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37361,7 +37361,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63202400,
-      "think_param_id": 63202400,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37388,7 +37388,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63207100,
-      "think_param_id": 63207100,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37397,7 +37397,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63207180,
-      "think_param_id": 63207180,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37406,7 +37406,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63207185,
-      "think_param_id": 63207185,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37415,7 +37415,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63207190,
-      "think_param_id": 63207190,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37424,7 +37424,7 @@
     {
       "c_prefix": "c6320",
       "npc_param_id": 63207195,
-      "think_param_id": 63207195,
+      "think_param_id": 63202000,
       "variant_name": "Wandering Noble (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -37442,7 +37442,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55500083,
-      "think_param_id": 55500083,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37451,7 +37451,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55500093,
-      "think_param_id": 55500093,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37478,7 +37478,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55505000,
-      "think_param_id": 55505000,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37487,7 +37487,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55505100,
-      "think_param_id": 55505100,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37496,7 +37496,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55505200,
-      "think_param_id": 55505200,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37505,7 +37505,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55505300,
-      "think_param_id": 55505300,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37514,7 +37514,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55505400,
-      "think_param_id": 55505400,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37523,7 +37523,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55505500,
-      "think_param_id": 55505500,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37532,7 +37532,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55505600,
-      "think_param_id": 55505600,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37541,7 +37541,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55505700,
-      "think_param_id": 55505700,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37550,7 +37550,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55505800,
-      "think_param_id": 55505800,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37559,7 +37559,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55506000,
-      "think_param_id": 55506000,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37568,7 +37568,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55506100,
-      "think_param_id": 55506100,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37577,7 +37577,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55506200,
-      "think_param_id": 55506200,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37586,7 +37586,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55506300,
-      "think_param_id": 55506300,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37595,7 +37595,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55506400,
-      "think_param_id": 55506400,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37604,7 +37604,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55507000,
-      "think_param_id": 55507000,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37613,7 +37613,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55507100,
-      "think_param_id": 55507100,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37622,7 +37622,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55507200,
-      "think_param_id": 55507200,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37631,7 +37631,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55507300,
-      "think_param_id": 55507300,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37640,7 +37640,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55507400,
-      "think_param_id": 55507400,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37649,7 +37649,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55507500,
-      "think_param_id": 55507500,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37658,7 +37658,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55507600,
-      "think_param_id": 55507600,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37667,7 +37667,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55507700,
-      "think_param_id": 55507700,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37676,7 +37676,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55507800,
-      "think_param_id": 55507800,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37685,7 +37685,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55508000,
-      "think_param_id": 55508000,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37694,7 +37694,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55508100,
-      "think_param_id": 55508100,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37703,7 +37703,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55508200,
-      "think_param_id": 55508200,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37712,7 +37712,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55508300,
-      "think_param_id": 55508300,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37721,7 +37721,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55508400,
-      "think_param_id": 55508400,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37730,7 +37730,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55508500,
-      "think_param_id": 55508500,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37739,7 +37739,7 @@
     {
       "c_prefix": "c5550",
       "npc_param_id": 55508800,
-      "think_param_id": 55508800,
+      "think_param_id": 55500000,
       "variant_name": "Fingercreeper",
       "hp": 747,
       "_heritage_imported": true,
@@ -37757,7 +37757,7 @@
     {
       "c_prefix": "c5551",
       "npc_param_id": 55510093,
-      "think_param_id": 55510093,
+      "think_param_id": 55510000,
       "variant_name": "Fingercreeper (Large)",
       "hp": 1493,
       "_heritage_imported": true,
@@ -37766,7 +37766,7 @@
     {
       "c_prefix": "c5551",
       "npc_param_id": 55510100,
-      "think_param_id": 55510100,
+      "think_param_id": 55510000,
       "variant_name": "Fingercreeper (Large)",
       "hp": 1493,
       "_heritage_imported": true,
@@ -37784,7 +37784,7 @@
     {
       "c_prefix": "c5560",
       "npc_param_id": 55600083,
-      "think_param_id": 55600083,
+      "think_param_id": 55600000,
       "variant_name": "Fingercreeper (Small)",
       "hp": 105,
       "_heritage_imported": true,
@@ -37793,7 +37793,7 @@
     {
       "c_prefix": "c5560",
       "npc_param_id": 55600093,
-      "think_param_id": 55600093,
+      "think_param_id": 55600000,
       "variant_name": "Fingercreeper (Small)",
       "hp": 105,
       "_heritage_imported": true,
@@ -37820,7 +37820,7 @@
     {
       "c_prefix": "c5560",
       "npc_param_id": 55600297,
-      "think_param_id": 55600297,
+      "think_param_id": 55600000,
       "variant_name": "Fingercreeper (Small)",
       "hp": 63,
       "_heritage_imported": true,
@@ -37838,7 +37838,7 @@
     {
       "c_prefix": "c5560",
       "npc_param_id": 55600390,
-      "think_param_id": 55600390,
+      "think_param_id": 55600000,
       "variant_name": "Fingercreeper (Small)",
       "hp": 296,
       "_heritage_imported": true,
@@ -37856,7 +37856,7 @@
     {
       "c_prefix": "c5390",
       "npc_param_id": 53900001,
-      "think_param_id": 53900001,
+      "think_param_id": 53900000,
       "variant_name": "Troll (SoTE)",
       "hp": 1901,
       "_heritage_imported": true,
@@ -37865,7 +37865,7 @@
     {
       "c_prefix": "c5390",
       "npc_param_id": 53900083,
-      "think_param_id": 53900083,
+      "think_param_id": 53900000,
       "variant_name": "Troll (SoTE)",
       "hp": 1901,
       "_heritage_imported": true,
@@ -37874,7 +37874,7 @@
     {
       "c_prefix": "c5390",
       "npc_param_id": 53900090,
-      "think_param_id": 53900090,
+      "think_param_id": 53900000,
       "variant_name": "Troll (SoTE)",
       "hp": 1901,
       "_heritage_imported": true,
@@ -37883,7 +37883,7 @@
     {
       "c_prefix": "c5390",
       "npc_param_id": 53900100,
-      "think_param_id": 53900100,
+      "think_param_id": 53900000,
       "variant_name": "Troll (SoTE)",
       "hp": 1901,
       "_heritage_imported": true,
@@ -37901,7 +37901,7 @@
     {
       "c_prefix": "c5390",
       "npc_param_id": 53903000,
-      "think_param_id": 53903000,
+      "think_param_id": 53900000,
       "variant_name": "Troll (SoTE)",
       "hp": 1901,
       "_heritage_imported": true,
@@ -37919,7 +37919,7 @@
     {
       "c_prefix": "c5390",
       "npc_param_id": 53904100,
-      "think_param_id": 53904100,
+      "think_param_id": 53900000,
       "variant_name": "Troll (SoTE)",
       "hp": 1581,
       "_heritage_imported": true,
@@ -37946,7 +37946,7 @@
     {
       "c_prefix": "c5391",
       "npc_param_id": 53910082,
-      "think_param_id": 53910082,
+      "think_param_id": 53910000,
       "variant_name": "Troll Knight (SoTE)",
       "hp": 1901,
       "_heritage_imported": true,
@@ -37955,7 +37955,7 @@
     {
       "c_prefix": "c5391",
       "npc_param_id": 53910100,
-      "think_param_id": 53910100,
+      "think_param_id": 53910000,
       "variant_name": "Troll Knight (SoTE)",
       "hp": 1901,
       "_heritage_imported": true,
@@ -37964,7 +37964,7 @@
     {
       "c_prefix": "c5391",
       "npc_param_id": 53910190,
-      "think_param_id": 53910190,
+      "think_param_id": 53910000,
       "variant_name": "Troll Knight (SoTE)",
       "hp": 1901,
       "_heritage_imported": true,
@@ -37973,7 +37973,7 @@
     {
       "c_prefix": "c5391",
       "npc_param_id": 53910200,
-      "think_param_id": 53910200,
+      "think_param_id": 53910000,
       "variant_name": "Troll Knight (SoTE)",
       "hp": 1901,
       "_heritage_imported": true,
@@ -37982,7 +37982,7 @@
     {
       "c_prefix": "c5391",
       "npc_param_id": 53918000,
-      "think_param_id": 53918000,
+      "think_param_id": 53910000,
       "variant_name": "Troll Knight (SoTE)",
       "hp": 1901,
       "_heritage_imported": true,
@@ -38000,7 +38000,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300080,
-      "think_param_id": 55300080,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38009,7 +38009,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300081,
-      "think_param_id": 55300081,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38018,7 +38018,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300090,
-      "think_param_id": 55300090,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38027,7 +38027,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300093,
-      "think_param_id": 55300093,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38036,7 +38036,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300098,
-      "think_param_id": 55300098,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38045,7 +38045,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300099,
-      "think_param_id": 55300099,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38063,7 +38063,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300180,
-      "think_param_id": 55300180,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38072,7 +38072,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300181,
-      "think_param_id": 55300181,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38081,7 +38081,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300190,
-      "think_param_id": 55300190,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38090,7 +38090,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300193,
-      "think_param_id": 55300193,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38099,7 +38099,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300198,
-      "think_param_id": 55300198,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38108,7 +38108,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300199,
-      "think_param_id": 55300199,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38126,7 +38126,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55300299,
-      "think_param_id": 55300299,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 126,
       "_heritage_imported": true,
@@ -38135,7 +38135,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55301000,
-      "think_param_id": 55301000,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 430,
       "_heritage_imported": true,
@@ -38144,7 +38144,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55301100,
-      "think_param_id": 55301100,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 430,
       "_heritage_imported": true,
@@ -38153,7 +38153,7 @@
     {
       "c_prefix": "c5530",
       "npc_param_id": 55301200,
-      "think_param_id": 55301200,
+      "think_param_id": 55300000,
       "variant_name": "Man-Bat",
       "hp": 430,
       "_heritage_imported": true,
@@ -38171,7 +38171,7 @@
     {
       "c_prefix": "c5580",
       "npc_param_id": 55800084,
-      "think_param_id": 55800084,
+      "think_param_id": 55800000,
       "variant_name": "Flying Dragon (SoTE)",
       "hp": 2704,
       "_heritage_imported": true,
@@ -38180,7 +38180,7 @@
     {
       "c_prefix": "c5580",
       "npc_param_id": 55800085,
-      "think_param_id": 55800085,
+      "think_param_id": 55800000,
       "variant_name": "Flying Dragon (SoTE)",
       "hp": 2704,
       "_heritage_imported": true,
@@ -38189,7 +38189,7 @@
     {
       "c_prefix": "c5580",
       "npc_param_id": 55800985,
-      "think_param_id": 55800985,
+      "think_param_id": 55800000,
       "variant_name": "Flying Dragon (SoTE)",
       "hp": 2704,
       "_heritage_imported": true,
@@ -38198,7 +38198,7 @@
     {
       "c_prefix": "c5580",
       "npc_param_id": 55801000,
-      "think_param_id": 55801000,
+      "think_param_id": 55800000,
       "variant_name": "Flying Dragon (SoTE)",
       "hp": 1639,
       "_heritage_imported": true,
@@ -38225,7 +38225,7 @@
     {
       "c_prefix": "c5630",
       "npc_param_id": 56300083,
-      "think_param_id": 56300083,
+      "think_param_id": 56300000,
       "variant_name": "Giant Crayfish (SoTE)",
       "hp": 876,
       "_heritage_imported": true,
@@ -38234,7 +38234,7 @@
     {
       "c_prefix": "c5630",
       "npc_param_id": 56300090,
-      "think_param_id": 56300090,
+      "think_param_id": 56300000,
       "variant_name": "Giant Crayfish (SoTE)",
       "hp": 876,
       "_heritage_imported": true,
@@ -38252,7 +38252,7 @@
     {
       "c_prefix": "c5630",
       "npc_param_id": 56302000,
-      "think_param_id": 56302000,
+      "think_param_id": 56300000,
       "variant_name": "Giant Crayfish (SoTE)",
       "hp": 876,
       "_heritage_imported": true,
@@ -38261,7 +38261,7 @@
     {
       "c_prefix": "c5630",
       "npc_param_id": 56302081,
-      "think_param_id": 56302081,
+      "think_param_id": 56300000,
       "variant_name": "Giant Crayfish (SoTE)",
       "hp": 876,
       "_heritage_imported": true,
@@ -38270,7 +38270,7 @@
     {
       "c_prefix": "c5630",
       "npc_param_id": 56307081,
-      "think_param_id": 56307081,
+      "think_param_id": 56300000,
       "variant_name": "Giant Crayfish (SoTE)",
       "hp": 876,
       "_heritage_imported": true,
@@ -38288,7 +38288,7 @@
     {
       "c_prefix": "c5640",
       "npc_param_id": 56400081,
-      "think_param_id": 56400081,
+      "think_param_id": 56400000,
       "variant_name": "Giant Crab (SoTE)",
       "hp": 357,
       "_heritage_imported": true,
@@ -38297,7 +38297,7 @@
     {
       "c_prefix": "c5640",
       "npc_param_id": 56400083,
-      "think_param_id": 56400083,
+      "think_param_id": 56400000,
       "variant_name": "Giant Crab (SoTE)",
       "hp": 357,
       "_heritage_imported": true,
@@ -38306,7 +38306,7 @@
     {
       "c_prefix": "c5640",
       "npc_param_id": 56400098,
-      "think_param_id": 56400098,
+      "think_param_id": 56400000,
       "variant_name": "Giant Crab (SoTE)",
       "hp": 357,
       "_heritage_imported": true,
@@ -38324,7 +38324,7 @@
     {
       "c_prefix": "c5640",
       "npc_param_id": 56400183,
-      "think_param_id": 56400183,
+      "think_param_id": 56400000,
       "variant_name": "Giant Crab (SoTE)",
       "hp": 357,
       "_heritage_imported": true,
@@ -38333,7 +38333,7 @@
     {
       "c_prefix": "c5640",
       "npc_param_id": 56400198,
-      "think_param_id": 56400198,
+      "think_param_id": 56400000,
       "variant_name": "Giant Crab (SoTE)",
       "hp": 357,
       "_heritage_imported": true,
@@ -38351,7 +38351,7 @@
     {
       "c_prefix": "c5710",
       "npc_param_id": 57100083,
-      "think_param_id": 57100083,
+      "think_param_id": 57100000,
       "variant_name": "Demi-Human Shaman (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -38360,7 +38360,7 @@
     {
       "c_prefix": "c5710",
       "npc_param_id": 57100093,
-      "think_param_id": 57100093,
+      "think_param_id": 57100000,
       "variant_name": "Demi-Human Shaman (SoTE)",
       "hp": 85,
       "_heritage_imported": true,
@@ -38378,7 +38378,7 @@
     {
       "c_prefix": "c5710",
       "npc_param_id": 57109100,
-      "think_param_id": 57109100,
+      "think_param_id": 57100000,
       "variant_name": "Demi-Human Shaman (SoTE)",
       "hp": 599,
       "_heritage_imported": true,
@@ -38396,7 +38396,7 @@
     {
       "c_prefix": "c5720",
       "npc_param_id": 57200083,
-      "think_param_id": 57200083,
+      "think_param_id": 57200000,
       "variant_name": "Demi-Human Chief (SoTE)",
       "hp": 534,
       "_heritage_imported": true,
@@ -38405,7 +38405,7 @@
     {
       "c_prefix": "c5720",
       "npc_param_id": 57200093,
-      "think_param_id": 57200093,
+      "think_param_id": 57200000,
       "variant_name": "Demi-Human Chief (SoTE)",
       "hp": 534,
       "_heritage_imported": true,
@@ -38432,7 +38432,7 @@
     {
       "c_prefix": "c5760",
       "npc_param_id": 57600080,
-      "think_param_id": 57600080,
+      "think_param_id": 57600000,
       "variant_name": "Rat (SoTE)",
       "hp": 162,
       "_heritage_imported": true,
@@ -38441,7 +38441,7 @@
     {
       "c_prefix": "c5760",
       "npc_param_id": 57600081,
-      "think_param_id": 57600081,
+      "think_param_id": 57600000,
       "variant_name": "Rat (SoTE)",
       "hp": 162,
       "_heritage_imported": true,
@@ -38450,7 +38450,7 @@
     {
       "c_prefix": "c5760",
       "npc_param_id": 57600084,
-      "think_param_id": 57600084,
+      "think_param_id": 57600000,
       "variant_name": "Rat (SoTE)",
       "hp": 162,
       "_heritage_imported": true,
@@ -38459,7 +38459,7 @@
     {
       "c_prefix": "c5760",
       "npc_param_id": 57600090,
-      "think_param_id": 57600090,
+      "think_param_id": 57600000,
       "variant_name": "Rat (SoTE)",
       "hp": 162,
       "_heritage_imported": true,
@@ -38468,7 +38468,7 @@
     {
       "c_prefix": "c5760",
       "npc_param_id": 57600100,
-      "think_param_id": 57600100,
+      "think_param_id": 57600000,
       "variant_name": "Rat (SoTE)",
       "hp": 162,
       "_heritage_imported": true,
@@ -38486,7 +38486,7 @@
     {
       "c_prefix": "c5760",
       "npc_param_id": 57600386,
-      "think_param_id": 57600386,
+      "think_param_id": 57600000,
       "variant_name": "Rat (SoTE)",
       "hp": 162,
       "_heritage_imported": true,
@@ -38495,7 +38495,7 @@
     {
       "c_prefix": "c5760",
       "npc_param_id": 57600390,
-      "think_param_id": 57600390,
+      "think_param_id": 57600000,
       "variant_name": "Rat (SoTE)",
       "hp": 162,
       "_heritage_imported": true,
@@ -38504,7 +38504,7 @@
     {
       "c_prefix": "c5760",
       "npc_param_id": 57600886,
-      "think_param_id": 57600886,
+      "think_param_id": 57600000,
       "variant_name": "Rat (SoTE)",
       "hp": 162,
       "_heritage_imported": true,
@@ -38513,7 +38513,7 @@
     {
       "c_prefix": "c5760",
       "npc_param_id": 57600900,
-      "think_param_id": 57600900,
+      "think_param_id": 57600000,
       "variant_name": "Rat (SoTE)",
       "hp": 162,
       "_heritage_imported": true,
@@ -38531,7 +38531,7 @@
     {
       "c_prefix": "c5761",
       "npc_param_id": 57610080,
-      "think_param_id": 57610080,
+      "think_param_id": 57610000,
       "variant_name": "Giant Rat (SoTE)",
       "hp": 556,
       "_heritage_imported": true,
@@ -38540,7 +38540,7 @@
     {
       "c_prefix": "c5761",
       "npc_param_id": 57610081,
-      "think_param_id": 57610081,
+      "think_param_id": 57610000,
       "variant_name": "Giant Rat (SoTE)",
       "hp": 556,
       "_heritage_imported": true,
@@ -38549,7 +38549,7 @@
     {
       "c_prefix": "c5761",
       "npc_param_id": 57610084,
-      "think_param_id": 57610084,
+      "think_param_id": 57610000,
       "variant_name": "Giant Rat (SoTE)",
       "hp": 556,
       "_heritage_imported": true,
@@ -38558,7 +38558,7 @@
     {
       "c_prefix": "c5761",
       "npc_param_id": 57610090,
-      "think_param_id": 57610090,
+      "think_param_id": 57610000,
       "variant_name": "Giant Rat (SoTE)",
       "hp": 556,
       "_heritage_imported": true,
@@ -38576,7 +38576,7 @@
     {
       "c_prefix": "c5761",
       "npc_param_id": 57610386,
-      "think_param_id": 57610386,
+      "think_param_id": 57610000,
       "variant_name": "Giant Rat (SoTE)",
       "hp": 556,
       "_heritage_imported": true,
@@ -38585,7 +38585,7 @@
     {
       "c_prefix": "c5761",
       "npc_param_id": 57610390,
-      "think_param_id": 57610390,
+      "think_param_id": 57610000,
       "variant_name": "Giant Rat (SoTE)",
       "hp": 556,
       "_heritage_imported": true,
@@ -38594,7 +38594,7 @@
     {
       "c_prefix": "c5761",
       "npc_param_id": 57610886,
-      "think_param_id": 57610886,
+      "think_param_id": 57610000,
       "variant_name": "Giant Rat (SoTE)",
       "hp": 556,
       "_heritage_imported": true,
@@ -38603,7 +38603,7 @@
     {
       "c_prefix": "c5761",
       "npc_param_id": 57610900,
-      "think_param_id": 57610900,
+      "think_param_id": 57610000,
       "variant_name": "Giant Rat (SoTE)",
       "hp": 556,
       "_heritage_imported": true,
@@ -38621,7 +38621,7 @@
     {
       "c_prefix": "c5520",
       "npc_param_id": 55200081,
-      "think_param_id": 55200081,
+      "think_param_id": 55200000,
       "variant_name": "Stray (SoTE)",
       "hp": 338,
       "_heritage_imported": true,
@@ -38630,7 +38630,7 @@
     {
       "c_prefix": "c5520",
       "npc_param_id": 55200090,
-      "think_param_id": 55200090,
+      "think_param_id": 55200000,
       "variant_name": "Stray (SoTE)",
       "hp": 338,
       "_heritage_imported": true,
@@ -38639,7 +38639,7 @@
     {
       "c_prefix": "c5520",
       "npc_param_id": 55200095,
-      "think_param_id": 55200095,
+      "think_param_id": 55200000,
       "variant_name": "Stray (SoTE)",
       "hp": 338,
       "_heritage_imported": true,
@@ -38657,7 +38657,7 @@
     {
       "c_prefix": "c5524",
       "npc_param_id": 55240082,
-      "think_param_id": 55240082,
+      "think_param_id": 55240000,
       "variant_name": "Braided Stray",
       "hp": 338,
       "_heritage_imported": true,
@@ -38666,7 +38666,7 @@
     {
       "c_prefix": "c5524",
       "npc_param_id": 55240090,
-      "think_param_id": 55240090,
+      "think_param_id": 55240000,
       "variant_name": "Braided Stray",
       "hp": 338,
       "_heritage_imported": true,
@@ -38675,7 +38675,7 @@
     {
       "c_prefix": "c5524",
       "npc_param_id": 55240094,
-      "think_param_id": 55240094,
+      "think_param_id": 55240000,
       "variant_name": "Braided Stray",
       "hp": 338,
       "_heritage_imported": true,
@@ -38693,7 +38693,7 @@
     {
       "c_prefix": "c5526",
       "npc_param_id": 55260080,
-      "think_param_id": 55260080,
+      "think_param_id": 55260000,
       "variant_name": "Bloodbane Stray",
       "hp": 338,
       "_heritage_imported": true,
@@ -38702,7 +38702,7 @@
     {
       "c_prefix": "c5526",
       "npc_param_id": 55260090,
-      "think_param_id": 55260090,
+      "think_param_id": 55260000,
       "variant_name": "Bloodbane Stray",
       "hp": 338,
       "_heritage_imported": true,
@@ -38711,7 +38711,7 @@
     {
       "c_prefix": "c5526",
       "npc_param_id": 55260094,
-      "think_param_id": 55260094,
+      "think_param_id": 55260000,
       "variant_name": "Bloodbane Stray",
       "hp": 338,
       "_heritage_imported": true,
@@ -38729,7 +38729,7 @@
     {
       "c_prefix": "c5570",
       "npc_param_id": 55700090,
-      "think_param_id": 55700090,
+      "think_param_id": 55700000,
       "variant_name": "Marionette Soldier (SoTE)",
       "hp": 179,
       "_heritage_imported": true,
@@ -38747,7 +38747,7 @@
     {
       "c_prefix": "c5570",
       "npc_param_id": 55701090,
-      "think_param_id": 55701090,
+      "think_param_id": 55700000,
       "variant_name": "Marionette Soldier (SoTE)",
       "hp": 179,
       "_heritage_imported": true,
@@ -38756,7 +38756,7 @@
     {
       "c_prefix": "c5570",
       "npc_param_id": 55701100,
-      "think_param_id": 55701100,
+      "think_param_id": 55700000,
       "variant_name": "Marionette Soldier (SoTE)",
       "hp": 179,
       "_heritage_imported": true,
@@ -38765,7 +38765,7 @@
     {
       "c_prefix": "c5570",
       "npc_param_id": 55701190,
-      "think_param_id": 55701190,
+      "think_param_id": 55700000,
       "variant_name": "Marionette Soldier (SoTE)",
       "hp": 179,
       "_heritage_imported": true,
@@ -38774,7 +38774,7 @@
     {
       "c_prefix": "c5570",
       "npc_param_id": 55701200,
-      "think_param_id": 55701200,
+      "think_param_id": 55700000,
       "variant_name": "Marionette Soldier (SoTE)",
       "hp": 179,
       "_heritage_imported": true,
@@ -38783,7 +38783,7 @@
     {
       "c_prefix": "c5570",
       "npc_param_id": 55701290,
-      "think_param_id": 55701290,
+      "think_param_id": 55700000,
       "variant_name": "Marionette Soldier (SoTE)",
       "hp": 179,
       "_heritage_imported": true,
@@ -38801,7 +38801,7 @@
     {
       "c_prefix": "c5570",
       "npc_param_id": 55702090,
-      "think_param_id": 55702090,
+      "think_param_id": 55700000,
       "variant_name": "Marionette Soldier (SoTE)",
       "hp": 179,
       "_heritage_imported": true,
@@ -38819,7 +38819,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900081,
-      "think_param_id": 55900081,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38828,7 +38828,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900083,
-      "think_param_id": 55900083,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38837,7 +38837,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900087,
-      "think_param_id": 55900087,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38846,7 +38846,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900090,
-      "think_param_id": 55900090,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38855,7 +38855,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900091,
-      "think_param_id": 55900091,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38864,7 +38864,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900100,
-      "think_param_id": 55900100,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38873,7 +38873,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900180,
-      "think_param_id": 55900180,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38882,7 +38882,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900184,
-      "think_param_id": 55900184,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38891,7 +38891,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900190,
-      "think_param_id": 55900190,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38900,7 +38900,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900200,
-      "think_param_id": 55900200,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38909,7 +38909,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900300,
-      "think_param_id": 55900300,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38918,7 +38918,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900400,
-      "think_param_id": 55900400,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38927,7 +38927,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900483,
-      "think_param_id": 55900483,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38936,7 +38936,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900487,
-      "think_param_id": 55900487,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38945,7 +38945,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900500,
-      "think_param_id": 55900500,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38954,7 +38954,7 @@
     {
       "c_prefix": "c5590",
       "npc_param_id": 55900585,
-      "think_param_id": 55900585,
+      "think_param_id": 55900000,
       "variant_name": "Putrid Flesh (SoTE)",
       "hp": 275,
       "_heritage_imported": true,
@@ -38972,7 +38972,7 @@
     {
       "c_prefix": "c5591",
       "npc_param_id": 55910087,
-      "think_param_id": 55910087,
+      "think_param_id": 55910000,
       "variant_name": "Putrid Flesh Large (SoTE)",
       "hp": 1893,
       "_heritage_imported": true,
@@ -38981,7 +38981,7 @@
     {
       "c_prefix": "c5591",
       "npc_param_id": 55910400,
-      "think_param_id": 55910400,
+      "think_param_id": 55910000,
       "variant_name": "Putrid Flesh Large (SoTE)",
       "hp": 1893,
       "_heritage_imported": true,
@@ -38990,7 +38990,7 @@
     {
       "c_prefix": "c5591",
       "npc_param_id": 55910500,
-      "think_param_id": 55910500,
+      "think_param_id": 55910000,
       "variant_name": "Putrid Flesh Large (SoTE)",
       "hp": 1893,
       "_heritage_imported": true,
@@ -38999,7 +38999,7 @@
     {
       "c_prefix": "c5591",
       "npc_param_id": 55910587,
-      "think_param_id": 55910587,
+      "think_param_id": 55910000,
       "variant_name": "Putrid Flesh Large (SoTE)",
       "hp": 1893,
       "_heritage_imported": true,
@@ -39008,7 +39008,7 @@
     {
       "c_prefix": "c5591",
       "npc_param_id": 55917500,
-      "think_param_id": 55917500,
+      "think_param_id": 55910000,
       "variant_name": "Putrid Flesh Large (SoTE)",
       "hp": 1893,
       "_heritage_imported": true,
@@ -39017,7 +39017,7 @@
     {
       "c_prefix": "c5591",
       "npc_param_id": 55917587,
-      "think_param_id": 55917587,
+      "think_param_id": 55910000,
       "variant_name": "Putrid Flesh Large (SoTE)",
       "hp": 1893,
       "_heritage_imported": true,
@@ -39035,7 +39035,7 @@
     {
       "c_prefix": "c5850",
       "npc_param_id": 58500083,
-      "think_param_id": 58500083,
+      "think_param_id": 58500000,
       "variant_name": "Giant Ram",
       "hp": 448,
       "_heritage_imported": true,
@@ -39044,7 +39044,7 @@
     {
       "c_prefix": "c5850",
       "npc_param_id": 58500084,
-      "think_param_id": 58500084,
+      "think_param_id": 58500000,
       "variant_name": "Giant Ram",
       "hp": 448,
       "_heritage_imported": true,
@@ -39062,7 +39062,7 @@
     {
       "c_prefix": "c5850",
       "npc_param_id": 58500180,
-      "think_param_id": 58500180,
+      "think_param_id": 58500000,
       "variant_name": "Giant Ram",
       "hp": 448,
       "_heritage_imported": true,
@@ -39071,7 +39071,7 @@
     {
       "c_prefix": "c5850",
       "npc_param_id": 58500183,
-      "think_param_id": 58500183,
+      "think_param_id": 58500000,
       "variant_name": "Giant Ram",
       "hp": 448,
       "_heritage_imported": true,
@@ -39080,7 +39080,7 @@
     {
       "c_prefix": "c5850",
       "npc_param_id": 58500184,
-      "think_param_id": 58500184,
+      "think_param_id": 58500000,
       "variant_name": "Giant Ram",
       "hp": 448,
       "_heritage_imported": true,
@@ -39089,7 +39089,7 @@
     {
       "c_prefix": "c5850",
       "npc_param_id": 58500190,
-      "think_param_id": 58500190,
+      "think_param_id": 58500000,
       "variant_name": "Giant Ram",
       "hp": 448,
       "_heritage_imported": true,
@@ -39107,7 +39107,7 @@
     {
       "c_prefix": "c5871",
       "npc_param_id": 58710001,
-      "think_param_id": 58710001,
+      "think_param_id": 58710000,
       "variant_name": "Imp (Dragon Head)",
       "hp": 172,
       "_heritage_imported": true,
@@ -39116,7 +39116,7 @@
     {
       "c_prefix": "c5871",
       "npc_param_id": 58710090,
-      "think_param_id": 58710090,
+      "think_param_id": 58710000,
       "variant_name": "Imp (Dragon Head)",
       "hp": 172,
       "_heritage_imported": true,
@@ -39125,7 +39125,7 @@
     {
       "c_prefix": "c5871",
       "npc_param_id": 58710095,
-      "think_param_id": 58710095,
+      "think_param_id": 58710000,
       "variant_name": "Imp (Dragon Head)",
       "hp": 172,
       "_heritage_imported": true,
@@ -39134,7 +39134,7 @@
     {
       "c_prefix": "c5871",
       "npc_param_id": 58710100,
-      "think_param_id": 58710100,
+      "think_param_id": 58710000,
       "variant_name": "Imp (Dragon Head)",
       "hp": 172,
       "_heritage_imported": true,
@@ -39152,7 +39152,7 @@
     {
       "c_prefix": "c5930",
       "npc_param_id": 59300084,
-      "think_param_id": 59300084,
+      "think_param_id": 59300000,
       "variant_name": "Giant Skeleton (SoTE)",
       "hp": 671,
       "_heritage_imported": true,
@@ -39170,7 +39170,7 @@
     {
       "c_prefix": "c5930",
       "npc_param_id": 59301084,
-      "think_param_id": 59301084,
+      "think_param_id": 59300000,
       "variant_name": "Giant Skeleton (SoTE)",
       "hp": 613,
       "_heritage_imported": true,
@@ -39188,7 +39188,7 @@
     {
       "c_prefix": "c5931",
       "npc_param_id": 59310081,
-      "think_param_id": 59310081,
+      "think_param_id": 59310000,
       "variant_name": "Giant Beast Skeleton (SoTE)",
       "hp": 671,
       "_heritage_imported": true,
@@ -39197,7 +39197,7 @@
     {
       "c_prefix": "c5931",
       "npc_param_id": 59310084,
-      "think_param_id": 59310084,
+      "think_param_id": 59310000,
       "variant_name": "Giant Beast Skeleton (SoTE)",
       "hp": 671,
       "_heritage_imported": true,
@@ -39215,7 +39215,7 @@
     {
       "c_prefix": "c5931",
       "npc_param_id": 59311081,
-      "think_param_id": 59311081,
+      "think_param_id": 59310000,
       "variant_name": "Giant Beast Skeleton (SoTE)",
       "hp": 613,
       "_heritage_imported": true,
@@ -39224,7 +39224,7 @@
     {
       "c_prefix": "c5931",
       "npc_param_id": 59311084,
-      "think_param_id": 59311084,
+      "think_param_id": 59310000,
       "variant_name": "Giant Beast Skeleton (SoTE)",
       "hp": 613,
       "_heritage_imported": true,
@@ -39242,7 +39242,7 @@
     {
       "c_prefix": "c5940",
       "npc_param_id": 59400087,
-      "think_param_id": 59400087,
+      "think_param_id": 59400000,
       "variant_name": "Watcher Stones",
       "hp": 174,
       "_heritage_imported": true,
@@ -39260,7 +39260,7 @@
     {
       "c_prefix": "c5940",
       "npc_param_id": 59400187,
-      "think_param_id": 59400187,
+      "think_param_id": 59400000,
       "variant_name": "Watcher Stones",
       "hp": 174,
       "_heritage_imported": true,
@@ -39278,7 +39278,7 @@
     {
       "c_prefix": "c5940",
       "npc_param_id": 59400287,
-      "think_param_id": 59400287,
+      "think_param_id": 59400000,
       "variant_name": "Watcher Stones",
       "hp": 174,
       "_heritage_imported": true,
@@ -39287,7 +39287,7 @@
     {
       "c_prefix": "c5940",
       "npc_param_id": 59400300,
-      "think_param_id": 59400300,
+      "think_param_id": 59400000,
       "variant_name": "Watcher Stones",
       "hp": 174,
       "_heritage_imported": true,
@@ -39296,7 +39296,7 @@
     {
       "c_prefix": "c5940",
       "npc_param_id": 59400387,
-      "think_param_id": 59400387,
+      "think_param_id": 59400000,
       "variant_name": "Watcher Stones",
       "hp": 174,
       "_heritage_imported": true,
@@ -39305,7 +39305,7 @@
     {
       "c_prefix": "c5940",
       "npc_param_id": 59400400,
-      "think_param_id": 59400400,
+      "think_param_id": 59400000,
       "variant_name": "Watcher Stones",
       "hp": 174,
       "_heritage_imported": true,
@@ -39314,7 +39314,7 @@
     {
       "c_prefix": "c5940",
       "npc_param_id": 59400487,
-      "think_param_id": 59400487,
+      "think_param_id": 59400000,
       "variant_name": "Watcher Stones",
       "hp": 174,
       "_heritage_imported": true,
@@ -39332,7 +39332,7 @@
     {
       "c_prefix": "c5940",
       "npc_param_id": 59401087,
-      "think_param_id": 59401087,
+      "think_param_id": 59400000,
       "variant_name": "Watcher Stones",
       "hp": 174,
       "_heritage_imported": true,
@@ -39350,7 +39350,7 @@
     {
       "c_prefix": "c5990",
       "npc_param_id": 59900090,
-      "think_param_id": 59900090,
+      "think_param_id": 59900000,
       "variant_name": "Basilisk (SoTE)",
       "hp": 338,
       "_heritage_imported": true,
@@ -39359,7 +39359,7 @@
     {
       "c_prefix": "c5990",
       "npc_param_id": 59900094,
-      "think_param_id": 59900094,
+      "think_param_id": 59900000,
       "variant_name": "Basilisk (SoTE)",
       "hp": 338,
       "_heritage_imported": true,
@@ -39368,7 +39368,7 @@
     {
       "c_prefix": "c5990",
       "npc_param_id": 59900095,
-      "think_param_id": 59900095,
+      "think_param_id": 59900000,
       "variant_name": "Basilisk (SoTE)",
       "hp": 338,
       "_heritage_imported": true,
@@ -39395,7 +39395,7 @@
     {
       "c_prefix": "c5990",
       "npc_param_id": 59900294,
-      "think_param_id": 59900294,
+      "think_param_id": 59900000,
       "variant_name": "Basilisk (SoTE)",
       "hp": 127,
       "_heritage_imported": true,
@@ -39413,7 +39413,7 @@
     {
       "c_prefix": "c5380",
       "npc_param_id": 53800081,
-      "think_param_id": 53800081,
+      "think_param_id": 53800000,
       "variant_name": "Miranda Blossom (SoTE)",
       "hp": 1939,
       "_heritage_imported": true,
@@ -39422,7 +39422,7 @@
     {
       "c_prefix": "c5380",
       "npc_param_id": 53800084,
-      "think_param_id": 53800084,
+      "think_param_id": 53800000,
       "variant_name": "Miranda Blossom (SoTE)",
       "hp": 1939,
       "_heritage_imported": true,
@@ -39431,7 +39431,7 @@
     {
       "c_prefix": "c5380",
       "npc_param_id": 53800090,
-      "think_param_id": 53800090,
+      "think_param_id": 53800000,
       "variant_name": "Miranda Blossom (SoTE)",
       "hp": 1939,
       "_heritage_imported": true,
@@ -39440,7 +39440,7 @@
     {
       "c_prefix": "c5380",
       "npc_param_id": 53800091,
-      "think_param_id": 53800091,
+      "think_param_id": 53800000,
       "variant_name": "Miranda Blossom (SoTE)",
       "hp": 1939,
       "_heritage_imported": true,
@@ -39449,7 +39449,7 @@
     {
       "c_prefix": "c5380",
       "npc_param_id": 53800094,
-      "think_param_id": 53800094,
+      "think_param_id": 53800000,
       "variant_name": "Miranda Blossom (SoTE)",
       "hp": 1939,
       "_heritage_imported": true,
@@ -39467,7 +39467,7 @@
     {
       "c_prefix": "c5380",
       "npc_param_id": 53800284,
-      "think_param_id": 53800284,
+      "think_param_id": 53800000,
       "variant_name": "Miranda Blossom (SoTE)",
       "hp": 1939,
       "_heritage_imported": true,
@@ -39485,7 +39485,7 @@
     {
       "c_prefix": "c5380",
       "npc_param_id": 53800390,
-      "think_param_id": 53800390,
+      "think_param_id": 53800000,
       "variant_name": "Miranda Blossom (SoTE)",
       "hp": 1939,
       "_heritage_imported": true,
@@ -39503,7 +39503,7 @@
     {
       "c_prefix": "c5381",
       "npc_param_id": 53810081,
-      "think_param_id": 53810081,
+      "think_param_id": 53810000,
       "variant_name": "Miranda Sprout (SoTE)",
       "hp": 119,
       "_heritage_imported": true,
@@ -39512,7 +39512,7 @@
     {
       "c_prefix": "c5381",
       "npc_param_id": 53810084,
-      "think_param_id": 53810084,
+      "think_param_id": 53810000,
       "variant_name": "Miranda Sprout (SoTE)",
       "hp": 119,
       "_heritage_imported": true,
@@ -39521,7 +39521,7 @@
     {
       "c_prefix": "c5381",
       "npc_param_id": 53810090,
-      "think_param_id": 53810090,
+      "think_param_id": 53810000,
       "variant_name": "Miranda Sprout (SoTE)",
       "hp": 119,
       "_heritage_imported": true,
@@ -39530,7 +39530,7 @@
     {
       "c_prefix": "c5381",
       "npc_param_id": 53810091,
-      "think_param_id": 53810091,
+      "think_param_id": 53810000,
       "variant_name": "Miranda Sprout (SoTE)",
       "hp": 119,
       "_heritage_imported": true,
@@ -39539,7 +39539,7 @@
     {
       "c_prefix": "c5381",
       "npc_param_id": 53810094,
-      "think_param_id": 53810094,
+      "think_param_id": 53810000,
       "variant_name": "Miranda Sprout (SoTE)",
       "hp": 119,
       "_heritage_imported": true,
@@ -39557,7 +39557,7 @@
     {
       "c_prefix": "c5381",
       "npc_param_id": 53810284,
-      "think_param_id": 53810284,
+      "think_param_id": 53810000,
       "variant_name": "Miranda Sprout (SoTE)",
       "hp": 119,
       "_heritage_imported": true,
@@ -39575,7 +39575,7 @@
     {
       "c_prefix": "c5381",
       "npc_param_id": 53810390,
-      "think_param_id": 53810390,
+      "think_param_id": 53810000,
       "variant_name": "Miranda Sprout (SoTE)",
       "hp": 119,
       "_heritage_imported": true,
@@ -39593,7 +39593,7 @@
     {
       "c_prefix": "c5381",
       "npc_param_id": 53811081,
-      "think_param_id": 53811081,
+      "think_param_id": 53810000,
       "variant_name": "Miranda Sprout (SoTE)",
       "hp": 119,
       "_heritage_imported": true,
@@ -39620,7 +39620,7 @@
     {
       "c_prefix": "c5381",
       "npc_param_id": 53811390,
-      "think_param_id": 53811390,
+      "think_param_id": 53810000,
       "variant_name": "Miranda Sprout (SoTE)",
       "hp": 119,
       "_heritage_imported": true,
@@ -39638,7 +39638,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54210080,
-      "think_param_id": 54210080,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39647,7 +39647,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54210083,
-      "think_param_id": 54210083,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39656,7 +39656,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54210084,
-      "think_param_id": 54210084,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39665,7 +39665,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54210090,
-      "think_param_id": 54210090,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39674,7 +39674,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54210093,
-      "think_param_id": 54210093,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39683,7 +39683,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54211000,
-      "think_param_id": 54211000,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39692,7 +39692,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54211080,
-      "think_param_id": 54211080,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39701,7 +39701,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54211081,
-      "think_param_id": 54211081,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39710,7 +39710,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54211083,
-      "think_param_id": 54211083,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39719,7 +39719,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54211084,
-      "think_param_id": 54211084,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39728,7 +39728,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54211090,
-      "think_param_id": 54211090,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39737,7 +39737,7 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54211093,
-      "think_param_id": 54211093,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
@@ -39746,11 +39746,65 @@
     {
       "c_prefix": "c5421",
       "npc_param_id": 54211094,
-      "think_param_id": 54211094,
+      "think_param_id": 54210000,
       "variant_name": "Red Bear",
       "hp": 681,
       "_heritage_imported": true,
       "has_reward": false
+    },
+    {
+      "c_prefix": "c5120",
+      "npc_param_id": 51200000,
+      "think_param_id": 51200000,
+      "variant_name": "Bayle the Dread",
+      "hp": 2712,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5120",
+      "npc_param_id": 51200001,
+      "think_param_id": 51200000,
+      "variant_name": "Bayle the Dread",
+      "hp": 2712,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5120",
+      "npc_param_id": 51200085,
+      "think_param_id": 51200000,
+      "variant_name": "Bayle the Dread",
+      "hp": 2712,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5140",
+      "npc_param_id": 51400000,
+      "think_param_id": 51400000,
+      "variant_name": "Messmer the Impaler (Phase 2)",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5140",
+      "npc_param_id": 51400001,
+      "think_param_id": 51400000,
+      "variant_name": "Messmer the Impaler (Phase 2)",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
+    },
+    {
+      "c_prefix": "c5140",
+      "npc_param_id": 51400099,
+      "think_param_id": 51400000,
+      "variant_name": "Messmer the Impaler (Phase 2)",
+      "hp": 2963,
+      "_heritage_imported": true,
+      "has_reward": true
     }
   ],
   "canonical_targets": [
@@ -41283,4 +41337,4 @@
       "variants": 2
     }
   ]
-} 
+}

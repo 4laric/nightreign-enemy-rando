@@ -4,7 +4,7 @@
   "_excluded": {
     "two_entity_swaps": "Rennala c2030->c2031 and Godfrey c4720->Hoarah Loux c4721 use a different mechanism (second chr warped in) and need second-entity placement handling, NOT this re-enable.",
     "single_phase": "c8200, Romina c5030 have no phase transition; no re-enable needed, free to take name-marker terrain slots. (Manus c8500 was originally in this set on the assumption it was single-phase; v0.27.48 playtest established it has a c8300-class HP-threshold freeze and is banned outright in mmv_imports.json blacklist_when_active.phase_transition_broken, so no re-enable would help anyway.)",
-    "unclassified": "Fortissax c4511, c8400 had no battle.lua available to fingerprint."
+    "unclassified": "Fortissax c4511 had no battle.lua available to fingerprint."
   },
   "markers": {
     "c8300": 11300,

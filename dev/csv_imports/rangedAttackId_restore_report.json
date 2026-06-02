@@ -1,0 +1,144 @@
+{
+  "_meta": {
+    "description": "Restoration of rangedAttackId field on NpcThinkParam rows where the mod regulation has lowered the value below ER vanilla. Each CSV row replaces ONLY the rangedAttackId field; all other mod-specific tuning is preserved. Suspected cause of the Valiant Gargoyle missing-poison-breath issue and other muted-AI reports.",
+    "methodology": "1. For each NpcThinkParam ID present in both the mod and ER, compare rangedAttackId. 2. If mod < ER (numerically; -1 treated as least), include the row in the restore set with rangedAttackId = ER value. 3. If mod >= ER, leave it alone (deliberate mod aggression).",
+    "csv_target": "NpcThinkParam",
+    "csv_schema": "110 columns, NR/mod schema (includes unknown_1..4, no pad4)",
+    "apply_via": "Smithbox CSV import on NpcThinkParam",
+    "rows_in_csv": 12
+  },
+  "changes": [
+    {
+      "id": 25000040,
+      "cp": "c2500",
+      "name": "Crucible Knight (Unscaled)",
+      "tier": "night_boss",
+      "rangedAttackId": {
+        "mod_value": "-1",
+        "er_value": "3012",
+        "restored_to": "3012"
+      }
+    },
+    {
+      "id": 43830010,
+      "cp": "c4383",
+      "name": "Glintstone Digger",
+      "tier": "grunt",
+      "rangedAttackId": {
+        "mod_value": "-1",
+        "er_value": "3030",
+        "restored_to": "3030"
+      }
+    },
+    {
+      "id": 46000010,
+      "cp": "c4600",
+      "name": "Troll",
+      "tier": "miniboss",
+      "rangedAttackId": {
+        "mod_value": "-1",
+        "er_value": "20030",
+        "restored_to": "20030"
+      }
+    },
+    {
+      "id": 47705000,
+      "cp": "c4770",
+      "name": "Gargoyle",
+      "tier": "night_boss",
+      "rangedAttackId": {
+        "mod_value": "20024",
+        "er_value": "20026",
+        "restored_to": "20026"
+      }
+    },
+    {
+      "id": 47706000,
+      "cp": "c4770",
+      "name": "Gargoyle",
+      "tier": "night_boss",
+      "rangedAttackId": {
+        "mod_value": "20024",
+        "er_value": "20026",
+        "restored_to": "20026"
+      }
+    },
+    {
+      "id": 47706900,
+      "cp": "c4770",
+      "name": "Gargoyle",
+      "tier": "night_boss",
+      "rangedAttackId": {
+        "mod_value": "20024",
+        "er_value": "20026",
+        "restored_to": "20026"
+      }
+    },
+    {
+      "id": 50100000,
+      "cp": "c5010",
+      "name": "Golden Hippopotamus",
+      "tier": "field_boss",
+      "rangedAttackId": {
+        "mod_value": "-1",
+        "er_value": "3000",
+        "restored_to": "3000"
+      }
+    },
+    {
+      "id": 50100010,
+      "cp": "c5010",
+      "name": "Golden Hippopotamus",
+      "tier": "field_boss",
+      "rangedAttackId": {
+        "mod_value": "-1",
+        "er_value": "3000",
+        "restored_to": "3000"
+      }
+    },
+    {
+      "id": 50110000,
+      "cp": "c5011",
+      "name": "Golden Hippopotamus (Golden Wings)",
+      "tier": "night_boss",
+      "rangedAttackId": {
+        "mod_value": "-1",
+        "er_value": "3000",
+        "restored_to": "3000"
+      }
+    },
+    {
+      "id": 50110010,
+      "cp": "c5011",
+      "name": "Golden Hippopotamus (Golden Wings)",
+      "tier": "night_boss",
+      "rangedAttackId": {
+        "mod_value": "-1",
+        "er_value": "3000",
+        "restored_to": "3000"
+      }
+    },
+    {
+      "id": 53110010,
+      "cp": "c5311",
+      "name": "Inquisitor (Candles)",
+      "tier": "miniboss",
+      "rangedAttackId": {
+        "mod_value": "-1",
+        "er_value": "3020",
+        "restored_to": "3020"
+      }
+    },
+    {
+      "id": 53111010,
+      "cp": "c5311",
+      "name": "Inquisitor (Candles)",
+      "tier": "miniboss",
+      "rangedAttackId": {
+        "mod_value": "-1",
+        "er_value": "3020",
+        "restored_to": "3020"
+      }
+    }
+  ]
+}

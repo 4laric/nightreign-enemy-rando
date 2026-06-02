@@ -1,0 +1,402 @@
+{
+  "_meta": {
+    "description": "Cap-group definitions for V3_UNIQUE_TARGET_CAPS. When two or more c-prefixes share a 'cap group', the placement engine's count-toward-cap logic treats them as a single account: a placement of any member increments the group's count, the cap applies to the group sum, and reaching the cap blocks all members from subsequent slots.",
+    "motivation": "ER/SoTE re-use c-prefixes (c3251 Tree Sentinel / c6251 Tree Sentinel SoTE, c4191 Scarab / c6201 Scarab, etc.) represent the same chr identity from a player-recognition standpoint. Without a shared cap, both prefixes can place independently (e.g. 2 + 2 = 4 Tree Sentinels in a run), breaking the rarity contract per-prefix caps were chosen for.",
+    "schema": {
+      "groups": "dict from group name (string, snake_case) to a list of c-prefixes that share the cap. Group cap value is read from V3_UNIQUE_TARGET_CAPS — every member must have the same cap value in V3_UNIQUE_TARGET_CAPS, or a HIGH-severity audit finding fires.",
+      "name_format": "snake_case; lowercase; descriptive ('tree_sentinel_iconic', 'scarab_unified'); avoid version numbers.",
+      "membership": "Every cp in a group must (a) exist in nr_enemy_tags.json and (b) have an identical 'cap' value in V3_UNIQUE_TARGET_CAPS.",
+      "uniqueness": "Each cp may appear in AT MOST one group. The audit script enforces this.",
+      "carrying_cap": "The cap value lives on each member's V3_UNIQUE_TARGET_CAPS entry, NOT here. This file is purely the grouping. Rationale: keep cap-value tuning in one place (the existing dict) — this file only changes what counts the cap is *across*."
+    },
+    "engine_behavior": {
+      "accounting_key": "When evaluating cap-block / increment / reserve-against, the engine resolves each cp through _resolve_cap_group_key(cp) which returns the group name if cp is in a group, else cp itself. All cap reads and writes use the resolved key.",
+      "reservation_pass": "The reservation pre-pass iterates V3_RESERVATION_FLOORS unchanged. When the pre-pass tries to reserve N slots for cp X (which is in group G), it consults _placed_counts[G] (not [X]) and reserves up to (cap_G - placed_G - already_preserved_G) slots, where already_preserved_G is the sum of preserves for every cp in G.",
+      "msb_freeze": "begin_msb's frozen blocked set computes group counts; if a group is at/over cap, EVERY cp in the group is added to msb_blocked_cps.",
+      "telemetry": "Reservation log and audit_placement_budget_consistency report cap state by GROUP for grouped cps, by CP for ungrouped. Spoiler-format compatible: grouped placements still show their cp name, but cap-state summary lines list 'group=<name>: N/cap members={cp1, cp2, ...}'."
+    }
+  },
+  "groups": {
+    "tree_sentinel_iconic": {
+      "members": [
+        "c3251",
+        "c6251"
+      ],
+      "rationale": "Both are mounted Tree Sentinel — same chr identity. c3251 is the ER duo / Altus overworld variant; c6251 is the SoTE-area variant."
+    }
+  },
+  "_pending_after_other_cps_wired": {
+    "_note": "These groups are documented in dev/CAP_FOLD_CANDIDATES.md but NOT yet active. Each can be moved into the `groups` section above to fold its cps under a shared cap. Groups marked `kind=one_capped` are ready to fold today (existing cap on one member covers the group). Others need a cap value authored on one of the members in V3_UNIQUE_TARGET_CAPS before the fold takes behaviour effect.",
+    "candidate_pairings": [
+      {
+        "group_name_suggestion": "albinauric_archer_iconic",
+        "members": [
+          "c3170",
+          "c6210"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both Albinauric Archers. NB: c3170 is in V3_EXCLUDE_PREFIXES (rider component, excluded as both source and target). Group exists for completeness; only c6210 is functionally placeable."
+      },
+      {
+        "group_name_suggestion": "basilisk_iconic",
+        "members": [
+          "c4150",
+          "c5990"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 338 HP S basilisks. SoTE shipped the same enemy in DLC-cp-range."
+      },
+      {
+        "group_name_suggestion": "demi_human_chief_iconic",
+        "members": [
+          "c4120",
+          "c5720"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 534 HP demi-human chiefs."
+      },
+      {
+        "group_name_suggestion": "demi_human_shaman_iconic",
+        "members": [
+          "c4110",
+          "c5710"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 599 HP demi-human shamans (XS/S size variance)."
+      },
+      {
+        "group_name_suggestion": "giant_beast_skeleton_iconic",
+        "members": [
+          "c3061",
+          "c5931"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 671 HP giant beast skeletons. Tier disagreement same as above."
+      },
+      {
+        "group_name_suggestion": "giant_rat_iconic",
+        "members": [
+          "c4090",
+          "c5761"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 556 HP giant rats. Size class differs cosmetically (M vs S)."
+      },
+      {
+        "group_name_suggestion": "giant_skeleton_iconic",
+        "members": [
+          "c3060",
+          "c5930"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 671 HP giant skeletons. Tier disagreement (miniboss vs grunt) is classification variance not chr identity."
+      },
+      {
+        "group_name_suggestion": "glintstone_sorcerer_iconic",
+        "members": [
+          "c3702",
+          "c6232"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both Glintstone Sorcerers. hp 232 vs 267 is mod-side data variance."
+      },
+      {
+        "group_name_suggestion": "guardian_golem_iconic",
+        "members": [
+          "c4660",
+          "c5790"
+        ],
+        "confidence": "HIGH",
+        "kind": "one_capped",
+        "rationale": "Guardian Golem: c4660 (vanilla GIGA, cap=2) + c5790 (SoTE XL re-import, uncapped). Folding makes the existing cap=2 apply to both.",
+        "existing_cap": "c4660:2"
+      },
+      {
+        "group_name_suggestion": "living_jar_warrior_iconic",
+        "members": [
+          "c4490",
+          "c5750"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 449 HP living jar warriors."
+      },
+      {
+        "group_name_suggestion": "man_bat_iconic",
+        "members": [
+          "c4200",
+          "c5530"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 430 HP man-bats. S vs M size variance."
+      },
+      {
+        "group_name_suggestion": "misbegotten_iconic",
+        "members": [
+          "c3450",
+          "c6290"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both Misbegotten. NB: hp differs in tags (2640 vs 192) — this is a tags-side data issue, not a chr-identity issue. They are the same."
+      },
+      {
+        "group_name_suggestion": "page_iconic",
+        "members": [
+          "c3703",
+          "c6233"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 582 HP pages."
+      },
+      {
+        "group_name_suggestion": "perfumer_iconic",
+        "members": [
+          "c3701",
+          "c6231"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both Perfumers."
+      },
+      {
+        "group_name_suggestion": "rat_iconic",
+        "members": [
+          "c4080",
+          "c5760"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 162 HP rats. SoTE re-import; XS vs S size variance."
+      },
+      {
+        "group_name_suggestion": "royal_revenant_iconic",
+        "members": [
+          "c4020",
+          "c6270"
+        ],
+        "confidence": "HIGH",
+        "kind": "one_capped",
+        "rationale": "Royal Revenant: c4020 (vanilla cap=8) + c6270 (SoTE uncapped). Existing cap=8 applies to both.",
+        "existing_cap": "c4020:8"
+      },
+      {
+        "group_name_suggestion": "runebear_iconic",
+        "members": [
+          "c4630",
+          "c5780"
+        ],
+        "confidence": "HIGH",
+        "kind": "one_capped",
+        "rationale": "Runebear: c4630 (vanilla cap=2) + c5780 (SoTE uncapped). Existing cap=2 applies to both.",
+        "existing_cap": "c4630:2"
+      },
+      {
+        "group_name_suggestion": "scaly_misbegotten_iconic",
+        "members": [
+          "c3451",
+          "c6291"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 531 HP scaly misbegotten."
+      },
+      {
+        "group_name_suggestion": "scarab_iconic",
+        "members": [
+          "c4190",
+          "c6201"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both Scarabs (small loot bugs). NB: c4191 is in V3_EXCLUDE_PREFIXES; only c4190 + c6201 are placeable, and they fold together."
+      },
+      {
+        "group_name_suggestion": "tibia_mariner_iconic",
+        "members": [
+          "c4950",
+          "c5620"
+        ],
+        "confidence": "HIGH",
+        "kind": "tier_swing",
+        "rationale": "Tibia Mariner: c4950 (night_boss tier, vanilla) vs c5620 (miniboss tier, SoTE re-import). Both 1918 HP — same chr at different tier classification."
+      },
+      {
+        "group_name_suggestion": "troll_iconic",
+        "members": [
+          "c4600",
+          "c5390"
+        ],
+        "confidence": "HIGH",
+        "kind": "one_capped",
+        "rationale": "Troll: c4600 (vanilla cap=6) + c5390 (SoTE uncapped). Existing cap=6 applies to both.",
+        "existing_cap": "c4600:6"
+      },
+      {
+        "group_name_suggestion": "troll_knight_iconic",
+        "members": [
+          "c4601",
+          "c5391"
+        ],
+        "confidence": "HIGH",
+        "kind": "one_capped",
+        "rationale": "Troll Knight: c4601 (vanilla cap=6) + c5391 (SoTE uncapped). Existing cap=6 applies to both.",
+        "existing_cap": "c4601:6"
+      },
+      {
+        "group_name_suggestion": "ulcerated_tree_spirit_iconic",
+        "members": [
+          "c4640",
+          "c5960"
+        ],
+        "confidence": "HIGH",
+        "kind": "one_capped",
+        "rationale": "Ulcerated Tree Spirit: c4640 (vanilla cap=2) + c5960 (SoTE uncapped). Existing cap=2 applies to both.",
+        "existing_cap": "c4640:2"
+      },
+      {
+        "group_name_suggestion": "wandering_noble_iconic",
+        "members": [
+          "c4300",
+          "c6320"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both 85 HP wandering nobles. Exactly identical."
+      },
+      {
+        "group_name_suggestion": "wolf_iconic",
+        "members": [
+          "c4070",
+          "c6220"
+        ],
+        "confidence": "HIGH",
+        "kind": "identical_stats",
+        "rationale": "Both wolves. The mod has c6220 at 2498hp vs c4070 at 78hp — that mismatch reflects an SoTE variant scaling issue worth investigating but doesn't change identity."
+      },
+      {
+        "group_name_suggestion": "abductor_virgin_iconic",
+        "members": [
+          "c4470",
+          "c5970"
+        ],
+        "confidence": "MED",
+        "kind": "size_variance",
+        "rationale": "Abductor Virgin: c4470 XL/1601hp vs c5970 M/1418hp. Smaller SoTE variant but same chr — c5970 is the \"field abductor\" form, c4470 the \"fort\" form."
+      },
+      {
+        "group_name_suggestion": "fallingstar_beast_iconic",
+        "members": [
+          "c4680",
+          "c6310"
+        ],
+        "confidence": "MED",
+        "kind": "tier_swing",
+        "rationale": "Fallingstar Beast: c4680 (night_boss cap=2, full-grown) vs c6310 (miniboss, SoTE field variant). Same chr, two scales.",
+        "existing_cap": "c4680:2"
+      },
+      {
+        "group_name_suggestion": "inquisitor_iconic",
+        "members": [
+          "c5311",
+          "c5312"
+        ],
+        "confidence": "MED",
+        "kind": "identity",
+        "rationale": "Inquisitor: c5311 Candles vs c5312 Staff. Same chr identity with two weapon loadouts. The hp gap (173 vs 1722) reflects difficulty variants."
+      },
+      {
+        "group_name_suggestion": "jar_innards_iconic",
+        "members": [
+          "c5270",
+          "c5271"
+        ],
+        "confidence": "MED",
+        "kind": "size_variance",
+        "rationale": "Jar Innards: c5270 grunt L vs c5271 miniboss XL. Two sizes of the same pop-out enemy."
+      },
+      {
+        "group_name_suggestion": "lamprey_iconic",
+        "members": [
+          "c5060",
+          "c5061"
+        ],
+        "confidence": "MED",
+        "kind": "size_variance",
+        "rationale": "Lamprey: c5060 grunt L vs c5061 miniboss XL. Two sizes of the same cluster enemy."
+      },
+      {
+        "group_name_suggestion": "leonine_misbegotten_iconic",
+        "members": [
+          "c3460",
+          "c5950"
+        ],
+        "confidence": "MED",
+        "kind": "size_variance",
+        "rationale": "Leonine Misbegotten: hp 1240 vs 564 (M/M). SoTE field variant."
+      },
+      {
+        "group_name_suggestion": "miranda_blossom_iconic",
+        "members": [
+          "c4480",
+          "c5380"
+        ],
+        "confidence": "MED",
+        "kind": "tier_swing",
+        "rationale": "Miranda Blossom: c4480 (XL miniboss cap=1, the boss form) vs c5380 (M grunt, the field summon form). Tier swing is intentional in the data — the boss-encounter is c4480, field encounters are c5380. Folding ensures the rare-boss cap of 1 isn't doubled.",
+        "existing_cap": "c4480:1"
+      },
+      {
+        "group_name_suggestion": "omenkiller_iconic",
+        "members": [
+          "c4820",
+          "c5980"
+        ],
+        "confidence": "MED",
+        "kind": "size_variance",
+        "rationale": "Omenkiller: c4820 L/986hp vs c5980 M/429hp. Same chr at different scales."
+      },
+      {
+        "group_name_suggestion": "shade_iconic",
+        "members": [
+          "c5511",
+          "c5512"
+        ],
+        "confidence": "MED",
+        "kind": "size_variance",
+        "rationale": "Shade: c5511 vs c5512, small hp gap (376 vs 626). Two scales of same chr."
+      },
+      {
+        "group_name_suggestion": "hippopotamus_iconic",
+        "members": [
+          "c5010",
+          "c5011"
+        ],
+        "confidence": "LOW",
+        "kind": "phases",
+        "rationale": "Golden Hippopotamus: c5010 field_boss (phase 1 base) + c5011 night_boss (Golden Wings, cap=2). Two phases of the same named boss; cap=2 already reflects the desired rarity. Folding ensures players don't encounter both phases as if they were separate bosses.",
+        "existing_cap": "c5011:2"
+      },
+      {
+        "group_name_suggestion": "miranda_sprout_iconic",
+        "members": [
+          "c4481",
+          "c5381"
+        ],
+        "confidence": "LOW",
+        "kind": "sprouts",
+        "rationale": "Miranda Sprout: c4481 (vanilla M) + c5381 (SoTE XS). Field summons of the Miranda Blossom encounter. Less player-recognizable as \"the same boss\" than the blossom itself — these are basically environmental hazards."
+      }
+    ]
+  }
+}

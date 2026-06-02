@@ -1,0 +1,37 @@
+{
+  "_doc": "All-arenas whitelist for one-seed-many-Nightlords sweeps. Buckets are split by pool-majority for readability; engine treats nb1 and nb2 identically.",
+  "_version": "v0.28.x",
+  "_test_note": "Sweep mode: all 28 NB arenas active. Restore V1 picks via --restore-v1 when sweep is complete.",
+  "nb1": [
+    "m47_70_00_00",
+    "m47_80_00_00",
+    "m47_90_00_00",
+    "m48_00_00_00",
+    "m48_10_00_00",
+    "m48_70_00_00",
+    "m48_90_00_00",
+    "m49_10_00_00",
+    "m49_17_00_00",
+    "m49_24_00_00",
+    "m49_26_00_00",
+    "m49_27_00_00",
+    "m49_28_00_00",
+    "m49_29_00_00",
+    "m49_30_00_00",
+    "m49_90_00_00"
+  ],
+  "nb2": [
+    "m48_20_00_00",
+    "m48_30_00_00",
+    "m48_40_00_00",
+    "m48_50_00_00",
+    "m48_60_00_00",
+    "m48_80_00_00",
+    "m49_18_00_00",
+    "m49_19_00_00",
+    "m49_20_00_00",
+    "m49_21_00_00",
+    "m49_23_00_00",
+    "m49_25_00_00"
+  ]
+}

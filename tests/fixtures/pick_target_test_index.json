@@ -1,0 +1,377 @@
+{
+  "TestC4281DemotionLockin": [
+    "test_c4281_still_fragile_sensitive_for_backstop",
+    "test_insectoid_family_uniformly_sensitive_or_safe"
+  ],
+  "TestC5930C6220InvisibleBan": [
+    "test_c2274_NOT_banned",
+    "test_c5930_capped",
+    "test_c5930_no_longer_excluded",
+    "test_c6220_capped",
+    "test_c6220_no_longer_excluded"
+  ],
+  "TestCanonicalVariantPreference": [
+    "test_classify_canonical",
+    "test_classify_ghost_variant",
+    "test_classify_imported_chr",
+    "test_classify_unknown_cp_returns_unknown",
+    "test_filter_canonical_variants_empty_input",
+    "test_filter_canonical_variants_no_canonicals_falls_back",
+    "test_filter_canonical_variants_with_canonicals",
+    "test_picker_falls_back_when_no_canonical",
+    "test_picker_prefers_canonical_when_available",
+    "test_picker_with_canonical_pref_disabled",
+    "test_v3_prefer_canonical_default_is_true"
+  ],
+  "TestCaveMouthTrollYRaise": [
+    "test_all_three_phases_have_pi31",
+    "test_xz_unchanged",
+    "test_y_raised_by_2m"
+  ],
+  "TestCrossPhaseReposExtension": [
+    "test_all_three_phases_have_pi19_pi20",
+    "test_cross_phase_positions_match"
+  ],
+  "TestDataDrivenNoFileChrs": [
+    "test_all_data_file_entries_in_exclude_set",
+    "test_data_file_exists_and_loads"
+  ],
+  "TestDeathKnightTierPromotion": [
+    "test_c5070_effective_tier_is_miniboss",
+    "test_c5070_native_tier_is_miniboss"
+  ],
+  "TestDemotionAnimCompatNbMarker": [
+    "test_c3100_and_c5810_same_quirk",
+    "test_c4130_expects_boss_arena_is_false",
+    "test_nb_marker_set_covers_expected_names"
+  ],
+  "TestDumpOnlyChrHardExclude": [
+    "test_all_8_in_hard_exclude",
+    "test_dump_only_chrs_are_post_dlc_source",
+    "test_dump_only_chrs_have_no_canonical_variants"
+  ],
+  "TestEndToEndPickTargetThreading": [
+    "test_pick_target_cp_receives_gates_from_cmd_shuffle_v3"
+  ],
+  "TestEntranceAnimationGateV0_24_79": [
+    "test_centipede_demon_still_lands_at_fort",
+    "test_emerge_anim_passes_at_regular_slot",
+    "test_emerge_anim_rejected_at_no_emerge_slot",
+    "test_entrance_anim_dict_loaded",
+    "test_file_meta_carries_provenance",
+    "test_full_entry_metadata_accessible",
+    "test_no_emerge_slots_loaded",
+    "test_seed_emerge_anim_chrs_present",
+    "test_unknown_chr_passes_at_no_emerge_slot"
+  ],
+  "TestFieldRollTierWithFieldBoss": [
+    "test_four_outcomes_reachable_at_defaults",
+    "test_promote_draw_independent_of_primary_roll",
+    "test_promote_one_all_field_boss_becomes_night_boss",
+    "test_promote_zero_field_boss_stays_field_boss",
+    "test_roll_is_deterministic_per_slot"
+  ],
+  "TestFlyingRequiredSlots": [
+    "test_flying_dragon_accepted_at_flying_slot",
+    "test_non_flying_slot_not_affected"
+  ],
+  "TestForbiddenBySourceAnim": [
+    "test_v0_24_26_score_slot_allows_compatible_source_anim"
+  ],
+  "TestFortGuardianGolemRestoredV0_24_77": [
+    "test_c4810_rejected_at_fort",
+    "test_c7710_allowed_at_fort",
+    "test_fort_back_in_problem_slots",
+    "test_fort_emerge_anim_banned",
+    "test_fort_extra_allows_preserves_centipede_demon"
+  ],
+  "TestGate4AnimClassRejection": [
+    "test_legacy_slot_now_catches_anim_class_quadruped",
+    "test_red_wolf_rejected_at_m46_77",
+    "test_runebear_rejected_at_m46_77"
+  ],
+  "TestGate4BearRatParity": [
+    "test_bear_now_rejected_at_default_loco3_slot",
+    "test_goat_now_rejected_at_prophylactic_slot",
+    "test_humanoid_at_same_slot_still_passes",
+    "test_quadruped_large_caught_by_prefix_match",
+    "test_rat_still_rejected",
+    "test_unflagged_slots_unaffected"
+  ],
+  "TestGate4EncampmentSlots": [
+    "test_bear_at_encampment_slot_rejected",
+    "test_goat_at_encampment_slot_rejected",
+    "test_humanoid_at_encampment_slot_allowed",
+    "test_loco_0_doesnt_save_them",
+    "test_non_flagged_pi_in_same_msb_unaffected",
+    "test_prefix_match_catches_quadruped_large"
+  ],
+  "TestGate5_5GruntTrashAtBossBar": [
+    "test_c3664_at_field_boss_rejected",
+    "test_c3664_at_named_boss_rejected",
+    "test_c3664_at_walk_route_filler_allowed",
+    "test_c3664_demoted_to_grunt",
+    "test_c3664_removed_from_fragile_safe_confirmed",
+    "test_exempt_grunt_in_safe_confirmed_allowed",
+    "test_exempt_set_covers_at_least_85_grunts_at_boss_bar",
+    "test_field_boss_tier_active",
+    "test_giant_rat_rejected_at_named_boss",
+    "test_miniboss_tier_unaffected",
+    "test_miranda_sprout_rejected_at_named_boss",
+    "test_night_boss_tier_unaffected",
+    "test_slot_not_in_catalog_not_gated",
+    "test_smoking_gun_c3664_at_encampment_rejected",
+    "test_v3_boss_bar_gated_tiers_is_grunt_and_trash",
+    "test_v3_boss_bar_tiers_defined"
+  ],
+  "TestGate5_6XxlGigaSourceIntegrity": [
+    "test_anim_drift_gate_removed",
+    "test_same_chr_preserved_allowed",
+    "test_source_not_xxl_or_giga_skipped",
+    "test_unique_reservation_honors_gate_via_delegation",
+    "test_xxl_to_l_allowed"
+  ],
+  "TestGate6ScriptSpawnBossOffArena": [
+    "test_all_script_spawn_boss_chrs_rejected_at_overworld",
+    "test_centipede_demon_allowed_at_m46",
+    "test_centipede_demon_still_allowed_at_arena_slot",
+    "test_centipede_grub_NOT_gated",
+    "test_gaping_dragon_allowed_at_m46_arena",
+    "test_loader_finds_4_arena_slots",
+    "test_non_script_spawn_unaffected",
+    "test_storm_king_no_longer_arena_gated"
+  ],
+  "TestGate7XxlAtSmallSlot": [
+    "test_gate_uniformly_applies_to_all_xxl",
+    "test_giga_caught_by_geometry_gate",
+    "test_l_at_m_slot_allowed",
+    "test_troll_at_m_slot_banned",
+    "test_troll_at_s_slot_banned",
+    "test_xxl_at_xl_slot_allowed",
+    "test_xxl_at_xxl_slot_allowed",
+    "test_xxl_quadruped_large_at_m_slot_banned"
+  ],
+  "TestGate7_8NavRequiredAtStubNavSlot": [
+    "test_fat_inquisitor_rejected_at_cave",
+    "test_overworld_fat_inquisitor_unaffected",
+    "test_overworld_unaffected_by_whitelist",
+    "test_stub_nav_predicate",
+    "test_vanilla_cave_chr_allowed",
+    "test_whitelist_includes_known_cave_chrs"
+  ],
+  "TestGhostExcludeAudit": [
+    "test_lifted_ghost_excludes_can_be_targets",
+    "test_only_c2040_in_ghost_exclude"
+  ],
+  "TestGhostflameDragonCap": [
+    "test_c5860_capped_at_2",
+    "test_c5860_nightboss_cap_vs_c5820_miniboss_cap"
+  ],
+  "TestGuardianGolemPoolLooseningsV0_24_75": [
+    "test_anim_class_drift_gate_removed",
+    "test_cathedral_big_wyrm_passes_fragile_filter",
+    "test_cathedral_dragons_whitelisted",
+    "test_cathedral_non_sensitive_chr_now_allowed",
+    "test_cathedral_sensitive_chr_still_rejected",
+    "test_m30_30_fort_gg_lifted",
+    "test_m38_00_cathedral_gg_still_fragile",
+    "test_merchant_pool_keeps_vanilla",
+    "test_merchant_pool_vanilla_restricted",
+    "test_problem_slot_extra_allows_exists",
+    "test_size_drift_gate_still_active",
+    "test_swap_compat_anim_class_helper_removed"
+  ],
+  "TestHasRewardPreservationGate": [
+    "test_recipient_with_has_reward_missing_is_not_constrained",
+    "test_returns_none_when_no_rewarded_target_available",
+    "test_rewarded_recipient_only_swaps_to_rewarded_target",
+    "test_unrewarded_recipient_can_swap_to_unrewarded_target"
+  ],
+  "TestIntroAnimRequiredGateV0_26_11": [
+    "test_cathedra_entry_records_confirmed_failure",
+    "test_death_knight_classified_no_intro_anim",
+    "test_death_knight_passes_at_other_slot_in_same_msb",
+    "test_death_knight_passes_at_unrelated_slot",
+    "test_death_knight_rejected_at_cathedra",
+    "test_emerger_passes_at_cathedra",
+    "test_file_meta_carries_provenance",
+    "test_intro_anim_required_slots_loaded",
+    "test_no_intro_anim_class_in_taxonomy",
+    "test_unknown_chr_passes_at_cathedra"
+  ],
+  "TestManusUnBanned": [
+    "test_c8500_in_allowlist_override",
+    "test_c8500_still_mp_safe_blocked",
+    "test_c8500_tier_and_size",
+    "test_ds1_still_in_incompatible_origins"
+  ],
+  "TestMmvImportCap1": [
+    "test_mmv_imports_not_auto_capped",
+    "test_nr_placed_NOT_auto_capped"
+  ],
+  "TestMountAtNonMountSourceGate": [
+    "test_mount_prefixes_populated",
+    "test_non_mount_source_never_draws_a_mount",
+    "test_seed_ctd_check_clean_on_synthetic_nonmount_placement"
+  ],
+  "TestNightBossSlotCapExemption": [
+    "test_capped_cp_still_eligible_at_nb_slot",
+    "test_nb_slot_placement_does_not_bump_count",
+    "test_non_nb_slot_still_bumps_count"
+  ],
+  "TestNightBossSlotTierLadder": [
+    "test_nb_slot_admits_field_boss_tier_when_primary_empty",
+    "test_nb_slot_never_returns_miniboss_target",
+    "test_nb_slot_returns_none_when_ladder_exhausted"
+  ],
+  "TestOopsAllNbPinnedSlot": [
+    "test_cmd_shuffle_v3_signature_accepts_pinned_slot",
+    "test_impl_signature_accepts_pinned_slot",
+    "test_pinned_mode_disables_broad_scope_branch",
+    "test_pinned_slot_threads_through_cmd_shuffle_v3",
+    "test_shuffle_msb_v3_signature_accepts_pinned_slot",
+    "test_write_spoiler_logs_signature_accepts_pinned_slot"
+  ],
+  "TestPickTargetCpGateEffects": [
+    "test_arena_only_via_gates_blocks_non_arena_slot",
+    "test_exclude_target_prefixes_via_gates_filters_pool",
+    "test_ghost_exclude_via_gates_filters_pool"
+  ],
+  "TestPickTargetCpParity": [
+    "test_parity"
+  ],
+  "TestPickTargetCpSignature": [
+    "test_pick_target_accepts_gates",
+    "test_pick_target_cp_accepts_gates"
+  ],
+  "TestPreserveSlotsGate": [
+    "test_m46_62_cavalry_evergaol_preserved",
+    "test_m49_28_cavalry_nb_riders_preserved",
+    "test_non_preserved_slot_still_swaps"
+  ],
+  "TestProactiveNoTagDataBan": [
+    "test_all_26_proactive_bans_capped",
+    "test_c2274_giant_sleep_crab_un_banned_v0_24_41",
+    "test_playtest_confirmed_have_observed_metadata",
+    "test_proactive_bans_have_proactive_ban_flag"
+  ],
+  "TestQuadrupedUnsafeSlots": [
+    "test_catalog_is_frozenset",
+    "test_catalog_loaded",
+    "test_catalog_meta_has_entry",
+    "test_legacy_callers_unaffected",
+    "test_loader_resilient_to_malformed_json",
+    "test_loader_resilient_to_missing_file",
+    "test_picker_passes_slot_identity_to_predicate",
+    "test_predicate_allows_biped_at_quadruped_unsafe_slot",
+    "test_predicate_allows_quadruped_at_safe_slot",
+    "test_predicate_rejects_quadruped_at_unsafe_slot",
+    "test_scorer_passes_slot_identity_to_predicate",
+    "test_v0_24_32_slot_repositions_has_quadruped_safety_entry",
+    "test_v0_24_32_unverified_reposition_keeps_gate_active",
+    "test_v0_24_32_verified_reposition_releases_gate",
+    "test_v0_24_33_catalog_distinguishes_discovery_methods",
+    "test_v0_24_33_prophylactic_gate_still_blocks_quadrupeds",
+    "test_v0_24_33_prophylactic_slot_has_reposition",
+    "test_v0_24_33_prophylactic_slot_in_catalog"
+  ],
+  "TestRedWolfCap": [
+    "test_c3181_capped_at_4",
+    "test_red_wolf_in_quadruped_family_caps"
+  ],
+  "TestRejectTargetForSlot": [
+    "test_chaos_mode_tightens_caliber",
+    "test_nb_caliber_gate_rejects_non_caliber_at_nb_slot",
+    "test_nb_strict_gate_allows_at_strict_slot",
+    "test_nb_strict_gate_rejects",
+    "test_picker_uses_predicate",
+    "test_predicate_allows_safe_combo",
+    "test_predicate_exists",
+    "test_predicate_returns_reason_strings",
+    "test_scorer_uses_predicate"
+  ],
+  "TestReservationOrderBigFirstV0_24_76": [
+    "test_real_engine_giga_before_m",
+    "test_size_order_constant_defined",
+    "test_unknown_size_sorts_last",
+    "test_within_size_bucket_shuffled"
+  ],
+  "TestRiderMountFamilyConsistency": [
+    "test_c5890_banned_and_unplaceable",
+    "test_family_swap_now_inert",
+    "test_general_slot_still_excludes_mounts",
+    "test_no_family_when_a_half_unplaceable",
+    "test_preserve_helper_adds_both_pair_slots",
+    "test_preserve_helper_idempotent_and_scoped",
+    "test_preserved_pair_slot_returns_none_from_picker"
+  ],
+  "TestScriptSpawnBossCatalog": [
+    "test_all_catalogued_slots_have_script_spawn_source",
+    "test_catalog_loads_and_has_4_entries"
+  ],
+  "TestScriptSpawnSpawnPoolCrossRef": [
+    "test_every_script_spawn_slot_is_in_spawn_pool",
+    "test_script_spawn_label_includes_marker",
+    "test_spawn_pool_label_no_longer_says_putrid_avatar"
+  ],
+  "TestSeed798229Freezes": [
+    "test_broken_runtime_chrs_v0_24_65_lift_held",
+    "test_c3360_ancestral_follower_no_longer_excluded",
+    "test_c3610_small_oracle_envoy_no_longer_excluded",
+    "test_c3620_large_oracle_envoy_NOT_excluded",
+    "test_c4361_godrick_knights_horse_excluded",
+    "test_c4430_abnormal_stone_cluster_no_longer_excluded",
+    "test_fi_reserved_only_protects_c3620"
+  ],
+  "TestSpawnPoolRotationSourceExemption": [
+    "test_four_script_spawn_rotation_slots_are_now_exempt",
+    "test_predicate_recognises_every_spawn_pool_msb_at_pi_1",
+    "test_predicate_rejects_non_pi_1_indices",
+    "test_predicate_rejects_non_spawn_pool_msbs",
+    "test_script_spawn_chrs_still_tagged"
+  ],
+  "TestStackingDetectorCrossCollision": [
+    "test_m45_01_pi5_nudged_away_from_pi2",
+    "test_nr_all_part_positions_data_present"
+  ],
+  "TestStartingEncampmentCatalog": [
+    "test_catalog_is_frozenset",
+    "test_catalog_loaded",
+    "test_catalog_meta_has_entry",
+    "test_loader_resilient_to_malformed_json",
+    "test_loader_resilient_to_missing_file",
+    "test_spoiler_annotation_pattern_in_source",
+    "test_starting_encampment_scope_does_not_match_marker_slot",
+    "test_starting_encampment_scope_known_to_picker",
+    "test_v0_24_34_m43_02_in_catalog"
+  ],
+  "TestSwCornerFragilityFlag": [
+    "test_c4120_extra_banned_at_sw_corner",
+    "test_c6060_blocked_by_fragility_alone",
+    "test_repositions_still_apply",
+    "test_sw_corner_slots_are_fragile",
+    "test_unaffected_slots_not_collateral_damage"
+  ],
+  "TestSwCornerFreezeRepositions": [
+    "test_entries_present",
+    "test_marked_unverified",
+    "test_repositions_move_inward"
+  ],
+  "TestTagBackfillV0_24_72": [
+    "test_gate_5_6_accepts_c4601_at_humanoid_xxl_source",
+    "test_gate_5_6_c4601_at_large_boss_ground_source_post_v0_24_75"
+  ],
+  "TestUniqueReservationFragilityFilter": [
+    "test_c7910_allowed_at_fragile_slot_post_flip",
+    "test_extra_bans_honored_at_fragile_slot",
+    "test_non_fragile_slot_unaffected",
+    "test_other_nightlords_rejected_at_fragile_slot",
+    "test_sensitive_chr_rejected_at_fragile_slot"
+  ],
+  "TestVariantPruneList": [
+    "test_control_pruned_id_reachable_when_set_empty",
+    "test_no_cprefix_emptied_by_real_prune_list",
+    "test_pruned_id_never_picked",
+    "test_soft_fallback_when_prune_empties_pool"
+  ]
+}

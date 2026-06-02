@@ -77,6 +77,41 @@ _OWNED_MODULE_FIELDS = (
 )
 
 
+def _resolve_module_or_raise(module):
+    """Return `module` if non-None, else look up 'oops_v3' in
+    sys.modules.
+
+    `import oops_v3` is the obvious default but it silently returns a
+    FRESH copy of the module if a caller loaded oops_v3 via
+    importlib.util.spec_from_file_location (which doesn't register in
+    sys.modules). That fresh copy has empty V3_MP_SAFE_BLOCKLIST /
+    V3_GHOST_EXCLUDE_TARGET_PREFIXES until its own load_data runs — so
+    the override silently no-ops on the OTHER module instance the
+    caller actually uses for simulation.
+
+    Production callers (cmd_shuffle_v3, the GUI) hit the sys.modules
+    branch naturally — oops_v3 is in sys.modules during its own
+    execution. Only spec_from_file_location-loaded test/dev paths
+    can land in the None branch and not be in sys.modules. For those,
+    raise loudly instead of silently mutating an unused module copy.
+    """
+    if module is not None:
+        return module
+    import sys as _sys
+    if 'oops_v3' not in _sys.modules:
+        raise RuntimeError(
+            "engine.runtime helper called without explicit module=, "
+            "but 'oops_v3' is not registered in sys.modules. This "
+            "happens when a caller loads oops_v3 via "
+            "importlib.util.spec_from_file_location instead of a "
+            "standard `import oops_v3`. The implicit fallback would "
+            "load a FRESH copy of oops_v3 with empty state, and any "
+            "override would silently no-op on the module instance "
+            "the caller actually uses. Pass module=<your_loaded_oops_v3> "
+            "explicitly to fix.")
+    return _sys.modules['oops_v3']
+
+
 @contextmanager
 def apply_run_overrides(
     module=None,
@@ -123,9 +158,7 @@ def apply_run_overrides(
         tests that want to introspect or thread the explicit state
         downstream.
     """
-    if module is None:
-        import oops_v3
-        module = oops_v3
+    module = _resolve_module_or_raise(module)
 
     # Capture references to current values. We restore exactly these
     # references on exit, regardless of how the overrides chose to
@@ -268,9 +301,7 @@ def compose_pool_cap_overrides(
     Returns:
         dict — a small summary of what changed, for the spoiler / log.
     """
-    if module is None:
-        import oops_v3
-        module = oops_v3
+    module = _resolve_module_or_raise(module)
 
     summary = {
         'caps_overridden': 0,

@@ -73,53 +73,110 @@ $Event(90099999, Default, function() {
 """
 
 
-class TestPrebossWakeTimeoutRetiredV0_24_78:
-    """v0.24.78: preboss_wake_timeout RETIRED.
+# ============================================================================
+# Retired patches — consolidated tombstones
+# ============================================================================
+# Six patches have been retired. Each row: (name, retired_in, body_kept,
+# short_reason). `body_kept` distinguishes "function body preserved for
+# reference, @register removed" (most retirements) from "function body
+# fully removed too" (boss_reward_inject, disable_corpse_collision). The
+# full retirement rationale lives in the `# vX.Y.Z: name RETIRED.` comment
+# block in emevd_patch.py — this table is the test-side enforcement that
+# the rationale stays accurate.
+#
+# Adding a retirement: append a row here, ensure the @register decorator
+# is removed, then update EXPECTED_RETIRED in
+# tests/test_emevd_retired_patches_lock.py.
+RETIRED_PATCHES = [
+    ('preboss_wake_timeout',     'v0.24.78',  True,
+     'field-boss map-icon-on-Day-1 + healthbar-flicker regression'),
+    ('boss_reward_inject',       'v0.24.100', False,
+     'replaced by engine-side slot-pool gating + regulation.bin reward config'),
+    ('disable_corpse_collision', 'v0.24.100', False,
+     'empirically not working; death_timeout reliably covers the same case'),
+    ('permissive_boss_wake',     'v0.24.102', True,
+     'engine-side improvements (anim_compat-at-demotion, slot-pool gating, '
+     'has_reward preservation) made the wake-permissivity OR-clauses dead weight'),
+    ('permissive_spawn_emerge',  'v0.24.102', True,
+     'paired with permissive_boss_wake — same dead-weight class once '
+     'enemies reach Combat through normal vanilla pathways'),
+    ('nb_wave_bypass',           'v0.24.106', True,
+     'Default-mode registration fires once at map load, defeating the '
+     'watcher-only intent; xxxx2810_trigger_timeout supersedes it'),
+]
 
-    The patch was added in v0.24.71 as a "belt-and-suspenders safety
-    net" for the v0.24.69 Tricephalos seed 388677 case (boss never
-    spawned). The root cause was fixed properly in v0.24.70 via the
-    anim_compat-at-demotion mirror.
 
-    Meanwhile preboss_wake_timeout was actively degrading every
-    expedition: its 90s ElapsedSeconds fallback fires in every
-    encounter event registered via InitializeCommonEvent — including
-    m60 Limveld field-boss tiles. Result: 90 seconds into every
-    expedition, every field boss "wakes up" briefly, registering its
-    healthbar (→ map icon revealed Day 1 instead of Day 2) and
-    cycling through the L0 RestartEvent loop (→ spurious healthbar
-    flicker). Confirmed via user playtest screenshot showing red-
-    bordered Night Boss markers visible on Day 1.
+class TestRetiredPatches:
+    """Consolidated tombstones for retired emevd_patch entries.
 
-    Other timeout safety nets remain in place for the cases
-    preboss_wake_timeout was meant to cover:
-    - nb_speffect_wait_timeout (v0.24.74) covers NB-arena wave stalls
-    - boss_clear_watchdog (300s) covers spawned-but-frozen bosses
-    - permissive_boss_wake covers AI-state wake issues
+    Each retirement is enforced two ways:
 
-    If a "boss never spawned" case recurs, investigate root cause
-    rather than re-registering this patch. The collateral damage
-    isn't worth the defensive value.
+      1. The patch name is absent from `emevd_patch.PATCHES` at module
+         load. The `@register` decorator was actually removed (not just
+         commented), so the patch isn't picked up by the apply pipeline.
+
+      2. The corresponding function body is in the expected state:
+         either kept for reference (the common case — revival is one
+         decorator restoration away) or fully removed (revival requires
+         rewriting or restoring from git history).
+
+    These two assertions used to live in 6 per-patch test classes with
+    near-identical structure. v0.28.x consolidated them — see
+    `tests/test_emevd_retired_patches_lock.py` for the lock test that
+    catches the post-consolidation regression class (a row silently
+    dropping from RETIRED_PATCHES).
+
+    Adding a new retirement:
+      1. Remove `@register('foo')` in emevd_patch.py and the `# vN.X.Y:
+         foo RETIRED.` comment block explaining why.
+      2. Append a row to RETIRED_PATCHES above.
+      3. Add the patch name to EXPECTED_RETIRED in the lock test.
+
+    Reviving a retired patch:
+      1. Restore the `@register` decorator and (if body was removed) the
+         function body.
+      2. Remove the row from RETIRED_PATCHES.
+      3. Remove the name from EXPECTED_RETIRED.
+      4. Add or restore per-patch behavioral tests.
     """
 
-    def test_patch_no_longer_registered(self):
-        """preboss_wake_timeout must NOT be in PATCHES registry —
-        retirement is enforced at the @register decorator level."""
-        assert 'preboss_wake_timeout' not in emevd_patch.PATCHES, (
-            'preboss_wake_timeout was retired in v0.24.78 due to '
-            'field-boss map-icon-on-Day-1 + healthbar-flicker '
-            'regression. If you re-registered it, also restore the '
-            'previous tests AND address the regression first.')
+    @pytest.mark.parametrize('patch_name,retired_in,body_kept,reason',
+                             RETIRED_PATCHES,
+                             ids=[r[0] for r in RETIRED_PATCHES])
+    def test_patch_no_longer_registered(self, patch_name, retired_in,
+                                        body_kept, reason):
+        """The @register decorator was actually removed, so the patch
+        doesn't get picked up by the apply pipeline."""
+        assert patch_name not in emevd_patch.PATCHES, (
+            f'{patch_name!r} was retired in {retired_in} because '
+            f'{reason}. If revival is intentional, also drop the row '
+            f'from RETIRED_PATCHES above AND from EXPECTED_RETIRED in '
+            f'tests/test_emevd_retired_patches_lock.py.'
+        )
 
-    def test_function_still_exists_for_reference(self):
-        """The function body is kept for historical reference even
-        though the @register decorator was removed. If someone needs
-        to revive it (after addressing the field-boss regression),
-        the implementation is still here."""
-        assert hasattr(emevd_patch, 'patch_preboss_wake_timeout'), (
-            'patch_preboss_wake_timeout function body removed — '
-            'this is fine for cleanup but if you want to revive the '
-            'patch, you\'ll need to rewrite it.')
+    @pytest.mark.parametrize('patch_name,retired_in,body_kept,reason',
+                             RETIRED_PATCHES,
+                             ids=[r[0] for r in RETIRED_PATCHES])
+    def test_patch_function_body_state(self, patch_name, retired_in,
+                                       body_kept, reason):
+        """The function body matches the expected post-retirement state
+        (kept for reference vs fully removed)."""
+        fn_name = f'patch_{patch_name}'
+        has_body = hasattr(emevd_patch, fn_name)
+        if body_kept:
+            assert has_body, (
+                f'{fn_name} body was removed but RETIRED_PATCHES '
+                f'says body_kept=True. Either restore the function '
+                f'body or flip the row to body_kept=False.'
+            )
+        else:
+            assert not has_body, (
+                f'{fn_name} body reappeared but RETIRED_PATCHES '
+                f'says body_kept=False. Either remove the function '
+                f'body or flip the row to body_kept=True.'
+            )
+
+
 
 
 class TestEmevdPatchRegistry:
@@ -179,120 +236,6 @@ class TestEmevdPatchRegistry:
             'Check @register decorators.')
 
 
-class TestBossRewardInjectRetiredV0_24_100:
-    """v0.24.100: boss_reward_inject RETIRED.
-
-    The patch hooked common_func boss-wake handlers and the encampment-
-    clear handler to fire HandleMinibossDefeat on every confirmed boss
-    kill, providing universal NR choice-of-3 reward UI coverage for
-    randomized boss slots.
-
-    Replaced by an engine-side approach:
-    1. oops_v3 gates boss-having source slots to boss-having targets only,
-       so every kept boss slot has a c-prefix that natively triggers a reward.
-    2. A regulation.bin edit adds boss-reward configuration to chrs that
-       should have one but don't natively, expanding the boss-having pool.
-
-    Engine-side is more precise than the blanket common_func inject:
-    - No double-fire risk on vanilla per-map dungeon bosses (~28 known
-      call sites that already had map-specific HandleMinibossDefeat).
-    - No empty-picker risk on under-configured swap-ins — the regulation
-      edit gives them a proper reward set.
-    - Doesn't need to gate inside common_func at all; the source-target
-      pool is the gate.
-
-    The HandleMinibossDefeat call site catalog and BOSS_WAKE_HANDLER_EVENTS
-    list are recoverable from git history at v0.24.99 if a future revival
-    is needed.
-    """
-
-    def test_patch_no_longer_registered(self):
-        """boss_reward_inject must NOT be in PATCHES registry —
-        retirement is enforced at the @register decorator level
-        (the function and its decorator were removed in v0.24.100)."""
-        assert 'boss_reward_inject' not in emevd_patch.PATCHES, (
-            'boss_reward_inject was retired in v0.24.100 in favor of '
-            'engine-side slot-pool gating + regulation.bin boss-reward '
-            'config. If you re-registered it, also confirm whether the '
-            'engine-side replacement is incomplete and surface that.')
-
-    def test_function_body_removed(self):
-        """Unlike preboss_wake_timeout (which kept its body for reference),
-        boss_reward_inject is fully removed. If revival is needed, restore
-        from git history at v0.24.99."""
-        assert not hasattr(emevd_patch, 'patch_boss_reward_inject'), (
-            'patch_boss_reward_inject function reappeared. If revived '
-            'intentionally, restore the @register decorator AND update '
-            'the required-patches list in TestEmevdPatchRegistry.')
-
-
-# ============================================================================
-# v0.24.102: permissive_boss_wake + permissive_spawn_emerge retirement
-# ============================================================================
-class TestPermissiveBossWakeRetiredV0_24_102:
-    """v0.24.102: permissive_boss_wake RETIRED.
-
-    The patch widened boss healthbar/BGM activation triggers (events
-    90015000 + 90015030) from `AIStateType.Combat` only to a four-way
-    OR of Combat | Recognition | Alert | HP-damage. This was a safety
-    net for swapped enemies that sat in non-Combat AI states.
-
-    Retirement hypothesis: the engine-side improvements (anim_compat-at-
-    demotion, slot-pool gating, has_reward preservation, V3_PRESERVE_SLOTS
-    hardening, V3_EXCLUDE_TARGET_PREFIXES + V3_EXCLUDE_SOURCE_PREFIXES
-    coverage of mount/rider chrs) mean swapped enemies should reach
-    AIStateType.Combat through normal vanilla pathways. The
-    Recognition/Alert/HP-damage OR-clauses are dead weight.
-
-    Function body kept for reference (unlike boss_reward_inject which
-    was fully removed). Revival is one @register decorator restoration
-    away if playtest shows wake-state regressions.
-    """
-
-    def test_patch_no_longer_registered(self):
-        """permissive_boss_wake must NOT be in PATCHES registry."""
-        assert 'permissive_boss_wake' not in emevd_patch.PATCHES, (
-            'permissive_boss_wake was retired in v0.24.102. If you '
-            're-registered it, document the playtest evidence that '
-            'reverted the retirement hypothesis.')
-
-    def test_function_still_exists_for_reference(self):
-        """The function body is kept for historical reference."""
-        assert hasattr(emevd_patch, 'patch_permissive_boss_wake'), (
-            'patch_permissive_boss_wake function body removed — '
-            'this is fine for cleanup but if you want to revive the '
-            'patch, you\'ll need to rewrite it.')
-
-
-class TestPermissiveSpawnEmergeRetiredV0_24_102:
-    """v0.24.102: permissive_spawn_emerge RETIRED.
-
-    The patch injected EnableCharacterAI + SetNetworkUpdateRate
-    (AlwaysUpdate) after ForceAnimationPlayback calls in ~30 spawn/wake
-    handlers (90085002, 90015310, 90015160/163/164, pose-idle 90035XXX
-    family, SpecialStandby 90005200/201/211/221). This was a safety
-    net for swapped enemies whose anim_bank was missing the required
-    spawn-emerge animation, causing them to freeze in T-pose-stuck or
-    pose-idle state.
-
-    Retired alongside permissive_boss_wake on the same hypothesis. If
-    T-pose-stuck or never-wakes-from-pose recurs in playtest, prefer
-    a targeted anim_compat fix in the swap layer over reviving the
-    blanket EMEVD inject.
-    """
-
-    def test_patch_no_longer_registered(self):
-        """permissive_spawn_emerge must NOT be in PATCHES registry."""
-        assert 'permissive_spawn_emerge' not in emevd_patch.PATCHES, (
-            'permissive_spawn_emerge was retired in v0.24.102. If you '
-            're-registered it, document the playtest evidence.')
-
-    def test_function_still_exists_for_reference(self):
-        """The function body is kept for historical reference."""
-        assert hasattr(emevd_patch, 'patch_permissive_spawn_emerge'), (
-            'patch_permissive_spawn_emerge function body removed — '
-            'this is fine for cleanup but if you want to revive the '
-            'patch, you\'ll need to rewrite it.')
 
 
 # ============================================================================
@@ -773,49 +716,6 @@ L1:\r
                 f'output will misclassify it as an unpatched candidate.')
 
 
-# ============================================================================
-# v0.24.105 (RETIRED v0.24.106): nb_wave_bypass
-# ============================================================================
-class TestNbWaveBypassRetiredV0_24_106:
-    """v0.24.105 nb_wave_bypass was retired in v0.24.106 because the
-    architecture was wrong: $Event(99055100) is Default mode and is
-    registered per-arena via $InitializeCommonEvent in each Event(0),
-    which means it fires ONCE AT MAP LOAD — setting the bypass flag at
-    map load, which would release the XXXX2810 WaitFor at map load and
-    spawn the boss the instant the player enters the arena. The intended
-    semantic was "fire only as a recovery action triggered by a watcher"
-    but the watcher was never built and Default-mode registration
-    short-circuits straight to fire.
-
-    The actual symptom (N2 minion wave not starting) is better addressed
-    by adding a timeout to the WaitFor itself — see
-    TestXxxx2810TriggerTimeoutV0_24_106 below.
-
-    These tests assert nb_wave_bypass is unregistered and confirm the
-    function body is kept for reference (matching the retirement pattern
-    used by permissive_boss_wake / permissive_spawn_emerge / boss_reward_inject
-    / disable_corpse_collision / preboss_wake_timeout).
-    """
-
-    def test_patch_no_longer_registered(self):
-        import emevd_patch
-        assert 'nb_wave_bypass' not in emevd_patch.PATCHES, (
-            'nb_wave_bypass was retired in v0.24.106 — it should no longer '
-            'appear in the PATCHES registry. If you re-registered it, '
-            'either the retirement was reverted intentionally (update '
-            'this test) or by accident (remove the @register decorator).')
-
-    def test_function_still_exists_for_reference(self):
-        """The function body is kept in the source for design-discussion
-        value (the bypass-flag picker rule, the 99055100 atomic-claim
-        ordering) — it's just not registered. If a future watcher-based
-        architecture revives the approach, the function is the starting
-        point."""
-        import emevd_patch
-        assert hasattr(emevd_patch, 'patch_nb_wave_bypass'), (
-            'patch_nb_wave_bypass function body removed entirely — keep '
-            'it in the source per the retirement convention (see '
-            'permissive_boss_wake, etc.)')
 
 
 # ============================================================================

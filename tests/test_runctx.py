@@ -503,10 +503,15 @@ class TestPhase5_5_ModuleDictBackCopy:
         # Grep test — fragile if someone refactors the function, but
         # the comment-tag is searchable so this is the cheap insurance
         # against accidental removal.
-        src = inspect.getsource(engine._cmd_shuffle_v3_impl)
+        # v0.28.x: body extracted to engine.cmd_shuffle.
+        # cmd_shuffle_v3_impl; grep the engine module where the real
+        # body lives.
+        from engine import cmd_shuffle
+        src = inspect.getsource(cmd_shuffle.cmd_shuffle_v3_impl)
         assert 'Phase 5.5' in src, (
-            'Phase 5.5 marker missing from _cmd_shuffle_v3_impl — '
-            'the RunContext flip and/or back-copy was removed')
+            'Phase 5.5 marker missing from engine.cmd_shuffle.'
+            'cmd_shuffle_v3_impl — the RunContext flip and/or '
+            'back-copy was removed')
         assert '_V3_UNIQUE_RESERVATIONS.update' in src, (
             'back-copy from run_ctx to module dicts is missing — '
             'spoiler emit will see empty placement state')

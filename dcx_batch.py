@@ -550,6 +550,7 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     emevd_vanilla_dir=None,
                     emevd_out_dir=None,
                     emevd_overlay_dir=None,
+                    game_install=None,
                     vanilla_msg_bundle=None,
                     mod_msg_bundle=None,
                     fallback_nameid=None,
@@ -1181,29 +1182,83 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                                     raw_additions = _json.load(_f)
                                 # JSON keys are strings; FMG IDs are ints
                                 additions = {int(k): v for k, v in raw_additions.items()}
-                                # v0.24.110: bundled-vanilla fallback. If the
-                                # on-disk vanilla msg path doesn't exist (NR
-                                # install isn't UXM-unpacked or UXM failed on
-                                # msg specifically), fall back to the bundled
-                                # raw BND4 at data/vanilla_msg/. The bundled
-                                # file is unwrapped so it can be parsed
-                                # without Oodle for the read step — only the
-                                # output DCX-wrap step needs the DLL.
+                                # Read the vanilla msgbnd bytes from one of
+                                # three sources, in order:
+                                #   1. on-disk loose file at vanilla_msg_bundle
+                                #      (UXM-unpacked NR install, or me3 staging)
+                                #   2. v0.28.x: archive read via VanillaSource
+                                #      (RSA-decrypted dvdbnd index; works on
+                                #      stock packed installs without UXM)
+                                #   3. v0.24.110: bundled raw-BND4 fallback
+                                #      at data/vanilla_msg/item_dlc01.msgbnd
+                                #      (last resort — unwrapped, parses without
+                                #      Oodle; only the output DCX-wrap step
+                                #      needs the DLL)
                                 _src_path = vanilla_msg_bundle
-                                if not os.path.exists(_src_path):
-                                    # Bundled fallback path: raw BND4 of
-                                    # stock-or-modded NR item_dlc01.msgbnd.
+                                bundle_bytes = None
+                                # 1) loose file
+                                if os.path.exists(_src_path):
+                                    with open(_src_path, 'rb') as _f:
+                                        bundle_bytes = _f.read()
+                                else:
+                                    print(f"  Vanilla msg not on disk at "
+                                          f"{vanilla_msg_bundle}")
+                                # 2) v0.28.x: archive read via VanillaSource.
+                                # data_archive RSA-decrypts each .bhd header
+                                # table and indexes every file by 64-bit path
+                                # hash; the read returns raw still-DCX-wrapped
+                                # bytes which the existing _is_dcx check below
+                                # handles identically to the loose path. The
+                                # map/event loose-fallback routing inside
+                                # VanillaSource is irrelevant here (we don't
+                                # pass loose_*_dir) — only the archive path
+                                # fires. Caveat: dlc01's BHD key isn't bundled,
+                                # so dlc01.bhd is skipped during indexing. If
+                                # item_dlc01.msgbnd.dcx lives exclusively in
+                                # dlc01.bdt on a given install, the get() will
+                                # KeyError and we fall through to (3).
+                                if bundle_bytes is None and game_install:
+                                    try:
+                                        from vanilla_source import VanillaSource
+                                        _vs = VanillaSource(game_dir=game_install)
+                                        if _vs.has_archive:
+                                            try:
+                                                bundle_bytes = _vs.read(
+                                                    'msg/engUS/item_dlc01.msgbnd.dcx')
+                                                _src_path = (
+                                                    '<archive: msg/engUS/'
+                                                    'item_dlc01.msgbnd.dcx>')
+                                                print(f"  Reading from NR archive at: "
+                                                      f"{game_install}")
+                                            except KeyError:
+                                                print(f"  Not in NR archive index "
+                                                      f"(dlc01 skipped? wrong rel path?) "
+                                                      f"— trying bundled fallback")
+                                        else:
+                                            print(f"  No NR archives indexed at "
+                                                  f"{game_install} — trying "
+                                                  f"bundled fallback")
+                                    except Exception as _arc_e:
+                                        print(f"  Archive read setup failed "
+                                              f"({_arc_e}); trying bundled fallback")
+                                # 3) bundled raw-BND4 fallback
+                                if bundle_bytes is None:
                                     _bundled = os.path.join(
                                         HERE, 'data', 'vanilla_msg',
                                         'item_dlc01.msgbnd')
                                     if os.path.exists(_bundled):
-                                        print(f"  Vanilla msg not on disk at "
-                                              f"{vanilla_msg_bundle}")
                                         print(f"  Falling back to bundled: "
                                               f"{_bundled}")
+                                        with open(_bundled, 'rb') as _f:
+                                            bundle_bytes = _f.read()
                                         _src_path = _bundled
-                                with open(_src_path, 'rb') as _f:
-                                    bundle_bytes = _f.read()
+                                # All three sources exhausted — raise
+                                # FileNotFoundError to match the original
+                                # behavior. The outer except catches it,
+                                # prints "auto-splice FAILED", and Phase 3
+                                # fallback kicks in with fallback_nameid.
+                                if bundle_bytes is None:
+                                    raise FileNotFoundError(vanilla_msg_bundle)
                                 # v0.24.12: log enough state on splice
                                 # failure to diagnose without a re-run.
                                 _is_dcx = bundle_bytes[:4] == b'DCX\x00'

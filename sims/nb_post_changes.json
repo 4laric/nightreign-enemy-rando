@@ -1,0 +1,207 @@
+{
+  "engine_version": "?",
+  "seeds_per_slot": 100,
+  "slot_count": 51,
+  "cluster": "all",
+  "aggregate": {
+    "night_boss": 5100
+  },
+  "aggregate_none": 0,
+  "aggregate_unique_cps": [
+    "c2031",
+    "c2110",
+    "c2120",
+    "c2130",
+    "c2500",
+    "c3050",
+    "c3560",
+    "c4511",
+    "c4620",
+    "c4670",
+    "c4720",
+    "c4721",
+    "c4730",
+    "c4750",
+    "c4770",
+    "c4800",
+    "c5000",
+    "c5030",
+    "c5051",
+    "c5120",
+    "c5130",
+    "c5140",
+    "c5200",
+    "c5210",
+    "c5220",
+    "c5230",
+    "c5300",
+    "c5800",
+    "c5860",
+    "c5960",
+    "c7700",
+    "c7710",
+    "c7800",
+    "c7820",
+    "c7900",
+    "c7910",
+    "c7920"
+  ],
+  "per_slot": {
+    "m47_70_00_00.msb|pi=20": {
+      "night_boss": 100
+    },
+    "m47_80_00_00.msb|pi=8": {
+      "night_boss": 100
+    },
+    "m47_90_00_00.msb|pi=7": {
+      "night_boss": 100
+    },
+    "m48_00_00_00.msb|pi=1": {
+      "night_boss": 100
+    },
+    "m48_10_00_00.msb|pi=3": {
+      "night_boss": 100
+    },
+    "m48_40_00_00.msb|pi=0": {
+      "night_boss": 100
+    },
+    "m48_40_00_00.msb|pi=4": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=0": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=3": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=4": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=5": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=6": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=7": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=8": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=9": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=10": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=11": {
+      "night_boss": 100
+    },
+    "m48_50_00_00.msb|pi=12": {
+      "night_boss": 100
+    },
+    "m48_60_00_00.msb|pi=0": {
+      "night_boss": 100
+    },
+    "m48_60_00_00.msb|pi=9": {
+      "night_boss": 100
+    },
+    "m48_60_00_00.msb|pi=10": {
+      "night_boss": 100
+    },
+    "m48_60_00_00.msb|pi=11": {
+      "night_boss": 100
+    },
+    "m48_60_00_00.msb|pi=12": {
+      "night_boss": 100
+    },
+    "m48_60_00_00.msb|pi=13": {
+      "night_boss": 100
+    },
+    "m48_60_00_00.msb|pi=14": {
+      "night_boss": 100
+    },
+    "m48_60_00_00.msb|pi=15": {
+      "night_boss": 100
+    },
+    "m48_60_00_00.msb|pi=16": {
+      "night_boss": 100
+    },
+    "m48_70_00_00.msb|pi=0": {
+      "night_boss": 100
+    },
+    "m48_80_00_00.msb|pi=0": {
+      "night_boss": 100
+    },
+    "m48_80_00_00.msb|pi=1": {
+      "night_boss": 100
+    },
+    "m48_90_00_00.msb|pi=23": {
+      "night_boss": 100
+    },
+    "m49_10_00_00.msb|pi=5": {
+      "night_boss": 100
+    },
+    "m49_17_00_00.msb|pi=6": {
+      "night_boss": 100
+    },
+    "m49_17_00_00.msb|pi=8": {
+      "night_boss": 100
+    },
+    "m49_18_00_00.msb|pi=5": {
+      "night_boss": 100
+    },
+    "m49_19_00_00.msb|pi=7": {
+      "night_boss": 100
+    },
+    "m49_20_00_00.msb|pi=5": {
+      "night_boss": 100
+    },
+    "m49_21_00_00.msb|pi=5": {
+      "night_boss": 100
+    },
+    "m49_23_00_00.msb|pi=6": {
+      "night_boss": 100
+    },
+    "m49_24_00_00.msb|pi=0": {
+      "night_boss": 100
+    },
+    "m49_25_00_00.msb|pi=0": {
+      "night_boss": 100
+    },
+    "m49_25_00_00.msb|pi=6": {
+      "night_boss": 100
+    },
+    "m49_26_00_00.msb|pi=8": {
+      "night_boss": 100
+    },
+    "m49_27_00_00.msb|pi=13": {
+      "night_boss": 100
+    },
+    "m49_28_00_00.msb|pi=2": {
+      "night_boss": 100
+    },
+    "m49_28_00_00.msb|pi=3": {
+      "night_boss": 100
+    },
+    "m49_28_00_00.msb|pi=4": {
+      "night_boss": 100
+    },
+    "m49_28_00_00.msb|pi=5": {
+      "night_boss": 100
+    },
+    "m49_29_00_00.msb|pi=16": {
+      "night_boss": 100
+    },
+    "m49_30_00_00.msb|pi=7": {
+      "night_boss": 100
+    },
+    "m49_90_00_00.msb|pi=3": {
+      "night_boss": 100
+    }
+  },
+  "miniboss_offender_count": 0,
+  "grunt_offender_count": 0,
+  "preserved_slot_count": 0
+}

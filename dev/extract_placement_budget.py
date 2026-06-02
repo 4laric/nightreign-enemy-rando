@@ -89,7 +89,8 @@ DEFAULT_OUTPUT_PATH = os.path.join(PROJECT_ROOT, 'data', 'placement_budget.json'
 # Extraction
 # ---------------------------------------------------------------------------
 
-def extract_budget(engine, tags: dict | None = None) -> dict:
+def extract_budget(engine, tags: dict | None = None,
+                   preserve_editorial_from: str | None = None) -> dict:
     """Build the placement-budget dict from a loaded engine module.
 
     Args:
@@ -100,6 +101,19 @@ def extract_budget(engine, tags: dict | None = None) -> dict:
         tags:    nr_enemy_tags-shaped dict (chr → tag-row). Used only
                  to source the editorial `name` field. If omitted, the
                  file is loaded from the standard location.
+        preserve_editorial_from:
+                 Optional path to an existing placement_budget.json.
+                 If provided, the editorial fields (rationale,
+                 exclude_reason, since, history, tags) are PRESERVED
+                 from that file rather than emitted as null/empty.
+                 This is what re-running the extractor on the committed
+                 JSON should do: regenerate engine-derived facts while
+                 leaving the human-managed rationale intact.
+
+                 Defaults to None for back-compat with the round-trip
+                 test fixture (which passes a duck-typed engine with no
+                 corresponding JSON history); the CLI passes the
+                 default path to preserve real editorial content.
 
     Returns:
         A dict suitable for `json.dump`. Top-level keys:
@@ -111,6 +125,20 @@ def extract_budget(engine, tags: dict | None = None) -> dict:
         tags_path = os.path.join(PROJECT_ROOT, 'data', 'nr_enemy_tags.json')
         with open(tags_path, encoding='utf-8') as f:
             tags = json.load(f)
+
+    # Load existing editorial fields if a preservation source is given.
+    _existing_editorial: dict[str, dict] = {}
+    if preserve_editorial_from is not None and os.path.exists(preserve_editorial_from):
+        with open(preserve_editorial_from, encoding='utf-8') as f:
+            _existing = json.load(f)
+        for cp, e in _existing.get('chrs', {}).items():
+            _existing_editorial[cp] = {
+                'rationale':      e.get('rationale'),
+                'exclude_reason': e.get('exclude_reason'),
+                'since':          e.get('since'),
+                'history':        e.get('history') or [],
+                'tags':           e.get('tags') or [],
+            }
 
     caps = dict(engine.V3_UNIQUE_TARGET_CAPS)
     excl = set(engine.V3_EXCLUDE_TARGET_PREFIXES)
@@ -180,13 +208,15 @@ def extract_budget(engine, tags: dict | None = None) -> dict:
             'mp_safe_blocked': cp in mp_safe,
             'tier_override':   cp in tag_overrides,
             'map_excludes': cp_to_map_excludes.get(cp, []),
-            # Editorial placeholders — see module docstring. Reserved
-            # for later GUI / manual-edit work.
-            'rationale':      None,
-            'exclude_reason': None,   # v0.26.x: schema_version=2
-            'since':          None,
-            'history':        [],
-            'tags':           [],
+            # Editorial fields — preserved from `preserve_editorial_from`
+            # if given (CLI path), otherwise null/empty (used by the
+            # round-trip test with a duck-typed engine and no JSON
+            # history to preserve from).
+            'rationale':      _existing_editorial.get(cp, {}).get('rationale'),
+            'exclude_reason': _existing_editorial.get(cp, {}).get('exclude_reason'),
+            'since':          _existing_editorial.get(cp, {}).get('since'),
+            'history':        _existing_editorial.get(cp, {}).get('history', []) or [],
+            'tags':           _existing_editorial.get(cp, {}).get('tags', []) or [],
         }
         chrs[cp] = entry
 
@@ -309,7 +339,13 @@ def _load_engine_and_extract() -> dict:
     """
     import oops_v3
     _, tags = oops_v3.load_data()
-    return extract_budget(oops_v3, tags=tags)
+    # Preserve editorial fields (rationale, exclude_reason, since,
+    # history, tags) from the existing committed JSON if present.
+    # Falls through to None on first-time bootstrap.
+    return extract_budget(
+        oops_v3, tags=tags,
+        preserve_editorial_from=DEFAULT_OUTPUT_PATH,
+    )
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -1,0 +1,335 @@
+{
+  "_schema": "swap_plan_seed_lock_v2",
+  "_seeds": [
+    42,
+    789157,
+    12345
+  ],
+  "_settings_cases": [
+    {
+      "case_id": "42_mp_safe",
+      "seed": 42,
+      "settings": {
+        "multiplayer_safe": true
+      }
+    },
+    {
+      "case_id": "42_sote_mode",
+      "seed": 42,
+      "settings": {
+        "sote_mode": true
+      }
+    },
+    {
+      "case_id": "42_chaos_mode",
+      "seed": 42,
+      "settings": {
+        "chaos_mode": true
+      }
+    }
+  ],
+  "seeds": {
+    "12345": {
+      "n_distinct_targets": 282,
+      "n_no_target": 57,
+      "n_placements": 3959,
+      "n_reservations": 117,
+      "placed_counts_top_10": [
+        [
+          "c3661",
+          41
+        ],
+        [
+          "c3080",
+          40
+        ],
+        [
+          "c3451",
+          40
+        ],
+        [
+          "c3500",
+          40
+        ],
+        [
+          "c3662",
+          40
+        ],
+        [
+          "c3664",
+          40
+        ],
+        [
+          "c3703",
+          40
+        ],
+        [
+          "c4040",
+          40
+        ],
+        [
+          "c4120",
+          40
+        ],
+        [
+          "c3020",
+          39
+        ]
+      ],
+      "swap_plan_sha256": "e39fbae6c3573b66c9139c94aec6c7f31e749acd3ca37bb99442a7d1961406f4",
+      "unique_reservation_count": 270
+    },
+    "42": {
+      "n_distinct_targets": 278,
+      "n_no_target": 54,
+      "n_placements": 3962,
+      "n_reservations": 117,
+      "placed_counts_top_10": [
+        [
+          "c4313",
+          42
+        ],
+        [
+          "c3500",
+          41
+        ],
+        [
+          "c3020",
+          40
+        ],
+        [
+          "c3650",
+          40
+        ],
+        [
+          "c3661",
+          40
+        ],
+        [
+          "c3662",
+          40
+        ],
+        [
+          "c4100",
+          40
+        ],
+        [
+          "c4162",
+          40
+        ],
+        [
+          "c4373",
+          40
+        ],
+        [
+          "c3451",
+          39
+        ]
+      ],
+      "swap_plan_sha256": "89b21ea501eaa3c06255873848d16b2dab059ea0f3faa7ea02ec45fbe7f1892d",
+      "unique_reservation_count": 269
+    },
+    "789157": {
+      "n_distinct_targets": 284,
+      "n_no_target": 51,
+      "n_placements": 3965,
+      "n_reservations": 117,
+      "placed_counts_top_10": [
+        [
+          "c3750",
+          41
+        ],
+        [
+          "c4120",
+          41
+        ],
+        [
+          "c3000",
+          40
+        ],
+        [
+          "c3080",
+          40
+        ],
+        [
+          "c3662",
+          40
+        ],
+        [
+          "c3703",
+          40
+        ],
+        [
+          "c3950",
+          40
+        ],
+        [
+          "c4100",
+          40
+        ],
+        [
+          "c4250",
+          40
+        ],
+        [
+          "c4313",
+          40
+        ]
+      ],
+      "swap_plan_sha256": "456afa7bdf9b6540a8cd071e224602fd8f7444545f8dc5b11dc2c23aaf8ab7ef",
+      "unique_reservation_count": 272
+    }
+  },
+  "settings_cases": {
+    "42_chaos_mode": {
+      "n_distinct_targets": 280,
+      "n_no_target": 54,
+      "n_placements": 3962,
+      "n_reservations": 117,
+      "placed_counts_top_10": [
+        [
+          "c4110",
+          42
+        ],
+        [
+          "c3020",
+          40
+        ],
+        [
+          "c3451",
+          40
+        ],
+        [
+          "c3500",
+          40
+        ],
+        [
+          "c3650",
+          40
+        ],
+        [
+          "c3662",
+          40
+        ],
+        [
+          "c3664",
+          40
+        ],
+        [
+          "c4040",
+          40
+        ],
+        [
+          "c4100",
+          40
+        ],
+        [
+          "c4162",
+          40
+        ]
+      ],
+      "swap_plan_sha256": "3f25f2ceb9abaad62d74965c1d50aee71fc5fec5b37bcababf172121a5050b99",
+      "unique_reservation_count": 271
+    },
+    "42_mp_safe": {
+      "n_distinct_targets": 140,
+      "n_no_target": 950,
+      "n_placements": 3066,
+      "n_reservations": 60,
+      "placed_counts_top_10": [
+        [
+          "c7810",
+          48
+        ],
+        [
+          "c4382",
+          47
+        ],
+        [
+          "c3664",
+          46
+        ],
+        [
+          "c4150",
+          46
+        ],
+        [
+          "c4165",
+          46
+        ],
+        [
+          "c5240",
+          46
+        ],
+        [
+          "c4160",
+          45
+        ],
+        [
+          "c4170",
+          45
+        ],
+        [
+          "c5750",
+          45
+        ],
+        [
+          "c4080",
+          44
+        ]
+      ],
+      "swap_plan_sha256": "833ab21bd77118cdf8b07ec631e51b4cd1f677c7c78706d20e0b849e29751efb",
+      "unique_reservation_count": 140
+    },
+    "42_sote_mode": {
+      "n_distinct_targets": 100,
+      "n_no_target": 192,
+      "n_placements": 3824,
+      "n_reservations": 117,
+      "placed_counts_top_10": [
+        [
+          "c5060",
+          243
+        ],
+        [
+          "c5193",
+          77
+        ],
+        [
+          "c6290",
+          75
+        ],
+        [
+          "c5600",
+          74
+        ],
+        [
+          "c5630",
+          74
+        ],
+        [
+          "c6233",
+          74
+        ],
+        [
+          "c5050",
+          73
+        ],
+        [
+          "c5526",
+          73
+        ],
+        [
+          "c5940",
+          73
+        ],
+        [
+          "c5700",
+          72
+        ]
+      ],
+      "swap_plan_sha256": "fdffddfe3b5fad065415b2b05fdde6462ba954857c460b859af97aeaa0e32c42",
+      "unique_reservation_count": 167
+    }
+  }
+}

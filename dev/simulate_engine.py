@@ -127,7 +127,8 @@ def _compute_cluster_budgets(o, prefix_variants, inventory,
 
 
 def simulate(seed, inventory, roster, tags, pv, pc, msb_budgets=None,
-             pi_to_cid_by_msb=None, cluster_budgets=None):
+             pi_to_cid_by_msb=None, cluster_budgets=None,
+             chaos_mode=False):
     """Run one MSB-free shuffle for `seed`. Returns a result dict.
 
     v0.28.x Phase 2: when pi_to_cid_by_msb is provided (Phase 0 clusters
@@ -137,7 +138,13 @@ def simulate(seed, inventory, roster, tags, pv, pc, msb_budgets=None,
     resident/budget via run_ctx.active_*_cps(). Slots whose (msb, pi)
     aren't in the cluster file go in a cluster_id=-1 trailing bucket
     that runs without arming a POI scope — picker falls back to MSB
-    state for those."""
+    state for those.
+
+    v0.28.x: `chaos_mode` (default False) threads through to
+    o.pick_target. When True, the picker activates the v0.23.11
+    asymmetric NB-tier gating (NB chrs leak down to field slots, field
+    bosses can't leak up to NB arenas). Pass-through only — the engine
+    owns the semantics. See engine.picker / engine.rejection."""
     rng = random.Random(seed)
     o._V3_RUN_SEED = seed  # v0.28: propagate seed to the per-slot hashed rolls
                            # (_field_slot_roll / _slot_decision_rng) so the
@@ -264,7 +271,7 @@ def simulate(seed, inventory, roster, tags, pv, pc, msb_budgets=None,
                 slot_msb_name=msb_name, slot_pi=pi,
                 slot_variant_name=vname, slot_pos=slot_pos,
                 slot_require_boss_reward=require_boss_reward,
-                chaos_mode=False, gates=None, run_ctx=run_ctx)
+                chaos_mode=chaos_mode, gates=None, run_ctx=run_ctx)
             if target_cp is None:
                 n_no_target += 1
                 no_target.append({

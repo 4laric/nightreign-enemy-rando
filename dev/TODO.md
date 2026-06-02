@@ -85,8 +85,10 @@ to one source of truth.
   at load time)
 - History trail is data-readable, not comment-spelunked
 - A/B sim tooling can swap whole budget files in/out instead of
-  patching `V3_UNIQUE_TARGET_CAPS` manually like `dev/sim_cap_ab.py`
-  currently does
+  patching `V3_UNIQUE_TARGET_CAPS` manually like
+  `dev/archive/sim_cap_ab.py` historically did (v0.25.2-vs-v0.25.3
+  cap A/B; archived in v0.28.x — version-locked, but the harness
+  pattern is the reference)
 - Migration to per-chr JSON files (one file per c-prefix) if the
   single-table form gets unwieldy
 
@@ -117,8 +119,10 @@ Once caps + pools are a data file, build a small GUI:
   caps are. Filter by anim_class, size, source (vanilla NR / heritage /
   MMV). Quick toggle to exclude/include.
 - **A/B preview:** "If I change c4980 Death Bird cap from 2 to 3, what
-  does my next 50 seeds look like?" Wires into the existing
-  `sim_cap_ab.py` harness as a non-blocking background run.
+  does my next 50 seeds look like?" Wires into a new
+  `sim_cap_ab.py`-style harness (the v0.25.2-vs-v0.25.3 original
+  archived in v0.28.x; pattern lives in `dev/archive/sim_cap_ab.py`)
+  as a non-blocking background run.
 - **Dead-code finder:** scans for cap entries that can't fire (excluded
   chrs, trash-tier with cap, etc.) and flags them with a one-click
   "remove this dead entry" action.
@@ -513,7 +517,10 @@ keep them visible without forcing a triage decision:
 
 ## Reservation-health snapshot (100 seeds, v0.26.x, vanilla MSBs)
 
-Captured 2026-05-20 via `dev/sim_reservation_health.py`.
+Captured 2026-05-20 via `dev/sim_reservation_health.py` (archived in
+v0.28.x to `dev/archive/sim_reservation_health.py`; superseded by
+`dev/sim_new_add_health.py` which uses inventory JSON instead of
+raw MSBs).
 
 Reserves reliably (0% unplaced, 24/31 marquee NB chrs):
   c2130, c2500, c3050, c3100, c3250, c3251, c3560, c3570,

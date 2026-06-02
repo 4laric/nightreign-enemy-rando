@@ -71,49 +71,78 @@ class TestFlyingDragonBan:
 
 
 class TestRationaleDocumented:
-    """Each ban needs an inline comment explaining why — without
-    rationale, a future maintainer might lift the bans thinking
-    they were defensive against a since-fixed CTD."""
+    """Each ban needs documented rationale — without it, a future
+    maintainer might lift the bans thinking they were defensive
+    against a since-fixed CTD.
 
-    def test_inline_comment_explains_no_sauce(self):
-        """c4500 + c4505 ban rationale: 'no sauce'."""
-        import inspect
-        src = inspect.getsource(oops_v3)
-        exclude_idx = src.find('V3_EXCLUDE_TARGET_PREFIXES = {')
-        c4500_idx = src.find("'c4500'", exclude_idx)
-        assert exclude_idx != -1 and c4500_idx != -1
-        # Look at the 1500 chars before c4500 — should contain rationale
-        context = src[max(0, c4500_idx - 1500):c4500_idx]
-        assert ('sauce' in context.lower() or 'no element' in context.lower()
-                or 'agheel' in context.lower() or 'bland' in context.lower()), (
-            "The c4500/c4505 ban needs an inline comment explaining the "
-            "'no sauce' rationale — without it, a future maintainer "
-            "might lift the ban thinking it was defensive.")
+    Post-Step-3 (v0.28.x): rationale lives in the JSON's editorial
+    fields (`exclude_reason`, `rationale`, `since`) rather than in
+    inline source comments. This class checks those JSON fields for
+    the three banned dragons. Establishes the documentation pattern
+    that other future bans should follow.
 
-    def test_inline_comment_explains_greyoll_size(self):
-        """c4504 ban rationale: too big."""
-        import inspect
-        src = inspect.getsource(oops_v3)
-        exclude_idx = src.find('V3_EXCLUDE_TARGET_PREFIXES = {')
-        c4504_idx = src.find("'c4504'", exclude_idx)
-        assert exclude_idx != -1 and c4504_idx != -1
-        context = src[max(0, c4504_idx - 1500):c4504_idx]
-        assert ('greyoll' in context.lower() or 'too big' in context.lower()
-                or 'giant' in context.lower() or 'clipping' in context.lower()), (
-            "The c4504 ban needs an inline comment explaining the "
-            "'too big' rationale (Greyoll-specific). Without it, a "
-            "future maintainer might lump it in with the rot/ice "
-            "dragons and lift the ban.")
+    The pre-Step-3 version of this class grepped oops_v3.py source
+    code for keywords like 'sauce' / 'greyoll' near the inline literal
+    entries. That literal is gone now (Step 3) — comments live in git
+    history; structured rationale lives in the JSON.
+    """
 
-    def test_todo_reference_present(self):
-        """The comment block should mention the ER-dragon-import TODO
-        so anyone reading the bans knows there's a plan to widen the
-        pool rather than just shrink it."""
-        import inspect
-        src = inspect.getsource(oops_v3)
-        exclude_idx = src.find('V3_EXCLUDE_TARGET_PREFIXES = {')
-        c4500_idx = src.find("'c4500'", exclude_idx)
-        context = src[max(0, c4500_idx - 1500):c4500_idx + 200]
-        assert 'TODO' in context and 'dev/TODO.md' in context, (
-            "The dragon-ban comment should reference dev/TODO.md so "
-            "readers know about the planned ER-import widening work.")
+    def _load_json(self):
+        import json
+        import os
+        ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(ROOT, 'data', 'placement_budget.json')) as f:
+            return json.load(f)
+
+    def test_no_sauce_rationale_in_json(self):
+        """c4500 + c4505 ban rationale: 'no sauce' / 'no element'.
+        Their JSON entries must mention this so a future maintainer
+        doesn't lift the ban thinking it was defensive."""
+        d = self._load_json()
+        for cp in ('c4500', 'c4505'):
+            e = d['chrs'].get(cp, {})
+            reason = (e.get('exclude_reason') or '') + ' ' + (e.get('rationale') or '')
+            reason_lc = reason.lower()
+            assert ('sauce' in reason_lc or 'no element' in reason_lc
+                    or 'agheel' in reason_lc or 'bland' in reason_lc), (
+                f"{cp} JSON entry needs an exclude_reason / rationale "
+                f"explaining the 'no sauce' ban rationale. Edit "
+                f"data/placement_budget.json — chrs.{cp}.exclude_reason. "
+                f"Current: {reason!r}"
+            )
+
+    def test_greyoll_size_rationale_in_json(self):
+        """c4504 ban rationale: 'too big' / Greyoll size. JSON entry
+        must reflect this so it doesn't get lumped with the rot/ice
+        dragons and lifted."""
+        d = self._load_json()
+        e = d['chrs'].get('c4504', {})
+        reason = (e.get('exclude_reason') or '') + ' ' + (e.get('rationale') or '')
+        reason_lc = reason.lower()
+        assert ('greyoll' in reason_lc or 'too big' in reason_lc
+                or 'giant' in reason_lc or 'clipping' in reason_lc), (
+            f"c4504 JSON entry needs an exclude_reason / rationale "
+            f"explaining the 'too big' / Greyoll-specific ban. Edit "
+            f"data/placement_budget.json — chrs.c4504.exclude_reason. "
+            f"Current: {reason!r}"
+        )
+
+    def test_todo_reference_in_at_least_one_dragon(self):
+        """At least one of the three banned-dragon entries should
+        reference dev/TODO.md so readers know about the planned
+        ER-import widening work (the alternative to keeping the bans
+        forever)."""
+        d = self._load_json()
+        any_mention = False
+        for cp in ('c4500', 'c4504', 'c4505'):
+            e = d['chrs'].get(cp, {})
+            reason = (e.get('exclude_reason') or '') + ' ' + (e.get('rationale') or '')
+            if 'TODO' in reason or 'dev/TODO.md' in reason:
+                any_mention = True
+                break
+        assert any_mention, (
+            "At least one of c4500/c4504/c4505 in "
+            "data/placement_budget.json should reference dev/TODO.md "
+            "in its exclude_reason or rationale, pointing at the "
+            "planned ER-import widening work."
+        )

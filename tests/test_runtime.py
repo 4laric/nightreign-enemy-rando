@@ -517,3 +517,73 @@ class TestMpSafeBlocklistHoist:
             f"unioned into ghost: {sorted(missing_in_ghost)}. The picker "
             "reads ghost — the blocklist alone doesn't protect anything."
         )
+
+
+# =====================================================================
+# _resolve_module_or_raise — defensive helper
+# =====================================================================
+
+class TestModuleResolver:
+    """The default module-resolution path used to be `import oops_v3`,
+    which silently returned a FRESH copy of oops_v3 if a caller had
+    loaded the real one via importlib.util.spec_from_file_location
+    (which doesn't register in sys.modules). The override would then
+    mutate the fresh copy's state while the caller continued using the
+    spec-loaded one — a silent no-op.
+
+    v0.28.x replaced that with _resolve_module_or_raise which loudly
+    rejects the spec-loaded path. These tests pin that contract.
+    """
+
+    def test_explicit_module_returned_unchanged(self):
+        """When module is not None, return it as-is — no sys.modules
+        lookup, no raising. The override-via-explicit-module path is
+        the safe one."""
+        from engine.runtime import _resolve_module_or_raise
+        sentinel = object()
+        assert _resolve_module_or_raise(sentinel) is sentinel
+
+    def test_default_path_uses_sys_modules_oops_v3(self):
+        """In a normal test environment, oops_v3 is in sys.modules
+        (via the standard `import oops_v3` at the top of this file),
+        so the None path returns that registered module."""
+        import sys
+        from engine.runtime import _resolve_module_or_raise
+        resolved = _resolve_module_or_raise(None)
+        assert resolved is sys.modules['oops_v3']
+
+    def test_default_path_raises_when_oops_v3_not_in_sys_modules(self,
+                                                                  monkeypatch):
+        """The footgun guard. When oops_v3 isn't in sys.modules (e.g.
+        a caller loaded it via spec_from_file_location), the helper
+        must raise instead of falling back to a fresh import."""
+        import sys
+        from engine.runtime import _resolve_module_or_raise
+
+        # Stash and remove oops_v3 from sys.modules to simulate the
+        # spec-loaded caller scenario. The monkeypatch fixture
+        # restores it on test exit.
+        monkeypatch.delitem(sys.modules, 'oops_v3', raising=False)
+
+        with pytest.raises(RuntimeError) as exc:
+            _resolve_module_or_raise(None)
+
+        # Message must mention the key facts so the failure is
+        # diagnostic, not just "something went wrong."
+        msg = str(exc.value)
+        assert 'spec_from_file_location' in msg
+        assert 'sys.modules' in msg
+        assert 'module=' in msg
+
+    def test_raise_message_points_at_explicit_module_fix(self,
+                                                          monkeypatch):
+        """The error message must tell the caller how to fix it. If
+        someone hits this in production-like code, the fix is to pass
+        module= explicitly — that's what the message should say."""
+        import sys
+        from engine.runtime import _resolve_module_or_raise
+
+        monkeypatch.delitem(sys.modules, 'oops_v3', raising=False)
+
+        with pytest.raises(RuntimeError, match=r'module=.*explicitly'):
+            _resolve_module_or_raise(None)

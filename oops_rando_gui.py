@@ -7464,12 +7464,18 @@ class RandoGUI(PoolsCapsPanelMixin):
                     bundled_overlay = os.path.join(HERE, 'patched_emevd')
                     emevd_overlay = (bundled_overlay
                                      if os.path.isdir(bundled_overlay) else None)
+                    # v0.28.x: pass game_install through so the FMG
+                    # splice can read item_dlc01.msgbnd.dcx out of NR's
+                    # encrypted dvdbnd archives via data_archive when
+                    # the loose path isn't on disk (no UXM unpack).
+                    game_install_path = self.game_install_var.get().strip()
                     dcx_batch.rando_pipeline(
                         config['in_dir'], config['out_dir'],
                         spawn_pool_source_dir=config.get('spawn_pool_source_dir'),
                         emevd_vanilla_dir=vanilla_emevd or None,
                         emevd_out_dir=output_emevd or None,
                         emevd_overlay_dir=emevd_overlay,
+                        game_install=game_install_path or None,
                         vanilla_msg_bundle=vanilla_msg or None,
                         mod_msg_bundle=mod_msg or None,
                         fallback_nameid=fallback_nameid,

@@ -304,7 +304,7 @@
     "c2030": {
       "arena_only": false,
       "cap": null,
-      "exclude": false,
+      "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,
@@ -1018,7 +1018,7 @@
       "since": null,
       "source": "nr_placed",
       "tags": [],
-      "tier": "night_boss",
+      "tier": "field_boss",
       "tier_override": false
     },
     "c3170": {
@@ -1243,7 +1243,7 @@
     },
     "c3350": {
       "arena_only": false,
-      "cap": 4,
+      "cap": 2,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -1258,7 +1258,7 @@
       "since": null,
       "source": "nr_placed",
       "tags": [],
-      "tier": "miniboss",
+      "tier": "field_boss",
       "tier_override": true
     },
     "c3360": {
@@ -1767,8 +1767,8 @@
     },
     "c3670": {
       "arena_only": false,
-      "cap": 4,
-      "exclude": false,
+      "cap": null,
+      "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,
@@ -2127,7 +2127,7 @@
     },
     "c4021": {
       "arena_only": false,
-      "cap": 4,
+      "cap": null,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": true,
@@ -2142,7 +2142,7 @@
       "since": null,
       "source": "nr_placed",
       "tags": [],
-      "tier": "miniboss",
+      "tier": "field_boss",
       "tier_override": true
     },
     "c4040": {
@@ -2911,7 +2911,7 @@
     },
     "c4270": {
       "arena_only": false,
-      "cap": 4,
+      "cap": 8,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": true,
@@ -2926,7 +2926,7 @@
       "since": null,
       "source": "nr_placed",
       "tags": [],
-      "tier": "miniboss",
+      "tier": "field_boss",
       "tier_override": true
     },
     "c4280": {
@@ -3975,6 +3975,28 @@
       "tier": "grunt",
       "tier_override": false
     },
+    "c4491": {
+      "arena_only": false,
+      "cap": 40,
+      "exclude": false,
+      "exclude_reason": null,
+      "fragile_sensitive": false,
+      "ghost_exclude": false,
+      "history": [
+        "v0.28.x: unbanned from V3_EXCLUDE_PREFIXES. The cp has 1 merchant variant + 6 hostile-combat Small Living Jar variants (team=6, 1615x exploding spEffect family, 150 HP). Merchant variant npc=44910000 stays filtered at the variant level via V3_AVOID_VARIANT_NPC_IDS. cap=40 to match c5751 (sibling SOTE-side small Living Jar)."
+      ],
+      "map_excludes": [],
+      "mp_safe_blocked": false,
+      "name": "Small Living Jar",
+      "nb_caliber": false,
+      "nb_strict": false,
+      "rationale": "Combat variants only; merchant variant filtered. See history.",
+      "since": "v0.28.x",
+      "source": "nr_placed",
+      "tags": [],
+      "tier": "grunt",
+      "tier_override": false
+    },
     "c4492": {
       "arena_only": false,
       "cap": null,
@@ -3999,7 +4021,7 @@
       "arena_only": false,
       "cap": null,
       "exclude": true,
-      "exclude_reason": null,
+      "exclude_reason": "No element / status — the Agheel-class base Flying Dragon has no rot/ice/lightning/death sauce. Bland visual + mechanical experience at every swap slot. v0.26.x: ban so dragon slots land on saucy variants instead. See dev/TODO.md for ER-import widening work to grow the saucy-dragon pool further.",
       "fragile_sensitive": true,
       "ghost_exclude": false,
       "history": [],
@@ -4012,7 +4034,7 @@
       "nb_caliber": true,
       "nb_strict": false,
       "rationale": null,
-      "since": null,
+      "since": "v0.26.x",
       "source": "nr_placed",
       "tags": [],
       "tier": "miniboss",
@@ -4088,7 +4110,7 @@
       "arena_only": false,
       "cap": null,
       "exclude": true,
-      "exclude_reason": null,
+      "exclude_reason": "Elder Dragon Greyoll — too big. The giant prone elder dragon does not fit random arenas (clipping, absurd healthbar). Greyoll-specific size complaint, separate from the c4500/c4505 \"no sauce\" rationale. v0.26.x: banned. See dev/TODO.md for ER-import widening work.",
       "fragile_sensitive": false,
       "ghost_exclude": false,
       "history": [],
@@ -4098,7 +4120,7 @@
       "nb_caliber": false,
       "nb_strict": false,
       "rationale": null,
-      "since": null,
+      "since": "v0.26.x",
       "source": "post_dlc_dump",
       "tags": [],
       "tier": "night_boss",
@@ -4108,7 +4130,7 @@
       "arena_only": false,
       "cap": null,
       "exclude": true,
-      "exclude_reason": null,
+      "exclude_reason": "Flying Dragon (Small) — same \"no sauce\" complaint as c4500. Horde role was not enough to save it from the bland-visual ban. v0.26.x: banned alongside c4500. See dev/TODO.md for ER-import widening work.",
       "fragile_sensitive": true,
       "ghost_exclude": false,
       "history": [],
@@ -4121,7 +4143,7 @@
       "nb_caliber": true,
       "nb_strict": false,
       "rationale": null,
-      "since": null,
+      "since": "v0.26.x",
       "source": "nr_placed",
       "tags": [],
       "tier": "miniboss",
@@ -4227,7 +4249,7 @@
       "since": null,
       "source": "heritage",
       "tags": [],
-      "tier": "field_boss",
+      "tier": "miniboss",
       "tier_override": false
     },
     "c4570": {
@@ -4458,7 +4480,7 @@
     },
     "c4660": {
       "arena_only": true,
-      "cap": 4,
+      "cap": 2,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -4476,7 +4498,7 @@
       "since": null,
       "source": "nr_placed",
       "tags": [],
-      "tier": "miniboss",
+      "tier": "field_boss",
       "tier_override": true
     },
     "c4670": {
@@ -4684,7 +4706,7 @@
     },
     "c4810": {
       "arena_only": false,
-      "cap": 4,
+      "cap": 2,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -4699,7 +4721,7 @@
       "since": null,
       "source": "nr_placed",
       "tags": [],
-      "tier": "miniboss",
+      "tier": "field_boss",
       "tier_override": true
     },
     "c4811": {
@@ -7973,7 +7995,7 @@
     },
     "c7100": {
       "arena_only": false,
-      "cap": 4,
+      "cap": 2,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -7990,7 +8012,7 @@
       "since": null,
       "source": "nr_placed",
       "tags": [],
-      "tier": "miniboss",
+      "tier": "field_boss",
       "tier_override": true
     },
     "c7500": {
@@ -8737,26 +8759,6 @@
       "arena_only": false,
       "cap": 2,
       "exclude": false,
-      "exclude_reason": null,
-      "fragile_sensitive": false,
-      "ghost_exclude": false,
-      "history": [],
-      "map_excludes": [],
-      "mp_safe_blocked": false,
-      "name": null,
-      "nb_caliber": false,
-      "nb_strict": false,
-      "rationale": null,
-      "since": null,
-      "source": null,
-      "tags": [],
-      "tier": null,
-      "tier_override": false
-    },
-    "c8400": {
-      "arena_only": false,
-      "cap": null,
-      "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,

@@ -290,14 +290,23 @@ class TestLiveEngine:
         `python3 dev/extract_placement_budget.py`, this test fails
         with a directive to re-run it.
 
-        This is the equivalent of `--check` mode in the CLI."""
+        This is the equivalent of `--check` mode in the CLI.
+
+        Note: passes `preserve_editorial_from` so the extracted
+        baseline keeps the committed JSON's `rationale` /
+        `exclude_reason` / `since` fields rather than nulling them
+        out — those are human-managed, not engine-derived, so they
+        shouldn't trigger a round-trip diff."""
         if not os.path.exists(DEFAULT_OUTPUT_PATH):
             pytest.fail(
                 f'{DEFAULT_OUTPUT_PATH} does not exist. '
                 f'Run: python3 dev/extract_placement_budget.py')
         with open(DEFAULT_OUTPUT_PATH, encoding='utf-8') as f:
             committed = f.read()
-        live = render_json(extract_budget(engine, tags=tags))
+        live = render_json(extract_budget(
+            engine, tags=tags,
+            preserve_editorial_from=DEFAULT_OUTPUT_PATH,
+        ))
         assert committed == live, (
             f'\ndata/placement_budget.json is out of date with engine state.\n'
             f'Run: python3 dev/extract_placement_budget.py\n'

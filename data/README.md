@@ -1,72 +1,68 @@
-# Data files
+# patched_emevd/early_spawn/
 
-JSON data files loaded by the engine at runtime. Moved here in stages:
-- v0.23.06: bulk slot / anchor / heritage-import-plan files
-- v0.23.71: full consolidation — all roster, tag, import, terrain, and
-  promotion JSONs moved here too
+Alternate **`common_func.emevd.dcx`** for the "Early night-boss spawn (RoR2
+teleporter)" GUI toggle.
 
-The engine's `_data_path()` helper checks `data/<file>` first, then
-falls back to the project root if a file isn't found. So older installs
-that still have JSONs at root keep working transparently.
+When the user enables **Early night-boss spawn** on the Generate /
+Heritage tab, the GUI installs the `common_func.emevd.dcx` from THIS folder
+instead of the default one in `patched_emevd/`. Every other EMEVD file
+(`common_func` aside) is reused byte-for-byte from `patched_emevd/` — only
+`common_func` differs.
 
-## Files
+## What the difference is
 
-### Roster + tagging (always loaded)
+The only change vs. the shipped (clock-gated) build is the trigger condition
+inside common_func event **`90065950`** (`nb_night_transition`):
 
-| File | Purpose | Loaded by |
-|------|---------|-----------|
-| `nr_enemy_roster.json` | Every NPCParam variant of every NR enemy: name, tier, anim hints, base movement params. ~770KB. | `oops_v3.load_data` |
-| `nr_enemy_tags.json` | Per-c-prefix tag bundle: name, size, locomotion, fragile_locomotion, team, has_reward, source. The authoritative content/balance metadata. | `oops_v3.load_data`, GUI |
-| `manual_promotions.json` | Vanilla NR enemies with NpcParam data but never placed in any MSB (Storm King, Nameless King, Ancestor Spirit, Grafted Scion). Re-introduced as swap targets via tagging only. | `oops_v3.load_data` |
-| `vanilla_promotions_v1.json` | Additional vanilla NR chrs surfaced by tagging only (no Smithbox imports needed). `_source: vanilla_promotions_v1`. | `oops_v3.load_data` |
+- **Default (clock):** the night gate arms on the vanilla 23:00–23:59 window
+  — `PlayAreaCurrentTimeInRange(23,0,0,23,59,59)`.
+- **Early spawn (this folder):** the night gate arms on **player proximity**
+  to the night boss — `EntityInRadiusOfEntity(20000, bossEntityId, 5, 1)` —
+  so a player can walk up to a night-boss arena and start the fight before
+  the storm reaches night.
 
-### Slot + terrain catalogs (built once per major change)
+Everything else is identical and intentionally retained: the
+`WaitFor(EventFlag(gateFlag))` night-scoping, the N2 `EventFlag(7512)`
+"a night boss has died" softlock guard, and the redundant
+7501/7504/7707 (N1) and 7506/7509/7727 (N2) storm / night-progress flag
+firing (so day-rollover behaves exactly the same).
 
-| File | Purpose | Loaded by |
-|------|---------|-----------|
-| `nr_all_slots.json` | Every recipient slot: map + part_index + source c_prefix. Used for cluster-lock map detection and SE-suffix MSB enumeration. | `oops_v3.load_data`, `_compute_se_msbs` |
-| `nr_boss_slots.json` | Subset of `nr_all_slots.json` where the source is a boss-tier chr. Used for size-down rescue's at-risk tail computation. | `oops_v3.shuffle_msb_v3` rescue path |
-| `t1_anchors.json` | Per-MSB anchor positions for POI proximity fragility detection. Anchors include placeholder clusters and encampments. | `oops_v3._load_t1_anchors`, `_compute_se_msbs` |
-| `slot_terrain.json` | Per-slot terrain classification (on-mesh / off-mesh / edge-sentinel). Used for fragility-aware target filtering. | `oops_v3._load_slot_roughness`, `_load_off_mesh_slots` |
+The per-map night-tile binaries already pass the boss entity id as the
+first arg to `90065950`, so they don't change — that's why only
+`common_func` lives here.
 
-### Optional asset packs (gated by `_meta.enabled`)
+## How to (re)generate this file
 
-| File | Purpose | Default state |
-|------|---------|---------------|
-| `heritage_pack.json` | 47 SOTE-flavored creatures (Bears, Imps, Messmer Soldiers). | OFF by default |
-| `mmv_imports.json` | More Map Variations (MMV) cross-game boss imports — Malenia, Maliketh, Slave Knight Gael, etc. | OFF by default; flip via GUI checkbox |
-
-### Other (build-time / dev)
-
-| File | Purpose |
-|------|---------|
-| `batch_import_plan_comprehensive.json` | Heritage pack's import manifest. Used by the GUI's heritage-scan tab to show pretty names during chr/ folder scan. |
-| `nightlord_pools.json`, `nightlord_expedition_table.json` | Nightlord targeting tables, used by `oops_all_anyone.py`. |
-
-## When to regenerate
-
-Most users never touch these. If you're modifying the engine and adding
-new chrs, regenerate via the dev tools:
-
-- `nr_enemy_roster.json` — `dev/build_roster.py`
-- `nr_enemy_tags.json` — hand-curated; see CHANGELOG entries for tag-edit history
-- `nr_all_slots.json` — `dev/extract_msb_slots.py`
-- `nr_boss_slots.json` — manual filter from `nr_all_slots.json` keeping only entries where the source c-prefix is boss-tier
-- `t1_anchors.json` — `dev/audit_encampment_anchors.py` and `dev/audit_placeholder_clusters.py`
-- `slot_terrain.json` — `build_slot_terrain.py` (works against a vanilla MSB dump)
-
-## Backwards compatibility
-
-If you're upgrading from a pre-v0.23.71 install, these files used to be
-at the project root. The engine's `_data_path()` helper falls back to
-root, so legacy layouts keep working without changes. You can move
-the JSONs into `data/` whenever you like; no functional difference.
-
-To consolidate manually:
+From a clean decompile of vanilla `common_func.emevd.dcx` (DarkScript3):
 
 ```
-mkdir -p data
-mv *.json data/   # if you have other top-level JSONs to keep, move only the listed ones
+# 1. Decompile vanilla common_func -> common_func.emevd.dcx.js (DarkScript3)
+# 2. Emit the proximity variant (only nb_night_transition changes):
+python emevd_patch.py patch <decompiled_dir> <out_dir> \
+    --patch nb_night_transition --early-boss-spawn
+# 3. Recompile <out_dir>/common_func.emevd.dcx.js -> .emevd.dcx (DarkScript3)
+# 4. Drop the result here:
+#       patched_emevd/early_spawn/common_func.emevd.dcx
 ```
 
-The engine will pick them up from `data/` on next run.
+(If you want the full batch in early-spawn mode, drop `--patch
+nb_night_transition` and pass `--early-boss-spawn` to the whole run; the
+per-map files come out identical to the default build, so you still only
+need to copy `common_func.emevd.dcx` out of it.)
+
+## Until the binary is here
+
+The GUI treats the toggle as a no-op-with-warning if
+`early_spawn/common_func.emevd.dcx` is missing: it logs that the early-spawn
+binary isn't bundled and falls back to the default clock-gated build, so an
+enabled toggle never ships a broken or half-applied EMEVD.
+
+## Design caveat (worth a playtest)
+
+Because the `gateFlag` wait is retained, the early spawn only arms once the
+engine has flipped this arena's gate flag (AABB0000 N1 / AABB0001 N2).
+Whether that happens at expedition start or only at the night transition was
+the open empirical question from the design pass — if it's set late, "early"
+is bounded by it. Dropping the gateFlag wait for truly-from-start spawning
+is a separate change (it also loosens N1/N2 scoping) and is not what this
+build does.

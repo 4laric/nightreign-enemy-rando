@@ -74,6 +74,9 @@ O1FnLm8i4zOxVdPHQBKICkKcGS1o3C2dfwIEXw/f3w==
 """,
 }
 
-# Archives that actually hold chr/script/sfx (sd/* are sound data — harmless to
-# index but never needed for heritage imports).
+# Archives that hold chr/script/sfx AND sd (sound) data. sd/* is pulled for
+# the MMV/ER roster bulk-sync (silent cross-game bosses otherwise); the packed
+# --source-game materialize path still reads chr-only, so sound from a *packed*
+# ER install is not auto-deployed -- point the GUI roster importer at an
+# unpacked game-root (with its sd/ subdir) for that.
 ELDEN_RING_ARCHIVES = ["Data0", "Data1", "Data2", "Data3", "DLC", "sd/sd", "sd/sd_dlc02"]

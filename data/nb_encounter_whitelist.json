@@ -1,7 +1,7 @@
 {
   "_doc": "All-arenas whitelist for one-seed-many-Nightlords sweeps. Buckets are split by pool-majority for readability; engine treats nb1 and nb2 identically.",
   "_version": "v0.28.x",
-  "_test_note": "Sweep mode: all 28 NB arenas active. Restore V1 picks via --restore-v1 when sweep is complete.",
+  "_test_note": "Sweep complete: 12 confirmed OK_rando arenas. 3 banned for known/predicted phase-transition breakage. Remaining untested (m49_21 DRB, m49_23 Dragonkin, m49_25 Crucible+Hippo, m49_26 Outland Cmdr, m49_29 DHQ) are EMEVD-clean and predicted-safe.",
   "nb1": [
     "m47_70_00_00",
     "m47_80_00_00",
@@ -13,17 +13,12 @@
     "m49_10_00_00",
     "m49_17_00_00",
     "m49_24_00_00",
-    "m49_26_00_00",
-    "m49_27_00_00",
     "m49_28_00_00",
     "m49_29_00_00",
     "m49_30_00_00",
     "m49_90_00_00"
   ],
   "nb2": [
-    "m48_20_00_00",
-    "m48_30_00_00",
-    "m48_40_00_00",
     "m48_50_00_00",
     "m48_60_00_00",
     "m48_80_00_00",
@@ -33,5 +28,12 @@
     "m49_21_00_00",
     "m49_23_00_00",
     "m49_25_00_00"
-  ]
+  ],
+  "_banned_arenas": {
+    "m48_20_00_00": "Nameless King \u2014 Phase 2 transition fails under rando (Storm King death does not trigger NK foot-form spawn). Confirmed BROKEN.",
+    "m48_30_00_00": "Dancer \u2014 EMEVD has CharacterHasSpEffect + SetSpEffect + CreateReferredDamagePair + WarpCharacterAndCopyFloor patterns. Predicted to fail similarly to Nameless King (chr-internal phase logic not satisfied by swap targets).",
+    "m48_40_00_00": "Morgott \u2014 EMEVD has CreateReferredDamagePair patterns suggesting phase 2 (Cursed Mark / black holy spear) transition logic. Banned conservatively pending direct test.",
+    "m49_26_00_00": "Outland Commander \u2014 banned by user preference. Commander variants share c3050 c_prefix with Battlefield Commander; conservative ban pending future investigation.",
+    "m49_27_00_00": "Battlefield Commander \u2014 banned by user preference. Commander variants share c3050 c_prefix; conservative ban pending future investigation."
+  }
 }

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "_engine_fingerprint": "v0.28.0",
+    "_engine_fingerprint": "v0.28.1",
     "_generator": "dev/extract_placement_budget.py",
     "_notes": [
       "Sparse: only c-prefixes with at least one non-default fact",
@@ -5013,18 +5013,25 @@
     "c5020": {
       "arena_only": false,
       "cap": null,
-      "exclude": false,
-      "exclude_reason": null,
+      "exclude": true,
+      "exclude_reason": "release_holdback",
       "fragile_sensitive": false,
       "ghost_exclude": false,
-      "history": [],
+      "history": [
+        {
+          "change": "exclude=True",
+          "rationale_summary": "Temporary release-holdback ahead of v0.28.x ship — not yet validated against v0.28.x balance pass end-to-end. Lift after clean playtest confirms working.",
+          "reason": "release_holdback",
+          "version": "v0.28.x"
+        }
+      ],
       "map_excludes": [],
       "mp_safe_blocked": true,
       "name": "Putrescent Knight",
       "nb_caliber": false,
       "nb_strict": false,
-      "rationale": null,
-      "since": null,
+      "rationale": "v0.28.x: TEMPORARY release-holdback ban pending playtest confirmation. Putrescent Knight (SoTE heritage import, 7 variants, field_boss tier) shipping is being held back ahead of the v0.28.x release in the interest of releasability — encounter has not been validated against the v0.28.x balance pass (HP overrides, damage clips, NB whitelist routing, contamination heal) end-to-end. Heritage-only chr, so target-side exclusion fully removes it from the rando without source-side knock-on (vanilla NR has no Putrescent Knight slots to source-displace from). Lift this entry after a clean playtest run with c5020 placements observed working: (a) no spawn freeze / T-pose, (b) HP curve feels right, (c) attacks land at the expected damage band, (d) reward drops correctly. Reverting = set exclude back to false and clear the reason/rationale fields; the loader at oops_v3 module load picks it up.",
+      "since": "v0.28.x",
       "source": "er_heritage_port_v0_27_0",
       "tags": [],
       "tier": "field_boss",

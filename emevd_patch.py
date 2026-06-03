@@ -113,6 +113,46 @@ PATCHES = {}
 PUBLISH_MODE = True
 
 
+# v0.28.x: "full RoR2" early-boss-spawn switch for nb_night_transition
+# (event 90065950). DEFAULT FALSE -> the shipped no-early-trigger build:
+# the night gate fires on the vanilla 23:00-23:59 clock window only.
+#
+# When True, the SAME event 90065950 swaps its trigger condition from the
+# clock window to player proximity to the night boss
+# (EntityInRadiusOfEntity(20000, bossEntityId, _NB_EARLY_SPAWN_RADIUS, 1)),
+# so a player can walk up to a night-boss arena and start the fight before
+# the storm reaches night. This is the RoR2-teleporter mechanic.
+#
+# Scope of the difference is deliberately minimal: ONLY the common_func
+# body of 90065950 changes. The per-map InitializeCommonEvent calls are
+# byte-identical in both modes (they already pass the boss entity id as
+# arg0 -- named `unusedBossEntityId` in the clock build, used as the
+# proximity entity in the early build), so the 28 night-map .emevd.dcx
+# binaries are reused as-is and only common_func.emevd.dcx is regenerated.
+#
+# What is intentionally KEPT identical to the clock build:
+#   - WaitFor(EventFlag(gateFlag)) night-scoping (so the N1/N2 handler is
+#     pinned to the arena the engine actually staged it as).
+#   - The N2 EventFlag(7512) "a night boss has died" guard (so the
+#     mission-progress chain can't be driven N2-before-N1).
+#   - The redundant 7501/7504/7707 (N1) and 7506/7509/7727 (N2) storm /
+#     night-progress flag firing, and SetNetworkconnectedEventFlagID on
+#     arenaFlag, so day-rollover behaves exactly as in the clock build.
+#
+# CAVEAT worth a playtest: because the gateFlag wait is retained, the early
+# spawn only arms once the engine has flipped this arena's gate flag
+# (AABB0000 N1 / AABB0001 N2). Whether that happens at expedition start or
+# only at the night transition is the open empirical question from the
+# design pass -- if it is set late, "early" is bounded by it. Dropping the
+# gateFlag wait for truly-from-start spawning is a separate change (it also
+# loosens N1/N2 scoping) and is NOT what this switch does.
+#
+# Toggled by the `patch --early-boss-spawn` CLI flag (and by callers that
+# set this module global before invoking cmd_patch). Idempotency, anchors,
+# and the per-map path are unchanged.
+EARLY_BOSS_SPAWN = False
+
+
 def register(name):
     def deco(fn):
         PATCHES[name] = fn
@@ -1826,6 +1866,253 @@ def patch_nb_arena_entry_trigger(content, filename):
 
 
 # ============================================================================
+# nb_night_transition (v0.28.x) — OOPS_ALL_NB no-early-trigger night gate
+# ============================================================================
+#
+# OOPS_ALL_NB mode places a night boss in every Limveld tile. Each tile's
+# arena must arm at the legitimate night window (23:00) WITHOUT an early
+# proximity hair-trigger — the v0.27.x debug build of this event used
+# EntityInRadiusOfEntity(...) and pre-fired the arena the moment the player
+# walked near it, before night even fell. This patch ships the
+# "NO-EARLY-TRIGGER" rebuild: the trigger condition is the vanilla night
+# window (PlayAreaCurrentTimeInRange(23,0,0,23,59,59)) instead of proximity.
+#
+# Two pieces, mirroring nb_arena_entry_trigger's shape:
+#   - common_func: append $Event(90065950) once (the gate handler).
+#   - per night-map: inject two $InitializeCommonEvent(0, 90065950, ...)
+#     calls (N1 + N2) into Event(0), right after the vanilla
+#     IsMapVariation(0) night-trigger block.
+#
+# Target set = every per-map file whose Event(0) carries the
+# IsMapVariation(0) + 90055000/90055001 night-trigger block. That block is
+# the night-map signature: present in all 28 m47/m48/m49 night tiles and
+# absent from every overworld map, so it gates injection precisely without
+# a hardcoded map list.
+#
+# Args are stem-derived exactly like _arena_entry_args:
+#   m48_50 → prefix 4850 → boss 48500800, arenaFlag 48500200,
+#            gateFlag N1 48500000 / N2 48500001.
+#
+# Idempotent with vanilla and on re-run: EndIf(arenaFlag) short-circuits if
+# the arena already armed; SetNetworkconnectedEventFlagID on an already-ON
+# flag is a no-op; re-running skips files that already carry the calls.
+
+_NB_NIGHT_TRANSITION_EVENT_ID = 90065950
+
+# v0.28.x: proximity radius (metres, player-to-boss) for the EARLY_BOSS_SPAWN
+# build of 90065950. 5m matches the night-boss teleporter design pass; the
+# nb_arena entry/hold triggers use 20/25m as reference points. Tunable.
+_NB_EARLY_SPAWN_RADIUS = 5
+
+# The 3-line constructor comment, verbatim, at Event-body (4-space) indent.
+_NB_NIGHT_TRANSITION_COMMENT = (
+    '    // Unconditional teleporter instantiation: event itself waits on the\r\n'
+    '    // gateFlag at runtime (AABB0000/AABB0001), so it works even if the\r\n'
+    '    // engine flips those flags after the constructor has run.'
+)
+
+
+def _nb_night_transition_args(stem):
+    """Derive (boss800, arenaFlag200, gateFlag_n1, gateFlag_n2) from an
+    arena stem. Pattern matches _arena_entry_args:
+      m48_50 → 4850 → (48500800, 48500200, 48500000, 48500001)
+      m49_29 → 4929 → (49290800, 49290200, 49290000, 49290001)
+    """
+    import re as _re
+    m = _re.match(r'm(\d+)_(\d+)_', stem)
+    if not m:
+        raise ValueError(f'unrecognized stem: {stem!r}')
+    base = int(f'{m.group(1)}{m.group(2)}') * 10000
+    return base + 800, base + 200, base + 0, base + 1
+
+
+def _build_night_transition_event_body(early_spawn=False):
+    """Render the $Event(90065950) common_func body.
+
+    early_spawn=False (default): the no-early-trigger night gate. Verbatim
+    reproduction of the hand-authored event (the shipped clock build),
+    leading blank line included so it appends cleanly after the last
+    vanilla event.
+
+    early_spawn=True: the "full RoR2" build -- identical in every respect
+    except the per-night trigger condition, which becomes player proximity
+    to the night boss instead of the 23:00-23:59 clock window. arg0
+    (`bossEntityId`) is the proximity entity. See the EARLY_BOSS_SPAWN
+    module comment for the rationale and the retained gateFlag / 7512 /
+    storm-flag scaffolding.
+    """
+    if early_spawn:
+        # arg0 is now USED (the proximity entity), so name it accordingly.
+        boss_arg_name = 'bossEntityId'
+        header = [
+            '// ============================================================================',
+            '//  OOPS_ALL_NB - Night transition trigger (EARLY-SPAWN / full RoR2 build)',
+            '//',
+            '//  Same event, same args, same downstream effects as the shipped clock build.',
+            '//  The ONLY change is the trigger: the 23:00-23:59 clock window is replaced by',
+            f'//  player proximity to the night boss (within {_NB_EARLY_SPAWN_RADIUS}m), so a player can start the',
+            '//  night-boss fight before the storm reaches night -- the RoR2 teleporter.',
+            '//  Vanilla 90055000/90055001 remain the real timer-driven night trigger and',
+            '//  fire redundantly; the storm-active 7707/7727 + night-progress flags +',
+            '//  arenaFlag below are left untouched so day-rollover behaves identically. N2',
+            "//  keeps its 7512 (a night boss has died) guard so it still can't run the",
+            '//  mission chain N2-before-N1.',
+            '//',
+            '//  Args: bossEntityId (AABB0800, the proximity entity), arenaFlag (AABB0200),',
+            '//        gateFlag (AABB0000 N1 / AABB0001 N2), night (1 or 2).',
+            '// ============================================================================',
+        ]
+        trigger_n1 = [
+            '        // EARLY SPAWN (full RoR2): player proximity, not the clock window.',
+            f'        WaitFor(EntityInRadiusOfEntity(20000, bossEntityId, {_NB_EARLY_SPAWN_RADIUS}, 1)',
+            '            || EventFlag(arenaFlag));',
+        ]
+        trigger_n2 = [
+            f'        WaitFor((EntityInRadiusOfEntity(20000, bossEntityId, {_NB_EARLY_SPAWN_RADIUS}, 1)',
+            '                && EventFlag(7512))',
+            '            || EventFlag(arenaFlag));',
+        ]
+    else:
+        boss_arg_name = 'unusedBossEntityId'
+        header = [
+            '// ============================================================================',
+            '//  OOPS_ALL_NB - Night transition trigger (NO-EARLY-TRIGGER build)',
+            '//',
+            '//  The proximity hair-trigger is GONE. The only change vs the debug build is',
+            '//  the trigger condition: EntityInRadiusOfEntity(...) has been swapped for the',
+            '//  vanilla night window PlayAreaCurrentTimeInRange(23,0,0,23,59,59), so this',
+            '//  event can no longer fire before 23:00. Vanilla 90055000/90055001 remain the',
+            '//  real night trigger; everything below (storm-active 7707/7727 + the night-',
+            '//  progress flags + arenaFlag) is left untouched and fires redundantly at the',
+            '//  legitimate night. N2 keeps its 7512 (a night boss has died) guard so it',
+            "//  still can't run the mission chain N2-before-N1. arg0 is now unused.",
+            '//',
+            '//  Args: unusedBossEntityId (AABB0800, ignored), arenaFlag (AABB0200),',
+            '//        gateFlag (AABB0000 N1 / AABB0001 N2), night (1 or 2).',
+            '// ============================================================================',
+        ]
+        trigger_n1 = [
+            '        // No-early-trigger gate: vanilla night window, not proximity.',
+            '        WaitFor(PlayAreaCurrentTimeInRange(23, 0, 0, 23, 59, 59)',
+            '            || EventFlag(arenaFlag));',
+        ]
+        trigger_n2 = [
+            '        WaitFor((PlayAreaCurrentTimeInRange(23, 0, 0, 23, 59, 59)',
+            '                && EventFlag(7512))',
+            '            || EventFlag(arenaFlag));',
+        ]
+
+    lines = ['']
+    lines.extend(header)
+    lines.append('')
+    lines.append(
+        f'$Event(90065950, Default, function({boss_arg_name}, arenaFlag, gateFlag, night) {{')
+    lines.extend([
+        '    DisableNetworkSync();',
+        '    EndIf(EventFlag(arenaFlag));',
+        "    // Scope to this arena's assigned night (engine flips the gate flag late,",
+        '    // so this is a runtime wait rather than a constructor-time check).',
+        '    WaitFor(EventFlag(gateFlag));',
+        '    if (night == 1) {',
+    ])
+    lines.extend(trigger_n1)
+    lines.append('    }')
+    lines.append('    if (night == 2) {')
+    lines.extend(trigger_n2)
+    lines.extend([
+        '    }',
+        '    EndIf(EventFlag(arenaFlag));',
+        '    // Redundant flag firing (intentionally retained -- mirrors vanilla night',
+        '    // arrival; 7707/7727 are the storm-active flags, ~30 consumers).',
+        '    if (night == 1) {',
+        '        SetNetworkconnectedEventFlagID(7501, ON);',
+        '        SetNetworkconnectedEventFlagID(7504, ON);',
+        '        SetNetworkconnectedEventFlagID(7707, ON);',
+        '    }',
+        '    if (night == 2) {',
+        '        SetNetworkconnectedEventFlagID(7506, ON);',
+        '        SetNetworkconnectedEventFlagID(7509, ON);',
+        '        SetNetworkconnectedEventFlagID(7727, ON);',
+        '    }',
+        '    SetNetworkconnectedEventFlagID(arenaFlag, ON);',
+        '});',
+        '',
+    ])
+    return '\r\n'.join(lines)
+
+
+def _is_nb_night_map(content):
+    """Night-map signature: Event(0) carries the IsMapVariation(0) +
+    90055000/90055001 vanilla night-trigger block. Present in all 28
+    m47/m48/m49 night tiles, absent from every overworld map."""
+    return ('IsMapVariation(0)' in content
+            and 'InitializeCommonEvent(0, 90055000' in content)
+
+
+@register('nb_night_transition')
+def patch_nb_night_transition(content, filename):
+    """v0.28.x: OOPS_ALL_NB no-early-trigger night gate (event 90065950).
+
+    Fixes: night arenas in OOPS_ALL_NB mode pre-firing on player proximity
+    before night fell (the v0.27.x debug build), and arenas that never
+    armed because the constructor checked the gate flag before the engine
+    flipped it. The 90065950 gate waits at runtime on the per-arena gate
+    flag, then on the vanilla night window (not proximity), then fires the
+    redundant storm/night-progress flags and the arena flag.
+
+    Scope:
+        - common_func.emevd.dcx.js: appends $Event(90065950) once.
+        - Each night-map per-map file: injects two
+          $InitializeCommonEvent(0, 90065950, boss, arenaFlag, gate, night)
+          calls (N1 + N2) into Event(0), right after the IsMapVariation(0)
+          night-trigger block.
+        - Overworld / non-night maps: untouched (they lack the block).
+
+    Idempotency:
+        - common_func: skip if '$Event(90065950,' already present.
+        - per-map: skip if 'InitializeCommonEvent(0, 90065950' present.
+    """
+    if filename.startswith('common_func'):
+        if f'$Event({_NB_NIGHT_TRANSITION_EVENT_ID},' in content:
+            return content, 0
+        return content + _build_night_transition_event_body(
+            early_spawn=EARLY_BOSS_SPAWN), 1
+
+    # Per-map injection — only genuine night maps.
+    if not _is_nb_night_map(content):
+        return content, 0
+    if f'InitializeCommonEvent(0, {_NB_NIGHT_TRANSITION_EVENT_ID}' in content:
+        return content, 0  # already injected
+
+    stem = _emevd_stem(filename)
+    try:
+        boss, arena_flag, gate_n1, gate_n2 = _nb_night_transition_args(stem)
+    except ValueError:
+        return content, 0
+
+    import re as _re
+    # Anchor: the close of the IsMapVariation(0) night-trigger block. The
+    # block sits at Event-body indent, so its closing brace is a 4-space
+    # '}'; inner EventFlag blocks close at 8 spaces. Non-greedy DOTALL stops
+    # at the FIRST 4-space close — the outer block's — placing the injection
+    # exactly where the hand-authored upload has it (before IsMapVariation(1)).
+    anchor = _re.search(r'if \(IsMapVariation\(0\)\) \{.*?\r?\n    \}',
+                        content, _re.DOTALL)
+    if not anchor:
+        return content, 0
+
+    inject = (
+        '\r\n' + _NB_NIGHT_TRANSITION_COMMENT +
+        f'\r\n    $InitializeCommonEvent(0, {_NB_NIGHT_TRANSITION_EVENT_ID}, '
+        f'{boss}, {arena_flag}, {gate_n1}, 1);'
+        f'\r\n    $InitializeCommonEvent(0, {_NB_NIGHT_TRANSITION_EVENT_ID}, '
+        f'{boss}, {arena_flag}, {gate_n2}, 2);'
+    )
+    new_content = content[:anchor.end()] + inject + content[anchor.end():]
+    return new_content, 1
+
+
+# ============================================================================
 # nb_arena_hold_trigger (v0.24.111)
 # ============================================================================
 
@@ -2727,12 +3014,17 @@ def cmd_audit(input_dir):
 # compensation patches have nothing to compensate for, and the safest
 # script is the original. Keyed by stem (no .emevd.dcx.js suffix).
 #
-#   m48_80_00_00 — Godskin Duo NB. Reclassified preserve_primary after
-#                  the Noble→Apostle swap broke the duo intro handshake.
-#                  MSB now vanilla; keep the EMEVD vanilla to match.
-EMEVD_PRESERVE_VANILLA = {
-    'm48_80_00_00',
-}
+#   m48_80_00_00 — Godskin Duo NB. Previously preserved here after the
+#                  Noble→Apostle swap broke the duo intro handshake.
+#                  LIFTED (v0.28.1): the duo-handshake patches now cover
+#                  it end-to-end — nb_arena_entry_trigger (99055200,
+#                  dual-head enable), nb_phase_reenable (99055400,
+#                  per-entity) and nb_night_transition (90065950), with
+#                  the 99055xxx event defs already shipped in common_func.
+#                  The full batch reproduces the playtest-confirmed
+#                  randomized script verbatim. MSB role is now
+#                  swap_actual_chr in data/nr_boss_arena_chr_roles.json.
+EMEVD_PRESERVE_VANILLA = set()
 
 
 def _emevd_stem(filename):
@@ -2857,6 +3149,14 @@ def main():
                     help='Where to write modified files (only changed files written)')
     pp.add_argument('--patch', action='append', dest='patches', metavar='NAME',
                     help='Apply only this patch (repeatable). Default: apply all.')
+    pp.add_argument('--early-boss-spawn', action='store_true', dest='early_boss_spawn',
+                    help='Build the "full RoR2" early-spawn variant of '
+                         'nb_night_transition (event 90065950): the night gate '
+                         'fires on player proximity to the boss instead of the '
+                         '23:00 clock window. Only common_func changes; the '
+                         'per-map binaries are reused. Compile the resulting '
+                         'common_func .js and ship it as '
+                         'patched_emevd/early_spawn/common_func.emevd.dcx.')
 
     args = p.parse_args()
 
@@ -2877,6 +3177,14 @@ def main():
             print("  DarkScript3.exe common_func.emevd.dcx")
             print("Then point input_dir at that folder.")
             sys.exit(1)
+        if getattr(args, 'early_boss_spawn', False):
+            global EARLY_BOSS_SPAWN
+            EARLY_BOSS_SPAWN = True
+            print("EARLY_BOSS_SPAWN=ON — nb_night_transition (90065950) will "
+                  "use the proximity trigger (full RoR2 early-spawn build).")
+            print("Only common_func.emevd.dcx changes; ship it as "
+                  "patched_emevd/early_spawn/common_func.emevd.dcx.")
+            print()
         cmd_patch(args.input_dir, args.output_dir, args.patches)
 
 

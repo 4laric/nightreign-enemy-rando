@@ -1,0 +1,68 @@
+{
+  "_doc": "Maximal per-Nightlord deterministic config v0.28.x. Uses verified-or-predicted-safe NB arenas. 8 Nightlords get 8 unique boss pairs. Banned arenas excluded: m48_20 NK, m48_30 Dancer, m48_40 Morgott, m49_26 Outland Cmdr, m49_27 Battlefield Cmdr.",
+  "_version": "v0.28.x",
+  "_arenas_used": {
+    "NB1 (8 unique)": [
+      "m49_29 DHQ",
+      "m47_80 Gaping Dragon",
+      "m48_10 Smelter",
+      "m47_90 Centipede",
+      "m48_00 Duke's Freja",
+      "m49_24 BBH",
+      "m47_70 Tibia",
+      "m49_30 Royal Revenant"
+    ],
+    "NB2 (8 unique)": [
+      "m49_18 Magma Wyrm",
+      "m49_19 Ancient Dragon",
+      "m48_50 Draconic TS",
+      "m48_60 Tree Sentinel",
+      "m49_20 Fallingstar",
+      "m49_21 Death Rite Bird",
+      "m49_25 Crucible+Hippo",
+      "m49_23 Dragonkin Soldier"
+    ]
+  },
+  "_eight_nightlord_pairings": {
+    "Gladius": "DHQ + Magma Wyrm",
+    "Adel": "Gaping Dragon + Ancient Dragon",
+    "Gnoster": "Smelter Demon + Draconic Tree Sentinel",
+    "Maris": "Centipede Demon + Tree Sentinel + RC",
+    "Libra": "Duke's Dear Freja + Fallingstar Beast",
+    "Fulghor": "Bell Bearing Hunter + Death Rite Bird",
+    "Caligo": "Tibia Mariner + Crucible Knight + Hippo",
+    "Heolstor": "Royal Revenant + Dragonkin Soldier"
+  },
+  "Gladius": {
+    "NB1": 444,
+    "NB2": 418
+  },
+  "Adel": {
+    "NB1": 427,
+    "NB2": 445
+  },
+  "Gnoster": {
+    "NB1": 430,
+    "NB2": 403
+  },
+  "Maris": {
+    "NB1": 428,
+    "NB2": 402
+  },
+  "Libra": {
+    "NB1": 429,
+    "NB2": 435
+  },
+  "Fulghor": {
+    "NB1": 439,
+    "NB2": 443
+  },
+  "Caligo": {
+    "NB1": 437,
+    "NB2": 447
+  },
+  "Heolstor": {
+    "NB1": 406,
+    "NB2": 446
+  }
+}

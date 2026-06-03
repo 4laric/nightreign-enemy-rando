@@ -1,0 +1,61 @@
+{
+  "_doc": "Per-Nightlord deterministic boss assignment using only the 12 confirmed-OK_rando arenas from the rando-compat sweep. Three arenas BANNED for known/predicted phase-transition breakage: m48_20 Nameless King (confirmed BROKEN), m48_30 Dancer (predicted broken via EMEVD analysis), m48_40 Morgott (predicted broken via EMEVD analysis). Use this config when you want every expedition to deliver a known-good boss pair.",
+  "_version": "v0.28.x",
+  "_confirmed_arenas": {
+    "NB1 picks": {
+      "444 / m49_29 / Demi-Human Queen + Swordmaster": "OK_vanilla (Gladius)",
+      "427 / m47_80 / Gaping Dragon (DS1)": "OK_rando (Adel)",
+      "430 / m48_10 / Smelter Demon (DS2)": "OK_vanilla + OK_rando (Gnoster)",
+      "436 / m49_10 / Grafted Monarch": "OK_rando (Maris)",
+      "428 / m47_90 / Centipede Demon (DS1)": "OK_rando (Gladius next-16)",
+      "429 / m48_00 / Duke's Dear Freja (DS2)": "OK_rando (Adel next-16)",
+      "439 / m49_24 / Bell Bearing Hunter": "OK_rando (Libra next-16)",
+      "437 / m47_70 / Tibia Mariner": "OK_rando (Fulghor next-16)",
+      "406 / m49_30 / Royal Revenant": "OK_rando (Caligo next-16)",
+      "413 / m49_90 / Ulcerated Tree Spirit": "OK_rando (Heolstor next-16)"
+    },
+    "NB2 picks": {
+      "418 / m49_18 / Great Wyrm / Magma Wyrm": "OK_vanilla + OK_rando (Gnoster)",
+      "445 / m49_19 / Ancient Dragon": "OK_rando (Adel)",
+      "403 / m48_50 / Draconic Tree Sentinel + RC": "OK_rando (Maris next-16, full-grunts arena)",
+      "402 / m48_60 / Tree Sentinel + RC": "OK_rando (cross-class slot test confirmed arena works)"
+    }
+  },
+  "_banned": {
+    "m48_20 / mod 431 / Nameless King": "Confirmed BROKEN \u2014 Phase 2 transition fails",
+    "m48_30 / mod 432 / Dancer": "Predicted BROKEN via EMEVD complexity (SpEffect + Warp + ReferredDamage)",
+    "m48_40 / mod 400 / Morgott": "Predicted BROKEN via EMEVD complexity (CreateReferredDamagePair \u00d7 2)"
+  },
+  "Gladius": {
+    "NB1": 444,
+    "NB2": 403
+  },
+  "Adel": {
+    "NB1": 427,
+    "NB2": 445
+  },
+  "Gnoster": {
+    "NB1": 430,
+    "NB2": 418
+  },
+  "Maris": {
+    "NB1": 444,
+    "NB2": 418
+  },
+  "Libra": {
+    "NB1": 430,
+    "NB2": 402
+  },
+  "Fulghor": {
+    "NB1": 427,
+    "NB2": 418
+  },
+  "Caligo": {
+    "NB1": 444,
+    "NB2": 445
+  },
+  "Heolstor": {
+    "NB1": 430,
+    "NB2": 445
+  }
+}

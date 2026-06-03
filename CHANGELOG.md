@@ -1,3 +1,103 @@
+## v0.28.2 (unreleased)
+
+Adds the GUI toggle for the night-boss "teleporter" (RoR2-style early boss
+spawn), building on the night/day-transition shoring-up that shipped in
+v0.28.1.
+
+Night-boss teleporter (experimental, default OFF):
+- New "Night-boss teleporter (experimental)" toggle on the heritage /
+  coop-safety tab: "Early night-boss spawn (RoR2 teleporter)". When ON, the
+  rando installs an alternate `common_func.emevd.dcx` whose
+  `nb_night_transition` event (90065950) fires on player PROXIMITY to the
+  boss arena instead of waiting for the 23:00 in-game clock window — walk up
+  and the night boss spawns early.
+- Minimal by construction: only `common_func.emevd.dcx` differs between the
+  clock build (shipped 0.28.1) and the proximity build. Every per-map
+  `.emevd.dcx` is reused byte-identical, because the per-map binaries already
+  pass the boss entity as the event's arg0 — the proximity variant just reads
+  it as the radius target. Both install seams swap only that one file:
+  - One-click "Install pre-patched EMEVDs" substitutes the proximity
+    `common_func` in the copy loop and calls it out in the dialog + log.
+  - A normal Randomize run overlays a throwaway `patched_emevd/` copy (the
+    proximity `common_func` swapped in) as `emevd_overlay_dir`, then cleans
+    the temp dir up afterwards. The shipped `patched_emevd/` is never mutated.
+- Graceful fallback: the proximity binary must be compiled in DarkScript3 and
+  dropped in `patched_emevd/early_spawn/common_func.emevd.dcx` — it can't be
+  synthesized in Python. Until it's present, the toggle falls back to the
+  standard clock-gated build and says so (install dialog + run log).
+- Caveat surfaced in the tooltip/ⓘ: the proximity event still scopes to the
+  night gate flag and fires the storm / night-transition flags, so engaging
+  it nudges the whole night sequence early, not just one arena. The exact
+  arming moment (expedition start vs. first night transition) is a playtest
+  question.
+- The toggle round-trips through saved settings, the shareable settings code,
+  and the "Active settings" run summary like the other run flags.
+
+Dev tooling:
+- `emevd_patch.py` gained an `EARLY_BOSS_SPAWN` module switch and a
+  `--early-boss-spawn` CLI flag on the `patch` subcommand. With it,
+  `nb_night_transition` is built in proximity mode (clock build is otherwise
+  byte-identical to before). Regenerate the binary with:
+  `python emevd_patch.py patch <decompiled> <out> --patch nb_night_transition --early-boss-spawn`,
+  recompile the resulting `common_func.emevd.dcx.js` in DarkScript3, and drop
+  the `.dcx` in `patched_emevd/early_spawn/`. See
+  `patched_emevd/early_spawn/README.md`.
+
+## v0.28.1
+
+Ships a trimmed SFX bundle, randomizes the Godskin Duo arena, and tightens
+the night-boss EMEVD.
+
+Release / bundling:
+- Trimmed `bundled_sfx/sfxbnd_c0000.ffxbnd.dcx` from ~182 MB to ~28 MB —
+  keeping only the FFX entries the heritage chrs actually consume — and kept
+  it in the build manifest and the bundle installer. All five heritage chrs
+  that depend on it (c5060 Lamprey, c5061 Lamprey (Large), c5500 Living Magma,
+  c5871 / c5872 Imp) stay enabled as randomizer targets. (An earlier
+  pre-release iteration dropped the bundle entirely and banned those five; the
+  content audit closed that out in favor of the trim.)
+- Dropped the DarkScript3 `.emevd.dcx.js` EMEVD sources from the release zip —
+  Nexus's malware scanner flags bundled JavaScript ("some suspicious files"),
+  and `patched_emevd/` carried ~143 of them. The compiled `.emevd.dcx`
+  binaries ship exactly as before (game-ready, what the GUI installs); the
+  `.js` sources stay in the source repo. (`Launch.bat` was dropped for the
+  same reason in v0.27.0; the GUI launcher is `oops_rando_gui.pyw`.)
+- Fixed the release manifest to package four `dev/` modules that shipped code
+  imports at runtime: `apply_slot_repositions` (dcx_batch's off-mesh slot
+  relocation — its absence was a hard `ModuleNotFoundError` when relocating),
+  `chr_asset_resolver` (heritage chr import), and the `pools_caps_panel` /
+  `boutique_pool_panel` GUI mixins (which were silently stubbed when missing,
+  so those tabs just vanished). Added
+  `tests/test_build_manifest_completeness.py` — a static import-graph sweep
+  plus an isolated import/`load_data()` smoke test — so the manifest can't
+  drift out of sync with the engine's imports again.
+- Fixed the release manifest to ship `bundle_installer.py` — the GUI imports
+  it at module load to drive the "Install bundled files" button, so without
+  it the shipped GUI failed to start — plus the `bundled_regulation/`
+  pre-patched regulation.bin.
+
+Night-boss EMEVD:
+- New common_func event 90065950 (`nb_night_transition`) injected into all 28
+  night-map `Event(0)`s, force-firing the boss / arena / gate setup at the
+  day→night transition so randomized night bosses initialize reliably.
+  Idempotent; round-trip byte-verified.
+- Godskin Duo (m48_80) is now randomized too: both preserves lifted (MSB role
+  `preserve_primary` → `swap_actual_chr`; removed from `EMEVD_PRESERVE_VANILLA`,
+  which is now empty). The duo-handshake patches already in the registry cover
+  it — `nb_arena_entry_trigger` (99055200, dual-head enable) and
+  `nb_phase_reenable` (99055400, per-entity) plus `nb_night_transition`, with
+  the 99055xxx event defs already shipped in common_func. The full patch batch
+  reproduces the playtest-confirmed script verbatim. (It was preserved earlier
+  because the Noble→Apostle swap broke the duo intro handshake — exactly what
+  those patches fix.) Ships the playtested EMEVD under `patched_emevd/`.
+- The full patched-EMEVD batch (142 maps + common_func) now ships under
+  `patched_emevd/` for the GUI's "Install pre-patched EMEVD" button.
+
+Roster:
+- The roster importer now bulk-syncs the `sd` (sound) subdir alongside the
+  existing asset dirs, so imported chrs bring their sound banks.
+
+
 ## v0.28.0
 
 No more UXM unpacking. The rando now reads vanilla game data straight out
@@ -9433,4 +9533,4 @@ First public release.
 - DarkScript3: optional — only needed for re-patching against a newer NR
   build (pre-patched DCX shipped in `patched_emevd/`)
 - Yabber: not required — Python DCX layer ships in this bundle
-- Python: 3.10 or later
+- Python: 3.10 or later 

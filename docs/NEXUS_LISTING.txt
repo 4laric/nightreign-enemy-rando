@@ -124,7 +124,7 @@ Oodle. Copy [code]oo2core_*_win64.dll[/code] from
 the extracted folder. Any version of the filename works.
 [*]Run [code]python check_setup.py[/code] from the folder to verify your
 environment. Every check should print a green tick.
-[*]Launch the GUI: double-click [b]Launch.bat[/b], or double-click
+[*]Launch the GUI: double-click
 [b]oops_rando_gui.pyw[/b], or run [code]python oops_rando_gui.py[/code]
 from a terminal (use this one if you want diagnostic output for bug
 reports).

@@ -1,0 +1,47 @@
+{
+  "_doc": "Next-16 test config: 8 NB1 TODOs + 8 NB2 TODOs across 8 Nightlords. Pair assignments balance arena-tier mix per expedition. Updates docs/nb_rando_compat_sweep.md when results come in.",
+  "_version": "v0.28.x",
+  "_confirmed_arenas_excluded": "All 8 NB1/NB2 picks here are TODO. After testing, move confirmed ones into nightlord_bosses_known_good_stable.json.",
+  "_arena_pairings_summary": {
+    "Gladius": "NB1: Centipede Demon (m47_90) | NB2: Dancer of the Boreal Valley (m48_30)",
+    "Adel": "NB1: Duke's Dear Freja (m48_00) | NB2: Godskin Duo (m48_80)",
+    "Gnoster": "NB1: Nameless King (m48_20) | NB2: Tree Sentinel + Royal Cavalrymen (m48_60)",
+    "Maris": "NB1: Grafted Monarch (m49_10) | NB2: Draconic Tree Sentinel + Royal Cav (m48_50)",
+    "Libra": "NB1: Bell Bearing Hunter (m49_24) | NB2: Fallingstar Beast (m49_20)",
+    "Fulghor": "NB1: Tibia Mariner (m47_70) | NB2: Death Rite Bird (m49_21)",
+    "Caligo": "NB1: Royal Revenant (m49_30) | NB2: Dragonkin Soldier (m49_23)",
+    "Heolstor": "NB1: Ulcerated Tree Spirit (m49_90) | NB2: Crucible Knight + Hippopotamus (m49_25)"
+  },
+  "Gladius": {
+    "NB1": 428,
+    "NB2": 432
+  },
+  "Adel": {
+    "NB1": 429,
+    "NB2": 434
+  },
+  "Gnoster": {
+    "NB1": 431,
+    "NB2": 402
+  },
+  "Maris": {
+    "NB1": 436,
+    "NB2": 403
+  },
+  "Libra": {
+    "NB1": 439,
+    "NB2": 435
+  },
+  "Fulghor": {
+    "NB1": 437,
+    "NB2": 443
+  },
+  "Caligo": {
+    "NB1": 406,
+    "NB2": 446
+  },
+  "Heolstor": {
+    "NB1": 413,
+    "NB2": 447
+  }
+}

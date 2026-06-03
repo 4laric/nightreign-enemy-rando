@@ -1,0 +1,23 @@
+{
+  "_doc": "NB2-at-NB1-slot cross-class test config. All 8 NB1 slots are filled with NB2-class boss modifiers from the untested-under-rando set. This tests two things: (a) whether the engine validates modifier-class against slot (if it does, some/all of these will fail to spawn), and (b) whether each of these arenas works under rando. NB2 slots use known-good bosses as ballast, with Morgott serving as the 9th data point (currently only OK_vanilla, no rando test).",
+  "_version": "v0.28.x",
+  "_arenas_under_test": {
+    "Gladius_NB1":  "m48_30 Dancer of the Boreal Valley (was WAVE_BLOCKED)",
+    "Adel_NB1":     "m48_60 Tree Sentinel + Royal Cavalrymen",
+    "Gnoster_NB1":  "m48_80 Godskin Duo Noble + Apostle (was OK_spawn)",
+    "Maris_NB1":    "m49_20 Fallingstar Beast",
+    "Libra_NB1":    "m49_21 Death Rite Bird",
+    "Fulghor_NB1":  "m49_23 Dragonkin Soldier",
+    "Caligo_NB1":   "m49_25 Crucible Knight + Hippopotamus",
+    "Heolstor_NB1": "m49_26 Outland Commander",
+    "Heolstor_NB2": "m48_40 Morgott (currently OK_vanilla, untested under rando)"
+  },
+  "Gladius":  { "NB1": 432, "NB2": 445 },
+  "Adel":     { "NB1": 402, "NB2": 418 },
+  "Gnoster":  { "NB1": 434, "NB2": 445 },
+  "Maris":    { "NB1": 435, "NB2": 418 },
+  "Libra":    { "NB1": 443, "NB2": 403 },
+  "Fulghor":  { "NB1": 446, "NB2": 445 },
+  "Caligo":   { "NB1": 447, "NB2": 418 },
+  "Heolstor": { "NB1": 449, "NB2": 400 }
+}

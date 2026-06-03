@@ -3852,7 +3852,7 @@
     "is_multi_entity": true,
     "is_multi_wave": false,
     "complexity_score": 14,
-    "recommended_strategy": "preserve_primary"
+    "recommended_strategy": "swap_actual_chr"
   },
   "m48_90_00_00.msb": {
     "actual_chr_eids": [

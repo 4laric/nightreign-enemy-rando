@@ -125,7 +125,44 @@ If the pre-patched file doesn't apply cleanly to your NR build, use
 That requires [DarkScript3](https://github.com/AinTunez/DarkScript3)
 to decompile / recompile.
 
-### 5. Launch through me3
+### 5. Drop the bundled regulation + aicommon + sfx files into your profile
+
+This release ships a pre-patched `regulation.bin` (HP/damage balance,
+NB-arena whitelist, contamination fixes, plus MMV's cross-game param
+rows so MMV-imported chrs work out of the box), MMV's matching
+`aicommon.luabnd.dcx` AI manifests, and MMV's `sfxbnd_c0000.ffxbnd.dcx`
+particle-effect bundle. Copy them into your me3 profile package:
+
+```
+<me3 profile>/<package>/regulation.bin                ← from bundled_regulation/
+<me3 profile>/<package>/script/aicommon.luabnd.dcx    ← from bundled_aicommon/
+<me3 profile>/<package>/script/aicommon_dlc01.luabnd.dcx
+<me3 profile>/<package>/sfx/sfxbnd_c0000.ffxbnd.dcx   ← from bundled_sfx/
+```
+
+The "Install bundled mod files" button on the Generate tab does all
+four copies in one click — it reads the package destination from
+your saved me3 path and handles `.bak` backups for any existing
+files.
+
+Without `regulation.bin` deployed, the param-level fixes (HP nerfs,
+damage clips, NB whitelist routing, etc.) silently no-op and you'll
+get vanilla MMV behavior. Without the `aicommon` files, DLC and
+cross-game chrs whose AI scripts reference DLC-only goal-table
+constants will freeze on spawn. Without `sfxbnd_c0000.ffxbnd.dcx`,
+heritage / cross-game chr attacks lose their particle effects —
+sometimes silent no-ops, sometimes broken-FFX-reference spam.
+
+**Why MMV's bundles and not vanilla NR's?** All three bundles ship
+the assets that the rando's optional MMV cross-game imports need to
+address. v0.28.x playtest confirmed this is a hard dependency: ER's
+vanilla aicommon is **not** a substitute (DLC chr goal-tables fail
+to register), and vanilla NR's SFX bundle doesn't carry the FFX
+entries cross-game chrs reference. The three MMV-derived bundles
+ship together as the canonical asset base — see
+`bundled_regulation/README.md` for the full rationale.
+
+### 6. Launch through me3
 
 Start NR via me3 with your profile selected. The randomized world
 should load.

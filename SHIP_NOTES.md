@@ -230,14 +230,38 @@ patched_emevd/     Sparse overlay: must be .emevd.dcx (+ .emevd.dcx.js)
                    then confirm `find patched_emevd -name '*.emevd.dcx'`
                    is non-empty. (Can't be done on Linux/CI — oo2core is
                    a win64 DLL.)
+                   v0.28.2: optional subdir patched_emevd/early_spawn/ holds
+                   the night-boss-teleporter common_func.emevd.dcx (proximity
+                   trigger). NOT part of the top-level overlay glob (the GUI
+                   only reaches it when the "Early night-boss spawn" toggle is
+                   on, and swaps it in for the default common_func). Ships if
+                   present; absent = toggle falls back to the clock build.
+                   Regen: emevd_patch.py --early-boss-spawn (see that dir's
+                   README.md).
 
 bundled_aicommon/  aicommon.luabnd.dcx etc. (test_bundled_aicommon).
+
+bundled_regulation/ regulation.bin — MMV base + v0.28.x balance / safety
+                   patches pre-applied. End-user drop-in for
+                   `<me3 profile>/<package>/regulation.bin`. Companion
+                   to bundled_aicommon and bundled_sfx. Lock test:
+                   test_bundled_regulation.
+
+bundled_sfx/       sfxbnd_c0000.ffxbnd.dcx — MMV's c0000 SFX bundle.
+                   Required for cross-game / DLC / heritage chr
+                   particle effects (playtest-confirmed v0.28.x: ER's
+                   sfxbnd is not a substitute, same reasoning as ER's
+                   aicommon). End-user drop-in for `<me3 profile>/
+                   <package>/sfx/sfxbnd_c0000.ffxbnd.dcx`. ~182 MB —
+                   dominates release zip size. Lock test:
+                   test_bundled_sfx.
 ```
 
-Release checklist: verify all four dirs exist AND contain .dcx files
+Release checklist: verify all six dirs exist AND contain content
 (not just the dir). A quick gate:
-  for d in vanilla_msbs vanilla_event patched_emevd bundled_aicommon; do
-    echo "$d: $(find "$d" -name '*.dcx' 2>/dev/null | wc -l) .dcx"; done
+  for d in vanilla_msbs vanilla_event patched_emevd bundled_aicommon bundled_regulation bundled_sfx; do
+    n_files=$(find "$d" -type f -not -name 'README.md' 2>/dev/null | wc -l)
+    echo "$d: $n_files content files"; done
 
 ### Patched EMEVD bundle
 

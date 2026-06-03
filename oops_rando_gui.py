@@ -77,6 +77,13 @@ def _pick_ui_font():
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
+
+# v0.28.x: bundled-file installer config. Lives in its own module so
+# the lock tests can verify the registry without importing tkinter.
+from bundle_installer import BUNDLED_INSTALLS, list_bundle_content_files
+_list_bundle_content_files = list_bundle_content_files  # internal alias
+
+
 # Defer the imports until we actually need them — let the GUI start even if
 # the backend files have an issue, so we can show a nice error
 def _import_backend():
@@ -1341,6 +1348,7 @@ _RUN_SETTING_FLAGS = [
     ('prefer_canonical_variants', 'Prefer canonical variants',       True),
     ('randomize_safe_nb_arenas',  'Randomize "safe" NB arenas',      False),
     ('randomize_all_nb_arenas',   'Randomize all NB arenas',         False),
+    ('early_boss_spawn',          'Early night-boss spawn (RoR2)',   False),
     ('disable_resilient_filter',  'DIAGNOSTIC: baseline-everywhere', False),
 ]
 
@@ -1995,6 +2003,18 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # toggle the box and close the app without running lose the change.
         self.multiplayer_safe_var.trace_add("write", lambda *_: self._save_settings(
             multiplayer_safe=bool(self.multiplayer_safe_var.get())))
+
+        # v0.28.2: early night-boss spawn ("RoR2 teleporter"). When ON, the
+        # rando swaps in an alternate common_func.emevd.dcx whose
+        # nb_night_transition (90065950) fires on player-proximity to the
+        # boss instead of waiting for the 23:00 clock window. Experimental,
+        # default OFF; degrades gracefully (warns + falls back to the clock
+        # build) if the proximity binary isn't bundled under
+        # patched_emevd/early_spawn/. Persist on toggle like multiplayer_safe.
+        self.early_boss_spawn_var = tk.BooleanVar(
+            value=saved_settings.get('early_boss_spawn', False))
+        self.early_boss_spawn_var.trace_add("write", lambda *_: self._save_settings(
+            early_boss_spawn=bool(self.early_boss_spawn_var.get())))
 
         # v0.23.45: MMV integration toggle. Reads from + writes to the
         # `_meta.enabled` field of mmv_imports.json. The engine reads that
@@ -3565,6 +3585,27 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 "launches NR through me3. Same as clicking Launch by "
                 "hand. Cancelled runs don't auto-launch.")
 
+        # v0.28.x: bundled mod files installer. Static drop-ins
+        # (regulation.bin + AI manifests today; chr/sd/material bnds
+        # tomorrow if we ever need them) live in BUNDLED_INSTALLS at
+        # module scope — adding a new bundle is a one-line append, no
+        # button code changes.
+        f4b = ttk.Frame(parent, padding=(8, 0, 8, 8))
+        f4b.pack(fill='x')
+        self._install_bundled_btn = ttk.Button(
+            f4b, text="📦  Install bundled mod files",
+            command=self._install_bundled_files)
+        self._install_bundled_btn.pack(side='left', ipady=1)
+        Tooltip(self._install_bundled_btn,
+                "Copies the bundled regulation.bin, aicommon AI "
+                "manifests, and MMV SFX bundle into your me3 package. "
+                "Required for the v0.28.x balance / safety patches, "
+                "for cross-game / DLC chr AI to load, and for "
+                "heritage / cross-game chr particle effects. Existing "
+                "files are backed up to *.bak before overwrite.\n\n"
+                "Defaults the destination to your saved me3 package "
+                "path. Re-run after a profile wipe to redeploy.")
+
         # v0.24.0: "EMEVD patches (optional)" and "Force-include excluded
         # targets (optional)" UI sections removed from front page. The
         # bug-fix EMEVDs are now folded into the standard install flow;
@@ -3892,6 +3933,62 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         ttk.Label(mmv_frame,
             text=("(reads/writes mmv_imports.json _meta.enabled — toggling "
                   "takes effect on the next run)"),
+            style='Dim.TLabel').pack(anchor='w', pady=(4, 0))
+
+        # v0.28.2: night-boss teleporter (RoR2-style early spawn). When ON,
+        # the rando swaps in a proximity-triggered common_func.emevd.dcx so
+        # the night boss spawns when the player approaches its arena instead
+        # of at the 23:00 clock window. Experimental, default OFF. The
+        # proximity binary must be DarkScript3-compiled and dropped in
+        # patched_emevd/early_spawn/; until then the toggle falls back to the
+        # clock build (installer + run log say so).
+        tele_frame = ttk.LabelFrame(
+            f, text="Night-boss teleporter (experimental)", padding=10)
+        tele_frame.pack(fill='x', pady=(0, 12))
+        tele_row = ttk.Frame(tele_frame); tele_row.pack(fill='x')
+        tele_check = ttk.Checkbutton(tele_row,
+                         text="Early night-boss spawn (RoR2 teleporter)",
+                         variable=self.early_boss_spawn_var,
+                         style='TCheckbutton')
+        tele_check.pack(side='left')
+        Tooltip(tele_check,
+                "EXPERIMENTAL — default OFF.\n\n"
+                "When ON, the night boss is triggered by player PROXIMITY "
+                "to its arena instead of waiting for the 23:00 night "
+                "window — walk up to the arena and the boss spawns "
+                "(RoR2-style teleporter).\n\n"
+                "This fires the night flags / starts the night sequence "
+                "early, so the blast radius is bigger than one arena: "
+                "expect the broader night transition to kick in too.\n\n"
+                "Requires the proximity common_func build bundled in "
+                "patched_emevd/early_spawn/. If it's missing, the rando "
+                "falls back to the standard clock-gated build (the install "
+                "dialog / run log will tell you).")
+        make_info_icon(tele_row, tooltip_text=(
+            "Default: OFF (experimental)\n\n"
+            "The 'RoR2 teleporter': the night boss's spawn event "
+            "(nb_night_transition, 90065950) is rebuilt to trigger on "
+            "player proximity to the boss entity rather than on the 23:00 "
+            "in-game clock window. Approach the arena -> the boss spawns "
+            "early.\n\n"
+            "MECHANISM: only common_func.emevd.dcx changes — every per-map "
+            "EMEVD is reused byte-identical (they already pass the boss "
+            "entity to the event). Engaging the toggle installs the "
+            "alternate common_func from patched_emevd/early_spawn/ "
+            "(one-click install) or overlays it for a Randomize run.\n\n"
+            "CAVEAT: the event still scopes to the night gate flag and "
+            "fires the storm / night-transition flags, so this nudges the "
+            "whole night sequence early, not just one arena. Treat the "
+            "exact arming moment (expedition start vs. first night "
+            "transition) as something to playtest.\n\n"
+            "FALLBACK: if the proximity binary isn't bundled "
+            "(patched_emevd/early_spawn/common_func.emevd.dcx), the rando "
+            "uses the standard clock-gated build and says so in the log. "
+            "The binary must be compiled in DarkScript3 — it can't be "
+            "generated by the GUI."))
+        ttk.Label(tele_frame,
+            text=("(experimental — proximity-spawns the night boss; "
+                  "needs the early_spawn common_func build)"),
             style='Dim.TLabel').pack(anchor='w', pady=(4, 0))
 
         # v0.27.x: Vanilla mapstudio UI section REMOVED. The bundled
@@ -4273,8 +4370,8 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             "missing — without copying anything.\n\n"
             "Import roster: run the plan. Copies chr + AI-script files "
             "per chr (MMV folder first, Elden Ring folder as "
-            "fallback), then bulk-syncs the sfx/ and material/ dirs. "
-            "Idempotent — safe to re-run; only missing files copy.\n\n"
+            "fallback), then bulk-syncs the sfx/, material/, and sd/ "
+            "dirs. Idempotent — safe to re-run; only missing files copy.\n\n"
             "Run once after pointing at your folders; you should not "
             "need to think about chr assets again."),
             side='left', padx=(8, 0))
@@ -4312,17 +4409,20 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
           2. Otherwise, return root_path/<subname> (the standard case where
              root_path is the game-root).
 
-        We treat 'chr', 'script', 'sfx', and 'material' as KNOWN_SUBDIRS
-        for back-compat purposes: if root_path ends in one of these, we
-        resolve relative to its parent. Other arbitrary base names (e.g.
-        user named their mod folder 'msg/') aren't treated specially —
-        they just get a subdir appended.
+        We treat 'chr', 'script', 'sfx', 'material', and 'sd' as
+        KNOWN_SUBDIRS for back-compat purposes: if root_path ends in one
+        of these, we resolve relative to its parent. Other arbitrary base
+        names (e.g. user named their mod folder 'msg/') aren't treated
+        specially — they just get a subdir appended.
 
         v0.24.66: extended KNOWN_SUBDIRS to include 'sfx' and 'material'
         so that the new SFX + material auto-copy in chr-import can
         sibling-resolve from a chr/-rooted path.
+
+        v0.28.x: added 'sd' so the sound-bank bulk-sync sibling-resolves
+        the same way (a chr/-rooted source path finds <root>/sd).
         """
-        KNOWN_SUBDIRS = {'chr', 'script', 'sfx', 'material'}
+        KNOWN_SUBDIRS = {'chr', 'script', 'sfx', 'material', 'sd'}
         if not root_path:
             return ''
         root = root_path.rstrip('/\\')
@@ -4475,6 +4575,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     f"  AI-script files copied: {res['script_files_copied']}\n"
                     f"  sfx files copied:       {res['sfx_files_copied']}\n"
                     f"  material files copied:  {res['material_files_copied']}\n"
+                    f"  sd files copied:        {res['sd_files_copied']}\n"
                     f"  skipped (already had):  {res['files_skipped']}\n"
                     f"  total bytes copied:     "
                     f"{res['bytes_copied']/(1024*1024):.1f} MB\n")
@@ -6171,6 +6272,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             'prefer_canonical_variants': _b('prefer_canonical_variants_var'),
             'randomize_safe_nb_arenas': _b('randomize_safe_nb_arenas_var'),
             'randomize_all_nb_arenas': _b('randomize_all_nb_arenas_var'),
+            'early_boss_spawn': _b('early_boss_spawn_var'),
             'disable_resilient_filter': _b('disable_resilient_filter_var'),
             'excluded': sorted(self.excluded)
                         if getattr(self, 'excluded', None) else [],
@@ -6213,6 +6315,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 ('prefer_canonical_variants_var', 'prefer_canonical_variants'),
                 ('randomize_safe_nb_arenas_var', 'randomize_safe_nb_arenas'),
                 ('randomize_all_nb_arenas_var', 'randomize_all_nb_arenas'),
+                ('early_boss_spawn_var', 'early_boss_spawn'),
                 ('disable_resilient_filter_var', 'disable_resilient_filter')):
             if hasattr(self, attr):
                 getattr(self, attr).set(bool(d[key]))
@@ -6517,6 +6620,139 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             self.mod_msg_bundle_var.set(
                 os.path.join(me3, 'msg', 'engUS', basename))
 
+    def _install_bundled_files(self):
+        """Generic installer for everything in the BUNDLED_INSTALLS
+        registry — currently regulation.bin and aicommon.luabnd.dcx
+        files; future entries land here automatically.
+
+        For each registry entry:
+          1. Resolve bundle_dir under HERE, gather deployable files
+             (README/dotfiles excluded by _list_bundle_content_files).
+          2. Verify the entry's critical_file is present in the bundle.
+          3. Compute target dir = <me3 package>/<target_subpath>.
+          4. Copy each content file with .bak backup for any existing.
+
+        Shares the directory-picker + .bak pattern with
+        _install_prepatched_emevd so users see the same shape twice.
+        """
+        import shutil
+
+        # --- 1. Validate every bundle BEFORE prompting --------------------
+        plan = []   # list of (entry, content_files)
+        missing = []
+        for entry in BUNDLED_INSTALLS:
+            bundle_abs = os.path.join(HERE, entry['bundle_dir'])
+            content = _list_bundle_content_files(bundle_abs)
+            critical = os.path.join(bundle_abs, entry['critical_file'])
+            if not os.path.isdir(bundle_abs) or not os.path.exists(critical):
+                missing.append(
+                    f"{entry['bundle_dir']}/ "
+                    f"(missing: {entry['critical_file']})")
+                continue
+            if not content:
+                missing.append(
+                    f"{entry['bundle_dir']}/ (empty after filtering "
+                    f"READMEs / dotfiles)")
+                continue
+            plan.append((entry, content))
+
+        if not plan:
+            messagebox.showerror("Nothing to install",
+                "No bundled files found in this release. The package "
+                "may be incomplete — re-download the rando.\n\n"
+                "Missing:\n  • " + "\n  • ".join(missing))
+            return
+        if missing:
+            self._log("Bundled install: skipping incomplete bundle(s):\n", 'warn')
+            for m in missing:
+                self._log(f"  • {m}\n", 'warn')
+
+        # --- 2. Confirm modal — show every file that would be copied -----
+        msg_lines = [
+            "This will copy bundled mod files into your me3 package.",
+            "Existing files at each destination get a *.bak backup.",
+            "",
+            "About to install:"
+        ]
+        total_files = 0
+        for entry, content in plan:
+            target_label = entry['target_subpath'] or '<package root>'
+            msg_lines.append(f"")
+            msg_lines.append(
+                f"  → {target_label}/  ({entry['description']})")
+            for f in content:
+                msg_lines.append(f"      • {os.path.basename(f)}")
+                total_files += 1
+        msg_lines.append("")
+        msg_lines.append(f"Total: {total_files} file(s) across "
+                         f"{len(plan)} bundle(s).")
+        msg_lines.append("")
+        msg_lines.append("Click OK to pick your me3 package directory "
+                         "(the folder that mirrors the game install).")
+        if not messagebox.askokcancel("Install bundled mod files",
+                                       "\n".join(msg_lines)):
+            return
+
+        # --- 3. Pick the destination — default to saved me3_package -----
+        saved_pkg = self.me3_package_var.get().strip()
+        initial = saved_pkg if saved_pkg and os.path.isdir(saved_pkg) else HERE
+        package_root = filedialog.askdirectory(
+            title="me3 package directory (mirrors game install)",
+            initialdir=initial)
+        if not package_root:
+            self._log("Bundled install: cancelled\n", 'dim')
+            return
+
+        # --- 4. Copy with .bak backup ------------------------------------
+        copied_total = 0
+        backed_up_total = 0
+        for entry, content in plan:
+            target_dir = (os.path.join(package_root, entry['target_subpath'])
+                          if entry['target_subpath'] else package_root)
+            try:
+                os.makedirs(target_dir, exist_ok=True)
+            except OSError as e:
+                self._log(f"Could not create {target_dir}: {e}\n", 'error')
+                messagebox.showerror("Install failed",
+                    f"Could not create destination:\n{target_dir}\n{e}")
+                return
+            self._log(f"\n→ {entry['bundle_dir']} → {target_dir}\n", 'info')
+            for src in content:
+                fname = os.path.basename(src)
+                final_dest = os.path.join(target_dir, fname)
+                if os.path.exists(final_dest):
+                    backup = final_dest + '.bak'
+                    try:
+                        shutil.copy2(final_dest, backup)
+                        backed_up_total += 1
+                    except OSError as e:
+                        self._log(f"  Could not back up {fname}: {e}\n", 'warn')
+                        if not messagebox.askyesno("Backup failed",
+                            f"Could not back up:\n{final_dest}\n{e}\n\n"
+                            "Proceed with overwrite anyway?"):
+                            return
+                try:
+                    shutil.copy2(src, final_dest)
+                    copied_total += 1
+                    self._log(f"  ✓ {fname}\n", 'success')
+                except OSError as e:
+                    self._log(f"  Failed to copy {fname}: {e}\n", 'error')
+                    messagebox.showerror("Install failed",
+                        f"Could not write:\n{final_dest}\n{e}")
+                    return
+
+        if backed_up_total:
+            self._log(f"\nBacked up {backed_up_total} existing file(s) → *.bak\n",
+                      'dim')
+        self._log(f"\n✓ Bundled files installed ({copied_total} file(s) "
+                  f"across {len(plan)} bundle(s))\n", 'success')
+        self._log(f"   {package_root}\n", 'success')
+        messagebox.showinfo("Bundled files installed",
+            f"{copied_total} file(s) copied to:\n{package_root}\n\n"
+            f"Launch the game via me3 to test. If anything fails to load "
+            f"and you previously had custom files, the .bak backups are "
+            f"alongside the originals.")
+
     def _install_prepatched_emevd(self):
         """One-click install: copy ALL bundled patched EMEVD files into
         the user's me3 profile event/ directory. Includes common_func.emevd.dcx
@@ -6554,6 +6790,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         per_map_files = [f for f in prepatched_files
                          if os.path.basename(f) != 'common_func.emevd.dcx']
 
+        # v0.28.2: night-boss teleporter — decide whether to swap the
+        # proximity common_func in for the default clock-gated one.
+        early_status, early_cf, _default_cf = (
+            self._resolve_early_spawn_common_func(
+                bool(self.early_boss_spawn_var.get())))
+
         # Intro
         msg = ("This will copy all pre-patched EMEVD files into your me3\n"
                "profile, applying every rando fix in one click.\n\n"
@@ -6567,6 +6809,15 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             msg += f"      handlers can't reach: " + ", ".join(
                 os.path.basename(f).replace('.emevd.dcx', '')
                 for f in per_map_files) + ")\n"
+        if early_status == 'engaged':
+            msg += ("\n\u26a0 Night-boss teleporter ENGAGED (experimental):\n"
+                    "  common_func.emevd.dcx will be the PROXIMITY build —\n"
+                    "  the night boss spawns when you approach its arena\n"
+                    "  instead of waiting for the 23:00 clock window.\n")
+        elif early_status == 'missing':
+            msg += ("\n\u26a0 Night-boss teleporter is ON, but its proximity\n"
+                    "  binary isn't bundled (patched_emevd/early_spawn/).\n"
+                    "  Installing the standard clock-gated common_func.\n")
         msg += ("\nWhat it fixes:\n"
                 "  • Killed bosses not dropping runes\n"
                 "  • Sleeping enemies not waking up\n"
@@ -6600,6 +6851,10 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         backed_up = 0
         for src in prepatched_files:
             fname = os.path.basename(src)
+            # v0.28.2: swap in the proximity common_func when the teleporter
+            # is engaged (early_cf was already validated to exist).
+            if fname == 'common_func.emevd.dcx' and early_status == 'engaged':
+                src = early_cf
             final_dest = os.path.join(output_dir, fname)
             # Backup existing if present
             if os.path.exists(final_dest):
@@ -6618,6 +6873,9 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 shutil.copy(src, final_dest)
                 copied += 1
                 self._log(f"  ✓ {fname}\n", 'success')
+                if fname == 'common_func.emevd.dcx' and early_status == 'engaged':
+                    self._log("      ↑ proximity build (night-boss teleporter)\n",
+                              'info')
             except OSError as e:
                 self._log(f"Failed to copy {fname}: {e}\n", 'error')
                 messagebox.showerror("Install failed",
@@ -6636,6 +6894,84 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             f"If encounter bugs persist after install, your NR build may be a\n"
             f"different version than this file was patched against. Use the\n"
             f"\"Apply patches manually (advanced)\" option in that case.")
+
+    def _resolve_early_spawn_common_func(self, engaged):
+        """Decide which common_func.emevd.dcx the night-boss teleporter
+        should install. Pure (no logging, no side effects) so both the
+        one-click installer and the rando-pipeline worker can share it.
+
+        v0.28.2. The teleporter swaps the default clock-gated
+        nb_night_transition (90065950) — which fires in the 23:00 window —
+        for a proximity build that fires when the player gets near the boss
+        arena (RoR2-style). Only common_func.emevd.dcx differs between the
+        two builds; every per-map .emevd.dcx is reused byte-identical (the
+        per-map binaries already pass the boss entity as arg0, which the
+        proximity event reads). So "engage the teleporter" == "install an
+        alternate common_func.emevd.dcx".
+
+        The proximity binary must be DarkScript3-compiled by hand and dropped
+        in patched_emevd/early_spawn/ — it can't be synthesized in Python.
+        Until then the toggle degrades gracefully to the clock build.
+
+        Returns (status, early_cf_path, default_cf_path):
+          'off'      toggle off → install the default (clock-gated) build
+          'engaged'  toggle on + proximity binary present → install early_cf
+          'missing'  toggle on + proximity binary absent → fall back to
+                     default (caller should warn the user)
+        """
+        bundled = os.path.join(HERE, 'patched_emevd')
+        default_cf = os.path.join(bundled, 'common_func.emevd.dcx')
+        early_cf = os.path.join(bundled, 'early_spawn', 'common_func.emevd.dcx')
+        if not engaged:
+            return ('off', None, default_cf)
+        if os.path.exists(early_cf):
+            return ('engaged', early_cf, default_cf)
+        return ('missing', None, default_cf)
+
+    def _build_emevd_overlay_dir(self, engaged):
+        """Return (overlay_dir, temp_dir_to_clean) for the rando pipeline's
+        emevd_overlay_dir kwarg.
+
+        v0.28.2. Normally the bundled patched_emevd/ dir is used verbatim
+        (temp_dir_to_clean = None). When the night-boss teleporter is engaged
+        and its proximity common_func is bundled, build a throwaway overlay:
+        a copy of the top-level patched_emevd/*.emevd.dcx with the proximity
+        common_func.emevd.dcx swapped in for the default. This leaves the
+        shipped patched_emevd/ dir untouched and keeps the swap scoped to the
+        one run. The caller MUST rmtree the returned temp dir (when not None)
+        once the run finishes.
+
+        Runs on the worker thread; logs to self.log_queue, never Tk.
+        """
+        import shutil, tempfile, glob
+        bundled = os.path.join(HERE, 'patched_emevd')
+        if not os.path.isdir(bundled):
+            return (None, None)
+        status, early_cf, _default_cf = self._resolve_early_spawn_common_func(
+            engaged)
+        if status != 'engaged':
+            if status == 'missing':
+                self.log_queue.put(
+                    "  \u26a0 Early night-boss spawn is ON but the proximity "
+                    "common_func isn't bundled (patched_emevd/early_spawn/); "
+                    "using the standard clock-gated build.\n")
+            return (bundled, None)
+        # Engaged: assemble a throwaway overlay with the proximity common_func.
+        try:
+            tmp = tempfile.mkdtemp(prefix='nr_emevd_early_')
+            for f in glob.glob(os.path.join(bundled, '*.emevd.dcx')):
+                shutil.copy(f, os.path.join(tmp, os.path.basename(f)))
+            shutil.copy(early_cf, os.path.join(tmp, 'common_func.emevd.dcx'))
+            self.log_queue.put(
+                "  \u2191 Night-boss teleporter ENGAGED: overlaying the "
+                "proximity common_func.emevd.dcx (boss spawns on approach).\n")
+            return (tmp, tmp)
+        except OSError as e:
+            # Fail safe: fall back to the bundled dir rather than aborting.
+            self.log_queue.put(
+                f"  \u26a0 Couldn't build the early-spawn overlay ({e}); "
+                "using the standard patched_emevd/ instead.\n")
+            return (bundled, None)
 
     def _open_file_explorer(self, path):
         """Cross-platform: open file explorer to the given directory."""
@@ -7149,7 +7485,8 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             spawn_pool_source_dir=spawn_pool_source_dir,
             oops_all_nb_target=self.oops_all_nb_target_var.get(),
             oops_all_nb_scope=self.oops_all_nb_scope_var.get(),
-            multiplayer_safe=bool(self.multiplayer_safe_var.get()))
+            multiplayer_safe=bool(self.multiplayer_safe_var.get()),
+            early_boss_spawn=bool(self.early_boss_spawn_var.get()))
 
         # v0.19.21: Run button becomes a Cancel button while the worker
         # is active. Clicking it sets the cancel flag in the engine; the
@@ -7230,6 +7567,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             'oops_all_nb_target_cp': oops_all_nb_target_cp,
             'oops_all_nb_marker_scope': oops_all_nb_marker_scope,
             'multiplayer_safe': bool(self.multiplayer_safe_var.get()),
+            # v0.28.2: early night-boss spawn ("RoR2 teleporter"). Consumed
+            # by the EMEVD-overlay builder in the worker (see
+            # _build_emevd_overlay_dir) to decide whether to swap in the
+            # proximity common_func.emevd.dcx. Snapshotted here on the main
+            # thread so the worker never reads the Tk var off-thread.
+            'early_boss_spawn': bool(self.early_boss_spawn_var.get()),
             'disable_resilient_filter': bool(self.disable_resilient_filter_var.get()),
             'prefer_canonical_variants': bool(self.prefer_canonical_variants_var.get()),
             'randomize_safe_nb_arenas': bool(self.randomize_safe_nb_arenas_var.get()),
@@ -7459,6 +7802,10 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                         self.q.put(line + '\n')
                 def flush(self): pass
             sys.stdout = StreamingBuf(self.log_queue)
+            # v0.28.2: throwaway dir for the night-boss-teleporter overlay,
+            # if engaged. Cleaned up in the finally below. Initialised here
+            # so it's in scope even on the non-DCX (raw-MSB) path.
+            _emevd_overlay_tmp = None
             try:
                 # v0.26.16: variant-pool preference. Set before the
                 # pipeline branch so it applies to both the DCX
@@ -7510,9 +7857,15 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     # rando pipeline so those patches survive re-rolls
                     # instead of being clobbered. User can disable by
                     # deleting/renaming the dir.
-                    bundled_overlay = os.path.join(HERE, 'patched_emevd')
-                    emevd_overlay = (bundled_overlay
-                                     if os.path.isdir(bundled_overlay) else None)
+                    #
+                    # v0.28.2: _build_emevd_overlay_dir resolves the overlay
+                    # and, when the night-boss teleporter is engaged, returns
+                    # a throwaway copy with the proximity common_func swapped
+                    # in. The temp dir (2nd return value) is rmtree'd in the
+                    # finally below; None means "used patched_emevd/ as-is".
+                    emevd_overlay, _emevd_overlay_tmp = (
+                        self._build_emevd_overlay_dir(
+                            bool(config.get('early_boss_spawn'))))
                     # v0.28.x: pass game_install through so the FMG
                     # splice can read item_dlc01.msgbnd.dcx out of NR's
                     # encrypted dvdbnd archives via data_archive when
@@ -7544,6 +7897,10 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                         **kwargs_no_seed)
             finally:
                 sys.stdout = old_stdout
+                # v0.28.2: drop the throwaway night-boss-teleporter overlay.
+                if _emevd_overlay_tmp:
+                    import shutil
+                    shutil.rmtree(_emevd_overlay_tmp, ignore_errors=True)
 
             self.log_queue.put(f"--- Run complete ---\n")
 

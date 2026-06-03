@@ -657,9 +657,10 @@ def plan_roster_import(ns, mmv_dir, er_dir, target_chr_dir,
     sfx/, material/ as subdirs), not the chr/ subdir itself -- matching the
     GUI's existing "folder" convention.
 
-    SFX / material are NOT planned here -- they are shared bundles that
-    cannot be matched per-chr (sfxbnd_commoneffects etc.). The executor
-    bulk-syncs those dirs separately. See execute_roster_import.
+    SFX / material / sd are NOT planned here -- they are shared bundles
+    that cannot be matched per-chr (sfxbnd_commoneffects, monolithic sound
+    banks, etc.). The executor bulk-syncs those dirs separately. See
+    execute_roster_import.
 
     Returns a dict:
         {
@@ -874,13 +875,24 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
 
     Copies chr + script files (each entry carries its own resolved source
     dir, so MMV-origin and ER-origin chrs are handled in one pass), then
-    bulk-syncs the sfx/ and material/ directories.
+    bulk-syncs the sfx/, material/, and sd/ directories.
 
-    SFX / material sync follows the same MMV-first, ER-fallback rule as
-    the chr routing: if the MMV dir has an sfx/ (or material/) subdir it
-    is used; otherwise the ER dir's is. These are bulk dir-to-dir copies
-    -- the bundles are shared and not per-chr matchable. Idempotent
+    SFX / material / sd sync follows the same MMV-first, ER-fallback rule
+    as the chr routing: if the MMV dir has an sfx/ (or material/, or sd/)
+    subdir it is used; otherwise the ER dir's is. These are bulk dir-to-dir
+    copies -- the bundles are shared and not per-chr matchable. Idempotent
     skip-existing keeps re-runs cheap.
+
+    sd/ (v0.28.x): the FMOD sound banks (.fsb/.fsbm). A cross-game chr NR
+    never shipped (most MMV boss ports) has no sound bank in NR's own sd/,
+    so without this the boss spawns SILENT -- no vocalizations, no attack
+    foley. MMV ships an sd/ for exactly this reason; the GUI's MMV tooltip
+    already lists sd/ among the required asset dirs. Caveat: this is a flat
+    skip-existing copy. It is correct when MMV adds NEW, additively-named
+    banks. If MMV instead REPLACES a monolithic bank NR also has (e.g. a
+    re-authored enemy.fsb), skip-existing will leave NR's copy in place and
+    the new sound won't take -- the user must run with overwrite=True. Same
+    limitation the sfx/ and material/ syncs already carry.
 
     `progress_cb`, if given, is called progress_cb(cp, fname, seen, total,
     status) per file, mirroring execute_bulk_chr_import.
@@ -888,7 +900,7 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
     Returns a dict:
         {'chr_files_copied', 'script_files_copied', 'files_skipped',
          'bytes_copied', 'sfx_files_copied', 'material_files_copied',
-         'errors': [...]}
+         'sd_files_copied', 'errors': [...]}
     """
     # (no module-level dependencies)
     import os, shutil
@@ -905,6 +917,7 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
     res = {'chr_files_copied': 0, 'script_files_copied': 0,
            'files_skipped': 0, 'bytes_copied': 0,
            'sfx_files_copied': 0, 'material_files_copied': 0,
+           'sd_files_copied': 0,
            'errors': []}
 
     total = sum(e['bytes'] for e in plan.get('entries', []))
@@ -951,7 +964,7 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
                 f"{cp}: {len(e['script_files'])} script files NOT copied "
                 f"-- no script source/target dir resolved")
 
-    # --- SFX + material bulk sync (MMV-first, ER-fallback) ---
+    # --- SFX + material + sd bulk sync (MMV-first, ER-fallback) ---
     def _pick_subdir(name):
         for root in (mmv_dir, er_dir):
             if not root:
@@ -964,7 +977,8 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
 
     tgt_parent = os.path.dirname(os.path.abspath(tgt_chr))
     for name, key in (('sfx', 'sfx_files_copied'),
-                      ('material', 'material_files_copied')):
+                      ('material', 'material_files_copied'),
+                      ('sd', 'sd_files_copied')):
         src_dir = _pick_subdir(name)
         if not src_dir:
             continue

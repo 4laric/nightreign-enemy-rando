@@ -34,6 +34,25 @@ Bundling MMV's versions sidesteps the DLC-install requirement entirely.
 
 `_chr_import` and `_chr_bulk_import` (in `oops_rando_gui.py`) copy these files to the target script directory after the per-chr `_battle.luabnd.dcx` files. As of v0.24.64, this happens automatically whenever either import flow runs.
 
+Independently, the "Install bundled mod files" button on the Generate
+tab deploys these alongside `bundled_regulation/` and `bundled_sfx/`
+in one click via the BUNDLED_INSTALLS registry.
+
+## MMV's aicommon is required, not "preferred"
+
+v0.28.x playtest confirmed that ER's vanilla `aicommon.luabnd.dcx` is
+**not** a viable substitute for MMV's. The 922-name shared base is
+identical between the two, but MMV's bundle defines additional
+constants that DLC and cross-game chrs' AI scripts reference at
+registration time. Substituting ER's bundle produces silent
+registration failures → chrs spawn with no goal table → freeze.
+
+Previous versions of this README left this as a "pending confirmation"
+caveat. As of v0.28.x it's confirmed: MMV's `aicommon` ships
+permanently. The same playtest also confirmed `bundled_sfx/`'s MMV
+SFX bundle is required — the three bundles (regulation + aicommon +
+sfx) travel together as the canonical MMV-derived asset base.
+
 ## Regeneration
 
 If MMV ships an aicommon update (new cross-game chrs or expanded goal tables), drop the new `.dcx` files in here, replacing the existing ones. No code change needed — the import flow reads whatever's in this directory.

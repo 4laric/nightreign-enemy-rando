@@ -565,13 +565,20 @@ def load_data(ns):
     # floors. Alaric direction: give every eligible miniboss a floor of 1
     # (guarantees the rare tail appears).
     #
-    # v0.27.6: cap policy is now "4 across the board" — every
-    # miniboss-tier chr is capped at 4, overriding the v0.27.3 cap=6
-    # default AND every pre-existing hand-tuned 1/2/8 (Elder Lion 8->4;
-    # the singular-boss 1/2 values raised to 4). Power-of-2 ceiling;
-    # pairs with the floor=1 (guarantee 1, allow up to 4). Exempt: the
-    # _LIFTED_V0_24_65 defensive cap=1 chrs (bug-blast-radius limits,
-    # not feel-tuning) keep their cap.
+    # v0.27.6: cap policy was "4 across the board" — every miniboss-tier
+    # chr was capped at 4, overriding the v0.27.3 cap=6 default AND every
+    # pre-existing hand-tuned 1/2/8 value. Power-of-2 ceiling; pairs with
+    # the floor=1 (guarantee 1, allow up to 4).
+    #
+    # v0.28.2: tier-default-only — explicit JSON caps now win. The
+    # v0.27.6 unconditional clamp silently overrode hand-tuned
+    # placement_budget.json values (Onze cap=2 was bumped to 4; c4420
+    # cap=0 was bumped to 4 — the latter discovered when c4420's pull-
+    # from-rotation edit didn't take effect). The fix is one line: the
+    # cap branch now uses the same `not in` guard the floor branch right
+    # above it has always used. Tier defaults still apply to every
+    # miniboss without an explicit cap in the JSON; mount-role override
+    # below still wins unconditionally for c4050 / c5890.
     #
     # Slot budget: ~360 boss-strength slots/seed vs 100 floored chrs
     # (24 pre-existing + 76 miniboss) — ~3.6x headroom.
@@ -597,11 +604,10 @@ def load_data(ns):
         if _cp not in V3_RESERVATION_FLOORS:
             V3_RESERVATION_FLOORS[_cp] = 1
             _mb_floored += 1
-        # v0.27.6: 4 across the board — override any prior cap. As of
-        # v0.27.8 there is no exemption: the _LIFTED_V0_24_65 defensive
-        # cap=1 mechanism was removed, so every miniboss-tier chr —
-        # c4140/c4441/c4601/c4811/c5930/c6220 included — is capped at 4.
-        if V3_UNIQUE_TARGET_CAPS.get(_cp) != 4:
+        # v0.28.2: tier default only — leave explicit JSON caps alone.
+        # Was `!= 4` (unconditional clamp); see the v0.28.2 docstring
+        # block above for the Onze / c4420 motivation.
+        if _cp not in V3_UNIQUE_TARGET_CAPS:
             V3_UNIQUE_TARGET_CAPS[_cp] = 4
             _mb_capped += 1
     if _mb_floored or _mb_capped:
@@ -672,7 +678,13 @@ def load_data(ns):
             continue
         if _cp in _gr_exclude:
             continue
-        if V3_UNIQUE_TARGET_CAPS.get(_cp) != 40:
+        # v0.28.2: tier default only — same fix as the miniboss block
+        # above (explicit JSON caps win). No grunt-tier hand-tunes
+        # exist in placement_budget.json today; this is preemptive.
+        # _RARE_NOVELTY_CAPS below intentionally STILL wins over this
+        # default — it's an explicit grunt-tier override, not a JSON
+        # hand-tune, and runs after this loop on purpose.
+        if _cp not in V3_UNIQUE_TARGET_CAPS:
             V3_UNIQUE_TARGET_CAPS[_cp] = 40
             _gr_capped += 1
     if _gr_capped:

@@ -1,1 +1,2 @@
 * text=auto
+bundled_sfx/sfxbnd_c0000.ffxbnd.dcx filter=lfs diff=lfs merge=lfs -text

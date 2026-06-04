@@ -101,6 +101,10 @@ def write_spoiler_logs(ns, output_dir, entries, seed,
     _V3_UNIQUE_UNPLACED_LOG = ns['_V3_UNIQUE_UNPLACED_LOG']
     # Helper functions:
     _data_path = ns['_data_path']
+    # v0.28.x: night-boss arena → role table. Read from ns so engine
+    # modules stay project-root-import-free (idiomatic per the rest of
+    # engine/). Used to stamp entries below and to label MD map headers.
+    night_role = ns['night_role']
     # Caller's __file__ (used for spoiler archive dir lookup —
     # must resolve to oops_v3.py, not engine/spoilers.py).
     __file__ = ns['__file__']
@@ -111,6 +115,17 @@ def write_spoiler_logs(ns, output_dir, entries, seed,
             tags = json.load(f)
     except Exception:
         tags = {}
+    # v0.28.x: stamp every entry with its night-boss arena role.
+    # night_role.stamp_entry adds entry['night_role'] = [role_dict, ...]
+    # when entry['map'] is in NIGHT_ROLE_BY_ARENA (27 arenas); no-op
+    # otherwise. Mutates in place + idempotent, so the JSON dump
+    # below picks it up automatically and downstream readers
+    # (GUI spoiler viewer, external tools) can key off the field.
+    # Cheap: one dict lookup + maybe-set per entry, ~all-entries x
+    # microseconds total against a 50k-entry spoiler.
+    for _e in entries:
+        night_role.stamp_entry(_e)
+
     # JSON: machine-readable, full detail
     json_path = os.path.join(output_dir, '_spoilers.json')
     with open(json_path, 'w', encoding='utf-8') as f:
@@ -418,7 +433,9 @@ def write_spoiler_logs(ns, output_dir, entries, seed,
         if boss_entries:
             f.write("## Boss-tier swaps\n\n")
             for map_name, es in group_by_map(boss_entries).items():
-                f.write(f"### {map_name}\n\n")
+                _nr_label = night_role.label_for(map_name)
+                _hdr = f"### {map_name}" + (f" — {_nr_label}" if _nr_label else "")
+                f.write(f"{_hdr}\n\n")
                 f.write("| entity_id | original | → | new | position |\n")
                 f.write("|---|---|---|---|---|\n")
                 for e in sorted(es, key=lambda x: x['entity_id'] or -1):
@@ -436,7 +453,9 @@ def write_spoiler_logs(ns, output_dir, entries, seed,
             f.write("## Clustered swaps (multi-part encounters)\n\n")
             f.write("Members of the same cluster share an encounter. Look for matching `cluster_id` in JSON.\n\n")
             for map_name, es in group_by_map(cluster_entries).items():
-                f.write(f"### {map_name}\n\n")
+                _nr_label = night_role.label_for(map_name)
+                _hdr = f"### {map_name}" + (f" — {_nr_label}" if _nr_label else "")
+                f.write(f"{_hdr}\n\n")
                 # Group by cluster within map
                 by_cluster = defaultdict(list)
                 for e in es: by_cluster[e['cluster_id']].append(e)
@@ -451,7 +470,10 @@ def write_spoiler_logs(ns, output_dir, entries, seed,
         if field_entries:
             f.write("## Field swaps\n\n")
             for map_name, es in group_by_map(field_entries).items():
-                f.write(f"### {map_name} ({len(es)} swaps)\n\n")
+                _nr_label = night_role.label_for(map_name)
+                _hdr = (f"### {map_name} ({len(es)} swaps)"
+                        + (f" — {_nr_label}" if _nr_label else ""))
+                f.write(f"{_hdr}\n\n")
                 f.write("<details><summary>Show swaps</summary>\n\n")
                 f.write("| entity_id | original | → | new |\n")
                 f.write("|---|---|---|---|\n")

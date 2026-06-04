@@ -83,6 +83,11 @@ sys.path.insert(0, HERE)
 from bundle_installer import BUNDLED_INSTALLS, list_bundle_content_files
 _list_bundle_content_files = list_bundle_content_files  # internal alias
 
+# v0.28.x: night-boss arena → role labels for the spoiler viewer's
+# per-map headers. Pure data + helpers (no tkinter), so importing
+# eagerly at module load is safe even if backend imports fail.
+import night_role
+
 
 # Defer the imports until we actually need them — let the GUI start even if
 # the backend files have an issue, so we can show a nice error
@@ -1345,7 +1350,7 @@ _RUN_SETTING_FLAGS = [
     ('chaos_mode',                'Cinematic Chaos',                 False),
     ('merchant_model_swap',       'Merchant model swap',             True),
     ('mount_rider_swap',          'Mount/rider swap',                False),
-    ('prefer_canonical_variants', 'Prefer canonical variants',       True),
+    ('prefer_canonical_variants', 'Prefer canonical variants',       False),
     ('randomize_safe_nb_arenas',  'Randomize "safe" NB arenas',      False),
     ('randomize_all_nb_arenas',   'Randomize all NB arenas',         False),
     ('early_boss_spawn',          'Early night-boss spawn (RoR2)',   False),
@@ -2067,8 +2072,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # (sample_maps non-empty), skipping untested ghost variants that
         # can render glitched (T-pose, missing textures, off-scale FFX).
         # Soft filter — chrs with only ghost variants stay pickable.
-        # Default ON for visual stability.
-        self.prefer_canonical_variants_var = tk.BooleanVar(value=True)
+        # v0.28.2: default flipped to OFF — bad ghosts are now isolated
+        # via per-chr exclusions / the redundant-variant prune list, so
+        # the soft filter is no longer load-bearing and the OFF default
+        # restores the fuller variant pool. The checkbox remains for
+        # anyone who wants the old conservative behavior.
+        self.prefer_canonical_variants_var = tk.BooleanVar(value=False)
         # v0.26.16 / v0.26.x: randomize the safe single-boss night-boss
         # arenas. Subsumed by randomize_all_nb_arenas (all 25 includes
         # the safe 12) and its checkbox was removed alongside the all-NB
@@ -3586,10 +3595,10 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 "hand. Cancelled runs don't auto-launch.")
 
         # v0.28.x: bundled mod files installer. Static drop-ins
-        # (regulation.bin + AI manifests today; chr/sd/material bnds
-        # tomorrow if we ever need them) live in BUNDLED_INSTALLS at
-        # module scope — adding a new bundle is a one-line append, no
-        # button code changes.
+        # (regulation.bin + AI manifests + MMV SFX + material binders
+        # today; chr/sd bnds tomorrow if we ever need them) live in
+        # BUNDLED_INSTALLS at module scope — adding a new bundle is a
+        # one-line append, no button code changes.
         f4b = ttk.Frame(parent, padding=(8, 0, 8, 8))
         f4b.pack(fill='x')
         self._install_bundled_btn = ttk.Button(
@@ -3598,11 +3607,13 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         self._install_bundled_btn.pack(side='left', ipady=1)
         Tooltip(self._install_bundled_btn,
                 "Copies the bundled regulation.bin, aicommon AI "
-                "manifests, and MMV SFX bundle into your me3 package. "
-                "Required for the v0.28.x balance / safety patches, "
-                "for cross-game / DLC chr AI to load, and for "
-                "heritage / cross-game chr particle effects. Existing "
-                "files are backed up to *.bak before overwrite.\n\n"
+                "manifests, MMV SFX bundle, and MMV material binders "
+                "into your me3 package. Required for the v0.28.x "
+                "balance / safety patches, for cross-game / DLC chr "
+                "AI to load, for heritage / cross-game chr particle "
+                "effects, and for heritage chr shader/material "
+                "references to resolve. Existing files are backed up "
+                "to *.bak before overwrite.\n\n"
                 "Defaults the destination to your saved me3 package "
                 "path. Re-run after a profile wipe to redeploy.")
 
@@ -4085,14 +4096,20 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 "Soft filter: a c-prefix with ONLY ghost variants is "
                 "still pickable, so no chr is lost.")
         make_info_icon(cv_row, tooltip_text=(
-            "Default: ON\n\n"
+            "Default: OFF (as of v0.28.2)\n\n"
             "ON  — picker prefers canonical variants; a ghost variant "
             "is used only when its c-prefix has no canonical.\n"
             "OFF — full pool including ghost variants: more visual "
             "variety, higher glitch risk. Block individual bad ghosts "
-            "by npc_param_id if you want variety without this filter.\n\n"
-            "Mechanically every variant works; only visuals are at "
-            "risk with ghosts."
+            "by npc_param_id or prefix if you spot one in playtest.\n\n"
+            "Note: ghost variants can be AI-broken or crash-prone, not "
+            "just visually glitched — the canonical/ghost axis tracks "
+            "per-chr script (luabnd) and asset/param completeness. The "
+            "v0.28.2 default flipped to OFF only because the known-bad "
+            "ghosts have been isolated through other mechanisms (per-"
+            "chr exclusions, redundant-variant prune list, prefix "
+            "filters); any newly-found bad ghost should be isolated "
+            "the same way rather than re-enabling this filter wholesale."
         ))
 
         # v0.26.x: the "Randomize safe night-boss arenas" and
@@ -5941,8 +5958,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         groups = self._group_spoiler_entries_by_map(filtered)
         for map_name in sorted(groups.keys()):
             map_entries = groups[map_name]
+            _nr_label = night_role.label_for(map_name)
+            _hdr_suffix = f"  ({len(map_entries)} swap{'s' if len(map_entries) != 1 else ''})"
+            if _nr_label:
+                _hdr_suffix += f"  — {_nr_label}"
             self.spoiler_text.insert('end',
-                f"\n{map_name}  ({len(map_entries)} swap{'s' if len(map_entries) != 1 else ''})\n",
+                f"\n{map_name}{_hdr_suffix}\n",
                 'map_header')
             for entry in map_entries:
                 orig = entry.get('original') or {}
@@ -6622,8 +6643,9 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
 
     def _install_bundled_files(self):
         """Generic installer for everything in the BUNDLED_INSTALLS
-        registry — currently regulation.bin and aicommon.luabnd.dcx
-        files; future entries land here automatically.
+        registry — currently regulation.bin, aicommon AI manifests,
+        MMV SFX, and MMV material binders; future entries land here
+        automatically (see bundle_installer.py for the live list).
 
         For each registry entry:
           1. Resolve bundle_dir under HERE, gather deployable files
@@ -7810,9 +7832,11 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 # v0.26.16: variant-pool preference. Set before the
                 # pipeline branch so it applies to both the DCX
                 # (rando_pipeline) and raw-MSB (cmd_shuffle_v3) paths.
+                # v0.28.2: fallback default flipped to False to match
+                # the engine and GUI defaults.
                 import oops_v3
                 oops_v3.V3_PREFER_CANONICAL_VARIANTS = bool(
-                    config.get('prefer_canonical_variants', True))
+                    config.get('prefer_canonical_variants', False))
                 # Auto-detect input format: if the input dir has any .msb.dcx
                 # files, run the full DCX pipeline (decompress → shuffle →
                 # recompress). Otherwise treat as raw MSB input.

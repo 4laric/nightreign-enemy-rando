@@ -28,7 +28,7 @@ from collections import Counter, defaultdict
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
 V3_ENGINE_VERSION = 'v0.23'
-V3_ENGINE_FINGERPRINT = 'v0.28.1'  # MUST bump on each release — appears in spoilers
+V3_ENGINE_FINGERPRINT = 'v0.28.2'  # MUST bump on each release — appears in spoilers
 
 # v0.28.x (Phase 2 POI recycling): default on. Flip to False to revert
 # the per-cluster scope and restore the v0.27.45 per-MSB-only behavior
@@ -68,6 +68,14 @@ from engine.pack_loaders.heritage_pack import apply_heritage_pack
 from engine.pack_loaders.er_heritage import apply_er_heritage
 from engine.pack_loaders.mmv_imports import apply_mmv_imports
 from engine.placement_budget import apply_static_overrides as _apply_placement_budget_overrides
+
+# v0.28.x: night-boss arena → expedition/role table. Lives at the project
+# root next to data_archive / vanilla_source — pure data + helpers, no
+# project deps. write_spoiler_logs reads it via `ns['night_role']` to
+# stamp entries and label map-section headers. Importing it into module
+# globals here makes it visible in vars(oops_v3) which is what the shim
+# passes as ns.
+import night_role
 
 
 # v0.24.22 (Phase 12): per-pack loader registry.
@@ -2350,7 +2358,18 @@ V3_AVOID_VARIANT_NPC_IDS = {
 # prefix-eligibility (V3_EXCLUDE_PREFIXES / nr_missing_chr_files.json).
 # This is exactly how c2277 Crab leaked: single imported_chr variant,
 # nothing canonical to discriminate against, soft fallback passed it.
-V3_PREFER_CANONICAL_VARIANTS = True
+#
+# v0.28.2: default FLIPPED to False. The bad ghost variants that
+# motivated v0.26.16's "default True" stance have been isolated through
+# other mechanisms (per-chr exclusions, the redundant-variant prune
+# list, prefix-level filters), so the soft canonical-prefer filter is
+# no longer load-bearing. Flipping the default to False restores the
+# fuller variant pool for variety. The filter, the GUI checkbox, and
+# the soft fallback all remain intact — turning the checkbox ON still
+# works for anyone who wants the old behavior, and any newly-discovered
+# bad ghost should be isolated at its proper level (per-variant
+# blocklist or prefix exclusion) rather than re-enabled wholesale.
+V3_PREFER_CANONICAL_VARIANTS = False
 
 
 # v0.27.x: REDUNDANT-VARIANT PRUNE LIST

@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "what": "Expedition (Nomadic/Wandering) merchant ShopLineupParam rows that merchant_shop_fill.py randomizes per seed.",
+    "merchant_chr": "c3200 (Nomadic Merchant, npc_param_id 32000000)",
+    "note": "Each entry's rows are overwritten per seed (equipType@27 u8, equipId@4 s32, value@8 s32). Because equipType is rewritten too, the vanilla armor/goods rows are repurposed directly - no Smithbox pre-bake needed. All 23 contiguous rows of each copy are used.",
+    "param": "ShopLineupParam",
+    "field_offsets": {"equipType": 27, "equipId": 4, "value": 8, "row_size": 64},
+    "open_question": "Confirm on a rig how many DISTINCT shop ranges the shipping regulation routes field merchants to, and whether multiple merchants in one run hit different ones. Add more entries here as ranges are confirmed; the filler rolls each entry independently."
+  },
+  "merchants": [
+    {
+      "name": "nomadic_ungated",
+      "shop_band": "600000-600022",
+      "release_gate": 0,
+      "slots": [600000, 600001, 600002, 600003, 600004, 600005, 600006, 600007,
+                600008, 600009, 600010, 600011, 600012, 600013, 600014, 600015,
+                600016, 600017, 600018, 600019, 600020, 600021, 600022]
+    },
+    {
+      "name": "nomadic_gated",
+      "shop_band": "1600101-1600123",
+      "release_gate": 99019775,
+      "slots": [1600101, 1600102, 1600103, 1600104, 1600105, 1600106, 1600107,
+                1600108, 1600109, 1600110, 1600111, 1600112, 1600113, 1600114,
+                1600115, 1600116, 1600117, 1600118, 1600119, 1600120, 1600121,
+                1600122, 1600123]
+    }
+  ]
+}

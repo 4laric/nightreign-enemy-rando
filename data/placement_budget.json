@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "_engine_fingerprint": "v0.28.1",
+    "_engine_fingerprint": "v0.28.2",
     "_generator": "dev/extract_placement_budget.py",
     "_notes": [
       "Sparse: only c-prefixes with at least one non-default fact",
@@ -303,7 +303,7 @@
     },
     "c2030": {
       "arena_only": false,
-      "cap": null,
+      "cap": 0,
       "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -314,8 +314,8 @@
       "name": "Rennala, Queen of the Full Moon",
       "nb_caliber": true,
       "nb_strict": false,
-      "rationale": null,
-      "since": null,
+      "rationale": "doesnt work without field trip",
+      "since": "v0.28.2",
       "source": "heritage",
       "tags": [],
       "tier": "night_boss",
@@ -3711,7 +3711,7 @@
     },
     "c4420": {
       "arena_only": false,
-      "cap": 4,
+      "cap": 0,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -3722,8 +3722,8 @@
       "name": "Giant Crayfish",
       "nb_caliber": false,
       "nb_strict": false,
-      "rationale": null,
-      "since": null,
+      "rationale": "visual glitch on some variants",
+      "since": "v0.28.2",
       "source": "heritage",
       "tags": [],
       "tier": "miniboss",

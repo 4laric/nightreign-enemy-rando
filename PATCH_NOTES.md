@@ -1,3 +1,133 @@
+# v0.28.2 — what's new
+
+## Heritage chrs look right out of the box
+
+**MMV's material binders now bundle with the rando.** The shipped
+"Install bundled mod files" button copies one more thing to your
+profile, `<package>/material/allmaterial.matbinbnd.dcx` (+ DLC). Without
+these, heritage / cross-game chrs whose models reference shaders
+outside NR's base material registry rendered with broken or missing
+surfaces. Now they don't. The four bundles — regulation + aicommon +
+sfx + material — are the canonical MMV-derived asset base; the
+install button does all six file copies in one click.
+
+## Particle effects fixed on base chrs too
+
+The bundled SFX is back to the full MMV bundle (~182 MB, up from the
+trimmed ~28 MB that shipped in v0.28.1). The trim missed FFX
+references on **base NR chrs** — some of vanilla's own particle
+effects were broken without the full bundle deployed. v0.28.2 ships
+the full bundle to restore those. The "Install bundled mod files"
+button copies it for you; if you previously installed it the .bak
+backup path handles the overwrite the same way it does for the other
+bundles.
+
+## Two chrs pulled from the rotation
+
+- **Rennala, Queen of the Full Moon** no longer appears in random
+  placements. Her field-trip transition (the prelude before the boss
+  room) doesn't replicate outside her original encounter, so the
+  fight doesn't actually work at a random arena.
+- **Giant Crayfish** also pulled, pending a variant audit — some
+  variants have visual glitches.
+
+Both are still in the data files (you'll see them in spoilers from
+seeds generated against v0.28.1 or earlier); they just won't be
+chosen by v0.28.2's shuffle.
+
+## Variant variety on by default
+
+The "Prefer canonical variants" GUI checkbox now starts OFF instead
+of ON. With it OFF you'll see the full pool of NPCParam variants
+each c-prefix has — more visual variety per seed, more variation in
+attack movesets within a single chr type, more interesting
+encounters generally. The checkbox itself still exists if you want
+to flip it back on for any particular run.
+
+The reason to default it ON used to be "ghost variants are often
+broken in subtle ways" — the per-chr scripts (luabnd) on ghost
+variants are sometimes missing or incomplete, which can produce
+T-poses, missing FFX, broken AI, or worst-case CTDs. Those known-
+bad ghosts have now been isolated separately (via per-chr
+exclusions, the redundant-variant prune list, and prefix-level
+filters), so the soft canonical-prefer filter isn't load-bearing
+as a default safety net anymore. If a new bad ghost turns up in
+playtest, isolate it surgically at one of those layers rather than
+flipping the global filter back on wholesale — that's the
+documented playbook in the engine's docstring.
+
+## Hand-tuned caps actually take effect now
+
+If you've been wondering why a miniboss-tier chr with an explicit
+cap in `data/placement_budget.json` still showed up four times per
+seed — that's because a v0.27.6 engine rule was unconditionally
+clamping every miniboss-tier chr to cap=4, silently overriding
+whatever the JSON said. v0.28.2 makes the tier rule a *default* (set
+cap=4 only when the JSON doesn't specify one) rather than a clamp.
+Explicit JSON values now win. The same fix went into the analogous
+grunt-tier block as preemptive consistency, though no grunt-tier chr
+has a hand-tuned cap today.
+
+**Behavior change for known cases:**
+- `c4420` (Giant Crayfish): the rotation-pull above now actually
+  takes effect (was being clamped from 0 back to 4 before this fix).
+- `c4050` (Kaiden) and `c5840` (Black Knight): both have JSON
+  cap=30, and the v0.27.13 mount-role override re-pins them at 30
+  anyway, so effective cap is unchanged.
+
+**This fix does NOT explain Onze (Demi-Human Swordmaster, c5810)
+appearing 4×/seed despite cap=2.** Onze is field_boss tier, not
+miniboss, so neither tier-default rule touches it. The engine
+correctly loads c5810 at cap=2 both before and after this fix.
+Whatever's causing Onze to exceed cap=2 is a separate bug —
+suspect either MSB-boundary recycling (v0.28's frozen-blocked-set
+semantics let a cp overshoot mid-MSB) or the reservation pre-pass
+placing without re-checking cap. Worth a focused look in v0.28.3.
+
+## Spoilers know which arena is which night boss
+
+Each night-boss arena map now carries its **expedition + role** in the
+spoiler. Open `_spoilers.md` (or the spoiler viewer's Spoiler tab) and
+the per-map headers read `m49_18_00_00.msb — Tricephalos NB2`,
+`m49_30_00_00.msb (1 swaps) — Night Aspect NB1`, and so on. Maps that
+aren't a scheduled night-boss slot render unchanged. The full role data
+(NB1 / NB2 / NB1-extra / NB2-extra, including the rare extras suppressed
+from the compact label) lives in `_spoilers.json` as a new `night_role`
+key on each affected entry, so spoiler-tooling consumers can read it
+without parsing the markdown.
+
+## Night-boss teleporter (experimental, default OFF)
+
+New toggle on the heritage / coop-safety tab: **"Early night-boss spawn
+(RoR2 teleporter)."** When ON, walking up to a boss arena fires the
+night-boss spawn early instead of waiting for the 23:00 clock window.
+Minimal-by-construction — only `common_func.emevd.dcx` differs between
+the clock build and the proximity build; everything else stays byte-
+identical. Caveat: the proximity event still scopes to the night gate
+flag, so engaging it nudges the whole night sequence early, not just
+one arena. Round-trips through saved settings + the shareable settings
+code like the other run flags.
+
+## Refreshed regulation
+
+`bundled_regulation/regulation.bin` updated for v0.28.2. Same shape as
+before (MMV base + the v0.28.x balance / safety patch overlay), with
+the latest tweaks rolled in.
+
+## For modders — regulation dump as a separate download
+
+The release page now offers a **second zip**:
+`nightreign-enemy-rando-v0.28.2-regulation-dump.zip` (~3.6 MB). It's a
+flat CSV dump of every param table in the shipped regulation —
+`NpcParam.csv`, `AtkParam_Npc.csv`, `BehaviorParam.csv`,
+`LotResultPlayAreaParam.csv` (the night-boss arena table behind the
+new spoiler labels), and 248 more. End-users don't need it; modders
+who want CSV-readable params without cracking the .bin open in
+Smithbox can grab it alongside the main download. See
+`regulation_dump/README.md` for typical workflows.
+
+---
+
 # v0.28.0 — what's new
 
 ## No more UXM unpacking

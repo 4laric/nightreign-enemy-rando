@@ -4,39 +4,54 @@ MMV's SFX bundle for end-user deployment.
 
 ## What's here
 
-| File                          | Size   | Source | Purpose                                                          |
-|-------------------------------|--------|--------|------------------------------------------------------------------|
-| `sfxbnd_c0000.ffxbnd.dcx`     | ~28 MB | MMV (trimmed) | Particle effects for cross-game / DLC / heritage-imported chrs   |
+| File                          | Size    | Source | Purpose                                                          |
+|-------------------------------|---------|--------|------------------------------------------------------------------|
+| `sfxbnd_c0000.ffxbnd.dcx`     | ~182 MB | MMV    | Particle effects for base, cross-game, DLC, and heritage chrs    |
 
-This is **MMV's `sfxbnd_c0000.ffxbnd.dcx`, trimmed** to just the FFX
-entries the rando's heritage / cross-game chrs actually consume (down
-from MMV's full ~182 MB container). The c0000 SFX bundle is
-the shared particle-effect container that almost every chr's
-attack/buff/status visuals reference. MMV's version is a superset
-of vanilla NR's: it carries the FFX entries cross-game and SoTE-
-heritage chrs need (Bayle's flame breath, Romina's scarlet rot
-clouds, Putrescent Knight's misted-aether attacks, etc.).
+This is **MMV's full `sfxbnd_c0000.ffxbnd.dcx`**, shipped verbatim.
+The c0000 SFX bundle is the shared particle-effect container that
+almost every chr's attack / buff / status visuals reference. MMV's
+version is a superset of vanilla NR's: it carries the FFX entries
+cross-game and SoTE-heritage chrs need (Bayle's flame breath,
+Romina's scarlet rot clouds, Putrescent Knight's misted-aether
+attacks, etc.), AND it fixes FFX references on base NR chrs whose
+particle effects were broken in the vanilla bundle.
+
+### Note on sizing — v0.28.2 restored the full bundle
+
+v0.28.1 shipped a trimmed ~28 MB version of this bundle, scoped to
+just the FFX entries the heritage / cross-game chrs were known to
+consume. v0.28.2 reverts the trim and ships the full ~182 MB bundle
+because the trim missed FFX references on **base NR chrs** — some
+of vanilla's own effects were broken without the full MMV bundle
+deployed. The 154-MB-extra download is the cost of correctness.
 
 ## Why we bundle this
 
 Playtest-confirmed dependency. Without MMV's `sfxbnd_c0000.ffxbnd.dcx`
-deployed, heritage-imported chrs and DLC chrs spawn and animate but
-their attack/status particle effects either:
+deployed, chr particle effects either:
 
 - silently no-op (attack lands but the visual signal is missing →
   the player can't tell what hit them), or
 - reference an FFX ID that vanilla NR's bundle doesn't define →
   log-spammed FFX-lookup failures, potential crashes on some attacks.
 
+This failure mode hits cross-game and DLC chrs hardest (their attacks
+reference SOTE-and-later FFX IDs entirely absent from NR's bundle),
+but as of v0.28.2 playtest it's confirmed to hit base NR chrs too on
+specific attacks where vanilla's bundle has a missing or broken
+reference — MMV's bundle restores the intended visual.
+
 The required SFX IDs are baked into the chrs' AtkParam / BehaviorParam
 rows and into the regulation's effect-resource manifest, so dropping
 back to vanilla NR's `sfxbnd_c0000.ffxbnd.dcx` would require
-re-authoring every cross-game / DLC chr's effect references — far
-worse than shipping MMV's bundle.
+re-authoring every chr's broken effect references in regulation —
+far worse than shipping MMV's bundle.
 
 This is the same "MMV is the canonical asset base" pattern as
-`bundled_regulation/regulation.bin` and `bundled_aicommon/`. The
-three bundles travel together.
+`bundled_regulation/regulation.bin`, `bundled_aicommon/`, and
+`bundled_material/`. The four bundles travel together.
+
 
 ## Deployment
 

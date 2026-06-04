@@ -125,23 +125,26 @@ If the pre-patched file doesn't apply cleanly to your NR build, use
 That requires [DarkScript3](https://github.com/AinTunez/DarkScript3)
 to decompile / recompile.
 
-### 5. Drop the bundled regulation + aicommon + sfx files into your profile
+### 5. Drop the bundled regulation + aicommon + sfx + material files into your profile
 
 This release ships a pre-patched `regulation.bin` (HP/damage balance,
 NB-arena whitelist, contamination fixes, plus MMV's cross-game param
 rows so MMV-imported chrs work out of the box), MMV's matching
-`aicommon.luabnd.dcx` AI manifests, and MMV's `sfxbnd_c0000.ffxbnd.dcx`
-particle-effect bundle. Copy them into your me3 profile package:
+`aicommon.luabnd.dcx` AI manifests, MMV's `sfxbnd_c0000.ffxbnd.dcx`
+particle-effect bundle, and MMV's `allmaterial.matbinbnd.dcx`
+material/shader binders. Copy them into your me3 profile package:
 
 ```
-<me3 profile>/<package>/regulation.bin                ← from bundled_regulation/
-<me3 profile>/<package>/script/aicommon.luabnd.dcx    ← from bundled_aicommon/
+<me3 profile>/<package>/regulation.bin                       ← from bundled_regulation/
+<me3 profile>/<package>/script/aicommon.luabnd.dcx           ← from bundled_aicommon/
 <me3 profile>/<package>/script/aicommon_dlc01.luabnd.dcx
-<me3 profile>/<package>/sfx/sfxbnd_c0000.ffxbnd.dcx   ← from bundled_sfx/
+<me3 profile>/<package>/sfx/sfxbnd_c0000.ffxbnd.dcx          ← from bundled_sfx/
+<me3 profile>/<package>/material/allmaterial.matbinbnd.dcx   ← from bundled_material/
+<me3 profile>/<package>/material/allmaterial_dlc01.matbinbnd.dcx
 ```
 
 The "Install bundled mod files" button on the Generate tab does all
-four copies in one click — it reads the package destination from
+six copies in one click — it reads the package destination from
 your saved me3 path and handles `.bak` backups for any existing
 files.
 
@@ -152,13 +155,17 @@ cross-game chrs whose AI scripts reference DLC-only goal-table
 constants will freeze on spawn. Without `sfxbnd_c0000.ffxbnd.dcx`,
 heritage / cross-game chr attacks lose their particle effects —
 sometimes silent no-ops, sometimes broken-FFX-reference spam.
+Without the `allmaterial.matbinbnd.dcx` files, heritage / cross-game
+chr models that reference shaders or materials outside NR's base
+material registry render with broken / missing surfaces or fail to
+load entirely.
 
-**Why MMV's bundles and not vanilla NR's?** All three bundles ship
+**Why MMV's bundles and not vanilla NR's?** All four bundles ship
 the assets that the rando's optional MMV cross-game imports need to
 address. v0.28.x playtest confirmed this is a hard dependency: ER's
 vanilla aicommon is **not** a substitute (DLC chr goal-tables fail
 to register), and vanilla NR's SFX bundle doesn't carry the FFX
-entries cross-game chrs reference. The three MMV-derived bundles
+entries cross-game chrs reference. The four MMV-derived bundles
 ship together as the canonical asset base — see
 `bundled_regulation/README.md` for the full rationale.
 

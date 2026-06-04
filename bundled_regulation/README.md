@@ -89,9 +89,9 @@ failures → DLC chrs freeze on spawn. The same playtest confirmed
 `bundled_sfx/sfxbnd_c0000.ffxbnd.dcx` is also required for cross-game
 chr particle effects.
 
-The three MMV-derived bundles (regulation + aicommon + sfx) ship
-together as the canonical asset base. Splitting them is no longer
-on the roadmap.
+The four MMV-derived bundles (regulation + aicommon + sfx +
+material) ship together as the canonical asset base. Splitting
+them is no longer on the roadmap.
 
 ## Verifying integrity
 

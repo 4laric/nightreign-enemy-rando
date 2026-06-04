@@ -1,8 +1,212 @@
-## v0.28.2 (unreleased)
+## v0.28.2
 
-Adds the GUI toggle for the night-boss "teleporter" (RoR2-style early boss
-spawn), building on the night/day-transition shoring-up that shipped in
-v0.28.1.
+Cuts the v0.28.2 release. Contents below are everything that landed
+since v0.28.1 — the original night-boss teleporter work this entry
+was opened to track (toggle + EMEVD plumbing) plus the release-prep
+work that came in afterwards (bundled material binders, spoiler
+arena-role labels, regulation refresh, modder-facing regulation dump
+as a sibling artifact).
+
+Bundled assets:
+- New `bundled_material/` directory ships MMV's material binders
+  (`allmaterial.matbinbnd.dcx` + DLC, ~4.4 MB combined). Required for
+  heritage / cross-game chrs whose models reference shaders / materials
+  outside NR's base material registry — without it those chrs render
+  with broken surfaces or fail to load. `dev/chr_asset_resolver.py`'s
+  SHARED_DEPS table has flagged `material/` as `DIR_DEPLOYED` for a
+  while; this lifts it from "users provide manually" to "ships with
+  the rando." The "Install bundled mod files" button on the Generate
+  tab deploys it to `<package>/material/` alongside the existing
+  regulation / aicommon / sfx bundles. Adding it brings the canonical
+  MMV-derived asset base to four bundles.
+- `bundled_sfx/sfxbnd_c0000.ffxbnd.dcx` **reverted to MMV's full
+  ~182 MB bundle** (up from the ~28 MB trim that shipped in v0.28.1).
+  The trim missed FFX references on base NR chrs — vanilla's own
+  particle effects were broken on some attacks without the full MMV
+  bundle deployed. The 154-MB-extra download is the cost of
+  correctness. Updated `bundled_sfx/README.md` and the
+  `bundle_installer.py` registry description to drop the "trimmed"
+  framing.
+- `bundled_regulation/regulation.bin` refreshed for v0.28.2. The
+  shipped CSV dump (`regulation_dump/`, see below) matches the new
+  binary.
+- `bundle_installer.py`'s `BUNDLED_INSTALLS` registry grew the
+  `bundled_material → material/` entry. The Generate-tab installer
+  iterates the registry automatically; no GUI code changes needed.
+  Same `.bak`-backup-on-overwrite semantics as the other entries.
+
+Data:
+- `data/placement_budget.json` — two cap edits stamped
+  `since: v0.28.2`:
+  - `c2030` (Rennala, Queen of the Full Moon): cap `null` → `0`.
+    "doesnt work without field trip" — the field-trip transition
+    (the prelude before the boss room) doesn't replicate outside the
+    original encounter, so Rennala can't be a viable random
+    placement.
+  - `c4420` (Giant Crayfish): cap `4` → `0`. "visual glitch on some
+    variants" — pulled out of the rotation until the variants get
+    audited.
+
+Engine:
+- `engine/load_data.py` miniboss + grunt tier-default cap loops:
+  fixed an unconditional clamp that was silently overriding explicit
+  hand-tuned values from `data/placement_budget.json`. Was
+  `if V3_UNIQUE_TARGET_CAPS.get(_cp) != 4: ... = 4`; now
+  `if _cp not in V3_UNIQUE_TARGET_CAPS: ... = 4`. The fix makes the
+  cap branch consistent with the floor branch right above it in the
+  same loop (the floor branch has always used `not in`).
+  Discovered when `c4420`'s "pull from rotation" edit (above) failed
+  to take effect — the miniboss-tier rule clamped its
+  hand-tuned cap=0 back to 4. The cleanup audit found two other
+  miniboss-tier hand-tunes (c4050 Kaiden, c5840 Black Knight, both
+  at cap=30); both are mount-role chrs that the v0.27.13 override
+  re-pins at 30 anyway, so the user-observed effective cap on
+  those is unchanged. Grunt tier had zero hand-tunes; the
+  symmetric fix there is preemptive.
+
+  Tests that were silently passing the old clobber behavior — the
+  `extract_placement_budget` committed-file vs engine-state lock and
+  `test_engine_state_matches_loader_output[V3_UNIQUE_TARGET_CAPS]` —
+  now correctly verify that the JSON IS the authoritative cap
+  source. (The latter was failing intermittently before, attributed
+  to test-ordering state contamination; in retrospect the
+  intermittency tracked which path's clobber ran when, and the fix
+  makes both paths produce identical state.)
+
+- `V3_PREFER_CANONICAL_VARIANTS` default flipped True → False. The
+  v0.26.16 True default was a conservative-for-stability stance:
+  filter to canonical variants by default and treat ghost-variant
+  re-enablement as an opt-in. v0.28.2 reverses that — the
+  ghost-variant problem cases have been isolated through other
+  mechanisms (per-chr exclusions, the redundant-variant prune list,
+  prefix-level filters), so the soft canonical filter is no longer
+  load-bearing as a default safety net. Default OFF restores the
+  fuller variant pool. The filter implementation, the GUI checkbox,
+  the soft fallback, and the config-load path are all unchanged —
+  this is purely a default-value flip.
+
+  Updated alongside: the lock test `test_v3_prefer_canonical_default
+  _is_true` renamed and inverted to `_is_false` with rationale
+  pointing back to this changelog entry; the picker-preference test
+  monkeypatches the flag explicitly to keep exercising the
+  filter-ON behavior; the GUI info-icon tooltip dropped a long-
+  retracted claim ("only visuals are at risk with ghosts") that had
+  drifted out of sync with the engine docstring's v0.26.16
+  correction.
+
+Release manifest:
+- `scripts/build_release.py` `INCLUDE_DIRS` was missing
+  `bundled_regulation/` and `bundled_sfx/` — the v0.28.1 changelog
+  claimed the regulation bundle was added to the manifest but the
+  edit never landed. Confirmed: prior releases shipped without those
+  two dirs in the main zip, depending on user-provided binaries from
+  a stale install. Fixed in this release: all four `bundled_*` dirs
+  now consistently in `INCLUDE_DIRS` with deploy-path comments
+  matching the bundle installer.
+- `scripts/build_release.py` `INCLUDE_FILES` was missing
+  `bundle_installer.py`, caught by Alaric running the first v0.28.2
+  cut locally: the GUI raised `ModuleNotFoundError: No module named
+  'bundle_installer'` on first import. Same root cause as the
+  bundled_regulation gap above — the v0.28.1 changelog claimed both
+  the bundle_installer manifest fix AND `tests/test_build_manifest_
+  completeness.py` had landed, but neither actually did.
+- `scripts/build_release.py` `INCLUDE_FROM_DEV` was *also* missing
+  four files that shipped code imports lazily — only caught after
+  the long-missing manifest-completeness test was finally written
+  this round and run against the full shipped set:
+  - `dev/apply_slot_repositions.py` — `dcx_batch.py:720` calls
+    `from apply_slot_repositions import relocate_one_msb` inside a
+    function body. Works in the dev tree because the whole repo is
+    on sys.path; ModuleNotFoundErrors at runtime in a packaged
+    bundle when the slot-reposition code path fires.
+  - `dev/boutique_pool_panel.py`, `dev/pools_caps_panel.py` — GUI
+    panel mixins imported by `oops_rando_gui.py` after a sys.path
+    prepend of `dev/`. Without them the Boutique Pool and Pools &
+    Caps tabs silently fall back to stub implementations
+    (`oops_rando_gui.py:3075` documents the stub).
+  - `dev/chr_asset_resolver.py` — imported by `dev/heritage_chr_
+    import.py` (itself in INCLUDE_FROM_DEV since v0.27.x). Shipping
+    heritage_chr_import without chr_asset_resolver made the
+    heritage-import code path break with ModuleNotFoundError on
+    any try.
+- Fixed all five in this release: `bundle_installer.py` added to
+  `INCLUDE_FILES`; the four dev/ files added to `INCLUDE_FROM_DEV`.
+  File count in the shipped zip went 172 → 177.
+- `tests/test_build_manifest_completeness.py` finally written.
+  Two checks: a static AST sweep over every shipped `.py` for
+  first-party imports of unshipped modules (catches the lazy /
+  conditional imports a hand audit of the entry points would miss),
+  and a staged-engine import + `load_data()` test in an isolated
+  subprocess (`PYTHONPATH` stripped) to confirm the bundle is
+  self-contained at runtime, not just statically. Runs in seconds.
+  The bundled_regulation INCLUDE_DIRS gap from the head of this
+  section, the bundle_installer gap, and the four dev/ gaps would
+  ALL have been caught by this test if it had landed in v0.28.1
+  as that changelog claimed.
+- `night_role.py` (project-root) added to `INCLUDE_FILES`.
+- `INSTALL.md` §5 ("Drop the bundled regulation + aicommon + sfx +
+  material files into your profile") updated to cover the new
+  fourth bundle. The "Install bundled mod files" button now does
+  six file copies in one click (was four).
+- Each bundled `README.md` (`bundled_aicommon/`, `bundled_regulation/`,
+  `bundled_sfx/`) updated from "three bundles travel together" to
+  "four bundles" wording, and `bundled_material/README.md` added.
+
+Spoiler arena-role labels:
+- New `night_role.py` (project-root) bakes the `LotResultPlayAreaParam`
+  table into a static arena → role lookup (27 night-boss arenas, 15
+  scheduled NB1/NB2 slots after excluding Everdark rotation + extras).
+  Self-contained: stdlib-only, no project deps, regenerable from a
+  fresh param CSV via `build_from_param()`. Read by the engine + GUI
+  via the `ns` dict pattern, idiomatic per the rest of `engine/`.
+- `engine/spoilers.py`'s `write_spoiler_logs` now stamps every entry
+  in place with its arena's role list (`entry['night_role'] = [...]`)
+  before serializing to `_spoilers.json`. Stamping is idempotent so
+  the byte-identical shim-vs-direct contract in
+  `tests/test_spoilers_extraction.py` is preserved.
+- Map-section headers in `_spoilers.md` carry the compact label when
+  applicable: `### m49_18_00_00.msb — Tricephalos NB2`. Boss-tier,
+  clustered, and field-swap sections all annotate. Overworld map
+  headers (no night role) render unchanged. Extras suppressed in the
+  compact label unless they're the only role available; JSON carries
+  the full list either way.
+- Spoiler viewer in `oops_rando_gui.py` (`_render_spoiler_entries`)
+  appends ` — {label}` to the per-map header line, so historical
+  spoilers without the stamp still render correctly — the viewer
+  derives the label from the map name directly via `label_for()`.
+- New `tests/test_night_role.py` locks the table shape (every entry
+  has the documented keys, every role-prefix → night value
+  consistent), the 15-arena `STANDARD_NB_ARENAS` derivation, the
+  `EXPEDITION_BY_NIGHTLORD` coverage invariant, helper-function
+  behaviors (`_norm`, `roles_for`, `label_for`, `stamp_entry`
+  including idempotency), and the spoiler-pipeline integration end-
+  to-end (JSON stamp, MD header annotation, two-call byte-identical
+  output, build-manifest presence).
+
+Release infrastructure — sibling artifacts:
+- New `SIBLING_ARTIFACT_DIRS` manifest concept in
+  `scripts/build_release.py`. Parallel to `OPTIONAL_DIRS`, but
+  produces its own paired zip next to the main release rather than
+  going inside it. Default behavior: main zip stays lean for end-
+  users, modder-facing extras opt-in as separate downloads. Same
+  staging → zip pipeline as the main zip; verify_release rejects
+  source dirs that leak into the main staging output.
+- `--no-sibling-artifacts` CLI flag suppresses siblings even when
+  source is present (fast iteration builds). Absent source → silent
+  skip, same forgiving model as `OPTIONAL_DIRS`.
+- First sibling artifact: `regulation_dump/`, the 252-CSV flattening
+  of `bundled_regulation/regulation.bin`. Modders get param-table-
+  shaped data without having to crack the .bin open in Smithbox. The
+  dump compresses extremely well (77 MB raw → ~3.6 MB zipped, ~95%
+  ratio on highly-repetitive param data). Paired by version stamp:
+  `nightreign-enemy-rando-<version>.zip` + `...-regulation-dump.zip`
+  unpack into clearly-named top folders that sit side by side.
+  `regulation_dump/README.md` covers what it is, where it came from,
+  typical modder workflows, and regeneration.
+- New `tests/test_build_sibling_artifacts.py` (11 cases) locks the
+  registry shape, `make_sibling_zips` behavior across source-present /
+  -absent / -empty, `verify_release`'s leak-rejection, and the full
+  end-to-end build producing paired zips with disjoint contents.
 
 Night-boss teleporter (experimental, default OFF):
 - New "Night-boss teleporter (experimental)" toggle on the heritage /

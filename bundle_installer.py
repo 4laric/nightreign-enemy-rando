@@ -50,10 +50,22 @@ BUNDLED_INSTALLS = [
     {
         'bundle_dir':     'bundled_sfx',
         'target_subpath': 'sfx',
-        'description':    'Trimmed MMV SFX bundle (sfxbnd_c0000.ffxbnd.dcx, '
-                          '~28 MB) — playtest-confirmed dependency for '
-                          'cross-game / DLC / heritage chr particle effects',
+        'description':    "MMV's full SFX bundle (sfxbnd_c0000.ffxbnd.dcx, "
+                          '~182 MB) — playtest-confirmed dependency for '
+                          'base, cross-game, DLC, and heritage chr particle '
+                          'effects',
         'critical_file':  'sfxbnd_c0000.ffxbnd.dcx',
+    },
+    {
+        'bundle_dir':     'bundled_material',
+        'target_subpath': 'material',
+        'description':    "MMV's material binders "
+                          '(allmaterial.matbinbnd.dcx + DLC) — required '
+                          'for cross-game / heritage chr models that '
+                          'reference shaders/materials not in NR\'s base '
+                          'material registry (see dev/chr_asset_resolver.py '
+                          'SHARED_DEPS "material/")',
+        'critical_file':  'allmaterial.matbinbnd.dcx',
     },
 ]
 

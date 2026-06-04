@@ -1,0 +1,2667 @@
+{
+ "_meta": {
+  "what": "Clean loot pools (rarity-prefixed, sellable) baked from a regulation dump and intersected with the shipping regulation so every id exists. Used by the per-seed merchant/drop randomizers (the regulation itself carries no row names). Regenerate when the bundled regulation's item set changes.",
+  "filters": "weapons: base rows (ID%10000==0) with a [Common|Uncommon|Rare|Legendary] name prefix; talismans=EquipParamAccessory; goods=EquipParamGoods (loot-rarity only).",
+  "counts": {
+   "weapon": 377,
+   "talisman": 61,
+   "good": 92
+  }
+ },
+ "weapon": [
+  [
+   1000000,
+   "[Common] Dagger",
+   "Common"
+  ],
+  [
+   1010000,
+   "[Rare] Black Knife",
+   "Rare"
+  ],
+  [
+   1020000,
+   "[Common] Parrying Dagger",
+   "Common"
+  ],
+  [
+   1030000,
+   "[Uncommon] Mis\u00e9ricorde",
+   "Uncommon"
+  ],
+  [
+   1040000,
+   "[Rare] Reduvia",
+   "Rare"
+  ],
+  [
+   1050000,
+   "[Uncommon] Crystal Knife",
+   "Uncommon"
+  ],
+  [
+   1060000,
+   "[Uncommon] Celebrant's Sickle",
+   "Uncommon"
+  ],
+  [
+   1070000,
+   "[Rare] Glintstone Kris",
+   "Rare"
+  ],
+  [
+   1080000,
+   "[Rare] Scorpion's Stinger",
+   "Rare"
+  ],
+  [
+   1090000,
+   "[Common] Great Knife",
+   "Common"
+  ],
+  [
+   1100000,
+   "[Uncommon] Wakizashi",
+   "Uncommon"
+  ],
+  [
+   1110000,
+   "[Rare] Cinquedea",
+   "Rare"
+  ],
+  [
+   1130000,
+   "[Uncommon] Ivory Sickle",
+   "Uncommon"
+  ],
+  [
+   1140000,
+   "[Uncommon] Bloodstained Dagger",
+   "Uncommon"
+  ],
+  [
+   1150000,
+   "[Uncommon] Erdsteel Dagger",
+   "Uncommon"
+  ],
+  [
+   1160000,
+   "[Rare] Blade of Calling",
+   "Rare"
+  ],
+  [
+   2000000,
+   "[Common] Longsword",
+   "Common"
+  ],
+  [
+   2010000,
+   "[Common] Short Sword",
+   "Common"
+  ],
+  [
+   2020000,
+   "[Common] Broadsword",
+   "Common"
+  ],
+  [
+   2040000,
+   "[Uncommon] Lordsworn's Straight Sword",
+   "Uncommon"
+  ],
+  [
+   2050000,
+   "[Common] Weathered Straight Sword",
+   "Common"
+  ],
+  [
+   2060000,
+   "[Rare] Ornamental Straight Sword",
+   "Rare"
+  ],
+  [
+   2070000,
+   "[Rare] Golden Epitaph",
+   "Rare"
+  ],
+  [
+   2080000,
+   "[Rare] Nox Flowing Sword",
+   "Rare"
+  ],
+  [
+   2090000,
+   "[Uncommon] Inseparable Sword",
+   "Uncommon"
+  ],
+  [
+   2110000,
+   "[Rare] Coded Sword",
+   "Rare"
+  ],
+  [
+   2140000,
+   "[Legendary] Sword of Night and Flame",
+   "Legendary"
+  ],
+  [
+   2150000,
+   "[Uncommon] Crystal Sword",
+   "Uncommon"
+  ],
+  [
+   2180000,
+   "[Uncommon] Carian Knight's Sword",
+   "Uncommon"
+  ],
+  [
+   2190000,
+   "[Rare] Sword of St. Trina",
+   "Rare"
+  ],
+  [
+   2200000,
+   "[Rare] Miquellan Knight's Sword",
+   "Rare"
+  ],
+  [
+   2210000,
+   "[Uncommon] Cane Sword",
+   "Uncommon"
+  ],
+  [
+   2220000,
+   "[Rare] Regalia of Eochaid",
+   "Rare"
+  ],
+  [
+   2230000,
+   "[Common] Noble's Slender Sword",
+   "Common"
+  ],
+  [
+   2240000,
+   "[Uncommon] Warhawk's Talon",
+   "Uncommon"
+  ],
+  [
+   2250000,
+   "[Uncommon] Lazuli Glintstone Sword",
+   "Uncommon"
+  ],
+  [
+   2260000,
+   "[Uncommon] Rotten Crystal Sword",
+   "Uncommon"
+  ],
+  [
+   3000000,
+   "[Common] Bastard Sword",
+   "Common"
+  ],
+  [
+   3010000,
+   "[Uncommon] Forked Greatsword",
+   "Uncommon"
+  ],
+  [
+   3020000,
+   "[Common] Iron Greatsword",
+   "Common"
+  ],
+  [
+   3030000,
+   "[Common] Lordsworn's Greatsword",
+   "Common"
+  ],
+  [
+   3040000,
+   "[Uncommon] Knight's Greatsword",
+   "Uncommon"
+  ],
+  [
+   3050000,
+   "[Uncommon] Flamberge",
+   "Uncommon"
+  ],
+  [
+   3060000,
+   "[Rare] Ordovis's Greatsword",
+   "Rare"
+  ],
+  [
+   3070000,
+   "[Rare] Alabaster Lord's Sword",
+   "Rare"
+  ],
+  [
+   3080000,
+   "[Uncommon] Banished Knight's Greatsword",
+   "Uncommon"
+  ],
+  [
+   3090000,
+   "[Legendary] Dark Moon Greatsword",
+   "Legendary"
+  ],
+  [
+   3100000,
+   "[Legendary] Sacred Relic Sword",
+   "Legendary"
+  ],
+  [
+   3130000,
+   "[Rare] Helphen's Steeple",
+   "Rare"
+  ],
+  [
+   3140000,
+   "[Legendary] Blasphemous Blade",
+   "Legendary"
+  ],
+  [
+   3150000,
+   "[Legendary] Marais Executioner's Sword",
+   "Legendary"
+  ],
+  [
+   3160000,
+   "[Rare] Sword of Milos",
+   "Rare"
+  ],
+  [
+   3170000,
+   "[Legendary] Golden Order Greatsword",
+   "Legendary"
+  ],
+  [
+   3180000,
+   "[Uncommon] Claymore",
+   "Uncommon"
+  ],
+  [
+   3190000,
+   "[Uncommon] Gargoyle's Greatsword",
+   "Uncommon"
+  ],
+  [
+   3200000,
+   "[Rare] Death's Poker",
+   "Rare"
+  ],
+  [
+   3210000,
+   "[Rare] Gargoyle's Blackblade",
+   "Rare"
+  ],
+  [
+   4000000,
+   "[Common] Greatsword",
+   "Common"
+  ],
+  [
+   4010000,
+   "[Uncommon] Watchdog's Greatsword",
+   "Uncommon"
+  ],
+  [
+   4020000,
+   "[Legendary] Maliketh's Black Blade",
+   "Legendary"
+  ],
+  [
+   4030000,
+   "[Uncommon] Troll's Golden Sword",
+   "Uncommon"
+  ],
+  [
+   4040000,
+   "[Common] Zweihander",
+   "Common"
+  ],
+  [
+   4050000,
+   "[Legendary] Starscourge Greatsword",
+   "Legendary"
+  ],
+  [
+   4060000,
+   "[Rare] Royal Greatsword",
+   "Rare"
+  ],
+  [
+   4070000,
+   "[Rare] Godslayer's Greatsword",
+   "Rare"
+  ],
+  [
+   4080000,
+   "[Legendary] Ruins Greatsword",
+   "Legendary"
+  ],
+  [
+   4100000,
+   "[Legendary] Grafted Blade Greatsword",
+   "Legendary"
+  ],
+  [
+   4110000,
+   "[Uncommon] Troll Knight's Sword",
+   "Uncommon"
+  ],
+  [
+   5000000,
+   "[Common] Estoc",
+   "Common"
+  ],
+  [
+   5010000,
+   "[Uncommon] Cleanrot Knight's Sword",
+   "Uncommon"
+  ],
+  [
+   5020000,
+   "[Common] Rapier",
+   "Common"
+  ],
+  [
+   5030000,
+   "[Uncommon] Rogier's Rapier",
+   "Uncommon"
+  ],
+  [
+   5040000,
+   "[Rare] Antspur Rapier",
+   "Rare"
+  ],
+  [
+   5050000,
+   "[Rare] Frozen Needle",
+   "Rare"
+  ],
+  [
+   5060000,
+   "[Common] Noble's Estoc",
+   "Common"
+  ],
+  [
+   6000000,
+   "[Rare] Bloody Helice",
+   "Rare"
+  ],
+  [
+   6010000,
+   "[Uncommon] Godskin Stitcher",
+   "Uncommon"
+  ],
+  [
+   6020000,
+   "[Common] Great \u00c9p\u00e9e",
+   "Common"
+  ],
+  [
+   6040000,
+   "[Legendary] Dragon King's Cragblade",
+   "Legendary"
+  ],
+  [
+   7000000,
+   "[Common] Falchion",
+   "Common"
+  ],
+  [
+   7010000,
+   "[Uncommon] Beastman's Curved Sword",
+   "Uncommon"
+  ],
+  [
+   7020000,
+   "[Common] Shotel",
+   "Common"
+  ],
+  [
+   7030000,
+   "[Uncommon] Shamshir",
+   "Uncommon"
+  ],
+  [
+   7040000,
+   "[Common] Bandit's Curved Sword",
+   "Common"
+  ],
+  [
+   7050000,
+   "[Rare] Magma Blade",
+   "Rare"
+  ],
+  [
+   7060000,
+   "[Rare] Flowing Curved Sword",
+   "Rare"
+  ],
+  [
+   7070000,
+   "[Rare] Wing of Astel",
+   "Rare"
+  ],
+  [
+   7080000,
+   "[Uncommon] Scavenger's Curved Sword",
+   "Uncommon"
+  ],
+  [
+   7100000,
+   "[Legendary] Eclipse Shotel",
+   "Legendary"
+  ],
+  [
+   7110000,
+   "[Uncommon] Serpent-God's Curved Sword",
+   "Uncommon"
+  ],
+  [
+   7120000,
+   "[Uncommon] Mantis Blade",
+   "Uncommon"
+  ],
+  [
+   7140000,
+   "[Common] Scimitar",
+   "Common"
+  ],
+  [
+   7150000,
+   "[Uncommon] Grossmesser",
+   "Uncommon"
+  ],
+  [
+   8010000,
+   "[Rare] Onyx Lord's Greatsword",
+   "Rare"
+  ],
+  [
+   8020000,
+   "[Common] Dismounter",
+   "Common"
+  ],
+  [
+   8030000,
+   "[Uncommon] Bloodhound's Fang",
+   "Uncommon"
+  ],
+  [
+   8040000,
+   "[Rare] Magma Wyrm's Scalesword",
+   "Rare"
+  ],
+  [
+   8050000,
+   "[Rare] Zamor Curved Sword",
+   "Rare"
+  ],
+  [
+   8060000,
+   "[Uncommon] Omen Cleaver",
+   "Uncommon"
+  ],
+  [
+   8070000,
+   "[Uncommon] Monk's Flameblade",
+   "Uncommon"
+  ],
+  [
+   8080000,
+   "[Uncommon] Beastman's Cleaver",
+   "Uncommon"
+  ],
+  [
+   8100000,
+   "[Legendary] Morgott's Cursed Sword",
+   "Legendary"
+  ],
+  [
+   9000000,
+   "[Common] Uchigatana",
+   "Common"
+  ],
+  [
+   9010000,
+   "[Uncommon] Nagakiba",
+   "Uncommon"
+  ],
+  [
+   9020000,
+   "[Legendary] Hand of Malenia",
+   "Legendary"
+  ],
+  [
+   9030000,
+   "[Uncommon] Meteoric Ore Blade",
+   "Uncommon"
+  ],
+  [
+   9040000,
+   "[Rare] Rivers of Blood",
+   "Rare"
+  ],
+  [
+   9060000,
+   "[Rare] Moonveil",
+   "Rare"
+  ],
+  [
+   9070000,
+   "[Rare] Dragonscale Blade",
+   "Rare"
+  ],
+  [
+   9080000,
+   "[Uncommon] Serpentbone Blade",
+   "Uncommon"
+  ],
+  [
+   10000000,
+   "[Common] Twinblade",
+   "Common"
+  ],
+  [
+   10010000,
+   "[Uncommon] Godskin Peeler",
+   "Uncommon"
+  ],
+  [
+   10030000,
+   "[Uncommon] Twinned Knight Swords",
+   "Uncommon"
+  ],
+  [
+   10050000,
+   "[Rare] Eleonora's Poleblade",
+   "Rare"
+  ],
+  [
+   10080000,
+   "[Uncommon] Gargoyle's Twinblade",
+   "Uncommon"
+  ],
+  [
+   10090000,
+   "[Rare] Gargoyle's Black Blades",
+   "Rare"
+  ],
+  [
+   11000000,
+   "[Common] Mace",
+   "Common"
+  ],
+  [
+   11010000,
+   "[Common] Club",
+   "Common"
+  ],
+  [
+   11030000,
+   "[Common] Curved Club",
+   "Common"
+  ],
+  [
+   11040000,
+   "[Uncommon] Warpick",
+   "Uncommon"
+  ],
+  [
+   11050000,
+   "[Uncommon] Morning Star",
+   "Uncommon"
+  ],
+  [
+   11060000,
+   "[Uncommon] Varr\u00e9's Bouquet",
+   "Uncommon"
+  ],
+  [
+   11070000,
+   "[Uncommon] Spiked Club",
+   "Uncommon"
+  ],
+  [
+   11080000,
+   "[Uncommon] Hammer",
+   "Uncommon"
+  ],
+  [
+   11090000,
+   "[Uncommon] Monk's Flamemace",
+   "Uncommon"
+  ],
+  [
+   11100000,
+   "[Rare] Envoy's Horn",
+   "Rare"
+  ],
+  [
+   11110000,
+   "[Rare] Scepter of the All-Knowing",
+   "Rare"
+  ],
+  [
+   11120000,
+   "[Rare] Nox Flowing Hammer",
+   "Rare"
+  ],
+  [
+   11130000,
+   "[Rare] Ringed Finger",
+   "Rare"
+  ],
+  [
+   11140000,
+   "[Common] Stone Club",
+   "Common"
+  ],
+  [
+   11150000,
+   "[Legendary] Marika's Hammer",
+   "Legendary"
+  ],
+  [
+   12000000,
+   "[Common] Large Club",
+   "Common"
+  ],
+  [
+   12010000,
+   "[Uncommon] Greathorn Hammer",
+   "Uncommon"
+  ],
+  [
+   12020000,
+   "[Uncommon] Battle Hammer",
+   "Uncommon"
+  ],
+  [
+   12060000,
+   "[Common] Great Mace",
+   "Common"
+  ],
+  [
+   12080000,
+   "[Common] Curved Great Club",
+   "Common"
+  ],
+  [
+   12130000,
+   "[Uncommon] Celebrant's Skull",
+   "Uncommon"
+  ],
+  [
+   12140000,
+   "[Common] Pickaxe",
+   "Common"
+  ],
+  [
+   12150000,
+   "[Rare] Beastclaw Greathammer",
+   "Rare"
+  ],
+  [
+   12160000,
+   "[Rare] Envoy's Long Horn",
+   "Rare"
+  ],
+  [
+   12170000,
+   "[Rare] Cranial Vessel Candlestand",
+   "Rare"
+  ],
+  [
+   12180000,
+   "[Uncommon] Great Stars",
+   "Uncommon"
+  ],
+  [
+   12190000,
+   "[Uncommon] Brick Hammer",
+   "Uncommon"
+  ],
+  [
+   12200000,
+   "[Legendary] Devourer's Scepter",
+   "Legendary"
+  ],
+  [
+   12210000,
+   "[Uncommon] Rotten Battle Hammer",
+   "Uncommon"
+  ],
+  [
+   13000000,
+   "[Uncommon] Nightrider Flail",
+   "Uncommon"
+  ],
+  [
+   13010000,
+   "[Common] Flail",
+   "Common"
+  ],
+  [
+   13020000,
+   "[Rare] Family Heads",
+   "Rare"
+  ],
+  [
+   13030000,
+   "[Legendary] Bastard's Stars",
+   "Legendary"
+  ],
+  [
+   13040000,
+   "[Uncommon] Chainlink Flail",
+   "Uncommon"
+  ],
+  [
+   14000000,
+   "[Common] Battle Axe",
+   "Common"
+  ],
+  [
+   14010000,
+   "[Common] Forked Hatchet",
+   "Common"
+  ],
+  [
+   14020000,
+   "[Common] Hand Axe",
+   "Common"
+  ],
+  [
+   14030000,
+   "[Common] Jawbone Axe",
+   "Common"
+  ],
+  [
+   14040000,
+   "[Uncommon] Iron Cleaver",
+   "Uncommon"
+  ],
+  [
+   14050000,
+   "[Uncommon] Ripple Blade",
+   "Uncommon"
+  ],
+  [
+   14060000,
+   "[Uncommon] Celebrant's Cleaver",
+   "Uncommon"
+  ],
+  [
+   14080000,
+   "[Rare] Icerind Hatchet",
+   "Rare"
+  ],
+  [
+   14100000,
+   "[Uncommon] Highland Axe",
+   "Uncommon"
+  ],
+  [
+   14110000,
+   "[Rare] Sacrificial Axe",
+   "Rare"
+  ],
+  [
+   14120000,
+   "[Rare] Rosus' Axe",
+   "Rare"
+  ],
+  [
+   14140000,
+   "[Rare] Stormhawk Axe",
+   "Rare"
+  ],
+  [
+   15000000,
+   "[Common] Greataxe",
+   "Common"
+  ],
+  [
+   15010000,
+   "[Uncommon] Warped Axe",
+   "Uncommon"
+  ],
+  [
+   15020000,
+   "[Uncommon] Great Omenkiller Cleaver",
+   "Uncommon"
+  ],
+  [
+   15030000,
+   "[Common] Crescent Moon Axe",
+   "Common"
+  ],
+  [
+   15040000,
+   "[Legendary] Axe of Godrick",
+   "Legendary"
+  ],
+  [
+   15050000,
+   "[Common] Longhaft Axe",
+   "Common"
+  ],
+  [
+   15060000,
+   "[Uncommon] Rusted Anchor",
+   "Uncommon"
+  ],
+  [
+   15080000,
+   "[Uncommon] Executioner's Greataxe",
+   "Uncommon"
+  ],
+  [
+   15110000,
+   "[Legendary] Winged Greathorn",
+   "Legendary"
+  ],
+  [
+   15120000,
+   "[Rare] Butchering Knife",
+   "Rare"
+  ],
+  [
+   15130000,
+   "[Uncommon] Gargoyle's Great Axe",
+   "Uncommon"
+  ],
+  [
+   15140000,
+   "[Rare] Gargoyle's Black Axe",
+   "Rare"
+  ],
+  [
+   16000000,
+   "[Common] Short Spear",
+   "Common"
+  ],
+  [
+   16010000,
+   "[Common] Spear",
+   "Common"
+  ],
+  [
+   16020000,
+   "[Uncommon] Crystal Spear",
+   "Uncommon"
+  ],
+  [
+   16030000,
+   "[Uncommon] Clayman's Harpoon",
+   "Uncommon"
+  ],
+  [
+   16040000,
+   "[Rare] Cleanrot Spear",
+   "Rare"
+  ],
+  [
+   16050000,
+   "[Uncommon] Partisan",
+   "Uncommon"
+  ],
+  [
+   16060000,
+   "[Uncommon] Celebrant's Rib-Rake",
+   "Uncommon"
+  ],
+  [
+   16070000,
+   "[Uncommon] Pike",
+   "Uncommon"
+  ],
+  [
+   16080000,
+   "[Uncommon] Torchpole",
+   "Uncommon"
+  ],
+  [
+   16090000,
+   "[Legendary] Bolt of Gransax",
+   "Legendary"
+  ],
+  [
+   16110000,
+   "[Uncommon] Cross-Naginata",
+   "Uncommon"
+  ],
+  [
+   16120000,
+   "[Rare] Death Ritual Spear",
+   "Rare"
+  ],
+  [
+   16130000,
+   "[Rare] Inquisitor's Girandole",
+   "Rare"
+  ],
+  [
+   16140000,
+   "[Uncommon] Spiked Spear",
+   "Uncommon"
+  ],
+  [
+   16150000,
+   "[Common] Iron Spear",
+   "Common"
+  ],
+  [
+   16160000,
+   "[Uncommon] Rotten Crystal Spear",
+   "Uncommon"
+  ],
+  [
+   17010000,
+   "[Legendary] Mohgwyn's Sacred Spear",
+   "Legendary"
+  ],
+  [
+   17020000,
+   "[Rare] Siluria's Tree",
+   "Rare"
+  ],
+  [
+   17030000,
+   "[Uncommon] Serpent-Hunter",
+   "Uncommon"
+  ],
+  [
+   17050000,
+   "[Rare] Vyke's War Spear",
+   "Rare"
+  ],
+  [
+   17060000,
+   "[Common] Lance",
+   "Common"
+  ],
+  [
+   17070000,
+   "[Uncommon] Treespear",
+   "Uncommon"
+  ],
+  [
+   18000000,
+   "[Common] Halberd",
+   "Common"
+  ],
+  [
+   18010000,
+   "[Uncommon] Pest's Glaive",
+   "Uncommon"
+  ],
+  [
+   18020000,
+   "[Common] Lucerne",
+   "Common"
+  ],
+  [
+   18030000,
+   "[Common] Banished Knight's Halberd",
+   "Common"
+  ],
+  [
+   18040000,
+   "[Rare] Commander's Standard",
+   "Rare"
+  ],
+  [
+   18050000,
+   "[Uncommon] Nightrider Glaive",
+   "Uncommon"
+  ],
+  [
+   18060000,
+   "[Uncommon] Ripple Crescent Halberd",
+   "Uncommon"
+  ],
+  [
+   18070000,
+   "[Common] Vulgar Militia Saw",
+   "Common"
+  ],
+  [
+   18080000,
+   "[Rare] Golden Halberd",
+   "Rare"
+  ],
+  [
+   18090000,
+   "[Common] Glaive",
+   "Common"
+  ],
+  [
+   18100000,
+   "[Rare] Loretta's War Sickle",
+   "Rare"
+  ],
+  [
+   18110000,
+   "[Uncommon] Guardian's Swordspear",
+   "Uncommon"
+  ],
+  [
+   18130000,
+   "[Common] Vulgar Militia Shotel",
+   "Common"
+  ],
+  [
+   18140000,
+   "[Rare] Dragon Halberd",
+   "Rare"
+  ],
+  [
+   18150000,
+   "[Uncommon] Gargoyle's Halberd",
+   "Uncommon"
+  ],
+  [
+   18160000,
+   "[Rare] Gargoyle's Black Halberd",
+   "Rare"
+  ],
+  [
+   19000000,
+   "[Common] Scythe",
+   "Common"
+  ],
+  [
+   19010000,
+   "[Uncommon] Grave Scythe",
+   "Uncommon"
+  ],
+  [
+   19020000,
+   "[Rare] Halo Scythe",
+   "Rare"
+  ],
+  [
+   19060000,
+   "[Rare] Winged Scythe",
+   "Rare"
+  ],
+  [
+   20000000,
+   "[Common] Whip",
+   "Common"
+  ],
+  [
+   20020000,
+   "[Uncommon] Thorned Whip",
+   "Uncommon"
+  ],
+  [
+   20030000,
+   "[Rare] Magma Whip Candlestick",
+   "Rare"
+  ],
+  [
+   20050000,
+   "[Rare] Hoslow's Petal Whip",
+   "Rare"
+  ],
+  [
+   20060000,
+   "[Legendary] Giant's Red Braid",
+   "Legendary"
+  ],
+  [
+   20070000,
+   "[Uncommon] Urumi",
+   "Uncommon"
+  ],
+  [
+   21000000,
+   "[Common] Caestus",
+   "Common"
+  ],
+  [
+   21010000,
+   "[Uncommon] Spiked Caestus",
+   "Uncommon"
+  ],
+  [
+   21060000,
+   "[Legendary] Grafted Dragon",
+   "Legendary"
+  ],
+  [
+   21070000,
+   "[Uncommon] Iron Ball",
+   "Uncommon"
+  ],
+  [
+   21080000,
+   "[Uncommon] Star Fist",
+   "Uncommon"
+  ],
+  [
+   21100000,
+   "[Common] Katar",
+   "Common"
+  ],
+  [
+   21110000,
+   "[Rare] Clinging Bone",
+   "Rare"
+  ],
+  [
+   21120000,
+   "[Rare] Veteran's Prosthesis",
+   "Rare"
+  ],
+  [
+   21130000,
+   "[Rare] Cipher Pata",
+   "Rare"
+  ],
+  [
+   22000000,
+   "[Common] Hookclaws",
+   "Common"
+  ],
+  [
+   22010000,
+   "[Uncommon] Venomous Fang",
+   "Uncommon"
+  ],
+  [
+   22020000,
+   "[Uncommon] Bloodhound Claws",
+   "Uncommon"
+  ],
+  [
+   22030000,
+   "[Rare] Raptor Talons",
+   "Rare"
+  ],
+  [
+   23000000,
+   "[Rare] Prelate's Inferno Crozier",
+   "Rare"
+  ],
+  [
+   23010000,
+   "[Rare] Watchdog's Staff",
+   "Rare"
+  ],
+  [
+   23020000,
+   "[Uncommon] Great Club",
+   "Uncommon"
+  ],
+  [
+   23030000,
+   "[Rare] Envoy's Greathorn",
+   "Rare"
+  ],
+  [
+   23040000,
+   "[Common] Duelist Greataxe",
+   "Common"
+  ],
+  [
+   23050000,
+   "[Legendary] Axe of Godfrey",
+   "Legendary"
+  ],
+  [
+   23060000,
+   "[Rare] Dragon Greatclaw",
+   "Rare"
+  ],
+  [
+   23070000,
+   "[Rare] Staff of the Avatar",
+   "Rare"
+  ],
+  [
+   23080000,
+   "[Rare] Fallingstar Beast Jaw",
+   "Rare"
+  ],
+  [
+   23100000,
+   "[Rare] Ghiza's Wheel",
+   "Rare"
+  ],
+  [
+   23110000,
+   "[Uncommon] Giant-Crusher",
+   "Uncommon"
+  ],
+  [
+   23120000,
+   "[Uncommon] Golem's Halberd",
+   "Uncommon"
+  ],
+  [
+   23130000,
+   "[Uncommon] Troll's Hammer",
+   "Uncommon"
+  ],
+  [
+   23140000,
+   "[Rare] Rotten Staff",
+   "Rare"
+  ],
+  [
+   23150000,
+   "[Uncommon] Rotten Greataxe",
+   "Uncommon"
+  ],
+  [
+   24000000,
+   "[Common] Torch",
+   "Common"
+  ],
+  [
+   24020000,
+   "[Uncommon] Steel-Wire Torch",
+   "Uncommon"
+  ],
+  [
+   24040000,
+   "[Rare] St. Trina's Torch",
+   "Rare"
+  ],
+  [
+   24050000,
+   "[Rare] Ghostflame Torch",
+   "Rare"
+  ],
+  [
+   24060000,
+   "[Common] Beast-Repellent Torch",
+   "Common"
+  ],
+  [
+   24070000,
+   "[Uncommon] Sentry's Torch",
+   "Uncommon"
+  ],
+  [
+   30000000,
+   "[Common] Buckler",
+   "Common"
+  ],
+  [
+   30010000,
+   "[Rare] Perfumer's Shield",
+   "Rare"
+  ],
+  [
+   30020000,
+   "[Uncommon] Man-Serpent's Shield",
+   "Uncommon"
+  ],
+  [
+   30030000,
+   "[Common] Rickety Shield",
+   "Common"
+  ],
+  [
+   30040000,
+   "[Common] Pillory Shield",
+   "Common"
+  ],
+  [
+   30060000,
+   "[Rare] Beastman's Jar-Shield",
+   "Rare"
+  ],
+  [
+   30070000,
+   "[Common] Red Thorn Roundshield",
+   "Common"
+  ],
+  [
+   30080000,
+   "[Common] Scripture Wooden Shield",
+   "Common"
+  ],
+  [
+   30090000,
+   "[Common] Riveted Wooden Shield",
+   "Common"
+  ],
+  [
+   30100000,
+   "[Common] Blue-White Wooden Shield",
+   "Common"
+  ],
+  [
+   30110000,
+   "[Uncommon] Rift Shield",
+   "Uncommon"
+  ],
+  [
+   30120000,
+   "[Uncommon] Iron Roundshield",
+   "Uncommon"
+  ],
+  [
+   30130000,
+   "[Uncommon] Gilded Iron Shield",
+   "Uncommon"
+  ],
+  [
+   30140000,
+   "[Uncommon] Ice Crest Shield",
+   "Uncommon"
+  ],
+  [
+   30150000,
+   "[Rare] Smoldering Shield",
+   "Rare"
+  ],
+  [
+   30190000,
+   "[Rare] Spiralhorn Shield",
+   "Rare"
+  ],
+  [
+   30200000,
+   "[Rare] Coil Shield",
+   "Rare"
+  ],
+  [
+   31000000,
+   "[Uncommon] Kite Shield",
+   "Uncommon"
+  ],
+  [
+   31010000,
+   "[Common] Marred Leather Shield",
+   "Common"
+  ],
+  [
+   31020000,
+   "[Common] Marred Wooden Shield",
+   "Common"
+  ],
+  [
+   31030000,
+   "[Rare] Banished Knight's Shield",
+   "Rare"
+  ],
+  [
+   31040000,
+   "[Rare] Albinauric Shield",
+   "Rare"
+  ],
+  [
+   31050000,
+   "[Uncommon] Sun Realm Shield",
+   "Uncommon"
+  ],
+  [
+   31060000,
+   "[Rare] Silver Mirrorshield",
+   "Rare"
+  ],
+  [
+   31070000,
+   "[Common] Round Shield",
+   "Common"
+  ],
+  [
+   31080000,
+   "[Uncommon] Scorpion Kite Shield",
+   "Uncommon"
+  ],
+  [
+   31090000,
+   "[Uncommon] Twinbird Kite Shield",
+   "Uncommon"
+  ],
+  [
+   31100000,
+   "[Uncommon] Blue-Gold Kite Shield",
+   "Uncommon"
+  ],
+  [
+   31130000,
+   "[Rare] Brass Shield",
+   "Rare"
+  ],
+  [
+   31140000,
+   "[Rare] Great Turtle Shell",
+   "Rare"
+  ],
+  [
+   31170000,
+   "[Rare] Shield of the Guilty",
+   "Rare"
+  ],
+  [
+   31190000,
+   "[Rare] Carian Knight's Shield",
+   "Rare"
+  ],
+  [
+   31230000,
+   "[Uncommon] Large Leather Shield",
+   "Uncommon"
+  ],
+  [
+   31240000,
+   "[Common] Horse Crest Wooden Shield",
+   "Common"
+  ],
+  [
+   31250000,
+   "[Common] Candletree Wooden Shield",
+   "Common"
+  ],
+  [
+   31260000,
+   "[Common] Flame Crest Wooden Shield",
+   "Common"
+  ],
+  [
+   31270000,
+   "[Common] Hawk Crest Wooden Shield",
+   "Common"
+  ],
+  [
+   31280000,
+   "[Common] Beast Crest Heater Shield",
+   "Common"
+  ],
+  [
+   31290000,
+   "[Common] Red Crest Heater Shield",
+   "Common"
+  ],
+  [
+   31300000,
+   "[Common] Blue Crest Heater Shield",
+   "Common"
+  ],
+  [
+   31310000,
+   "[Common] Eclipse Crest Heater Shield",
+   "Common"
+  ],
+  [
+   31320000,
+   "[Common] Inverted Hawk Heater Shield",
+   "Common"
+  ],
+  [
+   31330000,
+   "[Common] Heater Shield",
+   "Common"
+  ],
+  [
+   31340000,
+   "[Uncommon] Black Leather Shield",
+   "Uncommon"
+  ],
+  [
+   32000000,
+   "[Common] Dragon Towershield",
+   "Common"
+  ],
+  [
+   32020000,
+   "[Uncommon] Distinguished Greatshield",
+   "Uncommon"
+  ],
+  [
+   32030000,
+   "[Rare] Crucible Hornshield",
+   "Rare"
+  ],
+  [
+   32040000,
+   "[Rare] Dragonclaw Shield",
+   "Rare"
+  ],
+  [
+   32050000,
+   "[Uncommon] Briar Greatshield",
+   "Uncommon"
+  ],
+  [
+   32080000,
+   "[Rare] Erdtree Greatshield",
+   "Rare"
+  ],
+  [
+   32090000,
+   "[Uncommon] Golden Beast Crest Shield",
+   "Uncommon"
+  ],
+  [
+   32120000,
+   "[Rare] Jellyfish Shield",
+   "Rare"
+  ],
+  [
+   32130000,
+   "[Rare] Fingerprint Stone Shield",
+   "Rare"
+  ],
+  [
+   32140000,
+   "[Uncommon] Icon Shield",
+   "Uncommon"
+  ],
+  [
+   32150000,
+   "[Rare] One-Eyed Shield",
+   "Rare"
+  ],
+  [
+   32160000,
+   "[Rare] Visage Shield",
+   "Rare"
+  ],
+  [
+   32170000,
+   "[Uncommon] Spiked Palisade Shield",
+   "Uncommon"
+  ],
+  [
+   32190000,
+   "[Common] Manor Towershield",
+   "Common"
+  ],
+  [
+   32200000,
+   "[Common] Crossed-Tree Towershield",
+   "Common"
+  ],
+  [
+   32210000,
+   "[Common] Inverted Hawk Towershield",
+   "Common"
+  ],
+  [
+   32220000,
+   "[Rare] Ant's Skull Plate",
+   "Rare"
+  ],
+  [
+   32230000,
+   "[Uncommon] Redmane Greatshield",
+   "Uncommon"
+  ],
+  [
+   32240000,
+   "[Uncommon] Eclipse Crest Greatshield",
+   "Uncommon"
+  ],
+  [
+   32250000,
+   "[Uncommon] Cuckoo Greatshield",
+   "Uncommon"
+  ],
+  [
+   32260000,
+   "[Uncommon] Golden Greatshield",
+   "Uncommon"
+  ],
+  [
+   32270000,
+   "[Uncommon] Gilded Greatshield",
+   "Uncommon"
+  ],
+  [
+   32280000,
+   "[Uncommon] Haligtree Crest Greatshield",
+   "Uncommon"
+  ],
+  [
+   32290000,
+   "[Common] Wooden Greatshield",
+   "Common"
+  ],
+  [
+   32300000,
+   "[Common] Lordsworn's Shield",
+   "Common"
+  ],
+  [
+   33000000,
+   "[Common] Glintstone Staff",
+   "Common"
+  ],
+  [
+   33040000,
+   "[Uncommon] Crystal Staff",
+   "Uncommon"
+  ],
+  [
+   33050000,
+   "[Uncommon] Gelmir Glintstone Staff",
+   "Uncommon"
+  ],
+  [
+   33060000,
+   "[Common] Demi-Human Queen's Staff",
+   "Common"
+  ],
+  [
+   33090000,
+   "[Legendary] Carian Regal Scepter",
+   "Legendary"
+  ],
+  [
+   33120000,
+   "[Common] Digger's Staff",
+   "Common"
+  ],
+  [
+   33130000,
+   "[Common] Astrologer's Staff",
+   "Common"
+  ],
+  [
+   33170000,
+   "[Uncommon] Carian Glintblade Staff",
+   "Uncommon"
+  ],
+  [
+   33180000,
+   "[Rare] Prince of Death's Staff",
+   "Rare"
+  ],
+  [
+   33190000,
+   "[Uncommon] Albinauric Staff",
+   "Uncommon"
+  ],
+  [
+   33200000,
+   "[Common] Academy Glintstone Staff",
+   "Common"
+  ],
+  [
+   33210000,
+   "[Uncommon] Carian Glintstone Staff",
+   "Uncommon"
+  ],
+  [
+   33230000,
+   "[Rare] Azur's Glintstone Staff",
+   "Rare"
+  ],
+  [
+   33240000,
+   "[Rare] Lusat's Glintstone Staff",
+   "Rare"
+  ],
+  [
+   33250000,
+   "[Rare] Meteorite Staff",
+   "Rare"
+  ],
+  [
+   33260000,
+   "[Uncommon] Staff of the Guilty",
+   "Uncommon"
+  ],
+  [
+   33270000,
+   "[Uncommon] Rotten Crystal Staff",
+   "Uncommon"
+  ],
+  [
+   33280000,
+   "[Uncommon] Staff of Loss",
+   "Uncommon"
+  ],
+  [
+   34000000,
+   "[Common] Finger Seal",
+   "Common"
+  ],
+  [
+   34010000,
+   "[Uncommon] Godslayer's Seal",
+   "Uncommon"
+  ],
+  [
+   34020000,
+   "[Uncommon] Giant's Seal",
+   "Uncommon"
+  ],
+  [
+   34030000,
+   "[Uncommon] Gravel Stone Seal",
+   "Uncommon"
+  ],
+  [
+   34040000,
+   "[Uncommon] Clawmark Seal",
+   "Uncommon"
+  ],
+  [
+   34060000,
+   "[Rare] Golden Order Seal",
+   "Rare"
+  ],
+  [
+   34070000,
+   "[Rare] Erdtree Seal",
+   "Rare"
+  ],
+  [
+   34080000,
+   "[Rare] Dragon Communion Seal",
+   "Rare"
+  ],
+  [
+   34090000,
+   "[Rare] Frenzied Flame Seal",
+   "Rare"
+  ],
+  [
+   40000000,
+   "[Common] Shortbow",
+   "Common"
+  ],
+  [
+   40010000,
+   "[Common] Misbegotten Shortbow",
+   "Common"
+  ],
+  [
+   40020000,
+   "[Uncommon] Red Branch Shortbow",
+   "Uncommon"
+  ],
+  [
+   40030000,
+   "[Uncommon] Harp Bow",
+   "Uncommon"
+  ],
+  [
+   40050000,
+   "[Uncommon] Composite Bow",
+   "Uncommon"
+  ],
+  [
+   41000000,
+   "[Common] Longbow",
+   "Common"
+  ],
+  [
+   41010000,
+   "[Uncommon] Albinauric Bow",
+   "Uncommon"
+  ],
+  [
+   41020000,
+   "[Uncommon] Horn Bow",
+   "Uncommon"
+  ],
+  [
+   41030000,
+   "[Rare] Erdtree Bow",
+   "Rare"
+  ],
+  [
+   41040000,
+   "[Rare] Serpent Bow",
+   "Rare"
+  ],
+  [
+   41060000,
+   "[Rare] Pulley Bow",
+   "Rare"
+  ],
+  [
+   41070000,
+   "[Rare] Black Bow",
+   "Rare"
+  ],
+  [
+   42000000,
+   "[Legendary] Lion Greatbow",
+   "Legendary"
+  ],
+  [
+   42010000,
+   "[Uncommon] Golem Greatbow",
+   "Uncommon"
+  ],
+  [
+   42030000,
+   "[Rare] Erdtree Greatbow",
+   "Rare"
+  ],
+  [
+   42040000,
+   "[Common] Greatbow",
+   "Common"
+  ],
+  [
+   43000000,
+   "[Common] Soldier's Crossbow",
+   "Common"
+  ],
+  [
+   43020000,
+   "[Common] Light Crossbow",
+   "Common"
+  ],
+  [
+   43030000,
+   "[Common] Heavy Crossbow",
+   "Common"
+  ],
+  [
+   43050000,
+   "[Rare] Pulley Crossbow",
+   "Rare"
+  ],
+  [
+   43060000,
+   "[Uncommon] Full Moon Crossbow",
+   "Uncommon"
+  ],
+  [
+   43080000,
+   "[Common] Arbalest",
+   "Common"
+  ],
+  [
+   43110000,
+   "[Uncommon] Crepus's Black-Key Crossbow",
+   "Uncommon"
+  ],
+  [
+   44000000,
+   "[Uncommon] Hand Ballista",
+   "Uncommon"
+  ],
+  [
+   44010000,
+   "[Rare] Jar Cannon",
+   "Rare"
+  ]
+ ],
+ "talisman": [
+  [
+   1000,
+   "[Uncommon] Crimson Amber Medallion",
+   "Uncommon"
+  ],
+  [
+   1010,
+   "[Uncommon] Cerulean Amber Medallion",
+   "Uncommon"
+  ],
+  [
+   1020,
+   "[Uncommon] Viridian Amber Medallion",
+   "Uncommon"
+  ],
+  [
+   1040,
+   "[Uncommon] Erdtree's Favor",
+   "Uncommon"
+  ],
+  [
+   1100,
+   "[Uncommon] Silver Scarab",
+   "Uncommon"
+  ],
+  [
+   1110,
+   "[Uncommon] Gold Scarab",
+   "Uncommon"
+  ],
+  [
+   1150,
+   "[Uncommon] Green Turtle Talisman",
+   "Uncommon"
+  ],
+  [
+   1160,
+   "[Uncommon] Stalwart Horn Charm",
+   "Uncommon"
+  ],
+  [
+   1170,
+   "[Uncommon] Immunizing Horn Charm",
+   "Uncommon"
+  ],
+  [
+   1180,
+   "[Uncommon] Clarifying Horn Charm",
+   "Uncommon"
+  ],
+  [
+   1190,
+   "[Uncommon] Prince of Death's Pustule",
+   "Uncommon"
+  ],
+  [
+   1200,
+   "[Uncommon] Mottled Necklace",
+   "Uncommon"
+  ],
+  [
+   1210,
+   "[Uncommon] Bull-Goat's Talisman",
+   "Uncommon"
+  ],
+  [
+   1230,
+   "[Uncommon] Warrior Jar Shard",
+   "Uncommon"
+  ],
+  [
+   1250,
+   "[Uncommon] Millicent's Prosthesis",
+   "Uncommon"
+  ],
+  [
+   2000,
+   "[Uncommon] Magic Scorpion Charm",
+   "Uncommon"
+  ],
+  [
+   2010,
+   "[Uncommon] Lightning Scorpion Charm",
+   "Uncommon"
+  ],
+  [
+   2020,
+   "[Uncommon] Fire Scorpion Charm",
+   "Uncommon"
+  ],
+  [
+   2030,
+   "[Uncommon] Sacred Scorpion Charm",
+   "Uncommon"
+  ],
+  [
+   2040,
+   "[Uncommon] Red-Feathered Branchsword",
+   "Uncommon"
+  ],
+  [
+   2050,
+   "[Uncommon] Ritual Sword Talisman",
+   "Uncommon"
+  ],
+  [
+   2060,
+   "[Uncommon] Spear Talisman",
+   "Uncommon"
+  ],
+  [
+   2070,
+   "[Uncommon] Hammer Talisman",
+   "Uncommon"
+  ],
+  [
+   2080,
+   "[Uncommon] Winged Sword Insignia",
+   "Uncommon"
+  ],
+  [
+   2090,
+   "[Uncommon] Dagger Talisman",
+   "Uncommon"
+  ],
+  [
+   2100,
+   "[Uncommon] Arrow's Reach Talisman",
+   "Uncommon"
+  ],
+  [
+   2120,
+   "[Uncommon] Twinblade Talisman",
+   "Uncommon"
+  ],
+  [
+   2130,
+   "[Uncommon] Axe Talisman",
+   "Uncommon"
+  ],
+  [
+   2150,
+   "[Uncommon] Arrow's Sting Talisman",
+   "Uncommon"
+  ],
+  [
+   2160,
+   "[Uncommon] Lord of Blood's Exultation",
+   "Uncommon"
+  ],
+  [
+   2170,
+   "[Uncommon] Kindred of Rot's Exultation",
+   "Uncommon"
+  ],
+  [
+   2180,
+   "[Uncommon] Claw Talisman",
+   "Uncommon"
+  ],
+  [
+   2190,
+   "[Uncommon] Roar Medallion",
+   "Uncommon"
+  ],
+  [
+   2200,
+   "[Uncommon] Curved Sword Talisman",
+   "Uncommon"
+  ],
+  [
+   2210,
+   "[Uncommon] Companion Jar",
+   "Uncommon"
+  ],
+  [
+   2220,
+   "[Uncommon] Perfumer's Talisman",
+   "Uncommon"
+  ],
+  [
+   3000,
+   "[Uncommon] Graven-School Talisman",
+   "Uncommon"
+  ],
+  [
+   3040,
+   "[Uncommon] Faithful's Canvas Talisman",
+   "Uncommon"
+  ],
+  [
+   3060,
+   "[Rare] Old Lord's Talisman",
+   "Rare"
+  ],
+  [
+   3070,
+   "[Rare] Radagon Icon",
+   "Rare"
+  ],
+  [
+   3080,
+   "[Uncommon] Primal Glintstone Blade",
+   "Uncommon"
+  ],
+  [
+   3090,
+   "[Rare] Godfrey Icon",
+   "Rare"
+  ],
+  [
+   4000,
+   "[Uncommon] Dragoncrest Shield Talisman",
+   "Uncommon"
+  ],
+  [
+   4010,
+   "[Uncommon] Spelldrake Talisman",
+   "Uncommon"
+  ],
+  [
+   4020,
+   "[Uncommon] Flamedrake Talisman",
+   "Uncommon"
+  ],
+  [
+   4030,
+   "[Uncommon] Boltdrake Talisman",
+   "Uncommon"
+  ],
+  [
+   4040,
+   "[Uncommon] Haligdrake Talisman",
+   "Uncommon"
+  ],
+  [
+   4050,
+   "[Uncommon] Pearldrake Talisman",
+   "Uncommon"
+  ],
+  [
+   4070,
+   "[Uncommon] Crucible Feather Talisman",
+   "Uncommon"
+  ],
+  [
+   4080,
+   "[Uncommon] Blue-Feathered Branchsword",
+   "Uncommon"
+  ],
+  [
+   4090,
+   "[Uncommon] Ritual Shield Talisman",
+   "Uncommon"
+  ],
+  [
+   4100,
+   "[Uncommon] Greatshield Talisman",
+   "Uncommon"
+  ],
+  [
+   5000,
+   "[Uncommon] Crimson Seed Talisman",
+   "Uncommon"
+  ],
+  [
+   5020,
+   "[Uncommon] Blessed Dew Talisman",
+   "Uncommon"
+  ],
+  [
+   5030,
+   "[Uncommon] Taker's Cameo",
+   "Uncommon"
+  ],
+  [
+   5040,
+   "[Uncommon] Godskin Swaddling Cloth",
+   "Uncommon"
+  ],
+  [
+   5050,
+   "[Uncommon] Assassin's Crimson Dagger",
+   "Uncommon"
+  ],
+  [
+   5060,
+   "[Uncommon] Assassin's Cerulean Dagger",
+   "Uncommon"
+  ],
+  [
+   6020,
+   "[Uncommon] Carian Filigreed Crest",
+   "Uncommon"
+  ],
+  [
+   6070,
+   "[Rare] Sacrificial Twig",
+   "Rare"
+  ],
+  [
+   6110,
+   "[Rare] Ancestral Spirit's Horn",
+   "Rare"
+  ]
+ ],
+ "good": [
+  [
+   300,
+   "[Common] Fire Pot",
+   "Common"
+  ],
+  [
+   320,
+   "[Common] Lightning Pot",
+   "Common"
+  ],
+  [
+   330,
+   "[Uncommon] Fetid Pot",
+   "Uncommon"
+  ],
+  [
+   340,
+   "[Uncommon] Swarm Pot",
+   "Uncommon"
+  ],
+  [
+   350,
+   "[Common] Holy Water Pot",
+   "Common"
+  ],
+  [
+   360,
+   "[Uncommon] Freezing Pot",
+   "Uncommon"
+  ],
+  [
+   370,
+   "[Uncommon] Poison Pot",
+   "Uncommon"
+  ],
+  [
+   390,
+   "[Common] Alluring Pot",
+   "Common"
+  ],
+  [
+   391,
+   "[Common] Beastlure Pot",
+   "Common"
+  ],
+  [
+   600,
+   "[Uncommon] Volcano Pot",
+   "Uncommon"
+  ],
+  [
+   640,
+   "[Uncommon] Sleep Pot",
+   "Uncommon"
+  ],
+  [
+   650,
+   "[Uncommon] Rancor Pot",
+   "Uncommon"
+  ],
+  [
+   660,
+   "[Common] Magic Pot",
+   "Common"
+  ],
+  [
+   670,
+   "[Uncommon] Rot Pot",
+   "Uncommon"
+  ],
+  [
+   700,
+   "[Legendary] Wending Grace",
+   "Legendary"
+  ],
+  [
+   820,
+   "[Uncommon] Boiled Crab",
+   "Uncommon"
+  ],
+  [
+   830,
+   "[Common] Boiled Prawn",
+   "Common"
+  ],
+  [
+   900,
+   "[Common] Neutralizing Boluses",
+   "Common"
+  ],
+  [
+   910,
+   "[Common] Stanching Boluses",
+   "Common"
+  ],
+  [
+   920,
+   "[Common] Thawfrost Boluses",
+   "Common"
+  ],
+  [
+   930,
+   "[Common] Stimulating Boluses",
+   "Common"
+  ],
+  [
+   940,
+   "[Common] Preserving Boluses",
+   "Common"
+  ],
+  [
+   950,
+   "[Common] Rejuvenating Boluses",
+   "Common"
+  ],
+  [
+   960,
+   "[Common] Clarifying Boluses",
+   "Common"
+  ],
+  [
+   1100,
+   "[Uncommon] Pickled Turtle Neck",
+   "Uncommon"
+  ],
+  [
+   1190,
+   "[Common] Silver-Pickled Fowl Foot",
+   "Common"
+  ],
+  [
+   1200,
+   "[Common] Gold-Pickled Fowl Foot",
+   "Common"
+  ],
+  [
+   1210,
+   "[Uncommon] Exalted Flesh",
+   "Uncommon"
+  ],
+  [
+   1290,
+   "[Uncommon] Starlight Shards",
+   "Uncommon"
+  ],
+  [
+   1400,
+   "[Common] Fire Grease",
+   "Common"
+  ],
+  [
+   1410,
+   "[Common] Lightning Grease",
+   "Common"
+  ],
+  [
+   1420,
+   "[Common] Magic Grease",
+   "Common"
+  ],
+  [
+   1430,
+   "[Common] Holy Grease",
+   "Common"
+  ],
+  [
+   1440,
+   "[Common] Blood Grease",
+   "Common"
+  ],
+  [
+   1450,
+   "[Common] Soporific Grease",
+   "Common"
+  ],
+  [
+   1460,
+   "[Common] Poison Grease",
+   "Common"
+  ],
+  [
+   1470,
+   "[Common] Freezing Grease",
+   "Common"
+  ],
+  [
+   1480,
+   "[Common] Dragonwound Grease",
+   "Common"
+  ],
+  [
+   1490,
+   "[Common] Rot Grease",
+   "Common"
+  ],
+  [
+   1690,
+   "[Common] Shield Grease",
+   "Common"
+  ],
+  [
+   1700,
+   "[Common] Throwing Dagger",
+   "Common"
+  ],
+  [
+   1720,
+   "[Common] Poisonbone Dart",
+   "Common"
+  ],
+  [
+   1730,
+   "[Common] Kukri",
+   "Common"
+  ],
+  [
+   1740,
+   "[Common] Crystal Dart",
+   "Common"
+  ],
+  [
+   1750,
+   "[Common] Fan Daggers",
+   "Common"
+  ],
+  [
+   3000,
+   "[Rare] Ancestral Infant's Head",
+   "Rare"
+  ],
+  [
+   3010,
+   "[Uncommon] Omen Bairn",
+   "Uncommon"
+  ],
+  [
+   3011,
+   "[Rare] Regal Omen Bairn",
+   "Rare"
+  ],
+  [
+   3030,
+   "[Uncommon] Cuckoo Glintstone",
+   "Uncommon"
+  ],
+  [
+   3050,
+   "[Common] Glintstone Scrap",
+   "Common"
+  ],
+  [
+   3051,
+   "[Uncommon] Large Glintstone Scrap",
+   "Uncommon"
+  ],
+  [
+   3060,
+   "[Uncommon] Gravity Stone Fan",
+   "Uncommon"
+  ],
+  [
+   3070,
+   "[Uncommon] Gravity Stone Chunk",
+   "Uncommon"
+  ],
+  [
+   3080,
+   "[Uncommon] Wraith Calling Bell",
+   "Uncommon"
+  ],
+  [
+   3310,
+   "[Uncommon] Warming Stone",
+   "Uncommon"
+  ],
+  [
+   3350,
+   "[Uncommon] Bewitching Branch",
+   "Uncommon"
+  ],
+  [
+   3500,
+   "[Rare] Uplifting Aromatic",
+   "Rare"
+  ],
+  [
+   3510,
+   "[Uncommon] Spark Aromatic",
+   "Uncommon"
+  ],
+  [
+   3520,
+   "[Uncommon] Ironjar Aromatic",
+   "Uncommon"
+  ],
+  [
+   3550,
+   "[Rare] Bloodboil Aromatic",
+   "Rare"
+  ],
+  [
+   3580,
+   "[Uncommon] Poison Spraymist",
+   "Uncommon"
+  ],
+  [
+   3610,
+   "[Rare] Acid Spraymist",
+   "Rare"
+  ],
+  [
+   8000,
+   "[Rare] Stonesword Key",
+   "Rare"
+  ],
+  [
+   8005,
+   "[Legendary] Cord End",
+   "Legendary"
+  ],
+  [
+   10050,
+   "[Uncommon] Small Pouch",
+   "Uncommon"
+  ],
+  [
+   10100,
+   "[Uncommon] Smithing Stone [1]",
+   "Uncommon"
+  ],
+  [
+   10101,
+   "[Rare] Smithing Stone [2]",
+   "Rare"
+  ],
+  [
+   10102,
+   "[Legendary] Smithing Stone [3]",
+   "Legendary"
+  ],
+  [
+   11000,
+   "[Rare] Crimsonspill Crystal Tear",
+   "Rare"
+  ],
+  [
+   11001,
+   "[Rare] Greenspill Crystal Tear",
+   "Rare"
+  ],
+  [
+   11002,
+   "[Rare] Crimson Crystal Tear",
+   "Rare"
+  ],
+  [
+   11004,
+   "[Rare] Cerulean Crystal Tear",
+   "Rare"
+  ],
+  [
+   11006,
+   "[Rare] Speckled Hardtear",
+   "Rare"
+  ],
+  [
+   11007,
+   "[Rare] Crimson Bubbletear",
+   "Rare"
+  ],
+  [
+   11008,
+   "[Rare] Opaline Bubbletear",
+   "Rare"
+  ],
+  [
+   11009,
+   "[Rare] Crimsonburst Crystal Tear",
+   "Rare"
+  ],
+  [
+   11010,
+   "[Rare] Greenburst Crystal Tear",
+   "Rare"
+  ],
+  [
+   11011,
+   "[Rare] Opaline Hardtear",
+   "Rare"
+  ],
+  [
+   11013,
+   "[Rare] Thorny Cracked Tear",
+   "Rare"
+  ],
+  [
+   11014,
+   "[Rare] Spiked Cracked Tear",
+   "Rare"
+  ],
+  [
+   11015,
+   "[Rare] Windy Crystal Tear",
+   "Rare"
+  ],
+  [
+   11016,
+   "[Rare] Ruptured Crystal Tear",
+   "Rare"
+  ],
+  [
+   11018,
+   "[Rare] Leaden Hardtear",
+   "Rare"
+  ],
+  [
+   11019,
+   "[Rare] Twiggy Cracked Tear",
+   "Rare"
+  ],
+  [
+   11020,
+   "[Rare] Crimsonwhorl Bubbletear",
+   "Rare"
+  ],
+  [
+   11025,
+   "[Rare] Cerulean Hidden Tear",
+   "Rare"
+  ],
+  [
+   11026,
+   "[Rare] Stonebarb Cracked Tear",
+   "Rare"
+  ],
+  [
+   11027,
+   "[Rare] Purifying Crystal Tear",
+   "Rare"
+  ],
+  [
+   11028,
+   "[Rare] Flame-Shrouding Cracked Tear",
+   "Rare"
+  ],
+  [
+   11029,
+   "[Rare] Magic-Shrouding Cracked Tear",
+   "Rare"
+  ],
+  [
+   11030,
+   "[Rare] Lightning-Shrouding Cracked Tear",
+   "Rare"
+  ],
+  [
+   11031,
+   "[Rare] Holy-Shrouding Cracked Tear",
+   "Rare"
+  ]
+ ]
+}

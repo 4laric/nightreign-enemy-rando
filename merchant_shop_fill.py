@@ -1,208 +1,90 @@
 #!/usr/bin/env python3
-"""merchant_shop_fill.py - per-seed-randomize the expedition merchant's shop.
+"""merchant_shop_fill.py - per-seed PURE-CHAOS randomization of the NR expedition merchant.
 
-Overwrites the ShopLineupParam rows of the Nomadic/Wandering merchant (c3200)
-in a regulation.bin with a fresh, seed-deterministic roll of weapons (and an
-optional weighted tail of talismans / goods). Pure chaos: uniform draws, random
-affordable prices uncorrelated with item power (a junk weapon can out-cost a
-Legendary). Each merchant entry in the slot manifest rolls independently, so if
-NR routes different field merchants to different shop ranges they show different
-stock in the same run.
+The expedition merchant's stock is spread across 21 numbered "Sets" per merchant
+family ([Common Merchant - Set N], [Rare Merchant - Set N], the Deep of Night
+variants, [Final Merchant]) plus per-family "Always" rows; the engine rolls one
+Set per seed/expedition. We randomize EVERY merchant row (Always + all Sets):
 
-This is the per-seed step the GUI / dcx_batch should call instead of plain-
-copying the bundled regulation: read bundled regulation -> roll(seed) -> write
-to the run output. The roll is reproducible from the run seed and emits a
-spoiler list.
+  * equipId  -> random item of the SAME equipType, from a chaos pool. Weapons
+    (equipType 6) are split by realm - normal merchants draw the 5xxxxx weapon
+    space, Deep of Night draws the 6xxxxx space - because those id spaces are
+    disjoint and the 6xxxxx (Everdark) ids are mode-specific. Goods (3) and
+    talismans (2) share one id space across families, so they pool globally.
+  * value -> a fully random price (default 1..60000), uncorrelated with the item
+    (value_Magnification is 1 and value_Add is 0 on every merchant row, so the
+    written value is exactly the displayed buy price).
 
-  python3 merchant_shop_fill.py \
-      --in  bundled_regulation/regulation.bin \
-      --out <run>/regulation.bin \
-      --param-dump /path/to/regulation/csv-dump \
-      --seed 8675309 \
-      --type-weights 0.85:0.10:0.05 --price-range 100 2000
-
-Pools are derived from the param dump CSVs (so MoreWeapons weapons are included
-automatically when you point --param-dump at the shipping regulation's dump).
+equipType is preserved, so each row's ancillary fields (sellQuantity, mtrlId,
+cost flags) stay valid for its slot type and every assigned id is one the game
+already sells -> no invalid-entry / wrong-id-space hazards. Row map + pools come
+from data/merchant_shop_slots.json (baked from a regulation dump).
 """
 
-import argparse
-import csv
-import hashlib
 import json
-import os
 import random
-import re
+from collections import defaultdict
 
 import regulation_io as R
 
-_LOOT_RE = re.compile(r"^\[(Common|Uncommon|Rare|Legendary)\]")
+DEFAULT_PRICE_RANGE = (1, 60000)
 
 
-def _rarity(name: str):
-    m = _LOOT_RE.match(name or "")
-    return m.group(1) if m else None
-
-
-def _read_csv(path):
-    with open(path, newline="", encoding="utf-8", errors="replace") as f:
-        return list(csv.DictReader(f))
-
-
-def load_pools(param_dump: str):
-    """Return {'weapon': [...], 'talisman': [...], 'good': [...]} of clean,
-    sellable, loot-rarity rows. Each item is (equip_id:int, name:str, rarity:str)."""
-    def pool(filename, base_only=False):
-        rows = _read_csv(os.path.join(param_dump, filename))
-        out = []
-        for r in rows:
-            rid = int(r["ID"])
-            if base_only and rid % 10000 != 0:
-                continue
-            rar = _rarity(r.get("Name", ""))
-            if rar:
-                out.append((rid, r["Name"], rar))
-        return out
-    return {
-        "weapon": pool("EquipParamWeapon.csv", base_only=True),   # base +0 rows only
-        "talisman": pool("EquipParamAccessory.csv"),
-        "good": pool("EquipParamGoods.csv"),                      # loot-rarity only
-    }
-
-
-def load_pools_baked(json_path):
-    """Load the clean pools from a baked data/regulation_pools.json (the shipped
-    path, since the regulation itself carries no row names). Returns the same
-    {'weapon'|'talisman'|'good': [(equip_id, name, rarity), ...]} shape as
-    load_pools()."""
-    d = json.load(open(json_path, encoding="utf-8"))
-    return {k: [tuple(x) for x in d[k]] for k in ("weapon", "talisman", "good")}
-
-
-# shop equipType code per pool
-_EQUIPTYPE = {"weapon": 0, "talisman": 2, "good": 3}
-
-
-def seed_to_int(seed) -> int:
+def seed_to_int(seed):
     if isinstance(seed, int):
-        return seed
-    return int.from_bytes(hashlib.sha256(str(seed).encode()).digest()[:8], "big")
+        return seed & 0xFFFFFFFF
+    s = str(seed).strip()
+    try:
+        return int(s) & 0xFFFFFFFF
+    except ValueError:
+        import hashlib
+        return int(hashlib.sha256(s.encode("utf-8")).hexdigest(), 16) & 0xFFFFFFFF
 
 
-def roll(manifest: dict, pools: dict, seed, type_weights, price_range, allow_dups):
-    """Produce {row_id: (equipType, equip_id, value)} plus a spoiler list."""
+def load_slots(json_path):
+    """Load the baked {targets, pools, price_range} chaos map."""
+    d = json.load(open(json_path, encoding="utf-8"))
+    return {"targets": d["targets"], "pools": d["pools"],
+            "price_range": tuple(d.get("price_range", DEFAULT_PRICE_RANGE))}
+
+
+def roll(slot_data, seed, *, price_range=None, distinct_per_group=True):
+    """Roll a new (equipId, value) for every merchant row. Returns
+    (patches, spoiler) where patches = {row_id: (equip_id, price)}.
+    Deterministic for `seed`."""
     rng = random.Random(seed_to_int(seed))
-    types = ["weapon", "talisman", "good"]
-    weights = [type_weights[t] for t in types]
-    # drop empty pools from the weighting
-    avail = [(t, w) for t, w in zip(types, weights) if pools[t] and w > 0]
-    if not avail:
-        raise SystemExit("no non-empty pools selected")
-    a_types, a_weights = [t for t, _ in avail], [w for _, w in avail]
+    pools = slot_data["pools"]
+    targets = slot_data["targets"]
+    lo, hi = price_range or slot_data.get("price_range", DEFAULT_PRICE_RANGE)
+
+    by_group = defaultdict(list)
+    for t in targets:
+        by_group[t["group_key"]].append(t)
 
     patches, spoiler = {}, []
-    for m in manifest["merchants"]:
-        used = {t: set() for t in a_types}  # distinct per type, per merchant
-        for rid in m["slots"]:
-            t = rng.choices(a_types, a_weights)[0]
-            pool = pools[t]
-            # distinct within this merchant unless allow_dups or this pool is exhausted
-            choice = None
-            if allow_dups or len(used[t]) >= len(pool):
-                choice = rng.choice(pool)
-            else:
-                for _ in range(64):
-                    c = rng.choice(pool)
-                    if c[0] not in used[t]:
-                        choice = c
-                        break
-                if choice is None:
-                    choice = rng.choice(pool)
-            used[t].add(choice[0])
-            equip_id, name, rar = choice
-            value = rng.randint(price_range[0], price_range[1])
-            patches[rid] = (_EQUIPTYPE[t], equip_id, value)
-            spoiler.append({
-                "merchant": m["name"], "row": rid, "type": t,
-                "equip_id": equip_id, "name": name, "rarity": rar, "price": value,
-            })
+    for gk in sorted(by_group):
+        by_pool = defaultdict(list)
+        for t in by_group[gk]:
+            by_pool[t["pool_key"]].append(t)
+        for pool_key, ts in sorted(by_pool.items()):
+            pool = pools.get(pool_key, [])
+            if not pool:
+                continue
+            k = len(ts)
+            ids = (rng.sample(pool, k) if distinct_per_group and k <= len(pool)
+                   else [rng.choice(pool) for _ in ts])
+            for t, eid in zip(ts, ids):
+                price = rng.randint(lo, hi)
+                patches[t["id"]] = (eid, price)
+                spoiler.append({"row": t["id"], "group": gk, "pool": pool_key,
+                                "equip_id": eid, "price": price})
     return patches, spoiler
 
 
-def apply_patches(reg: "R.Regulation", patches: dict):
-    for rid, (etype, equip_id, value) in patches.items():
-        reg.patch_param_field("ShopLineupParam", rid, R.SHOP_EQUIPTYPE_OFF, "<B", etype)
-        reg.patch_param_field("ShopLineupParam", rid, R.SHOP_EQUIPID_OFF, "<i", equip_id)
-        reg.patch_param_field("ShopLineupParam", rid, R.SHOP_VALUE_OFF, "<i", value)
-
-
-def fill_regulation(in_path, out_path, param_dump, seed, *,
-                    type_weights=(0.85, 0.10, 0.05), price_range=(100, 2000),
-                    allow_dups=False, manifest_path=None, zstd_level=17,
-                    spoiler_path=None, dry_run=False, key=R.NR_REGULATION_KEY):
-    here = os.path.dirname(os.path.abspath(__file__))
-    manifest_path = manifest_path or os.path.join(here, "data", "merchant_shop_slots.json")
-    manifest = json.load(open(manifest_path, encoding="utf-8"))
-    pools = load_pools(param_dump)
-    tw = {"weapon": type_weights[0], "talisman": type_weights[1], "good": type_weights[2]}
-    patches, spoiler = roll(manifest, pools, seed, tw, price_range, allow_dups)
-
-    if not dry_run:
-        reg = R.Regulation.load(in_path, key)
-        apply_patches(reg, patches)
-        reg.save(out_path, key, level=zstd_level)
-    if spoiler_path:
-        json.dump(spoiler, open(spoiler_path, "w", encoding="utf-8"), indent=2)
-    return {"pools": {k: len(v) for k, v in pools.items()},
-            "slots": len(patches), "spoiler": spoiler}
-
-
-def _parse_weights(s):
-    parts = [float(x) for x in s.split(":")]
-    if len(parts) != 3:
-        raise argparse.ArgumentTypeError("type-weights must be W:T:G (weapon:talisman:good)")
-    return tuple(parts)
-
-
-def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--in", dest="in_path", required=True, help="source regulation.bin")
-    ap.add_argument("--out", dest="out_path", help="output regulation.bin (omit with --dry-run)")
-    ap.add_argument("--param-dump", required=True, help="dir of regulation CSVs (EquipParam*.csv)")
-    ap.add_argument("--seed", required=True, help="run seed (int or string)")
-    ap.add_argument("--type-weights", type=_parse_weights, default=(0.85, 0.10, 0.05),
-                    help="weapon:talisman:good draw weights (default 0.85:0.10:0.05)")
-    ap.add_argument("--price-range", type=int, nargs=2, metavar=("LO", "HI"),
-                    default=(100, 2000), help="random price band (default 100 2000)")
-    ap.add_argument("--allow-dups", action="store_true",
-                    help="allow the same item more than once per merchant")
-    ap.add_argument("--slots", dest="manifest_path", help="slot manifest json")
-    ap.add_argument("--zstd-level", type=int, default=17)
-    ap.add_argument("--spoiler", dest="spoiler_path", help="write the roll spoiler json here")
-    ap.add_argument("--dry-run", action="store_true", help="roll + print, don't write")
-    args = ap.parse_args(argv)
-    if not args.dry_run and not args.out_path:
-        ap.error("--out is required unless --dry-run")
-
-    res = fill_regulation(
-        args.in_path, args.out_path, args.param_dump, args.seed,
-        type_weights=args.type_weights, price_range=tuple(args.price_range),
-        allow_dups=args.allow_dups, manifest_path=args.manifest_path,
-        zstd_level=args.zstd_level, spoiler_path=args.spoiler_path, dry_run=args.dry_run,
-    )
-    print(f"pools: {res['pools']}   slots rolled: {res['slots']}")
-    by_m = {}
-    for s in res["spoiler"]:
-        by_m.setdefault(s["merchant"], []).append(s)
-    for m, items in by_m.items():
-        print(f"\n[{m}]")
-        for s in items:
-            tag = {"weapon": "WPN", "talisman": "TAL", "good": "GD "}[s["type"]]
-            print(f"  {s['row']}  {tag} {s['rarity'] or '-':<9} {s['equip_id']:>9}  "
-                  f"{s['price']:>5}g  {s['name']}")
-    if not args.dry_run:
-        print(f"\nwrote {args.out_path}")
-
-
-if __name__ == "__main__":
-    main()
+def apply_patches(reg, patches):
+    """Write each row's equipId (s32 @ SHOP_EQUIPID_OFF) and value/price
+    (s32 @ SHOP_VALUE_OFF) in place. equipType is left untouched."""
+    for row_id, (equip_id, price) in patches.items():
+        reg.patch_param_field("ShopLineupParam", row_id, R.SHOP_EQUIPID_OFF, "<i", equip_id)
+        reg.patch_param_field("ShopLineupParam", row_id, R.SHOP_VALUE_OFF, "<i", price)
+    return len(patches)

@@ -75,7 +75,7 @@ class TestBuildMe3ProfileTemplate:
         assert 'profileVersion = "v1"' in result
 
     def test_includes_game_slug(self):
-        """The [supports] block declares which game this targets."""
+        """The [[supports]] block declares which game this targets."""
         result = install_discovery.build_me3_profile_template('test', game='nightreign')
         assert 'game = "nightreign"' in result
 
@@ -115,7 +115,7 @@ class TestBuildMe3ProfileTemplate:
         for arrays of tables."""
         result = install_discovery.build_me3_profile_template('test')
         # Section header
-        assert '[supports]' in result
+        assert '[[supports]]' in result
         # Array-of-tables for packages
         assert '[[packages]]' in result
 

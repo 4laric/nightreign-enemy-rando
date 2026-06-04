@@ -78,6 +78,66 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 
+# --- v0.30: me3-profile layout awareness ---------------------------------
+# When shipped as a me3 profile the tool code lives in <profile>/_rando/ and
+# this file runs from there; the profile root (one level up) holds the
+# pre-wired .me3 and the me3 package dir. Detecting that layout lets the GUI
+# default every output path into the shipped package with zero config.
+# Outside it (dev checkout / tests) _running_inside_profile() returns False
+# and nothing changes — the guards are deliberately strict.
+if getattr(sys, 'frozen', False):
+    _RANDO_DIR = os.path.dirname(os.path.abspath(sys.executable))
+else:
+    _RANDO_DIR = HERE
+PROFILE_ROOT = os.path.dirname(_RANDO_DIR)
+PACKAGE_DIR = os.path.join(PROFILE_ROOT, 'package')
+
+# Name of the shipped profile's own .me3 (kept in sync with
+# scripts/build_release.py ME3_FILENAME).
+_PROFILE_ME3_NAME = 'nightreign-enemy-rando.me3'
+
+
+def _profile_me3_path():
+    """Absolute path of the shipped profile's own .me3 at PROFILE_ROOT.
+    Prefers the single .me3 actually present there; falls back to the
+    conventional name. Deterministic — no "which .me3 is live" guessing."""
+    try:
+        me3s = [f for f in os.listdir(PROFILE_ROOT)
+                if f.lower().endswith('.me3')
+                and os.path.isfile(os.path.join(PROFILE_ROOT, f))]
+    except OSError:
+        me3s = []
+    if len(me3s) == 1:
+        return os.path.join(PROFILE_ROOT, me3s[0])
+    return os.path.join(PROFILE_ROOT, _PROFILE_ME3_NAME)
+
+
+
+def _path_within(child, parent):
+    """True iff child is parent or a descendant (proper, separator-anchored
+    ancestry — not a substring test)."""
+    try:
+        c = os.path.normcase(os.path.normpath(os.path.abspath(child)))
+        p = os.path.normcase(os.path.normpath(os.path.abspath(parent)))
+        return c == p or c.startswith(p + os.sep)
+    except Exception:
+        return False
+
+
+def _running_inside_profile():
+    """True iff running from inside a shipped me3 profile: the tool dir is
+    named `_rando` AND a `.me3` sits at the profile root next to it."""
+    try:
+        if os.path.basename(_RANDO_DIR.rstrip(os.sep)) != '_rando':
+            return False
+        if not os.path.isdir(PROFILE_ROOT):
+            return False
+        return any(f.endswith('.me3') for f in os.listdir(PROFILE_ROOT))
+    except OSError:
+        return False
+
+
+
 # v0.28.x: bundled-file installer config. Lives in its own module so
 # the lock tests can verify the registry without importing tkinter.
 from bundle_installer import BUNDLED_INSTALLS, list_bundle_content_files
@@ -1051,10 +1111,16 @@ class FirstLaunchWizard:
             text='Where should the shuffled files go?',
             font=(_pick_ui_font(), 16, 'bold'))
         head.pack(anchor='w', pady=(0, 4))
-        sub = ttk.Label(self.body,
-            text="Pick your me3 mod profile's folder. The rando writes "
-                 "the shuffled MSBs into <this>/map/mapstudio/ — me3 "
-                 "loads them as an overlay on top of vanilla.",
+        if _running_inside_profile():
+            _sub_text = ("This build is self-contained — it ships as its own "
+                         "me3 profile, so the shuffled files go into its own "
+                         "package/ folder (already set below). You don't need "
+                         "a separate me3 profile; just continue.")
+        else:
+            _sub_text = ("Pick your me3 mod profile's folder. The rando writes "
+                         "the shuffled MSBs into <this>/map/mapstudio/ — me3 "
+                         "loads them as an overlay on top of vanilla.")
+        sub = ttk.Label(self.body, text=_sub_text,
             wraplength=620, justify='left', style='Dim.TLabel')
         sub.pack(anchor='w', pady=(0, 16))
 
@@ -1067,19 +1133,22 @@ class FirstLaunchWizard:
                     '<this>/map/mapstudio/. me3 picks them up as an '
                     'overlay when you launch NR through it.')
 
-        # Inline help — "What's a me3 profile?"
-        help_frame = ttk.Frame(self.body); help_frame.pack(fill='x', pady=(16, 0))
-        ttk.Label(help_frame,
-            text="Don't have an me3 profile yet?",
-            style='Dim.TLabel').pack(anchor='w')
-        ttk.Label(help_frame,
-            text="me3 is mod engine 3 — a runtime mod loader for FromSoft "
-                 "games. Install it from GitHub (search 'mod engine 3'), "
-                 "create an empty mod profile folder anywhere (e.g. "
-                 "Documents/me3-profiles/my-rando/), and point this field "
-                 "at that folder.",
-            wraplength=620, justify='left', style='Dim.TLabel'
-            ).pack(anchor='w', pady=(2, 0))
+        # Inline help. Self-contained builds don't need a separate profile,
+        # so the 'create an me3 profile' guidance is gated to the non-
+        # self-contained case to avoid contradicting the screen above.
+        if not _running_inside_profile():
+            help_frame = ttk.Frame(self.body); help_frame.pack(fill='x', pady=(16, 0))
+            ttk.Label(help_frame,
+                text="Don't have an me3 profile yet?",
+                style='Dim.TLabel').pack(anchor='w')
+            ttk.Label(help_frame,
+                text="me3 is mod engine 3 — a runtime mod loader for FromSoft "
+                     "games. Install it from GitHub (search 'mod engine 3'), "
+                     "create an empty mod profile folder anywhere (e.g. "
+                     "Documents/me3-profiles/my-rando/), and point this field "
+                     "at that folder.",
+                wraplength=620, justify='left', style='Dim.TLabel'
+                ).pack(anchor='w', pady=(2, 0))
 
         self._set_validator(self._validate_output)
         self._screen_indicators['me3'] = me3_ind
@@ -1740,8 +1809,22 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # the path makes the requirement explicit.
         self.er_install_var = tk.StringVar(
             value=_root_paths_init.get('er_install', ''))
-        self.me3_package_var = tk.StringVar(
-            value=_root_paths_init.get('me3_package', ''))
+        # v0.30: when shipped as a me3 profile, default the package path to
+        # the bundled <profile>/package/ dir so the derive cascade fills
+        # output/EMEVD/chr automatically. Saved values still win, except one
+        # that no longer exists or points outside this profile.
+        _saved_me3_pkg = _root_paths_init.get('me3_package', '')
+        _me3_pkg_default = _saved_me3_pkg
+        if _running_inside_profile():
+            if not _saved_me3_pkg:
+                _me3_pkg_default = PACKAGE_DIR
+            elif (not os.path.isdir(_saved_me3_pkg)
+                  or not _path_within(_saved_me3_pkg, PROFILE_ROOT)):
+                print(f"[v0.30] saved me3 package path ({_saved_me3_pkg!r}) "
+                      f"is missing or outside this profile; using bundled "
+                      f"package {PACKAGE_DIR!r}")
+                _me3_pkg_default = PACKAGE_DIR
+        self.me3_package_var = tk.StringVar(value=_me3_pkg_default)
         # v0.26.x: me3 launcher binary path. Optional — find_me3_binary
         # auto-discovers in most cases. The Launch button uses this if
         # set, otherwise falls back to runtime discovery. Saved across
@@ -1862,6 +1945,15 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     and not self.chr_source_dir_var.get().strip()
                     and os.path.isdir(derived_chr)):
                 self.chr_source_dir_var.set(derived_chr)
+            # v0.28.2: also flow the ER root into the Import-ER panel's
+            # "Elden Ring folder" field (roster_er_dir_var). Without this
+            # the wizard sets er_install but the new panel renders empty,
+            # forcing users to re-paste the same path. Same empty-guard
+            # pattern as chr_source_dir above: only fill if the field is
+            # currently blank, so user customizations stick.
+            if (hasattr(self, 'roster_er_dir_var')
+                    and not self.roster_er_dir_var.get().strip()):
+                self.roster_er_dir_var.set(er)
             _persist_root_paths()
 
         def _derive_from_me3(*_args):
@@ -1928,7 +2020,17 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             if hasattr(self, 'output_emevd_dir_var') and not self.output_emevd_dir_var.get().strip():
                 self.output_emevd_dir_var.set(os.path.join(me3, 'event'))
             if hasattr(self, 'chr_target_dir_var') and not self.chr_target_dir_var.get().strip():
-                self.chr_target_dir_var.set(os.path.join(me3, 'chr'))
+                # v0.28.2: this var binds to the "me3 mod folder (target)"
+                # field on the Import-ER panel, which is documented (tooltip
+                # + helper text) as the me3 PACKAGE ROOT — parent of chr/,
+                # not chr/ itself. The importer at _roster_import appends
+                # `chr` to it on its own. The previous derivation
+                # `os.path.join(me3, 'chr')` violated that contract: it
+                # planted a /chr-ending path here, and the importer's own
+                # join then produced <root>/chr/chr. Defense-in-depth in
+                # _roster_import (smart-resolver) absorbs that case, but
+                # the right fix is to stop generating the bad path here.
+                self.chr_target_dir_var.set(me3)
             self._apply_msg_basename_derivation()
             _persist_root_paths()
 
@@ -2118,6 +2220,10 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # is preserved (still has shop/dialogue) — only the visual changes.
         # v0.19.27: default ON — playtested as solid, adds variety to NPCs.
         self.merchant_model_swap_var = tk.BooleanVar(value=True)
+        # v0.29: optional merchant-shop randomization stage (runs in the
+        # Randomize pipeline, not the bundled-file installer). Default on;
+        # loudly skips itself if the crypto deps or me3 package are missing.
+        self.shop_rando_var = tk.BooleanVar(value=True)
         # v0.23.19 / v0.24.0: Cinematic Chaos engine flag chaos_mode.
         # When ON, asymmetric NB-tier gating activates: Night Boss chrs
         # (Margit, Maliketh, Astel, etc.) become eligible at field-boss
@@ -3594,6 +3700,19 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 "launches NR through me3. Same as clicking Launch by "
                 "hand. Cancelled runs don't auto-launch.")
 
+        # v0.29: merchant-shop randomization toggle (optional stage).
+        self._shop_rando_check = ttk.Checkbutton(
+            f4, text="Randomize merchant shop",
+            variable=self.shop_rando_var)
+        self._shop_rando_check.pack(side='left', padx=(8, 0))
+        Tooltip(self._shop_rando_check,
+                "When checked, Randomize also re-rolls the expedition "
+                "merchant's shop (per the run seed) and writes the patched "
+                "regulation.bin into your me3 package. Needs the "
+                "'cryptography' and 'zstandard' packages; if missing, the "
+                "run logs a warning and skips just this stage. Same seed = "
+                "same shop.")
+
         # v0.28.x: bundled mod files installer. Static drop-ins
         # (regulation.bin + AI manifests + MMV SFX + material binders
         # today; chr/sd bnds tomorrow if we ever need them) live in
@@ -3673,6 +3792,40 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         self.log.tag_configure('dim',     foreground=THEME['text_dim'])
         self.log.tag_configure('accent',  foreground=THEME['accent'])
         self._log("Ready. Set folders and click Randomize.\n", 'dim')
+
+    def _get_dll_natives(self):
+        """DLL native paths from the Paths-tab box: one per line, stripped,
+        blanks and #comments dropped."""
+        try:
+            raw = self.dll_natives_text.get('1.0', 'end')
+        except Exception:
+            return []
+        out = []
+        for line in raw.splitlines():
+            s = line.strip()
+            if s and not s.startswith('#'):
+                out.append(s)
+        return out
+
+    def _persist_dll_natives(self, *_a):
+        try:
+            self._save_settings(dll_natives=self._get_dll_natives())
+        except Exception:
+            pass
+
+    def _add_dll_native(self):
+        """Browse for a DLL mod and append it to the natives box."""
+        path = filedialog.askopenfilename(
+            title="Select a DLL mod (e.g. SeamlessCoop's nrsc.dll)",
+            filetypes=[('DLL mods', '*.dll'), ('All files', '*.*')])
+        if not path:
+            return
+        lines = self._get_dll_natives()
+        if path not in lines:
+            lines.append(path)
+        self.dll_natives_text.delete('1.0', 'end')
+        self.dll_natives_text.insert('1.0', '\n'.join(lines))
+        self._persist_dll_natives()
 
     def _build_paths_tab(self, parent):
         """v0.24.10: every individual path picker lives here. Most users
@@ -3779,6 +3932,50 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
 
         # Paint initial indicator state now that the rows + vars exist.
         self._refresh_pathstab_indicators()
+
+        # === DLL mods / natives (v0.30) ===
+        # me3 "natives" are DLL mods (e.g. SeamlessCoop's nrsc.dll) loaded
+        # alongside the rando. When running as the shipped profile, each line
+        # below is written into the profile's own .me3 as a [[natives]] entry
+        # on every Randomize, so one launch runs the rando + these DLLs
+        # together (cf. thefifthmatt's "Add dll mods").
+        f_dll = ttk.LabelFrame(parent, text='DLL mods / natives (optional)',
+                               padding=8)
+        f_dll.pack(fill='x', padx=16, pady=4)
+        ttk.Label(f_dll,
+            text="DLL mods to load alongside the randomizer (e.g. SeamlessCoop's "
+                 "nrsc.dll). One full path per line. On each Randomize these are "
+                 "written into the profile's .me3 as [[natives]], so a single "
+                 "launch runs everything. Point at the DLL in its own mod folder "
+                 "so it finds its config — don't copy it here.",
+            style='Dim.TLabel', wraplength=720, justify='left').pack(
+                anchor='w', pady=(0, 4))
+        _dll_row = ttk.Frame(f_dll); _dll_row.pack(fill='x')
+        self.dll_natives_text = scrolledtext.ScrolledText(
+            _dll_row, height=3, wrap='none',
+            bg=THEME['surface_alt'], fg=THEME['text'],
+            insertbackground=THEME['text'], relief='flat',
+            font=(_pick_mono_font(), 10))
+        self.dll_natives_text.pack(side='left', fill='x', expand=True,
+                                   padx=(0, 4))
+        _dll_seed = '\n'.join(self._load_settings().get('dll_natives', []) or [])
+        if _dll_seed:
+            self.dll_natives_text.insert('1.0', _dll_seed)
+        self.dll_natives_text.bind('<FocusOut>', self._persist_dll_natives)
+        _dll_btns = ttk.Frame(f_dll); _dll_btns.pack(fill='x', pady=(4, 0))
+        ttk.Button(_dll_btns, text='Add DLL…',
+                   command=self._add_dll_native).pack(side='left')
+        ttk.Button(_dll_btns, text='Clear',
+                   command=lambda: (self.dll_natives_text.delete('1.0', 'end'),
+                                    self._persist_dll_natives())
+                   ).pack(side='left', padx=4)
+        if not _running_inside_profile():
+            ttk.Label(f_dll,
+                text="(Saved either way, but DLL natives are written into the "
+                     "shipped profile's own .me3 — running outside that profile "
+                     "they aren't applied to a launch.)",
+                style='Dim.TLabel', wraplength=720, justify='left').pack(
+                    anchor='w', pady=(4, 0))
 
         # === Fallback (when splice can't be done) ===
         # v0.24.105: removed. Fallback nameId is now hardwired ON with
@@ -4256,31 +4453,24 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         me3 profile chr/ folder against a spoiler's placement requirements,
         and copy missing chr files from a source game's chr/ folder
         (typically unpacked Elden Ring) into the me3 profile."""
-        # v0.23.15: vertical PanedWindow split — top pane holds controls
-        # (paths, asset packs, actions), bottom pane holds the Output log.
-        # The v0.23.14 asset-pack panel made the tab tall enough that the
-        # Output log was pushed below the fold on shorter windows. The
-        # draggable sash lets the user reclaim output space when needed.
-        # log_frame is created here so it's a sibling pane of `f` rather
-        # than a child of `f`; the rest of the function builds into `f`
-        # exactly as before.
-        paned = ttk.PanedWindow(parent, orient='vertical')
-        paned.pack(fill='both', expand=True)
-        f = ttk.Frame(paned, padding=16)
-        log_frame = ttk.LabelFrame(paned, text="Output", padding=10)
-        paned.add(f, weight=2)
-        paned.add(log_frame, weight=1)
-        # Defer initial sash placement until geometry is known — gives the
-        # output log roughly 1/3 of the visible area on first paint, so it's
-        # visible without dragging on a default-size window.
-        def _set_initial_sash():
-            try:
-                total_h = paned.winfo_height()
-                if total_h > 200:
-                    paned.sashpos(0, int(total_h * 0.66))
-            except Exception:
-                pass
-        parent.after(60, _set_initial_sash)
+        # v0.28.2: ripped out the v0.23.15 PanedWindow. The sash existed
+        # to give the user a way to reclaim Output-log space when the
+        # v0.23.14 asset-pack panel made the upper pane very tall on
+        # short windows. That asset-pack panel was REMOVED in v0.27.0
+        # (replaced by the passive Generate-tab compat banner). What
+        # remained — title + description + Paths + Actions — is now
+        # short enough not to need a draggable split, but with the sash
+        # placed at 66% of total height the upper pane was clipping its
+        # last child (the Actions LabelFrame) on default-sized windows.
+        # User-visible symptom: Diagnose and Import-roster buttons
+        # rendered as ~5px amber strips because their bottom halves were
+        # below the sash and occluded by the Output pane.
+        #
+        # New layout: linear column. Title / description / Paths /
+        # Actions get their natural sizes packed at the top, Output log
+        # takes whatever remains via fill='both', expand=True.
+        f = ttk.Frame(parent, padding=16)
+        f.pack(fill='both', expand=True)
 
         # v0.26.x: title row with the ? button on the right
         title_row = ttk.Frame(f); title_row.pack(fill='x')
@@ -4381,21 +4571,31 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 "Turn ON only to refresh stale/broken files from "
                 "source.")
 
-        make_info_icon(actions, tooltip_text=(
+        # v0.28.2: info-icon goes INSIDE btn_row so it sits inline with
+        # the buttons + checkbutton. Previously it was packed as a child
+        # of `actions` directly with side='left', but since btn_row had
+        # already taken the full width via fill='x', the info icon
+        # ended up on a phantom second row below — invisible at default
+        # window sizes, and visually wrong even when the layout fit.
+        make_info_icon(btn_row, tooltip_text=(
             "Diagnose: build the import plan and report it — how many "
             "chrs are wanted, how many each source provides, what is "
             "missing — without copying anything.\n\n"
             "Import roster: run the plan. Copies chr + AI-script files "
             "per chr (MMV folder first, Elden Ring folder as "
-            "fallback), then bulk-syncs the sfx/, material/, and sd/ "
-            "dirs. Idempotent — safe to re-run; only missing files copy.\n\n"
+            "fallback), then bulk-syncs the sfx/ and sd/ dirs "
+            "(material/ + shader/ ship via 'Install bundled mod "
+            "files' instead). Idempotent — safe to re-run; only "
+            "missing files copy.\n\n"
             "Run once after pointing at your folders; you should not "
             "need to think about chr assets again."),
-            side='left', padx=(8, 0))
+            side='left', padx=(16, 0))
 
         # === Output log ===
-        # log_frame is created up top as the bottom PanedWindow pane.
-        # We just populate it here.
+        # v0.28.2: now created here (was previously the bottom pane of
+        # the obsolete PanedWindow). Fill the remaining vertical space.
+        log_frame = ttk.LabelFrame(f, text="Output", padding=10)
+        log_frame.pack(fill='both', expand=True)
 
         self.chr_log = scrolledtext.ScrolledText(
             log_frame, wrap='word', height=14,
@@ -4520,8 +4720,27 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     f"ERR: {label} folder does not exist: {d}\n")
                 return
 
-        # target chr/ is a subdir of the me3 mod folder
-        target_chr = os.path.join(target, 'chr')
+        # v0.28.2: use the smart resolver instead of a blind
+        # os.path.join(target, 'chr'). The resolver handles three cases:
+        #   1. target is the me3 package root (documented panel semantics)
+        #      → appends 'chr' → <root>/chr  ✓
+        #   2. target already ends in /chr (user pasted the chr dir, or
+        #      saved settings from before the v0.28.2 derivation fix)
+        #      → returns as-is, no nested chr/chr  ✓
+        #   3. target is the package root and 'chr' is the same name as the
+        #      leaf → returns as-is (handled inside _resolve_asset_subdir)
+        # Without this fix a /chr-ending target produced <root>/chr/chr,
+        # which the importer then created and copied into — files landed
+        # one level too deep and the game saw nothing in <root>/chr/.
+        target_chr = self._resolve_target_chr_dir()
+        # v0.30: self-contained mode owns its package, so create the target
+        # chr/ dir instead of erroring that it doesn't exist (the old
+        # foreign-profile caution). Harmless if it already exists.
+        if _running_inside_profile() and target_chr:
+            try:
+                os.makedirs(target_chr, exist_ok=True)
+            except OSError:
+                pass
 
         def _worker():
             try:
@@ -4591,11 +4810,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     f"  chr files copied:       {res['chr_files_copied']}\n"
                     f"  AI-script files copied: {res['script_files_copied']}\n"
                     f"  sfx files copied:       {res['sfx_files_copied']}\n"
-                    f"  material files copied:  {res['material_files_copied']}\n"
                     f"  sd files copied:        {res['sd_files_copied']}\n"
                     f"  skipped (already had):  {res['files_skipped']}\n"
                     f"  total bytes copied:     "
-                    f"{res['bytes_copied']/(1024*1024):.1f} MB\n")
+                    f"{res['bytes_copied']/(1024*1024):.1f} MB\n"
+                    f"\n  (material/ + shader/ binders ship via "
+                    f"'Install bundled mod files' — not copied here.)\n")
                 if res['errors']:
                     self._chr_log_write(
                         f"\n  {len(res['errors'])} error(s):\n")
@@ -6641,6 +6861,27 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             self.mod_msg_bundle_var.set(
                 os.path.join(me3, 'msg', 'engUS', basename))
 
+    def _prepare_owned_package(self):
+        """Self-contained mode (running AS the shipped me3 profile): we own
+        package/ outright, so create every subdir we write to. The old
+        point-at-a-foreign-profile model cautiously refused to make dirs in
+        someone else's profile and errored when they were absent (e.g. the
+        'chr/ folder doesn't exist' import failure); as our own profile we
+        just make them. Returns the list of subdirs created (for logging).
+        No-op when not running inside the profile."""
+        if not _running_inside_profile():
+            return []
+        created = []
+        for sub in ('map/mapstudio', 'chr', 'event'):
+            d = os.path.join(PACKAGE_DIR, *sub.split('/'))
+            if not os.path.isdir(d):
+                try:
+                    os.makedirs(d, exist_ok=True)
+                    created.append(sub + '/')
+                except OSError:
+                    pass
+        return created
+
     def _install_bundled_files(self):
         """Generic installer for everything in the BUNDLED_INSTALLS
         registry — currently regulation.bin, aicommon AI manifests,
@@ -6689,7 +6930,23 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             for m in missing:
                 self._log(f"  • {m}\n", 'warn')
 
-        # --- 2. Confirm modal — show every file that would be copied -----
+        # --- 2. Resolve the destination first --------------------------
+        # v0.29: if the me3 package path is already configured (Generate
+        # tab — same value used by Randomize, the pre-flight check, and
+        # the launch button), use it directly. The user already picked
+        # it once; making them pick again in a second dialog was
+        # gratuitous. Only fall back to a picker if it's unset or the
+        # saved path no longer points at a directory (e.g. profile got
+        # moved or deleted since it was saved).
+        saved_pkg = self.me3_package_var.get().strip()
+        if saved_pkg and os.path.isdir(saved_pkg):
+            package_root = saved_pkg
+            picked_via_dialog = False
+        else:
+            package_root = None  # filled by the picker below, after confirm
+            picked_via_dialog = True
+
+        # --- 3. Confirm modal — show every file that would be copied -----
         msg_lines = [
             "This will copy bundled mod files into your me3 package.",
             "Existing files at each destination get a *.bak backup.",
@@ -6709,23 +6966,30 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         msg_lines.append(f"Total: {total_files} file(s) across "
                          f"{len(plan)} bundle(s).")
         msg_lines.append("")
-        msg_lines.append("Click OK to pick your me3 package directory "
-                         "(the folder that mirrors the game install).")
+        if picked_via_dialog:
+            msg_lines.append(
+                "Click OK to pick your me3 package directory "
+                "(the folder that mirrors the game install).")
+        else:
+            msg_lines.append(f"Destination: {package_root}")
+            msg_lines.append(
+                "(From the me3 package path on the Generate tab. "
+                "Click OK to install, Cancel to abort.)")
         if not messagebox.askokcancel("Install bundled mod files",
                                        "\n".join(msg_lines)):
             return
 
-        # --- 3. Pick the destination — default to saved me3_package -----
-        saved_pkg = self.me3_package_var.get().strip()
-        initial = saved_pkg if saved_pkg and os.path.isdir(saved_pkg) else HERE
-        package_root = filedialog.askdirectory(
-            title="me3 package directory (mirrors game install)",
-            initialdir=initial)
-        if not package_root:
-            self._log("Bundled install: cancelled\n", 'dim')
-            return
+        # --- 4. If we still need to pick, do it now ---------------------
+        if picked_via_dialog:
+            initial = saved_pkg if saved_pkg else HERE
+            package_root = filedialog.askdirectory(
+                title="me3 package directory (mirrors game install)",
+                initialdir=initial)
+            if not package_root:
+                self._log("Bundled install: cancelled\n", 'dim')
+                return
 
-        # --- 4. Copy with .bak backup ------------------------------------
+        # --- 5. Copy with .bak backup ------------------------------------
         copied_total = 0
         backed_up_total = 0
         for entry, content in plan:
@@ -7499,6 +7763,193 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 return
             spawn_pool_source_dir = ''  # disable for this run
 
+        # v0.28.2: bundled-files pre-flight. Check the configured me3
+        # package for each bundle's critical_file. If anything is
+        # missing, prompt the user to install before running. Skipped
+        # silently when me3_package_var is unset (no path to check
+        # against; the existing compat banner already nudges about
+        # configuring me3_package).
+        me3_pkg = self.me3_package_var.get().strip()
+        if _running_inside_profile():
+            # Self-contained: we ARE the me3 profile. Own our structure
+            # (create the dirs we write to) and don't interrogate the user
+            # about bundles. The static bundles ship pre-installed in
+            # package/; anything genuinely absent (e.g. an omitted sfx blob)
+            # is a non-blocking warning, not a Yes/No/Cancel gate.
+            _made = self._prepare_owned_package()
+            if _made:
+                self._log('package: created ' + ', '.join(_made)
+                          + ' (self-contained profile owns its structure).\n',
+                          'info')
+            try:
+                import bundle_installer as _bi
+                _chk = _bi.check_bundled_files_installed(PACKAGE_DIR)
+                if _chk['missing']:
+                    _names = ', '.join(m['bundle_dir'] for m in _chk['missing'])
+                    self._log(
+                        f"package: bundled file(s) not present: {_names}. "
+                        f"Continuing anyway — affected heritage / DLC / "
+                        f"cross-game chrs may look wrong, but the run "
+                        f"proceeds.\n", 'warn')
+            except Exception:
+                pass
+        elif me3_pkg and os.path.isdir(me3_pkg):
+            import bundle_installer as _bi
+            check = _bi.check_bundled_files_installed(me3_pkg)
+            if check['missing']:
+                missing_names = [m['bundle_dir'] for m in check['missing']]
+                lines = [
+                    f"{len(check['missing'])} of "
+                    f"{len(check['missing']) + len(check['installed'])} "
+                    f"bundled mod file(s) are NOT installed in your me3 "
+                    f"package:",
+                    "",
+                    f"   {me3_pkg}",
+                    "",
+                ]
+                for m in check['missing']:
+                    target_label = m['target_subpath'] or '<package root>'
+                    lines.append(
+                        f"   • {m['bundle_dir']} → {target_label}/"
+                        f"{m['critical_file']}")
+                lines += [
+                    "",
+                    "Without these, heritage / cross-game / DLC chrs may "
+                    "render with broken visuals, missing particle "
+                    "effects, broken AI, or crash the game.",
+                    "",
+                    "Install bundled mod files now?",
+                    "",
+                    "  Yes    — run the installer first (recommended)",
+                    "  No     — run the rando anyway (you've been warned)",
+                    "  Cancel — abort, fix things, try again",
+                ]
+                choice = messagebox.askyesnocancel(
+                    "Bundled mod files not installed",
+                    "\n".join(lines))
+                if choice is None:
+                    # Cancelled — reset the button and bail
+                    self.status_var.set("Ready")
+                    return
+                if choice is True:
+                    # Install path. _install_bundled_files runs its own
+                    # picker + confirm modal + copy; on return, re-check.
+                    self._install_bundled_files()
+                    check2 = _bi.check_bundled_files_installed(me3_pkg)
+                    if check2['missing']:
+                        still_missing = [
+                            m['bundle_dir'] for m in check2['missing']]
+                        if not messagebox.askyesno(
+                            "Some bundles still missing",
+                            f"Still missing after install:\n  • "
+                            + "\n  • ".join(still_missing)
+                            + "\n\nRun the rando anyway?"):
+                            self.status_var.set("Ready")
+                            return
+                # choice is False -> "run anyway"; fall through
+
+        # v0.29: ensure the user's .me3 profile actually points at this
+        # package. me3 doesn't auto-discover — without a [[packages]]
+        # entry the package contents are ignored at launch, even when
+        # all our files are sitting on disk in the right places. The
+        # editor is append-only: if the entry already exists it's a
+        # silent noop, and existing entries (other packages, natives,
+        # comments, formatting) are never rewritten. Logged loudly when
+        # something gets added or anything goes sideways so the user
+        # sees what happened. Skipped silently when me3_package isn't
+        # set — same don't-block stance as the bundle preflight.
+        #
+        # v0.30: when running as the shipped profile we OWN the profile's
+        # own .me3 at a known path, so regenerate it outright (package +
+        # configured DLL natives) instead of the discover-and-append path
+        # below. Deterministic (no "which .me3 is live" guessing) and it
+        # supports removing DLLs, not just adding them.
+        _dll_natives = self._get_dll_natives()
+        self._persist_dll_natives()
+        if _running_inside_profile():
+            try:
+                import me3_profile as _m3p
+                _me3_path = _profile_me3_path()
+                _hdr = ['nightreign-enemy-rando — me3 profile',
+                        'Regenerated by the randomizer on each run. Manage DLL',
+                        'mods on the Paths tab, not by editing this file.']
+                if _dll_natives:
+                    _hdr += ['', 'Active DLL mods (natives):']
+                    _hdr += [f'  {d}' for d in _dll_natives]
+                _res = _m3p.write_profile_me3(
+                    _me3_path, 'package/', game='nightreign',
+                    package_id='nightreign-enemy-rando',
+                    natives=_dll_natives, header_lines=_hdr)
+                if _res['action'] == 'written':
+                    self._log(
+                        f"me3 profile: wrote {os.path.basename(_me3_path)} "
+                        f"(package + {_res['natives']} DLL native(s)).\n",
+                        'info')
+                else:
+                    self._log(
+                        f"me3 profile: warning — couldn't write "
+                        f"{_me3_path}: {_res['detail']}. The shipped .me3 still "
+                        f"launches the rando; DLL mods may not load.\n", 'warn')
+            except Exception as _e:
+                self._log(f"me3 profile: warning — profile rewrite failed "
+                          f"({type(_e).__name__}: {_e}).\n", 'warn')
+        elif me3_pkg and os.path.isdir(me3_pkg):
+            try:
+                import me3_profile as _m3p
+                prof = _m3p.find_profile_for_package(me3_pkg)
+                if prof:
+                    res = _m3p.ensure_package_registered(prof, me3_pkg)
+                    if res['action'] == 'added':
+                        self._log(
+                            f"me3 profile: added [[packages]] entry "
+                            f"path = '{res['detail']}' to "
+                            f"{os.path.basename(prof)}\n", 'info')
+                        # Bonus: warn if the profile doesn't actually
+                        # declare nightreign as a supported game. me3
+                        # won't auto-launch from a double-click without
+                        # this; the .me3 still works via the CLI but a
+                        # user who created the profile by hand may have
+                        # missed it. Tri-valued: None = couldn't check
+                        # (no TOML lib, parse error), which we treat as
+                        # don't-warn since we can't be sure.
+                        nr_ok = _m3p.supports_nightreign(prof)
+                        if nr_ok is False:
+                            self._log(
+                                f"me3 profile: warning — "
+                                f"{os.path.basename(prof)} has no "
+                                f"[[supports]] entry for nightreign. "
+                                f"me3 won't know what game to launch "
+                                f"on double-click; add\n"
+                                f"    [[supports]]\n"
+                                f"    game = 'nightreign'\n"
+                                f"to the .me3 file.\n", 'warn')
+                    elif res['action'] == 'error':
+                        self._log(
+                            f"me3 profile: warning — couldn't update "
+                            f"{prof}: {res['detail']}. Mod files are "
+                            f"on disk but me3 may not load them. "
+                            f"Add the [[packages]] entry by hand if "
+                            f"needed.\n", 'warn')
+                    # action == 'noop' is the common case — stay silent.
+                else:
+                    # No .me3 file found near the package. Surface as a
+                    # warning — the user has output going somewhere me3
+                    # won't see it.
+                    self._log(
+                        f"me3 profile: warning — no .me3 file found "
+                        f"alongside {me3_pkg}. The rando's output will "
+                        f"land in the package, but me3 won't load it "
+                        f"until a .me3 profile declares this package. "
+                        f"Create one via the me3 CLI or by hand.\n",
+                        'warn')
+            except Exception as e:
+                # Don't let a profile-editor bug block the rando run.
+                self._log(
+                    f"me3 profile: warning — auto-register failed "
+                    f"({type(e).__name__}: {e}). Mod files will still "
+                    f"generate; you may need to add a [[packages]] "
+                    f"entry to your .me3 file by hand.\n", 'warn')
+
         # Persist folder picks for next launch
         self._save_settings(
             input_dir=in_dir,
@@ -7567,6 +8018,8 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # Snapshot config for the worker
         config = {
             'seed': seed,
+            'shop_rando': bool(self.shop_rando_var.get()),
+            'me3_package': self.me3_package_var.get().strip(),
             'in_dir': in_dir,
             'out_dir': out_dir,
             'mod_map_dir': mod_map_dir,
@@ -7937,6 +8390,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             if mod_map_dir:
                 self._copy_to_mod_folder(config['out_dir'], mod_map_dir)
 
+            # v0.29: optional merchant-shop randomization stage. Runs only
+            # after a successful enemy pass; patches the deployed
+            # regulation.bin's shop in place, keyed to the run seed.
+            if config.get('shop_rando'):
+                self._worker_shop_stage(config)
+
             # v0.26.x: Tier 3 UX #10 — emit a structured run-summary
             # payload right before __DONE__. The drain handler picks it
             # up and renders the "Last run" panel above the log so the
@@ -7967,6 +8426,68 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             self.log_queue.put(traceback.format_exc())
         finally:
             self.log_queue.put('__DONE__')
+
+    def _worker_shop_stage(self, config):
+        """v0.29 post-pass stage (worker thread): randomize the expedition
+        merchant's shop in the deployed regulation.bin, keyed to the run seed.
+        Patches the regulation already in the me3 package IN PLACE (preserving
+        its other params, with a .bak), falling back to the bundled regulation
+        when the package has none. Loud + non-fatal: the enemy run already
+        succeeded, so a shop-stage problem must never fail the whole run."""
+        import os
+        import shutil
+        q = self.log_queue
+
+        def tag(msg, t):
+            q.put(('__LOGLINE__', (msg, t)))
+
+        seed = config['seed']
+        tag("\n--- Merchant shop randomization ---\n", 'info')
+        try:
+            import regulation_rando
+        except Exception as e:
+            tag(f"  SKIPPED \u2014 regulation_rando unavailable: {e}\n", 'warn')
+            return
+        if not regulation_rando.deps_available():
+            tag("  \u26a0  SHOP NOT RANDOMIZED \u2014 needs the 'cryptography' and "
+                "'zstandard'\n", 'error')
+            tag("     Python packages. Install them in the interpreter running "
+                "this GUI:\n", 'error')
+            tag("       pip install cryptography zstandard\n", 'error')
+            return
+
+        # Resolve the me3 package root (where regulation.bin is deployed).
+        pkg = (config.get('me3_package') or '').strip()
+        if not pkg:
+            od = (config.get('out_dir') or '').rstrip('/\\')
+            cand = os.path.dirname(os.path.dirname(od)) if od else ''
+            if cand and os.path.isdir(cand):
+                pkg = cand
+        if not pkg or not os.path.isdir(pkg):
+            tag("  \u26a0  SHOP NOT RANDOMIZED \u2014 set the 'me3 package' path so the "
+                "patched\n", 'error')
+            tag("     regulation.bin can be written into your me3 profile.\n", 'error')
+            return
+
+        dest = os.path.join(pkg, 'regulation.bin')
+        src = dest if os.path.isfile(dest) else os.path.join(
+            HERE, 'bundled_regulation', 'regulation.bin')
+        if not os.path.isfile(src):
+            tag("  \u26a0  SHOP NOT RANDOMIZED \u2014 no regulation.bin in the package "
+                "or bundled_regulation/\n", 'error')
+            return
+        try:
+            if os.path.isfile(dest):
+                shutil.copy2(dest, dest + '.bak')
+            res = regulation_rando.randomize_regulation(
+                src, dest, seed, log=lambda line: q.put(line))
+            tag(f"  \u2713 merchant shop randomized: {res['shop_slots']} slots "
+                f"(seed {seed})\n", 'success')
+            tag(f"    \u2192 {dest}\n", 'success')
+        except Exception as e:
+            import traceback
+            tag(f"  \u26a0  shop randomization FAILED: {e}\n", 'error')
+            q.put(traceback.format_exc())
 
     def _copy_to_mod_folder(self, src_dir, dest_dir):
         """Copy *.msb.dcx files from src_dir into dest_dir.
@@ -8529,7 +9050,17 @@ def main():
     # runs, so the saved-paths load flow picks it up naturally — no
     # extra plumbing required.
     saved = _load_saved_paths()
-    if args.setup or should_run_wizard(saved):
+    # v0.30: a self-contained build ships AS its own me3 profile, so the
+    # shuffled files go into our OWN package/ — "where's your me3 profile"
+    # isn't a question to ask. Trigger the wizard only when the NR install
+    # still needs setting; the package is auto-filled to PACKAGE_DIR (for the
+    # wizard here, and again on GUI init) so the user is never prompted to
+    # point at a profile the rando would then ignore.
+    if _running_inside_profile():
+        _need_wizard = bool(args.setup) or not saved.get('game_install', '').strip()
+    else:
+        _need_wizard = bool(args.setup) or should_run_wizard(saved)
+    if _need_wizard:
         # v0.27.x: pre-populate the wizard's config with Steam autodetect
         # results BEFORE opening it. Previously the wizard received the
         # raw (empty) saved dict and showed empty install fields even on
@@ -8537,6 +9068,8 @@ def main():
         # Filling here means the wizard opens with the right paths already
         # in place; the user just confirms instead of manually browsing.
         wizard_config, _filled = _autodetect_paths(saved)
+        if _running_inside_profile() and not wizard_config.get('me3_package', '').strip():
+            wizard_config['me3_package'] = PACKAGE_DIR
         root.withdraw()  # hide main window during wizard
         try:
             wiz = FirstLaunchWizard(root, initial_config=wizard_config)

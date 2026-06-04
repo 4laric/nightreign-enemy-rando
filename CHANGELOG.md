@@ -1,3 +1,201 @@
+## v0.30 — me3-profile distribution + DLL mods
+
+Packaging/UX change layered on the v0.29 engine. The randomizer now ships AS
+a me3 profile and runs self-contained, in the style of thefifthmatt's
+randomizer: extract the zip, run the launcher, click Randomize, double-click
+the bundled `nightreign-enemy-rando.me3`. No package path to configure, no
+`.me3` to hand-edit, no separate bundled-file install step.
+
+Layout when extracted:
+
+    nightreign-enemy-rando/
+    ├── nightreign-enemy-rando.me3   ← the launchable profile
+    ├── randomize.pyw / randomize.sh ← launcher
+    ├── package/                     ← what me3 loads (regulation.bin, map/, chr/, …)
+    └── _rando/                      ← the tool (me3 never looks here)
+
+DLL mods (natives) — new:
+- A "DLL mods / natives" box on the Paths tab takes one DLL path per line
+  (e.g. SeamlessCoop's `nrsc.dll`). On every Randomize, the rando regenerates
+  its own `.me3` with one `[[natives]]` entry per line, so a single launch
+  runs the randomizer + those DLLs together — the same idea as thefifthmatt's
+  "Add dll mods". Point at each DLL in its own mod folder so it finds its
+  config; don't copy it into the profile.
+- Because the rando OWNS its `.me3` at a known path (the profile root), it
+  regenerates the file outright rather than guessing which `.me3` is "live"
+  and appending to it. That regenerate-don't-append design is also what lets
+  the list support removing a DLL, not just adding one.
+- `.me3` generation is centralized in `me3_profile.build_me3_text`, shared by
+  the build script (shipped baseline, package-only) and the GUI (runtime
+  rewrite, package + natives), so the two always agree on format.
+
+GUI defaults:
+- When running as the shipped profile (its dir is `_rando` with a sibling
+  `.me3`), the me3 package path defaults to the bundled `package/`, which
+  cascades to output/EMEVD/chr automatically. Dev/test runs are unaffected.
+
+Self-contained ownership (resolves the half-migrated "point at a profile"
+vs "be the profile" split):
+- The randomizer now fully OWNS its `package/` when running as the shipped
+  profile. It creates the subdirs it writes to (`map/mapstudio/`, `chr/`,
+  `event/`) instead of erroring when they're absent — the old model
+  cautiously refused to make dirs in a foreign profile, which surfaced as
+  the "Target chr/ folder doesn't exist" import failure. As our own
+  profile, we just make them.
+- The bundled-files preflight no longer interrupts a self-contained run
+  with a Yes/No/Cancel prompt. The static bundles ship pre-installed in
+  `package/`; anything genuinely absent (e.g. an omitted sfx blob) is a
+  non-blocking log warning. The cautious prompt is kept only for the
+  non-self-contained case (a dev checkout pointing at an external profile).
+- The first-launch wizard no longer asks you to "pick your me3 profile
+  folder" when the build is self-contained — output is its own `package/`,
+  not a question. The wizard now triggers only if the Nightreign install
+  still needs setting, and the package field is pre-filled to `package/`.
+  This removes the trap where pointing the wizard at a separate profile
+  created a second `package/` that never received the generated maps.
+
+Build / manifest:
+- The release manifest was completed so the shipped bundle actually imports.
+  The v0.29 manifest had carried the v0.28 module list unchanged and omitted
+  ten first-party modules the GUI/engine import (`night_role`,
+  `regulation_rando`/`regulation_io`/`merchant_shop_fill`, `me3_profile`,
+  `bundle_installer`, the two GUI panel mixins, `apply_slot_repositions`,
+  `chr_asset_resolver`) — a guaranteed `ModuleNotFoundError` from the
+  extracted bundle. `tests/test_build_manifest_completeness.py` now passes.
+- The build is registry-driven (`bundle_installer.BUNDLED_INSTALLS`), so the
+  v0.29 `material` and `shader` bundles are picked up automatically. The
+  ~182 MB sfx blob deploys once (no duplicate reference copy).
+
+Note: `V3_ENGINE_FINGERPRINT` is bumped to `v0.30`. It only affects the
+version string shown in spoilers/filenames — it does not feed the RNG, so no
+seed's randomization changes.
+
+## v0.29
+
+Adds an optional **merchant-shop randomization** stage to the Randomize
+pipeline. With "Randomize merchant shop" checked (next to the Randomize
+button, default on), Randomize re-rolls the expedition (Nomadic/Wandering)
+merchant's stock for the run seed and writes the patched regulation.bin into
+your me3 package - so the shop rerolls together with the enemies, off the same
+seed. Both shop copies (ungated 600000-600022 + the gated 1600101-1600123
+mirror) roll independently; same seed = same shop.
+
+The stage patches the regulation already in your me3 package IN PLACE
+(preserving its other params, with a .bak), falling back to the bundled
+regulation when the package has none. It runs only after a successful enemy
+pass and is non-fatal: if the deps or the me3 package path are missing it logs
+a loud "SHOP NOT RANDOMIZED" warning and skips just that stage.
+
+(Interim builds bolted this onto the "Install bundled mod files" button; that
+hook is removed - the bundled regulation install is a plain copy again.)
+
+How it works:
+- `regulation_io.py`: reads/patches the encrypted regulation in Python
+  (AES-256-CBC + ZSTD-DCX, then in-place fixed-width ShopLineupParam field
+  edits - no row add/remove, no Smithbox step; no-edit round-trip is
+  byte-identical, the key/IV/padding canary).
+- `merchant_shop_fill.py` builds the roll; `regulation_rando.py` is the entry
+  point the Randomize stage calls (one decrypt/recompress/encrypt cycle).
+- `data/regulation_pools.json` (377 weapons / 61 talismans / 92 goods, baked +
+  intersected with the shipping regulation) + `data/merchant_shop_slots.json`.
+
+Note: the stage randomizes which item sits in each shop slot (verified
+in-repo). It also writes a per-slot price into ShopLineupParam.value, but NR
+appears to price this merchant from each item's intrinsic value rather than
+that field, so the price write may have no visible effect - to be confirmed
+in-game.
+
+Dependencies: `pip install cryptography zstandard` into the interpreter that
+launches the GUI. `check_setup.py` reports their presence. Offline / me3 only.
+
+Tests: `tests/test_regulation_rando.py`.
+
+Also rolled into this release — the v0.28.3-in-progress patch cycle never cut
+a separate stop, so its content lands here:
+
+## v0.28.3 (folded into v0.29)
+
+Post-v0.28.2 patch cycle. Contents:
+
+Import-ER panel:
+- "Elden Ring folder" auto-populates from the wizard-set `er_install`
+  on next launch. `_derive_from_er_install` only filled
+  `chr_source_dir_var` before; now also fills `roster_er_dir_var` with
+  the same empty-guard pattern. Reported: wizard set ER path, panel
+  rendered empty, user had to re-paste.
+- "me3 mod folder (target)" stops auto-appending `/chr`. The field is
+  documented (tooltip + helper text) as the package root — the
+  importer adds `chr` to it on its own. `_derive_from_me3` was setting
+  `chr_target_dir_var = os.path.join(me3, 'chr')`, planting a
+  `/chr`-ending path the importer's own join then nested into
+  `<root>/chr/chr`. Files landed one level too deep and the game saw
+  empty `<root>/chr/`.
+- Defense-in-depth: `_roster_import` now uses
+  `self._resolve_target_chr_dir()` instead of a blind
+  `os.path.join(target, 'chr')`. So `/chr`-ending paths in saved
+  settings (from before this fix) or manually-pasted from the
+  `heritage_chr_import.py` docstring still resolve correctly.
+
+Bundled assets:
+- New `bundled_shader/` directory ships MMV's DLC shader binder
+  (`shaderbdle_dlc01.shaderbdlebnd.dcx`, ~39 MB). The material binder
+  (in `bundled_material/`) is the *registry* mapping material names →
+  shader IDs + parameters; this is the *shader programs themselves*
+  — the compiled HLSL→DXBC bytecode the GPU runs. The two layers
+  travel together: a material entry that references shader ID
+  `S_xxxx` is dead if `S_xxxx` isn't in the loaded shader binder.
+  NR's vanilla shader binder is missing entries that ER-DLC heritage
+  chrs need, so the affected chrs were rendering with broken / black
+  surfaces even after bundled_material landed in v0.28.2.
+- `BUNDLED_INSTALLS` registry grew the
+  `bundled_shader → shader/` entry; INCLUDE_DIRS picked up
+  `bundled_shader/`. The Generate-tab installer iterates the
+  registry automatically; no GUI code changes needed. Same
+  `.bak`-backup semantics as the other entries. The total file
+  count in the install button is now seven (regulation + 2×aicommon
+  + sfx + 2×material + shader).
+
+Heritage importer:
+- The roster importer no longer bulk-syncs the source `material/`
+  directory. Previously, calling Import roster would copy MMV's
+  entire `material/` dir (potentially hundreds of files) to the me3
+  package as a side effect. Now that the relevant material binders
+  ship via `bundled_material/` + `bundled_shader/` and deploy through
+  the "Install bundled mod files" button, the importer's bulk copy
+  was duplicating work AND surfaced two problems: (a) users got a
+  ~GB of files on first import without realizing what they were
+  getting, (b) any rando-specific material patching layered on top
+  of MMV's binders got silently clobbered. Material is now
+  install-button-only. The result-dict key
+  `material_files_copied` is preserved (always 0) for backward
+  compat with callers that read it; the GUI's import-results display
+  drops the material line and adds a one-line note pointing at the
+  install button. `sfx/` and `sd/` continue to be bulk-synced by the
+  importer.
+
+Generate-tab pre-flight:
+- Randomize button now pre-flights bundled-files installation. On
+  click, before any worker thread spins up, the GUI inspects the
+  configured me3 package and reports which `BUNDLED_INSTALLS`
+  entries are missing their critical_file at the deploy path. If
+  anything is missing the user gets a 3-button modal:
+  - Yes — invoke the install flow first, then re-check before
+    proceeding
+  - No — run the rando anyway (the warning makes the consequences
+    explicit)
+  - Cancel — abort the run
+- The same check now also runs inside `compatibility_preflight()`,
+  so the passive Generate-tab compatibility banner surfaces the
+  missing-bundles state during normal browsing — the user doesn't
+  have to click Randomize to discover the issue.
+- New `bundle_installer.check_bundled_files_installed(package_root)`
+  helper centralizes the check logic. Returns
+  `{installed: [...], missing: [...], unchecked: bool}` where
+  `unchecked=True` signals "no path to check against" (caller
+  should treat as can't-tell, not all-missing).
+
+
+
 ## v0.28.2
 
 Cuts the v0.28.2 release. Contents below are everything that landed

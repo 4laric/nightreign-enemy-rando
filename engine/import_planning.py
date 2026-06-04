@@ -232,6 +232,59 @@ def compatibility_preflight(ns, target_chr_dir):
             })
 
     # === Roll-up status ===
+    # === Check N: bundled mod files installed in me3 package ===
+    # v0.28.2: surfaces the same check the Generate-tab pre-flight
+    # modal runs, so the user sees the issue in the passive banner
+    # without having to click Randomize first. target_chr_dir is the
+    # chr/ subdir of the package; derive the package root by going
+    # up one level. Uses bundle_installer.check_bundled_files_installed
+    # which inspects every BUNDLED_INSTALLS entry's critical_file at
+    # its deploy path.
+    try:
+        import sys as _sys
+        import os as _os
+        _here = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+        if _here not in _sys.path:
+            _sys.path.insert(0, _here)
+        import bundle_installer as _bi
+        _pkg = _os.path.dirname(target)
+        _bundles = _bi.check_bundled_files_installed(_pkg)
+    except Exception:
+        _bundles = None
+    if _bundles and not _bundles.get('unchecked'):
+        if _bundles['missing']:
+            n_missing = len(_bundles['missing'])
+            n_total = n_missing + len(_bundles['installed'])
+            preview = ', '.join(m['bundle_dir']
+                                 for m in _bundles['missing'][:3])
+            if n_missing > 3:
+                preview += f' (+{n_missing - 3} more)'
+            checks.append({
+                'id': 'bundled_files_installed',
+                'name': 'Bundled mod files installed',
+                'severity': 'warn',
+                'message': (f"{n_missing} of {n_total} bundled file(s) "
+                            f"not installed: {preview}"),
+                'detail': ("Click 'Install bundled mod files' on the "
+                           "Generate tab to deploy MMV's regulation, "
+                           "AI manifests, SFX, material binders, and "
+                           "shader binder to your me3 package. Without "
+                           "them, heritage / cross-game / DLC chrs may "
+                           "render with broken visuals, missing particle "
+                           "effects, or fail to load. The Randomize "
+                           "button will also prompt you to install if "
+                           "anything is missing when you start a run."),
+            })
+        else:
+            checks.append({
+                'id': 'bundled_files_installed',
+                'name': 'Bundled mod files installed',
+                'severity': 'ok',
+                'message': (f"All {len(_bundles['installed'])} bundled "
+                            f"file(s) present in me3 package."),
+                'detail': '',
+            })
+
     severities = [c['severity'] for c in checks]
     if 'fail' in severities:
         status = 'fail'
@@ -875,10 +928,10 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
 
     Copies chr + script files (each entry carries its own resolved source
     dir, so MMV-origin and ER-origin chrs are handled in one pass), then
-    bulk-syncs the sfx/, material/, and sd/ directories.
+    bulk-syncs the sfx/ and sd/ directories.
 
-    SFX / material / sd sync follows the same MMV-first, ER-fallback rule
-    as the chr routing: if the MMV dir has an sfx/ (or material/, or sd/)
+    SFX / sd sync follows the same MMV-first, ER-fallback rule
+    as the chr routing: if the MMV dir has an sfx/ (or sd/)
     subdir it is used; otherwise the ER dir's is. These are bulk dir-to-dir
     copies -- the bundles are shared and not per-chr matchable. Idempotent
     skip-existing keeps re-runs cheap.
@@ -892,7 +945,20 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
     banks. If MMV instead REPLACES a monolithic bank NR also has (e.g. a
     re-authored enemy.fsb), skip-existing will leave NR's copy in place and
     the new sound won't take -- the user must run with overwrite=True. Same
-    limitation the sfx/ and material/ syncs already carry.
+    limitation the sfx/ sync already carries.
+
+    v0.28.2: material/ is NO LONGER bulk-synced here. The MMV material
+    binders (allmaterial.matbinbnd.dcx + DLC) and the paired DLC shader
+    binder are now shipped directly via bundled_material/ + bundled_shader/
+    and deployed by the GUI's "Install bundled mod files" button. The
+    importer used to copy the entire MMV material/ dir wholesale, which
+    duplicated work AND surfaced two problems: (a) on first import users
+    got a ~GB of files they didn't realize they were getting, (b) any
+    rando-specific material patching layered on top of MMV's binders got
+    silently clobbered by the bulk copy. Material now lives behind one
+    install action with explicit user consent. The `material_files_copied`
+    key stays in the result dict (always 0) for backward compat with
+    callers that read it -- the GUI's display line is gone.
 
     `progress_cb`, if given, is called progress_cb(cp, fname, seen, total,
     status) per file, mirroring execute_bulk_chr_import.
@@ -901,6 +967,7 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
         {'chr_files_copied', 'script_files_copied', 'files_skipped',
          'bytes_copied', 'sfx_files_copied', 'material_files_copied',
          'sd_files_copied', 'errors': [...]}
+    (material_files_copied is always 0 as of v0.28.2 -- see above.)
     """
     # (no module-level dependencies)
     import os, shutil
@@ -964,7 +1031,8 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
                 f"{cp}: {len(e['script_files'])} script files NOT copied "
                 f"-- no script source/target dir resolved")
 
-    # --- SFX + material + sd bulk sync (MMV-first, ER-fallback) ---
+    # --- SFX + sd bulk sync (MMV-first, ER-fallback) ---
+    # v0.28.2: material/ removed -- bundled separately, see docstring.
     def _pick_subdir(name):
         for root in (mmv_dir, er_dir):
             if not root:
@@ -977,7 +1045,6 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
 
     tgt_parent = os.path.dirname(os.path.abspath(tgt_chr))
     for name, key in (('sfx', 'sfx_files_copied'),
-                      ('material', 'material_files_copied'),
                       ('sd', 'sd_files_copied')):
         src_dir = _pick_subdir(name)
         if not src_dir:

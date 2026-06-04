@@ -45,31 +45,32 @@ def deps_available():
 
 
 def randomize_regulation(in_bin, out_bin, seed, *, data_dir=None,
-                         type_weights=DEFAULT_TYPE_WEIGHTS,
-                         price_range=DEFAULT_PRICE_RANGE, allow_dups=False,
-                         zstd_level=17, spoiler_path=None, log=None):
-    """Decrypt in_bin, randomize the expedition merchant shop for `seed`, write
-    out_bin. One decrypt/recompress/encrypt cycle. Returns
-    {'shop_slots': int, 'spoiler': [...]}.
+                         price_range=None, zstd_level=17, spoiler_path=None,
+                         log=None, **_legacy):
+    """Decrypt in_bin, randomize every expedition-merchant Set slot for `seed`,
+    write out_bin. One decrypt/recompress/encrypt cycle. Returns
+    {'shop_slots': int, 'sets': int, 'spoiler': [...]}.
+
+    Each Set slot's equipId is swapped for a random item of the same equipType
+    from that merchant family's pool; equipType and value are preserved. The
+    engine picks one Set per seed, so randomizing all Sets covers whatever the
+    player rolls. (**_legacy swallows old type_weights/price_range kwargs.)
     """
     data_dir = data_dir or os.path.join(HERE, "data")
-    pools = _shop.load_pools_baked(os.path.join(data_dir, "regulation_pools.json"))
-    manifest = json.load(open(os.path.join(data_dir, "merchant_shop_slots.json"),
-                              encoding="utf-8"))
-    tw = {"weapon": type_weights[0], "talisman": type_weights[1], "good": type_weights[2]}
-    patches, spoiler = _shop.roll(manifest, pools, seed, tw, tuple(price_range), allow_dups)
+    slot_data = _shop.load_slots(os.path.join(data_dir, "merchant_shop_slots.json"))
+    patches, spoiler = _shop.roll(slot_data, seed, price_range=price_range)
 
     reg = R.Regulation.load(in_bin)
-    _shop.apply_patches(reg, patches)
+    n = _shop.apply_patches(reg, patches)
     reg.save(out_bin, level=zstd_level)
 
+    lo, hi = price_range or slot_data.get("price_range", _shop.DEFAULT_PRICE_RANGE)
     if spoiler_path:
         json.dump(spoiler, open(spoiler_path, "w", encoding="utf-8"), indent=2)
     if log:
-        n = len(manifest["merchants"])
-        log(f"  merchant shop randomized: {len(patches)} slots across "
-            f"{n} merchant cop{'y' if n == 1 else 'ies'} (seed {seed})\n")
-    return {"shop_slots": len(patches), "spoiler": spoiler}
+        log(f"  merchant shop randomized (PURE CHAOS): {n} rows, items + random "
+            f"prices {lo}-{hi} (seed {seed})\n")
+    return {"shop_slots": n, "spoiler": spoiler}
 
 
 def _main(argv=None):

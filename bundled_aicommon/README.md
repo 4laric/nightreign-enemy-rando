@@ -51,7 +51,7 @@ Previous versions of this README left this as a "pending confirmation"
 caveat. As of v0.28.x it's confirmed: MMV's `aicommon` ships
 permanently. The same playtest also confirmed `bundled_sfx/`'s MMV
 SFX bundle is required, and `bundled_material/`'s MMV material
-binders are required for heritage chr shaders — the four bundles
+binders are required for heritage chr shaders — the five bundles
 (regulation + aicommon + sfx + material) travel together as the
 canonical MMV-derived asset base.
 

@@ -139,7 +139,18 @@ def dcx_compress(inner: bytes, template_dcx: bytes, level: int = 17) -> bytes:
         )
     data_start = template_dcx.find(_ZSTD_MAGIC)
     import zstandard as zstd
-    frame = zstd.ZstdCompressor(level=level).compress(inner)
+    # NR's regulation DCX uses a ZSTD frame with windowLog=16 (64 KiB window)
+    # and no content-size / checksum / dict-id in the frame header (FHD=0x00).
+    # The game's decompressor is built for that small window and CRASHES (CTD
+    # on regulation load) when handed a frame that declares a larger window —
+    # which is what ZstdCompressor's default level-17 settings produce
+    # (windowLog ~23). So cap window_log to 16 and match vanilla's frame-header
+    # structure. `level` only affects output size now; the window cap is the
+    # hard correctness constraint, not an optimization.
+    cparams = zstd.ZstdCompressionParameters.from_level(
+        level, window_log=16,
+        write_content_size=0, write_checksum=0, write_dict_id=0)
+    frame = zstd.ZstdCompressor(compression_params=cparams).compress(inner)
     header = bytearray(template_dcx[:data_start])
     struct.pack_into(">I", header, 0x20, len(frame))  # compressedSize (big-endian)
     return bytes(header) + frame
@@ -272,7 +283,14 @@ class Regulation:
     # -- serialization -------------------------------------------------------
     def to_bytes(self, key: bytes = NR_REGULATION_KEY, level: int = 17) -> bytes:
         dcx = dcx_compress(bytes(self.bnd), self._dcx_template, level=level)
-        return aes_encrypt(dcx, key, pkcs7=True)
+        # Match vanilla's AES layout: the regulation is zero-padded to a 16-byte
+        # multiple and encrypted with NO PKCS7 (the game decrypts PaddingMode.None
+        # and reads the inner DCX by its recorded size). PKCS7 would append 0x0e
+        # bytes vanilla never has; zero-pad keeps the plaintext byte-for-byte the
+        # shape FromSoft / SoulsFormats produce.
+        if len(dcx) % 16:
+            dcx = dcx + b"\x00" * (16 - len(dcx) % 16)
+        return aes_encrypt(dcx, key, pkcs7=False)
 
     def save(self, path: str, key: bytes = NR_REGULATION_KEY, level: int = 17) -> None:
         with open(path, "wb") as f:

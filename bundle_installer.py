@@ -67,6 +67,17 @@ BUNDLED_INSTALLS = [
                           'SHARED_DEPS "material/")',
         'critical_file':  'allmaterial.matbinbnd.dcx',
     },
+    {
+        'bundle_dir':     'bundled_shader',
+        'target_subpath': 'shader',
+        'description':    "MMV's DLC shader binder "
+                          "(shaderbdle_dlc01.shaderbdlebnd.dcx, ~39 MB) — "
+                          "the compiled shader programs the DLC material "
+                          "entries reference. Material binder + shader "
+                          "binder travel together; without this, DLC "
+                          "heritage chrs render with broken surfaces.",
+        'critical_file':  'shaderbdle_dlc01.shaderbdlebnd.dcx',
+    },
 ]
 
 
@@ -85,3 +96,65 @@ def list_bundle_content_files(bundle_dir_abs: str) -> list[str]:
         if os.path.isfile(full):
             out.append(full)
     return out
+
+
+def check_bundled_files_installed(package_root: str) -> dict:
+    """Inspect the user's me3 package and report which bundles are
+    deployed vs missing.
+
+    For each entry in BUNDLED_INSTALLS, checks whether
+    ``<package_root>/<target_subpath>/<critical_file>`` exists. The
+    critical_file is the bundle's required-file marker — the same one
+    the install button validates against the SOURCE bundle dir. Reusing
+    it here means "did the install button actually run successfully"
+    is the question being answered: presence of the critical_file at
+    the deploy path is the canonical signal.
+
+    Used by:
+      - oops_rando_gui._run_shuffle to prompt the user to install
+        before a randomize run kicks off
+      - compatibility_preflight to surface the same check in the
+        passive Generate-tab banner
+
+    Args:
+        package_root: absolute path of the me3 package
+            (i.e. ``<me3 profile>/<package>``, the directory that
+            mirrors the game install)
+
+    Returns dict with keys:
+        ``installed``  list[dict] — bundles whose critical_file is present
+        ``missing``    list[dict] — bundles whose critical_file is absent
+        ``unchecked``  bool — True if ``package_root`` is blank/invalid,
+                       in which case ``installed`` + ``missing`` are empty
+                       and the caller should treat this as "can't tell"
+                       rather than "all missing"
+
+    Each entry dict carries:
+        ``bundle_dir``      — registry entry's bundle_dir
+        ``target_subpath``  — registry entry's target_subpath
+        ``critical_file``   — registry entry's critical_file
+        ``description``     — registry entry's description
+        ``expected_path``   — the absolute path that was checked
+    """
+    pkg = (package_root or '').strip()
+    if not pkg or not os.path.isdir(pkg):
+        return {'installed': [], 'missing': [], 'unchecked': True}
+
+    installed = []
+    missing = []
+    for entry in BUNDLED_INSTALLS:
+        target_dir = (os.path.join(pkg, entry['target_subpath'])
+                      if entry['target_subpath'] else pkg)
+        expected = os.path.join(target_dir, entry['critical_file'])
+        rec = {
+            'bundle_dir':     entry['bundle_dir'],
+            'target_subpath': entry['target_subpath'],
+            'critical_file':  entry['critical_file'],
+            'description':    entry['description'],
+            'expected_path':  expected,
+        }
+        if os.path.isfile(expected):
+            installed.append(rec)
+        else:
+            missing.append(rec)
+    return {'installed': installed, 'missing': missing, 'unchecked': False}

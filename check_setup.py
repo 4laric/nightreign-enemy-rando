@@ -187,6 +187,20 @@ else:
         "will default to it."
     )
 
+# Optional: merchant-shop regulation randomization (v0.29)
+print("\n[+] Merchant-shop randomization (optional, v0.29)")
+try:
+    import cryptography  # noqa: F401
+    import zstandard  # noqa: F401
+    print("  OK  cryptography + zstandard present — the bundled regulation will")
+    print("      have its expedition-merchant shop randomized per seed when you")
+    print("      use the \"Randomize merchant shop\" stage.")
+except Exception:
+    print("  --  cryptography and/or zstandard NOT installed (optional). The")
+    print("      \"Randomize merchant shop\" stage is skipped (run logs a warning).")
+    print("      Enable it with:")
+    print("        pip install cryptography zstandard")
+
 # Summary
 print()
 print("=" * 60)

@@ -624,7 +624,7 @@ def build_me3_profile_template(profile_name,
 
     Schema (me3 v1 profile format):
         profileVersion = "v1"
-        [supports]
+        [[supports]]
             game = "<game>"
         [[packages]]
             id = "<id>"
@@ -635,7 +635,7 @@ def build_me3_profile_template(profile_name,
         f'# See https://github.com/garyttierney/me3 for the full schema.\n'
         f'profileVersion = "v1"\n'
         f'\n'
-        f'[supports]\n'
+        f'[[supports]]\n'
         f'game = "{game}"\n'
         f'\n'
         f'[[packages]]\n'

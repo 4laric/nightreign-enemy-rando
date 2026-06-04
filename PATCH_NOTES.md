@@ -1,4 +1,54 @@
-# v0.28.2 — what's new
+# v0.28.3 (unreleased) — what's new
+
+## DLC heritage chr surfaces fixed
+
+v0.28.2 added MMV's material binders, which got DLC-heritage chr
+materials *resolving* to a shader ID. But the shader binder NR
+ships in vanilla was missing the actual programs those IDs name, so
+DLC-heritage chrs still rendered with broken or black surfaces.
+v0.28.3 bundles MMV's `shaderbdle_dlc01.shaderbdlebnd.dcx` (the
+compiled shader programs themselves) to close the loop. The "Install
+bundled mod files" button now does seven copies in one click; five
+bundles travel together (regulation + aicommon + sfx + material +
+shader).
+
+## Generate tab pre-flights bundled-file installation
+
+Click Randomize without the bundled mod files installed and you
+now get a 3-button modal listing exactly what's missing, with
+options to install first, run anyway, or cancel. The same check
+runs in the passive compatibility banner on the Generate tab, so
+you can spot the issue without clicking Randomize. Skipped when
+the me3 package path isn't set — same don't-block behavior the
+banner has for that case.
+
+## Import Elden Ring panel: two field-handling fixes
+
+- The "Elden Ring folder" field now auto-populates from the wizard.
+  Previously the wizard set the path internally but the panel
+  rendered empty, forcing you to re-paste the same value.
+- The "me3 mod folder (target)" field no longer gets a stray `/chr`
+  suffix appended automatically. The panel's tooltip + helper text
+  documented this field as the package root; the auto-derive was
+  contradicting that by adding `/chr`, causing the importer to
+  produce a nested `<root>/chr/chr` directory where files landed
+  one level too deep and the game saw nothing. If your saved
+  setting still has `/chr` on the end from a previous launch, the
+  importer's smart-resolver handles it correctly now; or just clear
+  the field once and the re-derive picks the right root.
+
+## Heritage importer trims down
+
+The Import roster button no longer bulk-copies MMV's `material/`
+directory wholesale. The material binders that the heritage chrs
+actually need now ship via `bundled_material/` + `bundled_shader/`
+and deploy through the install button. The importer used to dump
+~GB of `material/` files into your me3 package as a side effect;
+now it copies only chr + script + sfx + sd assets (still bulk for
+sfx/sd, per-roster for chr/script). The import-results display
+notes that material/shader live behind the install button now.
+
+
 
 ## Heritage chrs look right out of the box
 

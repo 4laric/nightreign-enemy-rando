@@ -37,7 +37,7 @@ than shipping MMV's bundle.
 
 This is the same "MMV is the canonical asset base" pattern as
 `bundled_regulation/regulation.bin`, `bundled_aicommon/`, and
-`bundled_sfx/`. The four bundles travel together.
+`bundled_sfx/`. The five bundles travel together.
 
 ## Deployment
 

@@ -1,3 +1,45 @@
+# v0.30 — what's new
+
+## Ships as a self-contained me3 profile
+
+The randomizer is now its own me3 profile. Extract it anywhere, run the GUI,
+click Randomize, and double-click `nightreign-enemy-rando.me3` to play —
+that's the whole flow. No more creating a me3 profile, pointing the tool at
+one, or copying files into place. The pre-patched `regulation.bin` and MMV's
+aicommon / sfx / material / shader bundles ship already deployed inside the
+profile's `package/` folder, and the bundled `.me3` already points at it.
+
+If you used to drag the bundle into an existing me3 profile, you don't anymore
+— the folder *is* the profile. Just launch its `.me3`.
+
+## Run Seamless Co-op (and other DLL mods) alongside the rando
+
+New on the **Paths** tab: a **DLL mods / natives** box. Add a DLL — e.g.
+`nrsc.dll` from your SeamlessCoop folder — and every Randomize writes it into
+the profile's `.me3` as a `[[natives]]` entry, so a single launch runs the
+randomizer and your DLL mods together. Point at the DLL in its own mod folder
+so it finds its config; don't copy it into the profile. Removing a DLL from the
+list removes it on the next Randomize.
+
+## The rando owns its own structure now
+
+Because it *is* the profile, it just creates the folders it needs
+(`map/mapstudio/`, `chr/`, `event/`) instead of erroring that they don't exist,
+and it no longer interrupts a run with a "bundled files aren't installed"
+prompt — those ship pre-installed. The first-launch setup wizard no longer asks
+you to pick a me3 profile folder; it only asks for your Nightreign install, and
+only if it can't auto-detect one.
+
+(The "install bundled files" button and the Randomize pre-flight prompt from
+v0.28.3 still exist for advanced setups that point the tool at an *external*
+me3 profile, but the shipped profile never needs them.)
+
+## Launch options
+
+Double-click the `.me3`, click **Launch** in the GUI, or turn on **auto-launch
+after generate** so a finished roll starts the game for you. You never drag the
+folder into another profile.
+
 # v0.28.3 (unreleased) — what's new
 
 ## DLC heritage chr surfaces fixed

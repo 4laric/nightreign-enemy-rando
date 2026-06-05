@@ -13,6 +13,10 @@ The MSB rando. Swaps enemies within Nightreign's existing world layout.
 
 ### Setup
 
+The shipped profile's GUI auto-detects the Oodle DLL from your NR install,
+so most people can skip this. If it can't find it (or you're running from a
+source checkout):
+
 1. Find Nightreign's Oodle DLL. It's at:
    ```
    <Steam library>/steamapps/common/ELDEN RING NIGHTREIGN/Game/oo2core_*_win64.dll
@@ -32,11 +36,15 @@ The MSB rando. Swaps enemies within Nightreign's existing world layout.
 
 ### Generate
 
+In the shipped profile, run the launcher at the profile root:
+
 ```
-python oops_rando_gui.py
+randomize.pyw          # Windows: double-click (no console)
+./randomize.sh         # macOS / Linux
 ```
 
-Or via CLI:
+From a source checkout it's `python oops_rando_gui.py` (the launcher just
+adds `_rando/` to the path and runs the same GUI). Or via CLI:
 
 ```
 python dcx_batch.py rando \
@@ -72,11 +80,16 @@ This produces:
 
 ### Install
 
-Drop the `.msb.dcx` files into your me3 profile under `<package>/map/mapstudio/`.
+**GUI (shipped profile):** nothing to do. The rando *is* the me3 profile, so
+the GUI writes the `.msb.dcx` files straight into its own
+`package/map/mapstudio/` (creating the folder if needed). Just launch
+`nightreign-enemy-rando.me3` when the run finishes — or use the GUI's Launch
+button / auto-launch toggle. You never copy files or create a profile.
 
-If you don't have a me3 profile yet, see the me3 docs for setup. The short
-version: a profile is a directory tree that mirrors the game's layout, and me3
-substitutes any files it finds at runtime.
+**CLI:** the `dcx_batch.py rando` flow above writes to a plain `./output`
+folder, so there you do place the results yourself — copy `./output/*.msb.dcx`
+into the `map/mapstudio/` of whichever me3 package you're launching (the
+shipped profile's `package/`, or your own).
 
 ## Layer 2 — EMEVD patches (recommended)
 

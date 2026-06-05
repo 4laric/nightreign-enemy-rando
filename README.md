@@ -5,35 +5,37 @@ enemies and Night Bosses placed across every map, so each seed plays
 differently — Maliketh in a Giant Crab clearing, an Erdtree Avatar where
 a Tree Sentinel used to be, a different Nightlord fight every run.
 
-Current release: **v0.28.0**. For what changed, see `PATCH_NOTES.md`
+Current release: **v0.30**. For what changed, see `PATCH_NOTES.md`
 (user-facing release notes) and `CHANGELOG.md` (full per-version
 history).
 
 ## Install
 
-`INSTALL.md` has the full walkthrough. The short version:
+`INSTALL.md` has the full walkthrough. The short version — the rando ships as
+a **self-contained me3 profile**, so there's no profile to create and nothing
+to copy:
 
-1. Install **Python 3.10 or newer** (on Windows, tick "Add Python to
-   PATH" during install) and set up a me3 profile for Nightreign.
+1. Install **Python 3.10 or newer** (on Windows, tick "Add Python to PATH")
+   and **me3**, the Nightreign mod loader. You don't need to make a me3
+   profile — this rando *is* one.
 2. Unzip this bundle anywhere.
-3. Copy your game's Oodle DLL — `oo2core_*_win64.dll`, from the
-   Nightreign `Game/` folder — into the bundle folder.
-4. Run `python check_setup.py` to confirm the environment is healthy.
-5. Launch the GUI: double-click `oops_rando_gui.pyw`, or run
-   `python oops_rando_gui.py` from a terminal (use this one for
-   diagnostic output).
-6. On the **Generate** tab, point "Nightreign install" at your NR `Game/`
-   folder (packed is fine — no UXM unpack needed) and "ME3 mod profile" at
-   your me3 package. The output dir and vanilla read-paths auto-fill (and
-   if you accidentally pick the package's parent folder, it descends into
-   the package for you). Click Randomize, then **Install pre-patched EMEVD**.
+3. Run the GUI: double-click `randomize.pyw` (Windows), or `./randomize.sh` /
+   `python3 randomize.pyw` (macOS / Linux). Set a seed or leave it blank, then
+   click **Randomize**.
+4. Double-click **`nightreign-enemy-rando.me3`** to play.
 
-You do **not** need to UXM-unpack your install. The GUI reads vanilla map
-and event data straight from your own Nightreign install's `.bhd`/`.bdt`
-archives at run time — packed or unpacked, auto-detected — so this bundle
-ships no FromSoftware game data. Point the GUI at your NR install and click
-Randomize; the maps are pulled from the archives on the first run and cached
-locally.
+The pre-patched `regulation.bin` and MMV's aicommon / sfx / material / shader
+bundles already sit in `package/` — there's no "install bundled files" step,
+and the `.me3` already points at the package. The Oodle DLL is auto-detected
+from your NR install. To run **Seamless Co-op** (or any DLL mod) alongside the
+rando, add its `.dll` on the GUI's **Paths** tab and it's folded into the same
+`.me3`, so one launch runs both.
+
+You do **not** need to UXM-unpack your install. The GUI reads vanilla map and
+event data straight from your own Nightreign install's `.bhd`/`.bdt` archives
+at run time — packed or unpacked, auto-detected — so this bundle ships no
+FromSoftware game data. The maps are pulled from the archives on the first run
+and cached locally.
 
 ## What it does
 

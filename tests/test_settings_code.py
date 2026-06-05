@@ -36,7 +36,7 @@ class TestNormalize:
     def test_empty_fills_defaults(self):
         d = normalize_run_settings({})
         assert d['run_mode'] == 'Standard'
-        assert d['multiplayer_safe'] is True
+        assert d['multiplayer_safe'] is False
         assert d['mmv_enabled'] is False
         assert d['randomize_all_nb_arenas'] is False
         assert d['excluded'] == []
@@ -128,11 +128,11 @@ class TestSummary:
         assert all_default is True
         assert notable == []
 
-    def test_flags_multiplayer_off(self):
+    def test_flags_multiplayer_on(self):
         notable, all_default = summarize_run_settings(
-            {'multiplayer_safe': False})
+            {'multiplayer_safe': True})
         assert all_default is False
-        assert any('Multiplayer-safe: OFF' in n for n in notable)
+        assert any('Co-op vanilla clamp: ON' in n for n in notable)
 
     def test_flags_mmv_on(self):
         notable, _ = summarize_run_settings({'mmv_enabled': True})
@@ -162,10 +162,10 @@ class TestSummary:
         assert any('Pool exclusions: 3' in n for n in notable)
 
     def test_setting_at_default_not_flagged(self):
-        # multiplayer_safe True is the default — must NOT appear.
-        notable, _ = summarize_run_settings({'multiplayer_safe': True,
+        # multiplayer_safe False is now the default — must NOT appear.
+        notable, _ = summarize_run_settings({'multiplayer_safe': False,
                                              'mmv_enabled': True})
-        assert not any('Multiplayer-safe' in n for n in notable)
+        assert not any('Co-op vanilla clamp' in n for n in notable)
         assert any('MMV' in n for n in notable)
 
 
@@ -184,7 +184,7 @@ class TestFormatBlock:
         assert any(tag == 'dim' for tag, _ in block)
 
     def test_non_default_lines_are_warn(self):
-        block = format_run_settings_block({'multiplayer_safe': False})
+        block = format_run_settings_block({'multiplayer_safe': True})
         assert any(tag == 'warn' for tag, _ in block)
 
     def test_code_line_present_when_supplied(self):

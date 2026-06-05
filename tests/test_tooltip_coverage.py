@@ -120,7 +120,7 @@ class TestHeritageTabTooltips:
         # Anchor on the unique text the checkbox carries
         found, _ = _has_tooltip_near(
             gui_source,
-            '"Multiplayer-safe (skip heritage chrs)"',
+            '"Co-op clamp: vanilla NR + DLC only (skip imported chrs)"',
             window=600)
         assert found, ('Multiplayer-safe checkbox needs a direct '
                        'Tooltip — explaining the coop-desync risk on '

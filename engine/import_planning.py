@@ -56,7 +56,7 @@ import shutil
 from collections import defaultdict
 
 
-def compatibility_preflight(ns, target_chr_dir):
+def compatibility_preflight(ns, target_chr_dir, reg=None, roster=None):
     """v0.23.72-late: comprehensive compatibility check rolling up all the
     things that have to be true before a rando run will work without CTDs.
 
@@ -284,6 +284,66 @@ def compatibility_preflight(ns, target_chr_dir):
                             f"file(s) present in me3 package."),
                 'detail': '',
             })
+
+    # === Check: roster params backed by the installed regulation ===
+    # v0.28.x: cross-check every placeable variant's explicit npc/think
+    # param id against the ACTUALLY-INSTALLED regulation.bin (the live-data
+    # upgrade of the static valid_think_param_ids guard). Fully fail-open:
+    # any error here is swallowed so the report never breaks. Auto-derives
+    # the installed regulation from <pkg>/regulation.bin (same convention as
+    # the bundled-files installer) when the caller didn't pass one, and the
+    # roster from load_data().
+    try:
+        import os as _os
+        _reg = reg
+        if _reg is None:
+            _reg_path = _os.path.join(_os.path.dirname(target), 'regulation.bin')
+            if _os.path.isfile(_reg_path):
+                import regulation_io as _rio
+                _reg = _rio.Regulation.load(_reg_path)
+        if _reg is not None:
+            from engine.roster_resolve import resolve_available_roster
+            _roster = roster if roster is not None else ns['load_data']()[0]
+            _res = resolve_available_roster(ns, _reg, _roster, target)
+            _no_target = _res['no_target_after_params']
+            _miss = set(_res['missing_npc_param']) | set(_res['missing_think_param'])
+            if _no_target:
+                checks.append({
+                    'id': 'roster_params_in_regulation',
+                    'name': 'Roster params backed by installed regulation',
+                    'severity': 'warn',
+                    'message': (f"{len(_no_target)} roster chr(s) have no usable "
+                                f"target variant in the installed regulation: "
+                                f"{', '.join(_no_target[:12])}"),
+                    'detail': ("The installed regulation.bin lacks "
+                               "NpcParam/NpcThinkParam rows for these chrs, so "
+                               "the rando excludes them from placement (they "
+                               "fall back to vanilla). Re-run 'Install bundled "
+                               "mod files' to deploy the matching regulation, or "
+                               "add the chrs via the Roster Import tab's Guided "
+                               "import."),
+                })
+            elif _miss:
+                checks.append({
+                    'id': 'roster_params_in_regulation',
+                    'name': 'Roster params backed by installed regulation',
+                    'severity': 'info',
+                    'message': (f"{len(_miss)} chr(s) have some variants missing "
+                                f"param rows; a usable variant remains for each."),
+                    'detail': ("Informational — still placeable via an alternate "
+                               "variant."),
+                })
+            else:
+                checks.append({
+                    'id': 'roster_params_in_regulation',
+                    'name': 'Roster params backed by installed regulation',
+                    'severity': 'ok',
+                    'message': (f"All {_res['counts']['placeable']} available "
+                                f"chr(s) have regulation-backed param rows."),
+                    'detail': '',
+                })
+    except Exception:
+        pass  # fail-open: never break the report on this check
 
     severities = [c['severity'] for c in checks]
     if 'fail' in severities:

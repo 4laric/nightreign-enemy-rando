@@ -1413,7 +1413,7 @@ SETTINGS_CODE_PREFIX = 'NRR1-'   # NR-Rando settings, schema v1
 # != 'Standard'. Order here is the display order in the run summary.
 _RUN_SETTING_FLAGS = [
     ('run_mode',                  'Mode',                            'Standard'),
-    ('multiplayer_safe',          'Multiplayer-safe',                True),
+    ('multiplayer_safe',          'Co-op vanilla clamp',             False),
     ('mmv_enabled',               'MMV cross-game bosses',           False),
     ('sote_mode',                 'All-SOTE mode',                   False),
     ('chaos_mode',                'Cinematic Chaos',                 False),
@@ -2105,7 +2105,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # Multiplayer-safe mode: blacklist all heritage-imported c-prefixes
         # so coop partners without the heritage pack don't CTD on cell-load.
         self.multiplayer_safe_var = tk.BooleanVar(
-            value=saved_settings.get('multiplayer_safe', True))
+            value=saved_settings.get('multiplayer_safe', False))
         # v0.23.43: persist on toggle, not just on Run. Otherwise users who
         # toggle the box and close the app without running lose the change.
         self.multiplayer_safe_var.trace_add("write", lambda *_: self._save_settings(
@@ -4083,19 +4083,23 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         toggle_frame.pack(fill='x', pady=(0, 12))
         cb_row = ttk.Frame(toggle_frame); cb_row.pack(fill='x')
         mp_safe_check = ttk.Checkbutton(cb_row,
-                         text="Multiplayer-safe (skip heritage chrs)",
+                         text="Co-op clamp: vanilla NR + DLC only (skip imported chrs)",
                          variable=self.multiplayer_safe_var,
                          style='TCheckbutton')
         mp_safe_check.pack(side='left')
         Tooltip(mp_safe_check,
-                "When ON, the rando refuses to swap any slot to a "
-                "heritage chr (imported from Elden Ring). Vanilla NR + "
-                "DLC chrs only. Default ON because heritage chrs "
-                "desync coop partners who don't have them installed — "
-                "anyone joining your session needs the heritage chr "
-                "pack OR they CTD on cell load.")
+                "When ON, the rando clamps the pool to vanilla NR + DLC "
+                "chrs only — no heritage / imported chrs. Use it for coop: "
+                "imported chrs desync partners who don't have them "
+                "installed (they CTD on cell load). Default OFF — the rando "
+                "uses your full installed roster, and presence-gating "
+                "already excludes any chr you don't actually have, so a "
+                "solo run never CTDs on a missing import. Turn this ON only "
+                "to guarantee a session every coop partner can join on "
+                "stock NR + DLC.")
         ttk.Label(toggle_frame,
-            text="(default ON — safest setting for any session that might involve coop)",
+            text=("(default OFF — full installed roster; turn ON to clamp to "
+                  "vanilla NR + DLC for coop)"),
             style='Dim.TLabel').pack(anchor='w', pady=(4, 0))
 
         # v0.23.45: MMV integration toggle. Reads/writes mmv_imports.json
@@ -4550,6 +4554,19 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         actions = ttk.LabelFrame(f, text="Actions", padding=12)
         actions.pack(fill='x', pady=(0, 12))
 
+        guided_row = ttk.Frame(actions); guided_row.pack(fill='x', pady=(0, 6))
+        ttk.Button(guided_row,
+                   text="Guided import (find & fix missing chrs)…",
+                   command=self._open_er_import_wizard,
+                   style='Accent.TButton', width=38
+                   ).pack(side='left', ipady=2)
+        ttk.Label(actions,
+            text=("Walks you through detecting which imported chrs the rando "
+                  "can't place and copying them in from your Elden Ring / MMV "
+                  "folders. Or use the manual Diagnose / Import below."),
+            style='Dim.TLabel', wraplength=720, justify='left'
+            ).pack(anchor='w', pady=(0, 8))
+
         btn_row = ttk.Frame(actions); btn_row.pack(fill='x')
         ttk.Button(btn_row, text="Diagnose",
                    command=lambda: self._roster_import(dry_run=True),
@@ -4694,6 +4711,216 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         self.chr_log.configure(state='disabled')
     # v0.27.0: roster-import flow (Diagnose / Import roster).
     # Replaces the old spoiler-scoped + per-pack bulk import buttons.
+    def _open_er_import_wizard(self):
+        """Guided import wizard (proposal #2): a thin Toplevel over the
+        unit-tested ERImportWizardModel. Walks detect -> sources -> preview,
+        then hands the chosen folders to the existing threaded
+        _roster_import for the actual copy. The correctness-bearing logic
+        (missing-import detection, plan cross-reference, step gating) lives
+        in engine.import_wizard and is tested there; this method is just
+        rendering + wiring. Degrades to a plain guided import when no
+        installed regulation is found (detection unavailable)."""
+        import os as _os
+        import tkinter as _tk
+        from tkinter import ttk as _ttk, filedialog as _fd
+        import oops_v3 as _ov3
+        from engine.import_wizard import (
+            missing_imports, cross_reference_plan, ERImportWizardModel)
+
+        target = self._resolve_target_chr_dir()
+
+        # --- detect: installed regulation (if any) + roster -> missing set
+        reg = None
+        detect_err = None
+        empty = {'all': [], 'heritage': [], 'mmv': [], 'other': []}
+        try:
+            if target and _os.path.isdir(target):
+                regp = _os.path.join(_os.path.dirname(target), 'regulation.bin')
+                if _os.path.isfile(regp):
+                    import regulation_io as _rio
+                    reg = _rio.Regulation.load(regp)
+            roster = _ov3.load_data()[0]
+            missing = (missing_imports(vars(_ov3), reg, roster, target)
+                       if reg is not None else dict(empty))
+        except Exception as e:
+            detect_err = str(e)
+            missing = dict(empty)
+
+        model = ERImportWizardModel(
+            missing, detection_available=(reg is not None))
+
+        win = _tk.Toplevel(self.root)
+        win.title("Guided chr import")
+        win.configure(bg=THEME['bg'])
+        win.geometry("700x540")
+        win.transient(self.root)
+
+        body = _ttk.Frame(win, padding=16); body.pack(fill='both', expand=True)
+        _ttk.Label(body, text="Guided chr import",
+                   font=(self.ui_font, 14, 'bold'),
+                   foreground=THEME['accent'], background=THEME['bg']
+                   ).pack(anchor='w')
+        step_lbl = _ttk.Label(body, text="", style='Dim.TLabel')
+        step_lbl.pack(anchor='w', pady=(0, 8))
+        content = _ttk.Frame(body); content.pack(fill='both', expand=True)
+
+        nav = _ttk.Frame(body); nav.pack(fill='x', pady=(8, 0))
+        back_btn = _ttk.Button(nav, text="Back")
+        next_btn = _ttk.Button(nav, text="Next")
+        back_btn.pack(side='left'); next_btn.pack(side='right')
+
+        er_var = _tk.StringVar(value=self.roster_er_dir_var.get())
+        mmv_var = _tk.StringVar(value=self.roster_mmv_dir_var.get())
+        model.set_sources(er_dir=er_var.get(), mmv_dir=mmv_var.get())
+
+        def _refresh_nav():
+            i = model.step_index
+            step_lbl.config(
+                text=f"Step {i + 1} of {len(model.STEPS)}: {model.step}")
+            back_btn.config(state=('normal' if i > 0 else 'disabled'))
+            on_preview = (model.step == 'preview')
+            next_btn.config(
+                text=("Import" if on_preview else "Next"),
+                state=('normal' if model.can_advance() else 'disabled'))
+
+        def _render_preview(box, pv):
+            for w in box.winfo_children():
+                w.destroy()
+            totals = pv.get('plan_totals') or {}
+            _ttk.Label(box, background=THEME['bg'], foreground=THEME['accent'],
+                text=(f"Will copy {totals.get('copyable', 0)} chr file set(s) "
+                      f"({totals.get('from_mmv', 0)} from MMV, "
+                      f"{totals.get('from_er', 0)} from Elden Ring).")
+                ).pack(anchor='w')
+            if pv.get('will_supply'):
+                _ttk.Label(box, style='Dim.TLabel', wraplength=640,
+                    text=("  Resolves missing: " + ', '.join(
+                        f"{e['cp']}({e['origin']})" for e in pv['will_supply']))
+                    ).pack(anchor='w')
+            if pv.get('still_missing'):
+                _ttk.Label(box, style='Dim.TLabel', wraplength=640,
+                    text=("  Still missing after import (in neither source — "
+                          "missing DLC / not UXM-unpacked): "
+                          + ', '.join(pv['still_missing']))).pack(anchor='w')
+            if pv.get('unaccounted'):
+                _ttk.Label(box, style='Dim.TLabel', wraplength=640,
+                    text="  Unaccounted: " + ', '.join(pv['unaccounted'])
+                    ).pack(anchor='w')
+
+        def _render():
+            for w in content.winfo_children():
+                w.destroy()
+            step = model.step
+            if step == 'detect':
+                if detect_err:
+                    _ttk.Label(content, wraplength=640, style='Dim.TLabel',
+                        text=(f"Couldn't scan the installed roster "
+                              f"({detect_err}). You can still import "
+                              f"manually — click Next.")).pack(anchor='w')
+                elif not model.detection_available:
+                    _ttk.Label(content, wraplength=640, style='Dim.TLabel',
+                        text=("No installed regulation found next to the "
+                              "target chr/ folder, so the wizard can't list "
+                              "which chrs are missing. You can still import "
+                              "from your source folders — click Next.")
+                        ).pack(anchor='w')
+                elif not missing['all']:
+                    _ttk.Label(content, wraplength=640, background=THEME['bg'],
+                        foreground=THEME['accent'],
+                        text=("All imported chrs in your roster are already "
+                              "installed and param-backed — nothing to "
+                              "import.")).pack(anchor='w')
+                else:
+                    _ttk.Label(content, wraplength=640, background=THEME['bg'],
+                        foreground=THEME['text'],
+                        text=(f"{len(missing['all'])} imported chr(s) can't be "
+                              f"placed right now and fall back to vanilla:")
+                        ).pack(anchor='w', pady=(0, 4))
+                    for origin, label in (
+                            ('heritage', 'From Elden Ring (heritage)'),
+                            ('mmv', 'From MMV mod'), ('other', 'Other')):
+                        cps = missing.get(origin) or []
+                        if cps:
+                            _ttk.Label(content, style='Dim.TLabel',
+                                wraplength=640,
+                                text=f"  • {label}: {', '.join(cps)}"
+                                ).pack(anchor='w')
+            elif step == 'sources':
+                _ttk.Label(content, wraplength=640, style='Dim.TLabel',
+                    text=("Point at your unpacked source folder(s). MMV is "
+                          "tried first, the Elden Ring folder as fallback. At "
+                          "least one is required.")).pack(anchor='w', pady=(0, 8))
+
+                def _picker(var, label):
+                    row = _ttk.Frame(content); row.pack(fill='x', pady=2)
+                    _ttk.Label(row, text=label, width=14, background=THEME['bg'],
+                        foreground=THEME['text']).pack(side='left')
+                    _ttk.Entry(row, textvariable=var).pack(
+                        side='left', fill='x', expand=True, padx=(4, 4))
+                    _ttk.Button(row, text="Browse…", width=10,
+                        command=lambda: (lambda d: var.set(d) if d else None)(
+                            _fd.askdirectory(parent=win))).pack(side='left')
+
+                _picker(er_var, "Elden Ring:")
+                _picker(mmv_var, "MMV mod:")
+
+                def _on_change(*_):
+                    model.set_sources(er_dir=er_var.get(), mmv_dir=mmv_var.get())
+                    _refresh_nav()
+
+                er_var.trace_add('write', _on_change)
+                mmv_var.trace_add('write', _on_change)
+            elif step == 'preview':
+                _ttk.Label(content, wraplength=640, style='Dim.TLabel',
+                    text="Scan the source folder(s) to see what will be copied."
+                    ).pack(anchor='w', pady=(0, 6))
+                box = _ttk.Frame(content)
+
+                def _scan():
+                    for w in box.winfo_children():
+                        w.destroy()
+                    _ttk.Label(box, text="Scanning…", style='Dim.TLabel'
+                        ).pack(anchor='w')
+                    win.update_idletasks()
+                    try:
+                        plan = _ov3.plan_roster_import(
+                            mmv_var.get().strip(), er_var.get().strip(), target)
+                        pv = cross_reference_plan(missing.get('all') or [], plan)
+                        pv['plan_totals'] = plan.get('totals') or {}
+                        model.set_preview(pv)
+                        _render_preview(box, pv)
+                    except Exception as e:
+                        for w in box.winfo_children():
+                            w.destroy()
+                        _ttk.Label(box, wraplength=640, style='Dim.TLabel',
+                            text=f"Scan failed: {e}").pack(anchor='w')
+                    _refresh_nav()
+
+                _ttk.Button(content, text="Scan source folders", command=_scan,
+                    style='Accent.TButton').pack(anchor='w', pady=(0, 6))
+                box.pack(fill='both', expand=True)
+                if model.preview is not None:
+                    _render_preview(box, model.preview)
+            _refresh_nav()
+
+        def _do_back():
+            if model.back():
+                _render()
+
+        def _do_next():
+            if model.step == 'preview':
+                self.roster_er_dir_var.set(er_var.get())
+                self.roster_mmv_dir_var.set(mmv_var.get())
+                win.destroy()
+                self._roster_import(dry_run=False)
+                return
+            if model.advance():
+                _render()
+
+        back_btn.config(command=_do_back)
+        next_btn.config(command=_do_next)
+        _render()
+
     def _roster_import(self, dry_run=False):
         """One-time roster-driven chr import. dry_run=True is the
         Diagnose button (plan + report, no copy); dry_run=False is
@@ -8025,6 +8252,9 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             'mod_map_dir': mod_map_dir,
             'spawn_pool_source_dir': spawn_pool_source_dir,
             'excluded': set(self.excluded),
+            # v0.28.x: resolved on the main thread (Tk vars aren't
+            # thread-safe); the worker uses it for presence/param gating.
+            'target_chr_dir': self._resolve_target_chr_dir(),
             # v0.27.x: pool/cap overrides from the Pools & Caps tab —
             # unique_cap_overrides / caliber_pool_extras /
             # caliber_pool_removals. Empty selections come back as None, so
@@ -8160,11 +8390,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             # engine wrapper now handles the swap-and-restore itself.
             if config.get('multiplayer_safe'):
                 self.log_queue.put(
-                    "Multiplayer-safe: ON — heritage chrs blocked\n")
+                    "Co-op clamp: ON — imported chrs blocked, vanilla NR + "
+                    "DLC only\n")
             else:
                 self.log_queue.put(
-                    "Multiplayer-safe: OFF — heritage chrs allowed "
-                    "(every coop partner needs the heritage pack)\n")
+                    "Co-op clamp: OFF — full installed roster (presence "
+                    "gating excludes anything you don't have)\n")
             # v0.23.41: Surface MMV manifest state. Users without MMV won't
             # notice the engine "mmv_imports: skipped" line buried in startup
             # output; users WITH MMV who haven't enabled the manifest will
@@ -8189,6 +8420,54 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                             "you have MMV installed)\n")
             except Exception:
                 pass
+            # v0.28.x: presence + param gating. Load the installed
+            # regulation + roster ONCE and resolve which imported chrs can't
+            # actually be placed (assets absent on disk, or no
+            # NpcParam/NpcThinkParam row in the installed regulation), then
+            # merge those into the run's excluded set BEFORE engine_kwargs
+            # reads config['excluded'] below. Routed through
+            # excluded_prefixes -> V3_EXCLUDE_PREFIXES, which force_include
+            # does NOT subtract from, so presence is a hard floor (you can't
+            # force-place a chr you don't have). Non-fatal: logged + skipped
+            # on any error, and it never touches engine placement logic, so
+            # seed-locks are unaffected.
+            try:
+                import os as _pos
+                _tcd = config.get('target_chr_dir') or ''
+                _reg = None
+                if _tcd and _pos.path.isdir(_tcd):
+                    _regp = _pos.path.join(_pos.path.dirname(_tcd),
+                                           'regulation.bin')
+                    if _pos.path.isfile(_regp):
+                        import regulation_io as _rio
+                        _reg = _rio.Regulation.load(_regp)
+                if _reg is not None:
+                    from engine.roster_resolve import resolve_available_roster
+                    _roster0 = oops_v3.load_data()[0]
+                    _res = resolve_available_roster(
+                        vars(oops_v3), _reg, _roster0, _tcd)
+                    _presence_excl = (set(_res['imported_absent'])
+                                      | set(_res['no_target_after_params']))
+                    if _res['no_target_after_params']:
+                        self.log_queue.put(('__LOGLINE__', (
+                            f"Roster check: "
+                            f"{len(_res['no_target_after_params'])} chr(s) "
+                            f"have no regulation-backed target variant.\n",
+                            'warn')))
+                    if _presence_excl:
+                        config['excluded'] = (
+                            set(config['excluded']) | _presence_excl)
+                        self.log_queue.put(('__LOGLINE__', (
+                            f"Presence gating: excluding "
+                            f"{len(_presence_excl)} c-prefix(es) not "
+                            f"installed / missing params — "
+                            f"{', '.join(sorted(_presence_excl))}\n",
+                            'warn')))
+                        self.log_queue.put(('__LOGLINE__', (
+                            "  \u2192 To add them, open the Roster Import "
+                            "tab and run 'Guided import'.\n", 'warn')))
+            except Exception as _e:
+                self.log_queue.put(f"(presence gating skipped: {_e})\n")
             if config.get('disable_resilient_filter'):
                 self.log_queue.put(
                     "*** DIAGNOSTIC: disable_resilient_filter=ON — fragile slots "

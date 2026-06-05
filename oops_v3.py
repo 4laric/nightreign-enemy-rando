@@ -3085,10 +3085,10 @@ def detect_asset_packs(target_chr_dir):
     return result
 
 
-def compatibility_preflight(target_chr_dir):
+def compatibility_preflight(target_chr_dir, reg=None, roster=None):
     """compatibility_preflight: extracted to engine.import_planning in v0.28.x."""
     from engine.import_planning import compatibility_preflight as _impl
-    return _impl(globals(), target_chr_dir)
+    return _impl(globals(), target_chr_dir, reg=reg, roster=roster)
 
 
 def plan_bulk_chr_import(source_chr_dir, target_chr_dir,

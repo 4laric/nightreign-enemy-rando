@@ -1,0 +1,31 @@
+diff --git a/oops_rando_gui.py b/oops_rando_gui.py
+index 531ae7b..1e0adef 100644
+--- a/oops_rando_gui.py
++++ b/oops_rando_gui.py
+@@ -4752,8 +4752,25 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
+         win = _tk.Toplevel(self.root)
+         win.title("Guided chr import")
+         win.configure(bg=THEME['bg'])
+-        win.geometry("700x540")
+         win.transient(self.root)
++        # Match the codebase's modal Toplevel pattern so the window actually
++        # surfaces. A plain geometry with no position can open behind or off
++        # the main window with no focus (the "invisible wizard" failure) — it
++        # was created but never seen. Position it offset from the parent and
++        # grab_set to make it modal + focused.
++        try:
++            x = self.root.winfo_rootx() + 80
++            y = self.root.winfo_rooty() + 60
++            win.geometry(f"700x540+{x}+{y}")
++        except _tk.TclError:
++            win.geometry("700x540")
++        win.update_idletasks()
++        try:
++            win.grab_set()
++        except _tk.TclError:
++            pass
++        win.lift()
++        win.focus_force()
+ 
+         body = _ttk.Frame(win, padding=16); body.pack(fill='both', expand=True)
+         _ttk.Label(body, text="Guided chr import",

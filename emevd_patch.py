@@ -2320,6 +2320,27 @@ _PROXIMITY_WAKE_EXCLUDE_ENTITIES = set()   # entity ids to never auto-wake
 # generator's docstring. Loaded lazily and cached.
 _FRAGILE_SLOT_ENTITIES = None        # None = not yet loaded; dict once loaded
 
+# v0.28.x: dynamic-slot wake coupling. The fragile-slot list above is built
+# from the VANILLA tier of each slot's occupant, so it only covers slots
+# that were a miniboss/field_boss in vanilla. The randomizer, however,
+# PROMOTES POI-interior slots to boss (recipient_is_boss, driven by the
+# nr_boss_slots.json catalog) and gives them a healthbar — e.g. the m46_8X
+# castle-rotation tiles (Red Wolf / Leonine / Grafted Scion / Ancient Hero).
+# Those promoted slots got a healthbar but NO wake, so a substituted boss
+# could freeze in Recognition (the symptom this whole subsystem fixes). So
+# couple the wake set to the boss catalog: any slot that CAN host a
+# healthbar boss (every nr_boss_slots.json entry with a real eid) gets a
+# proximity wake. The existing per-entity guards below (already-seen,
+# exclude set, idempotent, an explicit EnableCharacterAI already present in
+# the file) still apply, so this only ADDS wakes for slots no other path
+# covers and leaves genuinely fog-gated bosses — which carry their own
+# EnableCharacterAI — untouched. Static like the fragile list: MSB part
+# entity ids do not change per run. Night-boss-tier rows are skipped (NB
+# arenas have dedicated wake machinery and their map stems early-return
+# above anyway). Loaded lazily and cached.
+_PROXIMITY_WAKE_FROM_CATALOG = True   # couple wakes to nr_boss_slots.json eids
+_BOSS_CATALOG_WAKE_EIDS = None        # None = not yet loaded; dict once loaded
+
 
 def _emevd_data_path(filename):
     """Resolve a data-file name to data/<filename> next to this module,
@@ -2348,6 +2369,54 @@ def _load_fragile_slot_entities():
     except (OSError, ValueError):
         _FRAGILE_SLOT_ENTITIES = {}
     return _FRAGILE_SLOT_ENTITIES
+
+
+def _load_boss_catalog_wake_eids():
+    """Lazy-load + cache the per-map boss-slot entity ids from
+    data/nr_boss_slots.json. Returns {map_stem: [entity_id, ...]} for every
+    catalog entry with a real (non-zero) eid, EXCEPT night-boss-tier rows,
+    so the proximity-wake patch can wake any normal-world slot that can host
+    a healthbar boss — including POI slots the randomizer promotes that
+    vanilla never classified as a boss. Returns {} if the file is
+    absent/malformed or the feature is off (the patch then falls back to the
+    encounter scan + fragile-slot list).
+
+    Catalog keys carry a '.msb' suffix (e.g. 'm46_82_00_00.msb'); the EMEVD
+    file stem does not, so the suffix is stripped to match. eid==0/None rows
+    (catalog entries with no resolved entity id, e.g. the m60_43_37 Troll
+    slots) are skipped — there is nothing to wake by id. tier=='nightboss'
+    rows are skipped because NB arenas have their own wake machinery (and
+    their map stems early-return in the patch regardless).
+    """
+    global _BOSS_CATALOG_WAKE_EIDS
+    if _BOSS_CATALOG_WAKE_EIDS is not None:
+        return _BOSS_CATALOG_WAKE_EIDS
+    if not _PROXIMITY_WAKE_FROM_CATALOG:
+        _BOSS_CATALOG_WAKE_EIDS = {}
+        return _BOSS_CATALOG_WAKE_EIDS
+    path = _emevd_data_path('nr_boss_slots.json')
+    out = {}
+    try:
+        with open(path, encoding='utf-8') as f:
+            raw = json.load(f)
+        raw.pop('_meta', None)
+        for msb, entries in raw.items():
+            if not isinstance(entries, list):
+                continue
+            stem = msb[:-4] if msb.endswith('.msb') else msb
+            for e in entries:
+                eid = e.get('eid')
+                if not eid:                       # skip None / 0 sentinels
+                    continue
+                if e.get('tier') == 'nightboss':  # NB arenas: own machinery
+                    continue
+                bucket = out.setdefault(stem, [])
+                if eid not in bucket:
+                    bucket.append(eid)
+    except (OSError, ValueError):
+        out = {}
+    _BOSS_CATALOG_WAKE_EIDS = out
+    return _BOSS_CATALOG_WAKE_EIDS
 
 
 def _build_proximity_wake_event_body(radius=_PROXIMITY_WAKE_RADIUS):
@@ -2397,6 +2466,15 @@ def patch_proximity_wake(content, filename):
     event. This catches fragile boss slots with no findable encounter
     event (90015023 multi-chr arenas, script-spawn-only slots). On the
     vanilla corpus the JSON pass adds +71 wakes over the encounter scan.
+
+    v0.28.x: the JSON pass now also unions in nr_boss_slots.json — every
+    catalog slot that can host a healthbar boss, including POI slots the
+    randomizer PROMOTES that vanilla never classified as a boss (notably the
+    m46_8X castle-rotation tiles: Red Wolf, Leonine, Grafted Scion, Ancient
+    Hero). This couples the wake set to "wherever a healthbar can appear"
+    rather than to vanilla tier. Same per-entity guards, so it only adds
+    wakes nothing else covers and leaves fog-gated bosses untouched.
+    Night-boss-tier rows are skipped (NB arenas have their own machinery).
 
     common_func : appends $Event(99055500) once.
     arena files : injects $InitializeCommonEvent(0, 99055500, eid, R) --
@@ -2488,10 +2566,20 @@ def patch_proximity_wake(content, filename):
     # new lines go inside the constructor event ($Event(0, ...)), where
     # InitializeCommonEvent calls legally live.
     fragile_by_map = _load_fragile_slot_entities()
-    fragile_eids = fragile_by_map.get(stem, [])
-    if fragile_eids:
+    catalog_by_map = _load_boss_catalog_wake_eids()
+    # Union the vanilla fragile-slot list with every healthbar-capable
+    # catalog slot for this map (v0.28.x). `seen` and the per-entity guards
+    # below dedup against the encounter scan and each other, so overlap and
+    # ordering are harmless — fragile entries first to preserve prior output
+    # order, then any catalog-only eids (e.g. the promoted m46_8X castle
+    # tiles) the vanilla classification never listed.
+    wake_eids = list(fragile_by_map.get(stem, []))
+    for _ceid in catalog_by_map.get(stem, []):
+        if _ceid not in wake_eids:
+            wake_eids.append(_ceid)
+    if wake_eids:
         pending = []
-        for eid_i in fragile_eids:
+        for eid_i in wake_eids:
             if eid_i in seen:
                 continue                       # encounter scan handled it
             seen.add(eid_i)

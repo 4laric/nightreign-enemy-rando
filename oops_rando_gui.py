@@ -810,7 +810,7 @@ def wizard_summary_lines(config):
 
 
 class FirstLaunchWizard:
-    """4-screen modal wizard for first-launch configuration.
+    """3-screen modal wizard for first-launch configuration.
 
     Builds a Toplevel modal that walks the user through the same
     environment checks the Setup Status panel shows — but one decision
@@ -833,7 +833,7 @@ class FirstLaunchWizard:
                    'Finish.' False if they closed via the X or Skip link.
     """
 
-    SCREEN_NAMES = ['welcome', 'output', 'oodle', 'done']
+    SCREEN_NAMES = ['welcome', 'output', 'done']
 
     def __init__(self, parent, initial_config=None):
         self.parent = parent
@@ -1061,9 +1061,8 @@ class FirstLaunchWizard:
             font=(_pick_ui_font(), 16, 'bold'))
         head.pack(anchor='w', pady=(0, 4))
         sub = ttk.Label(self.body,
-            text="This takes about a minute. I'll find your game installs, "
-                 "pick a place to write the shuffled files, and make sure "
-                 "the Oodle DLL is available.",
+            text="This takes about a minute. I'll find your game installs "
+                 "and pick a place to write the shuffled files.",
             wraplength=620, justify='left', style='Dim.TLabel')
         sub.pack(anchor='w', pady=(0, 16))
 
@@ -1165,125 +1164,6 @@ class FirstLaunchWizard:
             "(you just need an output folder).",
             parent=self.top)
         return False
-
-    def _build_oodle(self):
-        """Screen 3 — Oodle DLL discovery / cache."""
-        head = ttk.Label(self.body,
-            text='Last thing: Oodle DLL.',
-            font=(_pick_ui_font(), 16, 'bold'))
-        head.pack(anchor='w', pady=(0, 4))
-        sub = ttk.Label(self.body,
-            text="Nightreign uses Oodle to compress its .dcx files. The "
-                 "rando needs the same DLL to read and re-pack them.",
-            wraplength=620, justify='left', style='Dim.TLabel')
-        sub.pack(anchor='w', pady=(0, 16))
-
-        # Live-check Oodle status
-        try:
-            sys.path.insert(0, os.path.join(HERE, 'dev'))
-            import install_discovery
-            dll = install_discovery.find_oodle_dll()
-            nr_install = install_discovery.find_nightreign_install()
-            er_install = install_discovery.find_elden_ring_install()
-        except Exception as e:
-            dll = None
-            nr_install = None
-            er_install = None
-            ttk.Label(self.body,
-                text=f'(Discovery error: {e})',
-                style='Dim.TLabel').pack(anchor='w')
-
-        section = ttk.LabelFrame(self.body, text="Oodle status", padding=10)
-        section.pack(fill='x', pady=4)
-        status_row = ttk.Frame(section); status_row.pack(fill='x')
-        ind = StatusIndicator(status_row,
-                              'ok' if dll else 'error',
-                              f'Found: {dll}' if dll else 'Not found')
-        ind.pack(side='left', padx=(0, 6))
-        ttk.Label(status_row,
-            text=(f'Found: {dll}' if dll
-                  else 'Not found — needs manual setup'),
-            wraplength=560, justify='left',
-            ).pack(side='left', fill='x', expand=True)
-
-        # Action: depends on current state
-        action_row = ttk.Frame(section); action_row.pack(fill='x', pady=(10, 0))
-        if dll and os.path.dirname(os.path.abspath(dll)) != HERE:
-            # DLL exists but lives in NR/ER install. Offer to cache it
-            # so future launches don't re-scan Steam.
-            ttk.Label(action_row,
-                text="Optionally copy it next to the rando so launches "
-                     "are faster:",
-                style='Dim.TLabel', wraplength=620,
-                ).pack(anchor='w', pady=(0, 6))
-            def _do_copy():
-                try:
-                    dest = install_discovery.copy_oodle_dll_local()
-                    if dest:
-                        messagebox.showinfo(
-                            'Cached', f'Oodle DLL copied to:\n{dest}',
-                            parent=self.top)
-                        # Rebuild this screen to show the new state
-                        self._show(self.current)
-                except Exception as e:
-                    messagebox.showerror(
-                        'Copy failed', f'{e}', parent=self.top)
-            ttk.Button(action_row, text='Cache locally', command=_do_copy
-                       ).pack(side='left')
-        elif dll:
-            # Already cached locally
-            ttk.Label(action_row,
-                text="✓ Already cached locally — no action needed.",
-                ).pack(anchor='w')
-        elif nr_install or er_install:
-            # Not found, but a source game is detected — offer to copy
-            src_label = 'Nightreign' if nr_install else 'Elden Ring'
-            src_path = nr_install or er_install
-            ttk.Label(action_row,
-                text=f"Auto-detected {src_label} install at:\n  {src_path}\n"
-                     f"Click the button to copy the bundled Oodle DLL into "
-                     f"this folder.",
-                wraplength=620, justify='left',
-                ).pack(anchor='w', pady=(0, 6))
-            def _do_copy_from_install():
-                try:
-                    dest = install_discovery.copy_oodle_dll_local()
-                    if dest:
-                        messagebox.showinfo(
-                            'Copied',
-                            f'Oodle DLL copied to:\n{dest}\n\n'
-                            f"You're good to go.",
-                            parent=self.top)
-                        self._show(self.current)
-                    else:
-                        messagebox.showerror(
-                            'Copy failed',
-                            'Discovery found a source game but the DLL '
-                            "wasn't where we expected. Browse to "
-                            f'{src_path} and copy oo2core_*.dll next to '
-                            'oops_rando_gui.py manually.',
-                            parent=self.top)
-                except Exception as e:
-                    messagebox.showerror('Copy failed', f'{e}', parent=self.top)
-            ttk.Button(action_row, text=f'Copy from {src_label} install',
-                       command=_do_copy_from_install).pack(side='left')
-        else:
-            # No game install detected. Manual instructions.
-            ttk.Label(action_row,
-                text="No Nightreign or Elden Ring install detected on this "
-                     "machine. To get the Oodle DLL:\n"
-                     "  1. On any machine with NR or ER installed, find "
-                     "<Steam>/steamapps/common/ELDEN RING NIGHTREIGN/Game/"
-                     "oo2core_*_win64.dll\n"
-                     "  2. Copy it next to oops_rando_gui.py\n"
-                     "  3. Or set the OODLE_DLL environment variable to "
-                     "point at it.\n\n"
-                     "You can finish setup without it; the rando will "
-                     "flag this in Setup Status when you try to run.",
-                wraplength=620, justify='left', style='Dim.TLabel',
-                ).pack(anchor='w')
-
-        self._set_validator(lambda: True)  # always allow advance
 
     def _build_done(self):
         """Screen 4 — summary + next steps."""
@@ -4721,6 +4601,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         rendering + wiring. Degrades to a plain guided import when no
         installed regulation is found (detection unavailable)."""
         import os as _os
+        import threading
         import tkinter as _tk
         from tkinter import ttk as _ttk, filedialog as _fd
         import oops_v3 as _ov3
@@ -4892,29 +4773,63 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     text="Scan the source folder(s) to see what will be copied."
                     ).pack(anchor='w', pady=(0, 6))
                 box = _ttk.Frame(content)
+                scan_holder = {}
 
                 def _scan():
+                    if scan_holder.get('running'):
+                        return
+                    scan_holder.clear()
+                    scan_holder['running'] = True
+                    scan_btn.config(state='disabled')
                     for w in box.winfo_children():
                         w.destroy()
                     _ttk.Label(box, text="Scanning…", style='Dim.TLabel'
                         ).pack(anchor='w')
-                    win.update_idletasks()
-                    try:
-                        plan = _ov3.plan_roster_import(
-                            mmv_var.get().strip(), er_var.get().strip(), target)
-                        pv = cross_reference_plan(missing.get('all') or [], plan)
-                        pv['plan_totals'] = plan.get('totals') or {}
-                        model.set_preview(pv)
-                        _render_preview(box, pv)
-                    except Exception as e:
+                    mmv_d = mmv_var.get().strip()
+                    er_d = er_var.get().strip()
+                    miss = missing.get('all') or []
+
+                    def _work():
+                        # Off the UI thread: file I/O only, no Tk calls.
+                        try:
+                            plan = _ov3.plan_roster_import(mmv_d, er_d, target)
+                            pv = cross_reference_plan(miss, plan)
+                            pv['plan_totals'] = plan.get('totals') or {}
+                            scan_holder['result'] = pv
+                        except Exception as e:
+                            scan_holder['error'] = str(e)
+
+                    threading.Thread(target=_work, daemon=True).start()
+
+                    def _poll():
+                        # Main thread: wait for the worker, then render.
+                        if not win.winfo_exists():
+                            return
+                        if ('result' not in scan_holder
+                                and 'error' not in scan_holder):
+                            win.after(80, _poll)
+                            return
+                        scan_holder['running'] = False
+                        try:
+                            scan_btn.config(state='normal')
+                        except _tk.TclError:
+                            return
                         for w in box.winfo_children():
                             w.destroy()
-                        _ttk.Label(box, wraplength=640, style='Dim.TLabel',
-                            text=f"Scan failed: {e}").pack(anchor='w')
-                    _refresh_nav()
+                        if 'error' in scan_holder:
+                            _ttk.Label(box, wraplength=640, style='Dim.TLabel',
+                                text=f"Scan failed: {scan_holder['error']}"
+                                ).pack(anchor='w')
+                        else:
+                            model.set_preview(scan_holder['result'])
+                            _render_preview(box, scan_holder['result'])
+                        _refresh_nav()
 
-                _ttk.Button(content, text="Scan source folders", command=_scan,
-                    style='Accent.TButton').pack(anchor='w', pady=(0, 6))
+                    win.after(80, _poll)
+
+                scan_btn = _ttk.Button(content, text="Scan source folders",
+                    command=_scan, style='Accent.TButton')
+                scan_btn.pack(anchor='w', pady=(0, 6))
                 box.pack(fill='both', expand=True)
                 if model.preview is not None:
                     _render_preview(box, model.preview)
@@ -8354,6 +8269,41 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         try:
             import oops_v3
             oops_v3.set_cancel_requested(False)
+        except Exception:
+            pass
+
+        # v0.28.x: auto-popup. If imported chrs are missing their installed
+        # files, offer the guided importer before committing to a run — that
+        # importer is the tool that fixes them, and presence-gating would
+        # otherwise just silently skip them. Cheap detect-only check (no
+        # regulation/roster load), on the main thread before any work starts
+        # (so there's no mid-run import race). Choosing "Yes" opens the
+        # importer and cancels this run; "No" randomizes without them. Fully
+        # guarded so it can never block a run.
+        try:
+            _ov = oops_v3
+            _tcd = config.get('target_chr_dir') or ''
+            _absent = []
+            if _tcd:
+                for _info in (_ov.detect_asset_packs(_tcd) or {}).values():
+                    _absent.extend(_info.get('missing') or [])
+            _absent = sorted(set(_absent))
+            if _absent:
+                _extra = (f"\n  …(+{len(_absent) - 24} more)"
+                          if len(_absent) > 24 else "")
+                if messagebox.askyesno(
+                        "Missing imported chrs",
+                        f"{len(_absent)} imported chr(s) aren't installed and "
+                        f"will be skipped this run:\n\n"
+                        f"{', '.join(_absent[:24])}{_extra}\n\n"
+                        f"Open the guided importer to copy them in now?\n"
+                        f"(Choose No to randomize without them.)",
+                        parent=self.root):
+                    self.run_btn.config(text="⚙   Randomize", state='normal',
+                                        command=self._run_shuffle)
+                    self.status_var.set("Ready")
+                    self._open_er_import_wizard()
+                    return
         except Exception:
             pass
 

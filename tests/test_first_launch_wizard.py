@@ -186,18 +186,19 @@ class TestFirstLaunchWizardStructure:
     def test_class_defined(self, gui_source):
         assert 'class FirstLaunchWizard:' in gui_source
 
-    def test_has_four_screens(self, gui_source):
-        """SCREEN_NAMES must declare all 4 screens. If a future edit
+    def test_has_three_screens(self, gui_source):
+        """SCREEN_NAMES must declare all 3 screens. If a future edit
         adds/drops one, the integration test for main() may also need
-        to update — fail loud here."""
+        to update — fail loud here. (The Oodle screen was removed once
+        Oodle resolution moved to an on-demand check at run time.)"""
         # The class-level attribute should be present as a list literal
-        # with exactly these 4 names in order
+        # with exactly these 3 names in order
         idx = gui_source.find('class FirstLaunchWizard:')
         snippet = gui_source[idx:idx + 2000]
-        assert "SCREEN_NAMES = ['welcome', 'output', 'oodle', 'done']" in snippet
+        assert "SCREEN_NAMES = ['welcome', 'output', 'done']" in snippet
 
-    def test_all_four_screen_builders_exist(self, gui_source):
-        for screen in ('welcome', 'output', 'oodle', 'done'):
+    def test_all_three_screen_builders_exist(self, gui_source):
+        for screen in ('welcome', 'output', 'done'):
             assert f'def _build_{screen}(self):' in gui_source, (
                 f'_build_{screen} method missing — screen "{screen}" '
                 f'would error on display.')

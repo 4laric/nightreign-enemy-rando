@@ -22,10 +22,16 @@ RAD = ep._PROXIMITY_WAKE_RADIUS         # 15
 def clean_caches():
     """Save/restore the module caches + exclude set + feature flag."""
     saved = (ep._FRAGILE_SLOT_ENTITIES, ep._BOSS_CATALOG_WAKE_EIDS,
+             ep._EVERGAOL_WAKE_ENTITIES,
              set(ep._PROXIMITY_WAKE_EXCLUDE_ENTITIES),
              ep._PROXIMITY_WAKE_FROM_CATALOG)
+    # Isolate: start each test with an empty Evergaol catalog so the real
+    # data/evergaol_wake_entities.json never leaks into the existing cases.
+    # Tests that exercise the Evergaol pass set _EVERGAOL_WAKE_ENTITIES.
+    ep._EVERGAOL_WAKE_ENTITIES = {}
     yield
     (ep._FRAGILE_SLOT_ENTITIES, ep._BOSS_CATALOG_WAKE_EIDS,
+     ep._EVERGAOL_WAKE_ENTITIES,
      excl, ep._PROXIMITY_WAKE_FROM_CATALOG) = saved
     ep._PROXIMITY_WAKE_EXCLUDE_ENTITIES.clear()
     ep._PROXIMITY_WAKE_EXCLUDE_ENTITIES.update(excl)
@@ -152,3 +158,75 @@ def test_common_func_still_appends_event_body(clean_caches):
                                      "common_func.emevd.dcx.js")
     assert f"$Event({WAKE}," in out
     assert n == 1
+
+
+# --------------------------------------------------------------------------
+# injection — the Evergaol catalog (90015026 family, no encounter-scan cover)
+# --------------------------------------------------------------------------
+
+def test_evergaol_only_slot_gets_wake(clean_caches):
+    # An Evergaol boss in NEITHER the fragile list nor the boss catalog (the
+    # uncovered case the new catalog exists to fix) must be woken.
+    ep._FRAGILE_SLOT_ENTITIES = {}
+    ep._BOSS_CATALOG_WAKE_EIDS = {}
+    ep._EVERGAOL_WAKE_ENTITIES = {"m46_50_00_00": [46500830]}
+    content = _ctor("// nothing here")
+    out, n = ep.patch_proximity_wake(content, "m46_50_00_00.emevd.dcx.js")
+    assert f"{WAKE}, 46500830, {RAD}" in out
+    assert n == 1
+
+
+def test_evergaol_dedups_against_other_catalogs(clean_caches):
+    # Same eid in the boss catalog AND the Evergaol catalog -> injected once.
+    ep._FRAGILE_SLOT_ENTITIES = {}
+    ep._BOSS_CATALOG_WAKE_EIDS = {"m46_50_00_00": [46500830]}
+    ep._EVERGAOL_WAKE_ENTITIES = {"m46_50_00_00": [46500830]}
+    content = _ctor("// nothing")
+    out, n = ep.patch_proximity_wake(content, "m46_50_00_00.emevd.dcx.js")
+    assert _count(f"{WAKE}, 46500830", out) == 1
+    assert n == 1
+
+
+def test_evergaol_adds_alongside_other_catalogs(clean_caches):
+    # Distinct fragile, catalog, and Evergaol eids each get a wake.
+    ep._FRAGILE_SLOT_ENTITIES = {"m46_50_00_00": [46500801]}
+    ep._BOSS_CATALOG_WAKE_EIDS = {"m46_50_00_00": [46500802]}
+    ep._EVERGAOL_WAKE_ENTITIES = {"m46_50_00_00": [46500830]}
+    content = _ctor("// nothing")
+    out, n = ep.patch_proximity_wake(content, "m46_50_00_00.emevd.dcx.js")
+    assert f"{WAKE}, 46500801" in out
+    assert f"{WAKE}, 46500802" in out
+    assert f"{WAKE}, 46500830" in out
+    assert n == 3
+
+
+def test_evergaol_encounter_covered_not_doubled(clean_caches):
+    # An Evergaol eid that also has a 90015000 encounter call -> one wake only.
+    ep._FRAGILE_SLOT_ENTITIES = {}
+    ep._BOSS_CATALOG_WAKE_EIDS = {}
+    ep._EVERGAOL_WAKE_ENTITIES = {"m46_50_00_00": [46500830]}
+    content = _ctor("$InitializeCommonEvent(0, 90015000, 111, 46500830, 0);")
+    out, n = ep.patch_proximity_wake(content, "m46_50_00_00.emevd.dcx.js")
+    assert _count(f"{WAKE}, 46500830", out) == 1
+
+
+def test_evergaol_exclude_set_blocks_wake(clean_caches):
+    ep._FRAGILE_SLOT_ENTITIES = {}
+    ep._BOSS_CATALOG_WAKE_EIDS = {}
+    ep._EVERGAOL_WAKE_ENTITIES = {"m46_50_00_00": [46500830]}
+    ep._PROXIMITY_WAKE_EXCLUDE_ENTITIES.add(46500830)
+    content = _ctor("// nothing")
+    out, n = ep.patch_proximity_wake(content, "m46_50_00_00.emevd.dcx.js")
+    assert f"{WAKE}, 46500830" not in out
+    assert n == 0
+
+
+def test_shipped_evergaol_catalog_loads(clean_caches):
+    # Smoke test against the committed data/evergaol_wake_entities.json: it
+    # loads and carries the three Evergaol maps with positive boss-anchor eids.
+    ep._EVERGAOL_WAKE_ENTITIES = None        # force a real load from disk
+    cat = ep._load_evergaol_wake_entities()
+    assert {"m46_50_00_00", "m46_60_00_00", "m46_70_00_00"} <= set(cat)
+    assert 46500800 in cat["m46_50_00_00"]
+    assert all(isinstance(e, int) and e > 0
+               for eids in cat.values() for e in eids)

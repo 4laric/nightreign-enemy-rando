@@ -135,13 +135,15 @@ INCLUDE_FILES = [
     'dcx_batch.py',
     'emevd_patch.py',
     # v0.29 merchant / regulation subsystem (imported by the GUI + oops_v3).
-    # regulation_rando -> regulation_io + merchant_shop_fill + mob_drop_fill,
-    # so all four ship together; night_role is imported by both oops_v3 and
-    # the GUI.
+    # regulation_rando -> regulation_io + merchant_shop_fill + mob_drop_fill +
+    # npcparam_reward_fill, so all ship together; night_role is imported by both
+    # oops_v3 and the GUI. (Reward mapping reads data/nr_enemy_{roster,tags}.json,
+    # already shipped via INCLUDE_DIRS.)
     'regulation_rando.py',
     'regulation_io.py',
     'merchant_shop_fill.py',
     'mob_drop_fill.py',
+    'npcparam_reward_fill.py',
     'night_role.py',
     # me3-profile relocator/recovery module (imported by the GUI). Under the
     # v0.30 shipped-profile model its auto-register path is vestigial, but the

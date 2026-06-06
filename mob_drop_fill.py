@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""mob_drop_fill.py - per-seed randomization of enemy on-death drops (ItemLotParam_enemy).
+"""mob_drop_fill.py - per-seed randomization of drop lots (ItemLotParam).
 
 Companion to merchant_shop_fill.py. Where the shop randomizes what merchants
-sell, this randomizes what MOBS drop, and lifts the drop rate.
+sell, this randomizes what MOBS drop and what the WORLD hands out, and lifts the
+drop rate. It runs over either ItemLotParam table -- ENEMY_PARAM
+("ItemLotParam_enemy", on-death enemy drops) or MAP_PARAM ("ItemLotParam_map",
+map pickups / treasure / breakables / secondary enemy lots) -- via the `param`
+argument; both share the identical 224 B row layout.
 
 For every ItemLotParam_enemy row (the lot an enemy's NpcParam.itemLotId_enemy
 points at), each occupied item slot's lotItemId is rerolled to a random id of
@@ -36,7 +40,9 @@ from collections import defaultdict
 
 import regulation_io as R
 
-PARAM = "ItemLotParam_enemy"
+ENEMY_PARAM = "ItemLotParam_enemy"
+MAP_PARAM = "ItemLotParam_map"
+PARAM = ENEMY_PARAM          # default target (kept for back-compat)
 N_SLOTS = 8
 ID_OFF = 0x00      # s32 x8
 CAT_OFF = 0x20     # s32 x8
@@ -55,17 +61,19 @@ def seed_to_int(seed):
         return int(hashlib.sha256(s.encode("utf-8")).hexdigest(), 16) & 0xFFFFFFFF
 
 
-def extract(reg):
-    """Read ItemLotParam_enemy out of a loaded Regulation into a plain
-    {targets, pools} map so roll() can stay pure / reg-free (like the shop's
-    baked slot json). Built on the fly because the lots and their valid id
-    pools are derivable from the regulation itself -- no bake step needed.
+def extract(reg, param=PARAM):
+    """Read an ItemLotParam (ENEMY_PARAM or MAP_PARAM) out of a loaded
+    Regulation into a plain {targets, pools} map so roll() can stay pure /
+    reg-free (like the shop's baked slot json). Built on the fly because the
+    lots and their valid id pools are derivable from the regulation itself --
+    no bake step needed. Pools are per-param (enemy ids stay in enemy lots,
+    map ids in map lots), so the two passes never cross-contaminate.
 
       targets: [{"row": id, "items": [(slot, cat, weight)],
                  "nothings": [(slot, weight)]}]  (rows with >= 1 item only)
       pools:   {category_value: sorted([item_id, ...])}  (lotItemId != 0)
     """
-    off, _size, rows = reg._param(PARAM)
+    off, _size, rows = reg._param(param)
     bnd = reg.bnd
     pools = defaultdict(set)
     targets = []
@@ -128,11 +136,11 @@ def roll(drop_data, seed, *, rate_multiplier=DEFAULT_RATE_MULTIPLIER):
     return patches, spoiler
 
 
-def apply_patches(reg, patches):
+def apply_patches(reg, patches, param=PARAM):
     """Write each lot's rerolled ids (s32) and shrunk nothing weights (u16)
     in place. Categories, item weights, and quantities are left untouched.
     Returns the number of lots patched."""
     for rid, fields in patches.items():
         for field_off, fmt, value in fields:
-            reg.patch_param_field(PARAM, rid, field_off, fmt, value)
+            reg.patch_param_field(param, rid, field_off, fmt, value)
     return len(patches)

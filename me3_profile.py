@@ -252,6 +252,65 @@ def supports_nightreign(profile_path):
     return False
 
 
+def ensure_supports_nightreign(profile_path):
+    """Append a Nightreign [[supports]] entry to profile_path if it isn't
+    already declared. Append-only — never rewrites existing entries, so it's
+    safe for a user-authored profile.
+
+    me3 matches a profile to a game via [[supports]] (and won't auto-launch a
+    profile from a double-click without it). A profile hand-built for other NR
+    mods usually has it, but not always.
+
+    Returns (same shape as ensure_package_registered):
+        {'action': 'added', 'detail': 'nightreign'}       on append
+        {'action': 'noop',  'detail': 'already declared'}  when present
+        {'action': 'error', 'detail': '<reason>'}          on failure
+    """
+    if not profile_path or not os.path.isfile(profile_path):
+        return {'action': 'error',
+                'detail': f'profile not found: {profile_path}'}
+
+    present = supports_nightreign(profile_path)
+    if present is True:
+        return {'action': 'noop', 'detail': 'already declared'}
+    if present is None:
+        # Couldn't parse TOML — text-scan so we don't append a duplicate we
+        # just couldn't see (mirrors the package text fallback).
+        try:
+            with open(profile_path, 'r', encoding='utf-8',
+                      errors='replace') as f:
+                low = f.read().lower()
+        except OSError as e:
+            return {'action': 'error',
+                    'detail': f'failed to read {profile_path}: {e}'}
+        if any(f'game = "{g}"' in low or f"game = '{g}'" in low
+               for g in _NR_GAME_NAMES):
+            return {'action': 'noop', 'detail': 'already declared'}
+
+    # Leading-newline convention, same as ensure_package_registered.
+    try:
+        with open(profile_path, 'rb') as f:
+            try:
+                f.seek(-1, os.SEEK_END)
+                last = f.read(1)
+            except OSError:
+                last = b''
+    except OSError as e:
+        return {'action': 'error',
+                'detail': f'failed to read {profile_path}: {e}'}
+
+    leading = b'' if last in (b'\n', b'\r', b'') else b'\n'
+    block = leading + b'\n[[supports]]\ngame = "nightreign"\n'
+    try:
+        with open(profile_path, 'ab') as f:
+            f.write(block)
+    except OSError as e:
+        return {'action': 'error',
+                'detail': f'failed to write {profile_path}: {e}'}
+
+    return {'action': 'added', 'detail': 'nightreign'}
+
+
 # --- full-profile generation (used when the tool OWNS the .me3) --------------
 #
 # Unlike ensure_package_registered (append-only, safe for a user's hand-authored

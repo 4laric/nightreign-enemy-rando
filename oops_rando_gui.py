@@ -3485,6 +3485,9 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 ttk.Button(row, text="Create new…",
                            command=self._create_me3_profile
                            ).pack(side='left', padx=(2, 0))
+                ttk.Button(row, text="Add to existing…",
+                           command=self._add_to_existing_me3_profile
+                           ).pack(side='left', padx=(2, 0))
             # v0.26.x: Re-detect button + "(auto-detected)" badge for the
             # two root paths (Tier 1 UX #5). The me3 package isn't
             # auto-detectable from anywhere, so it gets neither.
@@ -5648,6 +5651,96 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         self._log(
             f"[Profile scaffold] Created {result['me3_file']} "
             f"+ {result['package_dir']}/\n", 'info')
+
+    def _add_to_existing_me3_profile(self):
+        """Power-user flow: point the rando at an existing me3 profile the
+        user already maintains (their own mod stack). Picks their .me3,
+        creates a `nightreign-enemy-rando/` package next to it, registers it
+        (append-only — their other packages and DLL natives are untouched),
+        ensures the profile declares Nightreign support, and sets me3_package
+        so output writes straight into their stack. After this they click
+        Randomize for a new seed and launch their profile as usual — nothing
+        to copy.
+        """
+        cur_pkg = self.me3_package_var.get().strip()
+        if cur_pkg and os.path.isdir(cur_pkg):
+            default_dir = os.path.dirname(os.path.dirname(cur_pkg))
+        else:
+            default_dir = (os.path.expanduser('~/Documents')
+                           if os.path.isdir(os.path.expanduser('~/Documents'))
+                           else os.path.expanduser('~'))
+        me3_path = filedialog.askopenfilename(
+            title="Pick your existing me3 profile (.me3)",
+            initialdir=default_dir,
+            filetypes=[('me3 profile', '*.me3'), ('All files', '*.*')])
+        if not me3_path:
+            return  # cancelled
+        if not me3_path.lower().endswith('.me3') or not os.path.isfile(me3_path):
+            messagebox.showerror("Not a .me3 file",
+                "Please pick your me3 profile file (the .me3 that lists "
+                "your mods) — not a folder or other file.",
+                parent=self.root)
+            return
+
+        # Create a package dir as a sibling of the .me3 (the me3 layout);
+        # reuse it if it already exists.
+        profile_dir = os.path.dirname(os.path.abspath(me3_path))
+        package_dir = os.path.join(profile_dir, 'nightreign-enemy-rando')
+        try:
+            for sub in ('map/mapstudio', 'chr', 'event'):
+                os.makedirs(os.path.join(package_dir, sub), exist_ok=True)
+        except OSError as e:
+            messagebox.showerror("Filesystem error",
+                f"Couldn't create the package folder next to your "
+                f"profile:\n\n{e}\n\nPick a profile on a writable drive, or "
+                f"free up disk space.",
+                parent=self.root)
+            return
+
+        # Register the package + ensure NR support. Both are append-only
+        # (me3_profile): the user's existing packages, [[natives]] DLL mods,
+        # and other settings are never rewritten.
+        import me3_profile
+        reg = me3_profile.ensure_package_registered(me3_path, package_dir)
+        if reg['action'] == 'error':
+            messagebox.showerror("Couldn't update your .me3",
+                f"Created the package folder, but adding it to your profile "
+                f"failed:\n\n{reg['detail']}\n\nYou can add this to your "
+                f".me3 by hand:\n\n[[packages]]\n"
+                f"path = 'nightreign-enemy-rando/'",
+                parent=self.root)
+            return
+        sup = me3_profile.ensure_supports_nightreign(me3_path)
+
+        # Point output at the new package (fires _derive_from_me3, which
+        # fills the map/chr/event paths and persists the choice).
+        self.me3_package_var.set(package_dir)
+
+        pkg_line = ("Registered the package in your .me3"
+                    if reg['action'] == 'added'
+                    else "Package was already registered in your .me3")
+        sup_line = ""
+        if sup.get('action') == 'added':
+            sup_line = ("\n  \u2713 Added a Nightreign [[supports]] line so "
+                        "me3 recognises the profile.")
+        elif sup.get('action') == 'error':
+            sup_line = ("\n  \u2022 Couldn't add the Nightreign [[supports]] "
+                        "line \u2014 if me3 won't launch the profile, add "
+                        "[[supports]] game = \"nightreign\" yourself.")
+        messagebox.showinfo("Added to your profile",
+            f"Pointed the randomizer at {os.path.basename(me3_path)}:\n\n"
+            f"  \u2713 Created nightreign-enemy-rando/ beside it (output "
+            f"lands here).\n"
+            f"  \u2713 {pkg_line} \u2014 your other packages and DLL mods "
+            f"are untouched.{sup_line}\n\n"
+            f"Click Randomize for a new seed, then launch your profile the "
+            f"way you normally do \u2014 the new seed loads with your mods. "
+            f"Nothing to copy.",
+            parent=self.root)
+        self._log(
+            f"[Add to profile] {me3_path}: package={reg['action']}, "
+            f"supports={sup.get('action')}; me3_package -> {package_dir}\n",
+            'info')
 
     # ------------------------------------------------------------------
     # v0.26.x: recommended-expedition banner

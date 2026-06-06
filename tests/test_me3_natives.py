@@ -83,3 +83,52 @@ class TestWriteProfileMe3:
         m.write_profile_me3(str(p), 'package/', natives=['C:/sc/nrsc.dll'])
         m.write_profile_me3(str(p), 'package/', natives=[])
         assert '[[natives]]' not in p.read_text(encoding='utf-8')
+
+
+class TestEnsureSupportsNightreign:
+    """Append-only [[supports]] insertion for a user-authored profile."""
+
+    def _write(self, tmp_path, text):
+        p = tmp_path / 'prof.me3'
+        p.write_text(text, encoding='utf-8')
+        return str(p)
+
+    def test_appends_when_absent(self, tmp_path):
+        p = self._write(tmp_path,
+            'profileVersion = "v1"\n\n[[packages]]\npath = \'mymod/\'\n')
+        assert m.supports_nightreign(p) is False
+        res = m.ensure_supports_nightreign(p)
+        assert res['action'] == 'added'
+        assert m.supports_nightreign(p) is True
+        body = open(p, encoding='utf-8').read()
+        assert '[[supports]]' in body and 'game = "nightreign"' in body
+
+    def test_noop_when_present(self, tmp_path):
+        p = self._write(tmp_path,
+            'profileVersion = "v1"\n\n[[supports]]\ngame = "nightreign"\n'
+            '\n[[packages]]\npath = \'mymod/\'\n')
+        before = open(p, encoding='utf-8').read()
+        assert m.ensure_supports_nightreign(p)['action'] == 'noop'
+        assert open(p, encoding='utf-8').read() == before  # untouched
+
+    def test_append_only_preserves_existing(self, tmp_path):
+        # A hand-authored profile with a package + a DLL native.
+        original = ('profileVersion = "v1"\n\n[[packages]]\n'
+                    "path = 'seamless/'\n\n[[natives]]\n"
+                    "path = 'C:/SeamlessCoop/nrsc.dll'\n")
+        p = self._write(tmp_path, original)
+        assert m.ensure_supports_nightreign(p)['action'] == 'added'
+        body = open(p, encoding='utf-8').read()
+        assert body.startswith(original)          # nothing rewritten
+        assert "path = 'C:/SeamlessCoop/nrsc.dll'" in body
+        assert m.supports_nightreign(p) is True
+
+    def test_error_when_missing(self, tmp_path):
+        assert m.ensure_supports_nightreign(
+            str(tmp_path / 'nope.me3'))['action'] == 'error'
+
+    def test_variant_game_name_is_noop(self, tmp_path):
+        # _NR_GAME_NAMES includes 'nr' — recognised, not duplicated.
+        p = self._write(tmp_path,
+            'profileVersion = "v1"\n\n[[supports]]\ngame = "nr"\n')
+        assert m.ensure_supports_nightreign(p)['action'] == 'noop'

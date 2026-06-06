@@ -2351,6 +2351,14 @@ _BOSS_CATALOG_WAKE_EIDS = None        # None = not yet loaded; dict once loaded
 # stamping involved.
 _EVERGAOL_WAKE_ENTITIES = None        # None = not yet loaded; dict once loaded
 
+# Name-marker boss slots given reserved entity ids by the stamp pass (see
+# dev/stamp_name_marker_boss_wakes.py + data/stamped_boss_wake_entities.json).
+# Vanilla addresses these bosses by name, not entity id, so the proximity wake
+# could not reach them until the stamp wrote ids onto their Enemy Parts. The
+# same reserved ids must be stamped into the shipped MSBs for these wakes to
+# resolve in game. Same union/guard treatment as the other catalogs.
+_STAMPED_BOSS_WAKE_ENTITIES = None    # None = not yet loaded; dict once loaded
+
 
 def _emevd_data_path(filename):
     """Resolve a data-file name to data/<filename> next to this module,
@@ -2397,6 +2405,24 @@ def _load_evergaol_wake_entities():
     except (OSError, ValueError):
         _EVERGAOL_WAKE_ENTITIES = {}
     return _EVERGAOL_WAKE_ENTITIES
+
+
+def _load_stamped_boss_wake_entities():
+    """Lazy-load + cache data/stamped_boss_wake_entities.json. Returns the
+    {map_stem: [entity_id, ...]} dict of stamped name-marker boss slots, or {}
+    if absent (the pass then does nothing). Keys are EMEVD stems (no .msb)."""
+    global _STAMPED_BOSS_WAKE_ENTITIES
+    if _STAMPED_BOSS_WAKE_ENTITIES is not None:
+        return _STAMPED_BOSS_WAKE_ENTITIES
+    path = _emevd_data_path('stamped_boss_wake_entities.json')
+    try:
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+        _STAMPED_BOSS_WAKE_ENTITIES = data.get(
+            'stamped_boss_wake_entities', {}) or {}
+    except (OSError, ValueError):
+        _STAMPED_BOSS_WAKE_ENTITIES = {}
+    return _STAMPED_BOSS_WAKE_ENTITIES
 
 
 def _load_boss_catalog_wake_eids():
@@ -2596,6 +2622,7 @@ def patch_proximity_wake(content, filename):
     fragile_by_map = _load_fragile_slot_entities()
     catalog_by_map = _load_boss_catalog_wake_eids()
     evergaol_by_map = _load_evergaol_wake_entities()
+    stamped_by_map = _load_stamped_boss_wake_entities()
     # Union the vanilla fragile-slot list with every healthbar-capable
     # catalog slot for this map (v0.28.x). `seen` and the per-entity guards
     # below dedup against the encounter scan and each other, so overlap and
@@ -2614,6 +2641,12 @@ def patch_proximity_wake(content, filename):
     for _eeid in evergaol_by_map.get(stem, []):
         if _eeid not in wake_eids:
             wake_eids.append(_eeid)
+    # Stamped name-marker boss slots — only reachable because the stamp pass
+    # wrote them a reserved entity id (and that same id must be stamped into
+    # the shipped MSB). Same dedup guards apply.
+    for _seid in stamped_by_map.get(stem, []):
+        if _seid not in wake_eids:
+            wake_eids.append(_seid)
     if wake_eids:
         pending = []
         for eid_i in wake_eids:

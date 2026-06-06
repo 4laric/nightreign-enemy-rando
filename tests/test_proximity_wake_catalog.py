@@ -22,16 +22,17 @@ RAD = ep._PROXIMITY_WAKE_RADIUS         # 15
 def clean_caches():
     """Save/restore the module caches + exclude set + feature flag."""
     saved = (ep._FRAGILE_SLOT_ENTITIES, ep._BOSS_CATALOG_WAKE_EIDS,
-             ep._EVERGAOL_WAKE_ENTITIES,
+             ep._EVERGAOL_WAKE_ENTITIES, ep._STAMPED_BOSS_WAKE_ENTITIES,
              set(ep._PROXIMITY_WAKE_EXCLUDE_ENTITIES),
              ep._PROXIMITY_WAKE_FROM_CATALOG)
-    # Isolate: start each test with an empty Evergaol catalog so the real
-    # data/evergaol_wake_entities.json never leaks into the existing cases.
-    # Tests that exercise the Evergaol pass set _EVERGAOL_WAKE_ENTITIES.
+    # Isolate: start each test with empty Evergaol + stamped catalogs so the
+    # real data/*.json never leak into the existing cases. Tests that exercise
+    # those passes set the cache explicitly.
     ep._EVERGAOL_WAKE_ENTITIES = {}
+    ep._STAMPED_BOSS_WAKE_ENTITIES = {}
     yield
     (ep._FRAGILE_SLOT_ENTITIES, ep._BOSS_CATALOG_WAKE_EIDS,
-     ep._EVERGAOL_WAKE_ENTITIES,
+     ep._EVERGAOL_WAKE_ENTITIES, ep._STAMPED_BOSS_WAKE_ENTITIES,
      excl, ep._PROXIMITY_WAKE_FROM_CATALOG) = saved
     ep._PROXIMITY_WAKE_EXCLUDE_ENTITIES.clear()
     ep._PROXIMITY_WAKE_EXCLUDE_ENTITIES.update(excl)
@@ -228,5 +229,61 @@ def test_shipped_evergaol_catalog_loads(clean_caches):
     cat = ep._load_evergaol_wake_entities()
     assert {"m46_50_00_00", "m46_60_00_00", "m46_70_00_00"} <= set(cat)
     assert 46500800 in cat["m46_50_00_00"]
+    assert all(isinstance(e, int) and e > 0
+               for eids in cat.values() for e in eids)
+
+
+# --------------------------------------------------------------------------
+# injection — the stamped name-marker boss catalog
+# --------------------------------------------------------------------------
+
+def test_stamped_slot_gets_wake(clean_caches):
+    # A stamped name-marker boss (reserved id, in no other catalog) is woken.
+    ep._FRAGILE_SLOT_ENTITIES = {}
+    ep._BOSS_CATALOG_WAKE_EIDS = {}
+    ep._STAMPED_BOSS_WAKE_ENTITIES = {"m32_00_00_00": [32009000]}
+    content = _ctor("// nothing here")
+    out, n = ep.patch_proximity_wake(content, "m32_00_00_00.emevd.dcx.js")
+    assert f"{WAKE}, 32009000, {RAD}" in out
+    assert n == 1
+
+
+def test_stamped_dedups_and_adds_alongside_others(clean_caches):
+    # Distinct fragile / catalog / evergaol / stamped eids each get one wake;
+    # a stamped eid duplicated in the boss catalog is injected once.
+    ep._FRAGILE_SLOT_ENTITIES = {"m32_00_00_00": [32000111]}
+    ep._BOSS_CATALOG_WAKE_EIDS = {"m32_00_00_00": [32009000]}   # dup of stamped
+    ep._EVERGAOL_WAKE_ENTITIES = {"m32_00_00_00": [32000222]}
+    ep._STAMPED_BOSS_WAKE_ENTITIES = {"m32_00_00_00": [32009000, 32009001]}
+    content = _ctor("// nothing")
+    out, n = ep.patch_proximity_wake(content, "m32_00_00_00.emevd.dcx.js")
+    assert f"{WAKE}, 32000111" in out
+    assert f"{WAKE}, 32000222" in out
+    assert _count(f"{WAKE}, 32009000", out) == 1
+    assert f"{WAKE}, 32009001" in out
+    assert n == 4
+
+
+def test_stamped_exclude_set_blocks_wake(clean_caches):
+    ep._FRAGILE_SLOT_ENTITIES = {}
+    ep._BOSS_CATALOG_WAKE_EIDS = {}
+    ep._STAMPED_BOSS_WAKE_ENTITIES = {"m32_00_00_00": [32009000]}
+    ep._PROXIMITY_WAKE_EXCLUDE_ENTITIES.add(32009000)
+    content = _ctor("// nothing")
+    out, n = ep.patch_proximity_wake(content, "m32_00_00_00.emevd.dcx.js")
+    assert f"{WAKE}, 32009000" not in out
+    assert n == 0
+
+
+def test_shipped_stamped_catalog_loads(clean_caches):
+    # Smoke test the committed data/stamped_boss_wake_entities.json: it loads,
+    # the night-boss arena maps and the baseless m60_10_09_12 slot are absent
+    # (the proximity wake can't reach either), and every id is a positive int
+    # in its map's reserved +9000 sub-range.
+    ep._STAMPED_BOSS_WAKE_ENTITIES = None     # force a real load from disk
+    cat = ep._load_stamped_boss_wake_entities()
+    assert "m60_10_09_12" not in cat          # no inferable base
+    assert not [m for m in cat if m[:3] in ("m48", "m49")]   # NB arenas excluded
+    assert 32009000 in cat.get("m32_00_00_00", [])
     assert all(isinstance(e, int) and e > 0
                for eids in cat.values() for e in eids)

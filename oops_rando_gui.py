@@ -807,9 +807,37 @@ def autodetect_is_sufficient(config, in_profile):
     if state not in ('ok', 'warn'):
         return False
     if not in_profile:
-        # No package/ to default into — the output screen still has a job.
+        # Outside a shipped profile, output lives in a profile we scaffold
+        # next to the tool (see _autoscaffold_local_profile, which runs just
+        # before this check and sets me3_package). Requiring me3_package here
+        # means we only skip the wizard once that scaffold actually
+        # succeeded; otherwise fall through so the user can sort setup out.
         return bool((config.get('me3_package') or '').strip())
     return True
+
+
+def _autoscaffold_local_profile():
+    """Non-profile fallback: create (once) a self-contained me3 profile next
+    to the tool so output has a real, me3-loadable home without prompting.
+
+    Idempotent — reuses an existing scaffold instead of erroring on a
+    non-empty dir. Returns the package dir to use as me3_package, or None if
+    scaffolding failed (caller leaves me3_package unset; the run's
+    empty-output guard + the Settings tab stay as the backstop). The
+    scaffolded .me3 declares the package, so me3 loads whatever the run
+    writes there.
+    """
+    try:
+        target = os.path.join(_RANDO_DIR, 'me3-profile')
+        pkg = os.path.join(target, 'rando')  # scaffold's default package_id
+        if os.path.isdir(pkg):
+            return pkg  # already scaffolded on a previous launch — reuse
+        sys.path.insert(0, os.path.join(HERE, 'dev'))
+        import install_discovery
+        result = install_discovery.scaffold_me3_profile(target)
+        return result.get('package_dir')
+    except Exception:
+        return None
 
 
 def wizard_summary_lines(config):
@@ -861,7 +889,7 @@ class FirstLaunchWizard:
                    'Finish.' False if they closed via the X or Skip link.
     """
 
-    SCREEN_NAMES = ['welcome', 'output', 'done']
+    SCREEN_NAMES = ['welcome', 'done']
 
     def __init__(self, parent, initial_config=None):
         self.parent = parent
@@ -1089,8 +1117,8 @@ class FirstLaunchWizard:
             font=(_pick_ui_font(), 16, 'bold'))
         head.pack(anchor='w', pady=(0, 4))
         sub = ttk.Label(self.body,
-            text="This takes about a minute. I'll find your game installs "
-                 "and pick a place to write the shuffled files.",
+            text="This takes about a minute — I'll find your game install "
+                 "and get everything else set up automatically.",
             wraplength=620, justify='left', style='Dim.TLabel')
         sub.pack(anchor='w', pady=(0, 16))
 
@@ -1132,69 +1160,8 @@ class FirstLaunchWizard:
             parent=self.top)
         return False
 
-    def _build_output(self):
-        """Screen 2 — ME3 output destination."""
-        head = ttk.Label(self.body,
-            text='Where should the shuffled files go?',
-            font=(_pick_ui_font(), 16, 'bold'))
-        head.pack(anchor='w', pady=(0, 4))
-        if _running_inside_profile():
-            _sub_text = ("This build is self-contained — it ships as its own "
-                         "me3 profile, so the shuffled files go into its own "
-                         "package/ folder (already set below). You don't need "
-                         "a separate me3 profile; just continue.")
-        else:
-            _sub_text = ("Pick your me3 mod profile's folder. The rando writes "
-                         "the shuffled MSBs into <this>/map/mapstudio/ — me3 "
-                         "loads them as an overlay on top of vanilla.")
-        sub = ttk.Label(self.body, text=_sub_text,
-            wraplength=620, justify='left', style='Dim.TLabel')
-        sub.pack(anchor='w', pady=(0, 16))
-
-        section = ttk.LabelFrame(self.body, text="Output destination",
-                                  padding=10)
-        section.pack(fill='x', pady=4)
-        me3_ind = self._add_path_row(
-            section, 'ME3 mod profile:', 'me3_package', 'me3_profile',
-            tooltip='Required. The rando writes shuffled MSBs into '
-                    '<this>/map/mapstudio/. me3 picks them up as an '
-                    'overlay when you launch NR through it.')
-
-        # Inline help. Self-contained builds don't need a separate profile,
-        # so the 'create an me3 profile' guidance is gated to the non-
-        # self-contained case to avoid contradicting the screen above.
-        if not _running_inside_profile():
-            help_frame = ttk.Frame(self.body); help_frame.pack(fill='x', pady=(16, 0))
-            ttk.Label(help_frame,
-                text="Don't have an me3 profile yet?",
-                style='Dim.TLabel').pack(anchor='w')
-            ttk.Label(help_frame,
-                text="me3 is mod engine 3 — a runtime mod loader for FromSoft "
-                     "games. Install it from GitHub (search 'mod engine 3'), "
-                     "create an empty mod profile folder anywhere (e.g. "
-                     "Documents/me3-profiles/my-rando/), and point this field "
-                     "at that folder.",
-                wraplength=620, justify='left', style='Dim.TLabel'
-                ).pack(anchor='w', pady=(2, 0))
-
-        self._set_validator(self._validate_output)
-        self._screen_indicators['me3'] = me3_ind
-
-    def _validate_output(self):
-        state = self._screen_indicators['me3'].state
-        if state in ('ok', 'warn'):
-            return True
-        messagebox.showerror(
-            'ME3 output required',
-            "Please set the ME3 mod profile path before continuing.\n\n"
-            "If you don't have me3 set up yet, click Skip — the main "
-            "GUI lets you configure it later and run the rando anyway "
-            "(you just need an output folder).",
-            parent=self.top)
-        return False
-
     def _build_done(self):
-        """Screen 4 — summary + next steps."""
+        """Screen 2 — summary + next steps."""
         head = ttk.Label(self.body,
             text='Setup complete.',
             font=(_pick_ui_font(), 16, 'bold'))
@@ -9438,6 +9405,15 @@ def main():
         wizard_config, _filled = _autodetect_paths(saved)
         if _running_inside_profile() and not wizard_config.get('me3_package', '').strip():
             wizard_config['me3_package'] = PACKAGE_DIR
+        elif not _running_inside_profile() and not wizard_config.get('me3_package', '').strip():
+            # v0.30: non-profile + nothing configured — scaffold a
+            # self-contained me3 profile next to the tool so output has a
+            # real, me3-loadable home and we never have to prompt for it.
+            # Idempotent; failure is non-fatal (the run's empty-output guard
+            # and the Settings tab remain the backstop).
+            _auto_pkg = _autoscaffold_local_profile()
+            if _auto_pkg:
+                wizard_config['me3_package'] = _auto_pkg
         # v0.30: skip the wizard entirely when auto-detection already found
         # everything it needs — a valid NR install (ER is optional, Oodle is
         # resolved on demand, me3 auto-discovers, and the output dir is our

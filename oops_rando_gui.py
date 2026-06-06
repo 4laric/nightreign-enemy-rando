@@ -3047,6 +3047,13 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         nb.pack(fill='both', expand=True, padx=12, pady=(8, 0))
         # v0.23.72-late: expose for the compatibility banner's jump-to-tab.
         self.nb = nb
+        # v0.29.x perf: the Pools & Caps and Boutique Pool tabs build lazily on
+        # first view (see _on_lazy_tab_changed). Pools & Caps alone constructs a
+        # 283-row cap table (×5 ttk widgets/row), so deferring it takes that
+        # cost out of startup. Both panels seed their run-config state in
+        # _pc_init_state / _boutique_init_state during __init__, so a run is
+        # unaffected even if neither tab is ever opened.
+        nb.bind('<<NotebookTabChanged>>', self._on_lazy_tab_changed, add='+')
 
         # Tab 1: main controls
         tab1 = ttk.Frame(nb)
@@ -3061,8 +3068,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         if getattr(self, '_PC_AVAILABLE', False):
             tab_pc = ttk.Frame(nb)
             nb.add(tab_pc, text='  Pools & Caps  ')
-            self._progress_callback('Building Pools & Caps tab…')
-            self._build_pools_caps_tab(tab_pc)
+            self._pc_tab_parent = tab_pc   # built lazily on first view
 
         # v0.28.x: Boutique Pool tab — promotion-rate controls (per-tier
         # whitelist UI to follow per dev/BOUTIQUE_RUN_SPEC.md). Hidden
@@ -3070,8 +3076,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         if getattr(self, '_BP_AVAILABLE', False):
             tab_bp = ttk.Frame(nb)
             nb.add(tab_bp, text='  Boutique Pool  ')
-            self._progress_callback('Building Boutique Pool tab…')
-            self._build_boutique_pool_tab(tab_bp)
+            self._bp_tab_parent = tab_bp   # built lazily on first view
 
         # Tab 3: heritage / multiplayer
         tab_h = ttk.Frame(nb)
@@ -5944,6 +5949,28 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     return
         except Exception:
             pass
+
+    def _on_lazy_tab_changed(self, event):
+        """Build the Pools & Caps / Boutique Pool tabs the first time they are
+        selected, rather than at startup. Both panels seed their run-config
+        state in __init__ (_pc_init_state / _boutique_init_state), so deferring
+        the widget-heavy build is purely a startup-speed win — a run works even
+        if neither tab is ever opened. Idempotent: each tab builds at most once
+        (guarded by _pc_widgets_ready / _bp_tab_built). Fires for every tab
+        change but no-ops unless the now-current tab is one of these two."""
+        try:
+            sel = event.widget.select()  # selected tab's widget path (str)
+        except Exception:
+            return
+        pc = getattr(self, '_pc_tab_parent', None)
+        if (pc is not None and str(pc) == sel
+                and not getattr(self, '_pc_widgets_ready', False)):
+            self._build_pools_caps_tab(pc)
+        bp = getattr(self, '_bp_tab_parent', None)
+        if (bp is not None and str(bp) == sel
+                and not getattr(self, '_bp_tab_built', False)):
+            self._build_boutique_pool_tab(bp)
+            self._bp_tab_built = True
 
     # ------------------------------------------------------------------
     # v0.26.x: Tier 3 UX #12 — Copy/Clear log

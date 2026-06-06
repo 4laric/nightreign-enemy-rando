@@ -514,7 +514,11 @@ class PoolsCapsPanelMixin:
         sb.pack(side='right', fill='y')
 
         self._pc_cap_vars = {}   # cp -> StringVar
-        self._pc_build_cap_rows()
+        # NB: do NOT build the cap rows here. _build_pools_caps_tab ends with
+        # _pc_refresh_all(), which calls _pc_build_cap_rows() — building here
+        # too would construct all 283 rows (×5 ttk widgets) twice on first
+        # render (build, then refresh_all destroys + rebuilds). The canvas
+        # scaffold above is all this method sets up.
 
     def _pc_build_cap_rows(self):
         for w in self._pc_caps_inner.winfo_children():

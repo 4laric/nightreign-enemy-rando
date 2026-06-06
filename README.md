@@ -5,7 +5,7 @@ enemies and Night Bosses placed across every map, so each seed plays
 differently — Maliketh in a Giant Crab clearing, an Erdtree Avatar where
 a Tree Sentinel used to be, a different Nightlord fight every run.
 
-Current release: **v0.30**. For what changed, see `PATCH_NOTES.md`
+Current release: **v0.31**. For what changed, see `PATCH_NOTES.md`
 (user-facing release notes) and `CHANGELOG.md` (full per-version
 history).
 

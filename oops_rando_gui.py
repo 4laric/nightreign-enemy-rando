@@ -9456,7 +9456,7 @@ class SplashWindow:
         # Thin separator + version line for visual interest
         sep = tk.Frame(outer, bg=dim, height=1)
         sep.pack(fill='x', pady=(12, 6))
-        version = tk.Label(outer, text='v0.20.90 — 4laric',
+        version = tk.Label(outer, text='v0.31 — 4laric',
                             bg=bg, fg=dim,
                             font=('TkDefaultFont', 8))
         version.pack(anchor='w')

@@ -1,3 +1,66 @@
+## v0.31 — per-seed loot & economy (regulation), boss-wake fixes
+
+Grows the per-seed regulation pass. v0.29 added shop randomization on top of
+the AES-256-CBC + ZSTD regulation codec (`regulation_io`); v0.31 runs three
+more passes on the *same* decrypt/recompress/encrypt cycle, so one Randomize
+now rerolls the merchant shop, on-death + map drops, no-drop reward lots, and
+rune rewards together off the run seed. All four passes live in
+`regulation_rando.randomize_regulation`.
+
+Drops — `mob_drop_fill.py`:
+- Every `ItemLotParam_enemy` (on-death) and `ItemLotParam_map` (treasure /
+  breakables / secondary lots) row has its items rerolled in-category and its
+  nothing-slot weight shrunk so P(any item) is multiplied by the drop-rate
+  multiplier (default x2). The map pass runs on a derived seed (`f"{seed}_map"`)
+  so it isn't a shadow of the enemy pass.
+- ItemLotParam only — drop RATE lives in the lot, never in NpcParam.
+
+Reward mapping — `npcparam_reward_fill.py` (the one NpcParam edit that varies
+per seed):
+- Runtime companion to the old opt-in `dev/emit_reward_overrides.py` CSV. Every
+  miniboss-or-above roster chr that drops nothing on any of itemLotId_enemy /
+  rewardItemLot_1 / rewardItemLot_2 is assigned a tier-appropriate
+  `itemLotId_enemy` drawn from the lots that tier actually uses (combined-pool
+  fallback). Pure floor — a chr already dropping anything is left untouched.
+  Per-row seeded (`f"{seed}:{nid}"`).
+
+getSoul flooring — `npcparam_getsoul_fill.py`:
+- Runtime companion to `dev/emit_getsoul_overrides.py`. Every roster chr whose
+  getSoul sits below its tier's placement-weighted vanilla median
+  (`V3_GETSOUL_TIER_FLOORS`) is lifted to it, so a relocated chr's rune reward
+  matches its tier instead of the vanilla pity floor (~80 runes on a beefy
+  enemy). Pure floor — never lowers.
+- Seed-INDEPENDENT (a fixed correction, not a reroll): the same patch lands
+  every seed, so it does not perturb per-seed byte-determinism. getSoul field
+  offset `0x2c` (s32), derived empirically and validated against the bundled
+  reg (value-plausibility + adjacency to hp@0x24 / itemLotId_enemy@0x30).
+
+Both NpcParam passes resolve c-prefix → tier via `nr_enemy_roster.json` +
+`nr_enemy_tags.json` (not id-string slicing — NR has 5-digit c-prefixes), read
+field values from the LIVE reg (the bundled, modded reg differs from the vanilla
+`NpcParam.csv` dump on a meaningful fraction of rows), and patch length-
+preserving fixed-width s32 fields. The v0.26.x "runtime getSoul declined — needs
+WitchyBND/AES" note is obsolete now that the codec exists: the floors apply at
+runtime and no Smithbox import is needed. The `dev/emit_*_overrides.py` emitters
+remain for hand-built regs.
+
+Boss wake — terrain-frozen holdouts:
+- Proximity wake (event 99055500) now reaches relocated bosses that vanilla
+  addressed by name and that stood frozen when relocated. Two parts: an
+  evergaol wake catalog, and an entity-id stamping pre-pass that writes a
+  reserved entity id onto each name-marker boss slot's Enemy Part so the wake
+  event can target it. Night-boss arena maps (m48_* / m49_*) are excluded — the
+  NB machinery owns those bosses. (The stamping pre-pass + an EMEVD recompile
+  are build steps.)
+
+GUI / QoL:
+- Guided chr import: the **Import** button no longer drops below the window
+  after the source scan fills the preview — the nav bar is pinned to the bottom
+  and the content area fills above it.
+
+Tests: `tests/test_npcparam_getsoul_fill.py`, alongside the existing
+`tests/test_regulation_rando.py`.
+
 ## v0.30 — me3-profile distribution + DLL mods
 
 Packaging/UX change layered on the v0.29 engine. The randomizer now ships AS

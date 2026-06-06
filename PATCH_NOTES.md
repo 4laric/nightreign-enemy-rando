@@ -1,3 +1,37 @@
+# v0.31 — what's new
+
+## Every seed now rerolls loot, not just the shop
+
+v0.29 made the expedition merchant sell a different stock each seed. v0.31
+extends that to the rest of the regulation — same seed, same Randomize, no
+extra step:
+
+- **Drops.** Every enemy's on-death drops and the world's treasure / breakable
+  pickups are rerolled in-category, and the drop rate is roughly doubled, so
+  kills and chests actually hand you things.
+- **No-drop bosses pay out now.** Minibosses and up that vanilla left dropping
+  nothing get a loot table appropriate to their tier, so a relocated miniboss
+  isn't a dead-end kill.
+- **Runes match the threat.** A chr moved to an isolated overworld kill used to
+  pay the vanilla pity floor — a beefy boss handing you ~80 runes. Every
+  enemy's rune reward is now lifted to at least its tier's typical vanilla
+  value, so the payout fits the fight.
+
+All of this happens automatically on Randomize, written straight into the
+regulation in your profile — no Smithbox import, no extra setup.
+
+## Bosses that used to freeze now wake up
+
+Some bosses, once relocated, would stand frozen until you approached from a
+specific angle — vanilla woke them by name from a script tied to their original
+spot. They now wake when you get close, like any other enemy. (Night-boss arena
+fights are unchanged.)
+
+## Quality of life
+
+- In **Guided chr import**, the **Import** button no longer ends up below the
+  window after a scan finishes — it's reachable without resizing.
+
 # v0.30 — what's new
 
 ## Ships as a self-contained me3 profile

@@ -8777,20 +8777,21 @@ V3_NIGHT_BOSS_STRICT_TARGETS: set[str] = set()
 # placement-weighted vanilla numbers; vanilla simply pays night-boss
 # encounters less per-placement than the rarer nightlord encounters.
 #
-# STATUS (v0.26.x): OPTIONAL, MANUAL. The rando does NOT ship or patch
-# a regulation.bin, and runtime regulation-patching was scoped and
-# declined (it needs a WitchyBND/AES dependency that cuts against the
-# mod's zero-setup direction — see the getSoul thread in dev notes).
-# Rune rewards on relocated chrs are therefore intentionally left a bit
-# wacky in the default experience. This table + emitter remain as an
-# OPT-IN tool: a user who wants consistent rune drops can run
-# dev/emit_getsoul_overrides.py and import the resulting CSV into their
-# own regulation via Smithbox themselves. It is not part of any
-# pipeline or release flow.
+# STATUS (v0.30.x): APPLIED AT RUNTIME. The v0.26.x decision to leave this
+# opt-in was predicated on the rando having no way to patch a regulation.bin
+# (the WitchyBND/AES concern). That premise is gone: the AES-256-CBC + ZSTD
+# regulation codec now exists (regulation_io) and the pipeline already patches
+# the reg every seed for the merchant shop, drops, and reward mapping. So these
+# floors are now consumed at runtime by npcparam_getsoul_fill.py, which floors
+# getSoul on the installed reg as a second NpcParam pass alongside the reward
+# fill — no manual Smithbox import needed. The floor is seed-independent (a
+# fixed correction), so it does not affect per-seed determinism.
 #
-# Consumed by the CSV emitter only — never by the rando engine. If you
-# edit these floors, regenerate data/npcparam_getsoul_overrides.csv
-# (python3 dev/emit_getsoul_overrides.py).
+# Consumed by BOTH the runtime pass (npcparam_getsoul_fill.py) and the dev CSV
+# emitter (dev/emit_getsoul_overrides.py, still useful for a hand-built reg). If
+# you edit these floors, both pick up the change automatically; regenerate
+# data/npcparam_getsoul_overrides.csv (python3 dev/emit_getsoul_overrides.py)
+# only if you ship that CSV.
 V3_GETSOUL_TIER_FLOORS = {
     'nightlord':  4375,
     # v0.28.x: night_boss 3750 -> 2910. Re-derived (placement-weighted

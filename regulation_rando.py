@@ -35,6 +35,7 @@ import regulation_io as R
 import merchant_shop_fill as _shop
 import mob_drop_fill as _drops
 import npcparam_reward_fill as _rewards
+import npcparam_getsoul_fill as _getsoul
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_TYPE_WEIGHTS = (0.85, 0.10, 0.05)   # weapon : talisman : good
@@ -55,19 +56,22 @@ def randomize_regulation(in_bin, out_bin, seed, *, data_dir=None,
                          price_range=None, zstd_level=17, spoiler_path=None,
                          drop_rate_multiplier=None, log=None, **_legacy):
     """Decrypt in_bin, randomize the expedition-merchant shop, every enemy and
-    map drop lot, and map a reward onto every miniboss-or-above enemy that drops
-    nothing, all for `seed`; write out_bin. One decrypt/recompress/encrypt cycle
-    covers every pass. Returns {'shop_slots', 'mob_drop_lots', 'map_drop_lots',
-    'reward_lots': int, 'spoiler', 'drop_spoiler', 'map_spoiler',
-    'reward_spoiler': [...]}.
+    map drop lot, map a reward onto every miniboss-or-above enemy that drops
+    nothing, and floor each roster chr's getSoul to its tier median, all for
+    `seed`; write out_bin. One decrypt/recompress/encrypt cycle covers every
+    pass. Returns {'shop_slots', 'mob_drop_lots', 'map_drop_lots', 'reward_lots',
+    'getsoul_floors': int, 'spoiler', 'drop_spoiler', 'map_spoiler',
+    'reward_spoiler', 'getsoul_spoiler': [...]}.
 
     Shop: each Set slot's equipId is swapped for a random item of the same
     equipType from that merchant family's pool; equipType and value preserved.
     Drops: each ItemLotParam_enemy and ItemLotParam_map lot's items are rerolled
     in-category and its nothing-slot weight shrunk so P(any item) is multiplied
     by `drop_rate_multiplier` (default 2.0). Rewards: every miniboss+ roster chr
-    with no drop on any field is assigned a tier-appropriate itemLotId_enemy (the
-    one NpcParam patch; pure floor). (**_legacy swallows old kwargs.)
+    with no drop on any field is assigned a tier-appropriate itemLotId_enemy.
+    getSoul: every roster chr whose getSoul is below its tier median is lifted to
+    it. Both NpcParam passes are pure floors; getSoul is seed-independent.
+    (**_legacy swallows old kwargs.)
     """
     data_dir = data_dir or os.path.join(HERE, "data")
     slot_data = _shop.load_slots(os.path.join(data_dir, "merchant_shop_slots.json"))
@@ -99,6 +103,17 @@ def randomize_regulation(in_bin, out_bin, seed, *, data_dir=None,
     reward_patches, reward_spoiler = _rewards.roll(reward_data, seed)
     n_reward = _rewards.apply_patches(reg, reward_patches)
 
+    # getSoul flooring on the SAME reg (the second NpcParam pass): lift every
+    # roster chr whose authored getSoul sits below its tier's placement-weighted
+    # vanilla median up to that median, so a relocated chr's rune reward matches
+    # its tier instead of paying the vanilla pity floor. Pure floor -- never
+    # lowers. Seed-independent (a fixed correction, not a reroll), so this does
+    # not perturb per-seed determinism. Mirrors the static dev emitter
+    # (dev/emit_getsoul_overrides.py) that was previously a manual Smithbox CSV.
+    getsoul_data = _getsoul.extract(reg, data_dir)
+    getsoul_patches, getsoul_spoiler = _getsoul.roll(getsoul_data, seed)
+    n_getsoul = _getsoul.apply_patches(reg, getsoul_patches)
+
     reg.save(out_bin, level=zstd_level)
 
     lo, hi = price_range or slot_data.get("price_range", _shop.DEFAULT_PRICE_RANGE)
@@ -108,6 +123,7 @@ def randomize_regulation(in_bin, out_bin, seed, *, data_dir=None,
         json.dump(drop_spoiler, open(base + "_drops.json", "w", encoding="utf-8"), indent=2)
         json.dump(map_spoiler, open(base + "_mapdrops.json", "w", encoding="utf-8"), indent=2)
         json.dump(reward_spoiler, open(base + "_rewards.json", "w", encoding="utf-8"), indent=2)
+        json.dump(getsoul_spoiler, open(base + "_getsoul.json", "w", encoding="utf-8"), indent=2)
     if log:
         log(f"  merchant shop randomized (PURE CHAOS): {n} rows, items + random "
             f"prices {lo}-{hi} (seed {seed})\n")
@@ -115,10 +131,11 @@ def randomize_regulation(in_bin, out_bin, seed, *, data_dir=None,
             f"drop rate x{mult:g} (seed {seed})\n")
         log(f"  miniboss+ rewards mapped: {n_reward} chrs given an on-death lot "
             f"(seed {seed})\n")
+        log(f"  getSoul floored: {n_getsoul} chrs lifted to their tier median\n")
     return {"shop_slots": n, "mob_drop_lots": n_drops, "map_drop_lots": n_map,
-            "reward_lots": n_reward, "spoiler": spoiler,
+            "reward_lots": n_reward, "getsoul_floors": n_getsoul, "spoiler": spoiler,
             "drop_spoiler": drop_spoiler, "map_spoiler": map_spoiler,
-            "reward_spoiler": reward_spoiler}
+            "reward_spoiler": reward_spoiler, "getsoul_spoiler": getsoul_spoiler}
 
 
 def _main(argv=None):
@@ -141,7 +158,7 @@ def _main(argv=None):
                                log=lambda s: print(s, end=""))
     print(f"wrote {a.out_bin}  ({res['shop_slots']} shop slots, "
           f"{res['mob_drop_lots']} mob-drop lots, {res['map_drop_lots']} map-drop lots, "
-          f"{res['reward_lots']} miniboss+ rewards)")
+          f"{res['reward_lots']} miniboss+ rewards, {res['getsoul_floors']} getSoul floors)")
 
 
 if __name__ == "__main__":

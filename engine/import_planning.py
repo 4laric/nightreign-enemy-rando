@@ -56,6 +56,14 @@ import shutil
 from collections import defaultdict
 
 
+# Enemy tiers that aren't placeable combat mobs: cinematic/system/NPC/cutscene
+# objects, non-hostile entities, and mount sub-parts. The randomizer never
+# places these as enemies, so a missing regulation variant for one is a no-op,
+# not a coverage gap. Used to keep the preflight from crying wolf over e.g.
+# c1000 "System Object" or c52101 "Wylder (Roundtable NPC)".
+_NON_PLACEABLE_TIERS = frozenset({'cinematic', 'non_combat', 'mount_component'})
+
+
 def compatibility_preflight(ns, target_chr_dir, reg=None, roster=None):
     """v0.23.72-late: comprehensive compatibility check rolling up all the
     things that have to be true before a rando run will work without CTDs.
@@ -307,21 +315,41 @@ def compatibility_preflight(ns, target_chr_dir, reg=None, roster=None):
             _res = resolve_available_roster(ns, _reg, _roster, target)
             _no_target = _res['no_target_after_params']
             _miss = set(_res['missing_npc_param']) | set(_res['missing_think_param'])
-            if _no_target:
+            # Only real placeable enemies belong in this warning. The roster
+            # also carries cinematic / system / NPC / cutscene chrs (tier in
+            # _NON_PLACEABLE_TIERS — e.g. c1000 "System Object", c52101
+            # "Wylder (Roundtable NPC)") and engine-banned prefixes
+            # (V3_EXCLUDE_PREFIXES, e.g. c4961). The engine never places those,
+            # so their lack of a regulation variant is a no-op, not a coverage
+            # gap — filter them out so the warning reflects what the user would
+            # actually miss in-game.
+            try:
+                _tags = json.load(open(_data_path('nr_enemy_tags.json'),
+                                       encoding='utf-8'))
+            except (OSError, ValueError):
+                _tags = {}
+            _banned = ns.get('V3_EXCLUDE_PREFIXES') or set()
+            _no_target_mobs = [
+                cp for cp in _no_target
+                if cp not in _banned
+                and (_tags.get(cp) or {}).get('tier') not in _NON_PLACEABLE_TIERS]
+            if _no_target_mobs:
                 checks.append({
                     'id': 'roster_params_in_regulation',
                     'name': 'Roster params backed by installed regulation',
                     'severity': 'warn',
-                    'message': (f"{len(_no_target)} roster chr(s) have no usable "
-                                f"target variant in the installed regulation: "
-                                f"{', '.join(_no_target[:12])}"),
-                    'detail': ("The installed regulation.bin lacks "
-                               "NpcParam/NpcThinkParam rows for these chrs, so "
-                               "the rando excludes them from placement (they "
-                               "fall back to vanilla). Re-run 'Install bundled "
-                               "mod files' to deploy the matching regulation, or "
-                               "add the chrs via the Roster Import tab's Guided "
-                               "import."),
+                    'message': (f"{len(_no_target_mobs)} enemy type(s) will be "
+                                f"skipped — no usable variant in the installed "
+                                f"regulation: "
+                                f"{', '.join(_no_target_mobs[:12])}"),
+                    'detail': ("The installed regulation.bin has no "
+                               "NpcParam/NpcThinkParam rows for these enemies, "
+                               "so the rando leaves them out of the placement "
+                               "pool — the slots that would have used them get "
+                               "other enemies instead. To include them, re-run "
+                               "'Install bundled mod files' to deploy the "
+                               "matching regulation, or add them via the Roster "
+                               "Import tab's Guided import."),
                 })
             elif _miss:
                 checks.append({

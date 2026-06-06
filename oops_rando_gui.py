@@ -784,6 +784,34 @@ def should_run_wizard(saved_config):
     return True
 
 
+def autodetect_is_sufficient(config, in_profile):
+    """True iff auto-detection found enough to skip the first-launch
+    wizard, so the user isn't made to click through a confirmation of
+    things we already found.
+
+    The only hard requirement is a usable Nightreign install. ER is
+    optional (heritage imports only), Oodle is resolved on demand at run
+    time, me3 is auto-discovered, and the output directory is our own
+    package/ when running as a shipped me3 profile. A 'warn' on the NR
+    path (e.g. exists but UXM not finished) counts: the wizard couldn't
+    fix that either, and the main GUI's Setup Status panel keeps nagging.
+
+    When NOT running inside a profile the output dir still has to be
+    chosen by hand, so require it to be set before skipping. Pure-ish:
+    validate_path_kind does a filesystem stat but no Tk.
+    """
+    nr = (config.get('game_install') or '').strip()
+    if not nr:
+        return False
+    state, _ = validate_path_kind(nr, 'nr_install')
+    if state not in ('ok', 'warn'):
+        return False
+    if not in_profile:
+        # No package/ to default into — the output screen still has a job.
+        return bool((config.get('me3_package') or '').strip())
+    return True
+
+
 def wizard_summary_lines(config):
     """Return a list of (indicator_state, text) tuples summarising the
     user's configured paths. Used by the Done screen to show
@@ -9410,20 +9438,33 @@ def main():
         wizard_config, _filled = _autodetect_paths(saved)
         if _running_inside_profile() and not wizard_config.get('me3_package', '').strip():
             wizard_config['me3_package'] = PACKAGE_DIR
-        root.withdraw()  # hide main window during wizard
-        try:
-            wiz = FirstLaunchWizard(root, initial_config=wizard_config)
-            root.wait_window(wiz.top)
-            # Persist whatever the user entered, even if they Skipped —
-            # saves them from re-entering the same paths next launch.
-            if wiz.config != saved:
-                _save_paths_to_disk(wiz.config)
-        except Exception as e:
-            # Wizard failure mustn't block startup. Log and fall through.
-            print(f"(setup wizard error: {e}; opening main GUI)",
-                  file=sys.stderr)
-        finally:
-            root.deiconify()
+        # v0.30: skip the wizard entirely when auto-detection already found
+        # everything it needs — a valid NR install (ER is optional, Oodle is
+        # resolved on demand, me3 auto-discovers, and the output dir is our
+        # own package/ in a shipped profile). Persist the detected config and
+        # go straight to the GUI; fall through to the wizard (the manual
+        # prompt) only when something's missing. --setup always shows it.
+        if not args.setup and autodetect_is_sufficient(
+                wizard_config, _running_inside_profile()):
+            if wizard_config != saved:
+                _save_paths_to_disk(wizard_config)
+            print("(auto-detected your install; skipping setup wizard — "
+                  "run with --setup to change paths)", file=sys.stderr)
+        else:
+            root.withdraw()  # hide main window during wizard
+            try:
+                wiz = FirstLaunchWizard(root, initial_config=wizard_config)
+                root.wait_window(wiz.top)
+                # Persist whatever the user entered, even if they Skipped —
+                # saves them from re-entering the same paths next launch.
+                if wiz.config != saved:
+                    _save_paths_to_disk(wiz.config)
+            except Exception as e:
+                # Wizard failure mustn't block startup. Log and fall through.
+                print(f"(setup wizard error: {e}; opening main GUI)",
+                      file=sys.stderr)
+            finally:
+                root.deiconify()
 
     # v0.26.x: splash screen during RandoGUI init. The init does
     # ~0.5–2 seconds of file I/O + widget construction; without

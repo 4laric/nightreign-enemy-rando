@@ -4665,12 +4665,21 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                    ).pack(anchor='w')
         step_lbl = _ttk.Label(body, text="", style='Dim.TLabel')
         step_lbl.pack(anchor='w', pady=(0, 8))
-        content = _ttk.Frame(body); content.pack(fill='both', expand=True)
 
-        nav = _ttk.Frame(body); nav.pack(fill='x', pady=(8, 0))
+        # Pin the Back/Next/Import bar to the bottom and pack it BEFORE the
+        # (expanding) content frame. Once the preview scan fills content, its
+        # requested height grows; a sibling packed *after* an expanding widget
+        # gets pushed off the bottom when the window can't grow, which is why
+        # the Import button was only reachable after manually resizing the
+        # window. Reserving the bottom strip first keeps the bar in view and
+        # lets content take the space above it.
+        nav = _ttk.Frame(body); nav.pack(side='bottom', fill='x', pady=(8, 0))
         back_btn = _ttk.Button(nav, text="Back")
         next_btn = _ttk.Button(nav, text="Next")
         back_btn.pack(side='left'); next_btn.pack(side='right')
+
+        content = _ttk.Frame(body)
+        content.pack(side='top', fill='both', expand=True)
 
         er_var = _tk.StringVar(value=self.roster_er_dir_var.get())
         mmv_var = _tk.StringVar(value=self.roster_mmv_dir_var.get())

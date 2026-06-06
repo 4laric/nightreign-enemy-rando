@@ -1,8 +1,7 @@
 """MSB binary-format primitives for Nightreign / Elden Ring map files.
 
 This module exposes the byte-level parse / mutate primitives that the
-v3 engine (`oops_v3.py`) and the walk-route rewriter
-(`rewrite_walk_routes.py`) call to operate on .msb files. It is NOT
+v3 engine (`oops_v3.py`) calls to operate on .msb files. It is NOT
 the engine — the engine lives in `oops_v3.py`.
 
 History

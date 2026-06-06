@@ -4,8 +4,8 @@
 Read-and-modify tool. For each (msb, pi, to_pos) in slot_repositions.json,
 locate Part pi's position field at offset 0x400, verify the existing bytes
 match the recorded from_pos (sanity check), and substitute the new position
-bytes in place. Preserves all other MSB content — same in-place-byte-sub
-discipline as Step 2a (walk_route renames) and the rewires.
+bytes in place. Preserves all other MSB content — the same in-place-byte-sub
+discipline used elsewhere in the pipeline.
 
 WHAT THIS DOES IN GAMEPLAY TERMS:
 Vanilla NR has many enemy slots placed off the navmesh (BVH classified
@@ -54,7 +54,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from rewrite_walk_routes import parse_msb_sections
+from oops_all_anyone import parse_msb_sections
 
 # Position field offset within an Enemy Part. Confirmed empirically against
 # slot_terrain.json: reads (-70.54, 180.85, -25.87) for m60_43_39_00 pi=23,

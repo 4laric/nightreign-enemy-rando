@@ -261,7 +261,7 @@ class TestExternalImportSurface:
         surface = _collect_external_surface()
         assert len(surface) >= 2, (
             f"Only {len(surface)} file(s) import from oops_all_anyone; "
-            "expected at least oops_v3.py + rewrite_walk_routes.py. "
+            "expected at least oops_v3.py plus the dev MSB tools. "
             "AST parsing may have silently failed."
         )
 

@@ -326,6 +326,3 @@ the v0.24.x arc:
 5. **Engine-wire V3_SCRIPTED_INTRO_SLOTS** so the picker rejects
    rather than just the validator flagging. Move #3 from the v0.24.86
    four-move plan.
-6. **walk_route substitution** (vs. the current deletion-only
-   approach). Requires discovering where the spawn manifest lives
-   (likely `regulation.bin`); deferred as a future project.

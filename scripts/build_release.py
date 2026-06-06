@@ -134,7 +134,6 @@ INCLUDE_FILES = [
     'dcx.py',
     'dcx_batch.py',
     'emevd_patch.py',
-    'rewrite_walk_routes.py',
     # v0.29 merchant / regulation subsystem (imported by the GUI + oops_v3).
     # regulation_rando -> regulation_io + merchant_shop_fill, so all three
     # ship together; night_role is imported by both oops_v3 and the GUI.
@@ -199,7 +198,7 @@ INCLUDE_FROM_DEV = [
     'dev/pools_caps_panel.py',
     'dev/boutique_pool_panel.py',
     # dev tools imported lazily by shipped runtime code:
-    #   apply_slot_repositions <- dcx_batch.py (needs rewrite_walk_routes, shipped)
+    #   apply_slot_repositions <- dcx_batch.py (slot-repositioning step)
     #   chr_asset_resolver     <- dev/heritage_chr_import.py
     'dev/apply_slot_repositions.py',
     'dev/chr_asset_resolver.py',

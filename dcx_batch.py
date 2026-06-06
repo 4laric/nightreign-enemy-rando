@@ -31,13 +31,9 @@ REWIRES_DIR = os.path.join(HERE, 'rewired_msbs')
 
 
 # =============================================================================
-# DIAGNOSTIC OVERRIDES — set to a c-prefix to force visual-baseline behavior.
-# Defaults are None (normal randomization). Edit these for a diagnostic run,
-# then revert to None for normal play. Both can be active simultaneously.
-#
-# WALK_ROUTE_FORCE_CP: every walk_route procedural spawn becomes this c-prefix
-#   regardless of seed. Step 2a bypasses its tier-aware picker entirely.
-#   Example: 'c4180' -> all walk_route patrols spawn Spirit Jellyfish.
+# DIAGNOSTIC OVERRIDE — set to a c-prefix to force visual-baseline behavior.
+# Default is None (normal randomization). Edit for a diagnostic run, then
+# revert to None for normal play.
 #
 # PLACED_PART_FORCE_CP: every placed Part (fragile OR non-fragile) becomes
 #   this c-prefix. Routes through oops_all_target_cp which short-circuits
@@ -46,25 +42,12 @@ REWIRES_DIR = os.path.join(HERE, 'rewired_msbs')
 #   different Foot Soldier variants (with/without shield, etc.) will appear.
 #   Example: 'c4373' -> every placed slot is some Leyndell Foot Soldier variant.
 #
-# Combined effect: the world is visually uniform (Foot Soldiers + Jellyfish).
-# Anything visible in-game that ISN'T one of those two is by construction
-# either (a) something neither system covers — rewired generator clones,
+# Anything visible in-game that ISN'T that c-prefix is by construction
+# either (a) something the system doesn't cover — rewired generator clones,
 # sentinels, type=15 squads tied to PIs that pick_variant_for_tier rejected,
 # or (b) c-prefix-without-valid-variant edge cases (visible in console as
 # "n_skipped_compat" increments).
 # =============================================================================
-WALK_ROUTE_FORCE_CP = None
-
-# v0.24.93-patch14: walk_route_rewrite disabled by default. The Step 2a/3
-# pass rewrites c-prefixes in walk_route_cXXXX event names across 81
-# MSBs per seed. Per Alaric direction: was never demonstrably effective
-# and kept only because of "no obvious downsides." Suspected contributor
-# to Day-2 explore-CTD class (walk_route renames may produce event-name
-# byte strings pointing to chrs not preloaded for the tile).
-#
-# Set True to re-enable. No other changes needed — the Step 2a/3 block
-# guards on this flag and falls through to Step 3/4 cleanly when False.
-WALK_ROUTE_REWRITE_ENABLED = False  # v0.24.93-patch14: see header
 PLACED_PART_FORCE_CP = None        # e.g., 'c4373' for foot-soldier baseline
 
 
@@ -697,8 +680,8 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
         # leaf center. Pre-shuffle so the shuffle sees the corrected
         # positions and the off_mesh_slots restriction in slot_terrain.json
         # gets satisfied (target_pool no longer needs to soft-restrict
-        # those slots). Same in-place byte substitution discipline as
-        # Step 2a (walk_route renames).
+        # those slots). Same in-place byte-substitution discipline used
+        # elsewhere in the pipeline.
         if SLOT_REPOSITIONS_PATH and os.path.exists(SLOT_REPOSITIONS_PATH):
             import json as _json
             print(f"\n=== Step 1b/3: Applying slot repositions ===")
@@ -769,7 +752,7 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
         # which short-circuits compat/fragile/tier checks at the swap site
         # (oops_v3.py line 9757). Variant within the c-prefix is rolled per-
         # slot via pick_variant_for_tier so e.g. Foot Soldier variants vary.
-        # Used for visual-baseline diagnostic runs paired with WALK_ROUTE_FORCE_CP.
+        # Used for visual-baseline diagnostic runs.
         if PLACED_PART_FORCE_CP is not None:
             print(f"  DIAGNOSTIC: oops_all_target_cp forced to "
                   f"{PLACED_PART_FORCE_CP!r} (was {oops_all_target_cp!r})")
@@ -807,127 +790,6 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                                 field_upgrade_fieldboss_pct=field_upgrade_fieldboss_pct,
                                 field_upgrade_nightboss_pct=field_upgrade_nightboss_pct,
                                 fieldboss_to_nightboss_promote_pct=fieldboss_to_nightboss_promote_pct)
-
-        if not WALK_ROUTE_REWRITE_ENABLED:
-            print(f"\n=== Step 2a/3: walk_route_rewrite DISABLED (v0.24.93-patch14) ===")
-            print(f"  Skipping 554-event rewrite across 81 MSBs. "
-                  f"Set WALK_ROUTE_REWRITE_ENABLED=True in dcx_batch.py to re-enable.")
-        else:
-            print(f"\n=== Step 2a/3: Rewriting walk_route procedural-spawn names ===")
-            # v0.23.77: walk_route_cXXXX events drive NR's procedural Limveld
-            # spawn engine — chrs of c-prefix cXXXX spawn at the route's points
-            # at runtime, independent of any MSB Part placements. Until v0.23.76
-            # these events were untouched by the rando, so vanilla c4100 Demi-
-            # Humans (and 63 other c-prefixes) spawned at fixed locations even
-            # in oops-all runs. This pass substitutes the c-prefix in the event
-            # name with a target picked by oops_v3.pick_target_cp — same picker
-            # the main shuffle uses, so walk_routes get the full tier-aware
-            # grunt-pool treatment (excludes V3_EXCLUDE_TARGET_PREFIXES,
-            # respects V3_MAP_PREFIX_TARGET_EXCLUDES, applies unique-cap
-            # exhaustion). v0.23.78: recipient_is_boss=False forces field-tier
-            # picks since walk_routes are procedural ambient-mob spawns, not
-            # boss encounters. In-place byte substitution preserves all MSB
-            # offsets — c-prefix is always 5 chars. See dev/rewrite_walk_routes.py.
-            import sys as _sys
-            _sys.path.insert(0, os.path.join(HERE, 'dev'))
-            from rewrite_walk_routes import rewrite_one_msb as _rewrite_walk_routes_one
-            import random as _random
-
-            # Build roster-backed picker — wraps oops_v3.pick_target_cp with
-            # the per-MSB context the walk_route pass has (slot_msb_name only;
-            # no slot_pi/slot_variant_name since walk_routes are events not Parts).
-            _tags = oops_v3._load_tags() if hasattr(oops_v3, '_load_tags') else None
-            # _load_tags isn't a stable public API — fall back to direct json load
-            # if the function isn't present.
-            if _tags is None:
-                import json as _json
-                _tags = _json.load(open(oops_v3._data_path('nr_enemy_tags.json'), encoding='utf-8'))
-                _roster = _json.load(open(oops_v3._data_path('nr_enemy_roster.json'), encoding='utf-8'))
-                _prefix_variants, _prefix_count = oops_v3.build_per_prefix_data(_roster)
-            else:
-                _prefix_variants, _prefix_count = oops_v3.build_per_prefix_data(
-                    oops_v3._load_roster() if hasattr(oops_v3, '_load_roster')
-                    else _json.load(open(oops_v3._data_path('nr_enemy_roster.json'), encoding='utf-8')))
-
-            def _walk_route_picker(source_cp, rng, slot_msb_name=None):
-                # v0.23.81 diagnostic: if WALK_ROUTE_FORCE_CP is set, ignore
-                # tier/excludes/seed entirely and return the forced c-prefix.
-                # This pairs with NON_FRAGILE_BASELINE_OVERRIDE for visual-
-                # baseline runs (everything's a Foot Soldier except procedural
-                # spawns which are all Jellyfish, anomalies are fragile slots).
-                if WALK_ROUTE_FORCE_CP is not None:
-                    return WALK_ROUTE_FORCE_CP
-                return oops_v3.pick_target_cp(
-                    recipient_cp=source_cp,
-                    tags=_tags,
-                    prefix_variants=_prefix_variants,
-                    prefix_count=_prefix_count,
-                    recipient_is_boss=False,  # walk_routes are field-tier
-                    rng=rng,
-                    slot_msb_name=slot_msb_name,
-                    slot_pi=None,
-                    slot_variant_name=None,
-                    slot_pos=None,
-                )
-
-            if WALK_ROUTE_FORCE_CP is not None:
-                print(f"  DIAGNOSTIC: walk_route picker forced to "
-                      f"{WALK_ROUTE_FORCE_CP!r} (bypassing tier-aware picker)")
-            wr_per_map = {}
-            wr_total_routes = 0
-            wr_total_renamed = 0
-            for _fn in sorted(os.listdir(shuffled_dir)):
-                if not _fn.endswith('.msb'):
-                    continue
-                _in = os.path.join(shuffled_dir, _fn)
-                # Deterministic per-file sub-RNG so file ordering doesn't matter.
-                _sub_rng = _random.Random(f'walk_route:{seed}:{_fn}')
-                _result = _rewrite_walk_routes_one(_in, _in, _sub_rng,
-                                                   pick_target_fn=_walk_route_picker,
-                                                   dry_run=False)
-                if _result.get('n_walk_routes', 0) > 0:
-                    wr_per_map[_fn] = _result
-                    wr_total_routes += _result['n_walk_routes']
-                    wr_total_renamed += _result['n_renamed']
-            print(f"  {wr_total_renamed}/{wr_total_routes} walk_routes renamed "
-                  f"across {len(wr_per_map)} MSBs")
-            # Record on metadata so spoiler shows what changed.
-            oops_v3.V3_PIPELINE_METADATA['walk_route_rewrite'] = {
-                'picker':         (f'FORCED({WALK_ROUTE_FORCE_CP!r})' if WALK_ROUTE_FORCE_CP
-                                   else 'oops_v3.pick_target_cp(recipient_is_boss=False)'),
-                'n_msbs_touched': len(wr_per_map),
-                'n_routes_seen':  wr_total_routes,
-                'n_renamed':      wr_total_renamed,
-                'per_map':        {fn: {'n_walk_routes': r['n_walk_routes'],
-                                        'n_renamed': r['n_renamed'],
-                                        'renames': [{'evt': x['event_idx'],
-                                                     'src': x['source'],
-                                                     'tgt': x['target']}
-                                                    for x in r['renames']
-                                                    if x.get('target')]}
-                                   for fn, r in wr_per_map.items()},
-            }
-
-            # v0.23.80: write_spoiler_logs snapshots V3_PIPELINE_METADATA inside
-            # cmd_shuffle_v3 (oops_v3.py line 11316: `'pipeline_metadata': dict(...)`)
-            # before Step 2a runs, so the walk_route_rewrite key we just set
-            # wouldn't reach the spoiler without a re-write. Cleanest fix is to
-            # patch the on-disk JSON in place — the .json sits in shuffled_dir,
-            # which is the same dir the recompress step reads next, so the
-            # downstream copy will pick up the updated version.
-            import json as _json
-            _spoiler_json_path = os.path.join(shuffled_dir, '_spoilers.json')
-            if os.path.exists(_spoiler_json_path):
-                try:
-                    with open(_spoiler_json_path, 'r', encoding='utf-8') as _f:
-                        _spoiler = _json.load(_f)
-                    _spoiler.setdefault('pipeline_metadata', {})['walk_route_rewrite'] = (
-                        oops_v3.V3_PIPELINE_METADATA['walk_route_rewrite'])
-                    with open(_spoiler_json_path, 'w', encoding='utf-8') as _f:
-                        _json.dump(_spoiler, _f, indent=2)
-                    print(f"  walk_route_rewrite metadata injected into {os.path.basename(_spoiler_json_path)}")
-                except Exception as _e:
-                    print(f"  WARNING: failed to patch spoiler JSON: {_e}")
 
         print(f"\n=== Step 3/4: Recompressing shuffled MSBs to DCX ===")
         # v0.23.07: pass vanilla_dir + in_dcx_dir to enable identity-skip.
@@ -975,7 +837,7 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
         #     edits; skipping is safer than spamming garbage names.
         #
         # Spoiler metadata: writes a healthbar_rewrite block into
-        # _spoilers.json/_spoilers.md alongside walk_route_rewrite.
+        # _spoilers.json/_spoilers.md.
         # ─────────────────────────────────────────────────────────────
         healthbar_status = 'skipped (no emevd_vanilla_dir configured)'
         healthbar_report = None
@@ -1410,8 +1272,7 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     _tb.print_exc()
 
         # Inject healthbar_rewrite metadata into _spoilers.json so the
-        # run record reflects what happened (matches walk_route_rewrite
-        # precedent from Step 2a).
+        # run record reflects what happened.
         spoiler_json_path = os.path.join(out_dcx_dir, '_spoilers.json')
         if os.path.exists(spoiler_json_path):
             try:

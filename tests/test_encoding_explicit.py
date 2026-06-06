@@ -34,7 +34,6 @@ SHIPPED_FILES = [
     'dcx.py',
     'dcx_batch.py',
     'emevd_patch.py',
-    'rewrite_walk_routes.py',
     'check_patched_deep.py',
     'diff_vanilla_vs_patched.py',
     'dump_vanilla_fmg.py',

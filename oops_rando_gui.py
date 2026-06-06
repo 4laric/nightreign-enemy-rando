@@ -7791,6 +7791,90 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         self._log(msg)
         return cache_map
 
+    def _ensure_oodle_available(self):
+        """On-demand Oodle resolution. Returns True if a usable
+        oo2core_*_win64.dll is present (after a silent auto-copy and, if
+        needed, one focused prompt); False if the user declined or couldn't
+        provide one, in which case the caller should abort the run.
+
+        This is what lets the first-launch wizard's upfront Oodle screen be
+        retired: the engine's dcx.py resolves Oodle via
+        install_discovery.find_oodle_dll() (OODLE_DLL env var > local repo
+        cache > Steam scan of NR/ER), so caching the DLL into the repo root
+        here guarantees the run will find it. copy_oodle_dll_local() caches
+        into that same repo root by default. Runs on the main thread before
+        the worker spawns, so it fails fast instead of dying deep inside
+        compression.
+        """
+        try:
+            dev_dir = os.path.join(HERE, 'dev')
+            if dev_dir not in sys.path:
+                sys.path.insert(0, dev_dir)
+            import install_discovery as _idsc
+        except Exception:
+            # Can't probe — never block a run on that. dcx.py will still
+            # raise its own actionable FileNotFoundError if Oodle is truly
+            # needed and missing.
+            return True
+        # 1. Already resolvable? (env var, local cache, or a Steam install)
+        try:
+            if _idsc.find_oodle_dll():
+                return True
+        except Exception:
+            return True
+        # 2. Silent auto-copy from a discovered Steam install into the cache.
+        try:
+            if _idsc.copy_oodle_dll_local():
+                return True
+        except Exception:
+            pass
+        # 3. Last resort: one focused prompt to locate the DLL by hand.
+        if not messagebox.askyesno(
+                "Oodle DLL needed",
+                "Nightreign needs the Oodle DLL (oo2core_*_win64.dll) to "
+                "read and write its compressed files, and I couldn't find it "
+                "automatically — nothing cached locally, OODLE_DLL isn't set, "
+                "and no Steam copy of NR/ER was detected.\n\n"
+                "It ships inside the game, e.g.\n"
+                "  <Steam>/steamapps/common/ELDEN RING NIGHTREIGN/Game/\n\n"
+                "Locate oo2core_*_win64.dll now? (Choose No to cancel the "
+                "run.)",
+                parent=self.root):
+            return False
+        picked = filedialog.askopenfilename(
+            title="Select oo2core_*_win64.dll",
+            parent=self.root,
+            filetypes=[("Oodle DLL", "oo2core_*_win64.dll"),
+                       ("All DLLs", "*.dll"), ("All files", "*.*")])
+        if not picked:
+            return False
+        # Cache the picked DLL into the repo root so find_oodle_dll() (and
+        # thus dcx.py) picks it up now and on future runs.
+        try:
+            import shutil
+            dest = os.path.join(HERE, os.path.basename(picked))
+            if os.path.abspath(picked) != os.path.abspath(dest):
+                shutil.copy2(picked, dest)
+        except OSError as e:
+            messagebox.showerror(
+                "Oodle copy failed",
+                f"Couldn't cache the DLL into the app folder:\n{e}",
+                parent=self.root)
+            return False
+        # Re-check via the real resolver. This also catches a wrong-named
+        # pick: dcx.py only matches oo2core_*_win64.dll.
+        try:
+            if _idsc.find_oodle_dll():
+                return True
+        except Exception:
+            return True
+        messagebox.showerror(
+            "Oodle still not found",
+            "That file didn't match the expected oo2core_*_win64.dll name, so "
+            "the engine won't pick it up. Cancelling the run.",
+            parent=self.root)
+        return False
+
     def _run_shuffle(self):
         if self.worker_thread and self.worker_thread.is_alive():
             messagebox.showwarning("Already running",
@@ -8306,6 +8390,16 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     return
         except Exception:
             pass
+
+        # On-demand Oodle: make sure the DLL is resolvable before the worker
+        # touches any .dcx (decompress on read, compress on write). Replaces
+        # the first-launch wizard's upfront Oodle step. Main thread, fail-fast
+        # — beats dying deep inside the run with a FileNotFoundError.
+        if not self._ensure_oodle_available():
+            self.run_btn.config(text="⚙   Randomize", state='normal',
+                                command=self._run_shuffle)
+            self.status_var.set("Ready")
+            return
 
         self.worker_thread = threading.Thread(
             target=self._worker, args=(config,), daemon=True)

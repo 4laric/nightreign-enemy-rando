@@ -39,6 +39,7 @@ share one canonical predicate.
 from __future__ import annotations
 
 from engine.rejection import reject_target_for_slot
+from engine.cap_groups import resolve_cap_key, cap_of_key, members_of_key
 
 
 def pick_target_cp(ns, recipient_cp, tags,
@@ -325,8 +326,17 @@ def pick_target_cp(ns, recipient_cp, tags,
         # preserving pre-v0.28 behavior exactly.
         _blocked = getattr(run_ctx, 'msb_blocked_cps', None)
         if _blocked is None and _placed_counts:
-            _blocked = {cp for cp, n in _placed_counts.items()
-                        if n >= V3_UNIQUE_TARGET_CAPS.get(cp, 0)}
+            # v0.29.x: group-aware live fallback (used when there's no
+            # begin_msb freeze — legacy callers / tests). Resolve each
+            # count-key's cap via cap_of_key (group key -> shared cap;
+            # cp -> its own cap) and expand a maxed key to the cp(s) it
+            # blocks. Replaces the old `V3_UNIQUE_TARGET_CAPS.get(cp, 0)`
+            # form, whose 0 default would mis-block group-name keys.
+            _blocked = set()
+            for _k, _n in _placed_counts.items():
+                _cap = cap_of_key(_k, V3_UNIQUE_TARGET_CAPS)
+                if _cap is not None and _n >= _cap:
+                    _blocked |= members_of_key(_k)
         if _blocked:
             pool = pool - _blocked
     # v0.20.20: per-map-prefix target-side excludes. See
@@ -1116,8 +1126,16 @@ def pick_target_cp(ns, recipient_cp, tags,
     # bosses that couldn't fit the slot terrain, so the slot fell to
     # miniboss. Exempting NB-slot placements keeps eligible NB chrs in
     # the pool for the duration of the seed.
-    if result in V3_UNIQUE_TARGET_CAPS and not _is_nightboss_slot:
-        _placed_counts[result] = _placed_counts.get(result, 0) + 1
+    if not _is_nightboss_slot:
+        # v0.29.x: count under the cap-group key so members of a shared
+        # cap (data/cap_groups.json) accumulate into one bucket. For
+        # ungrouped cps resolve_cap_key is identity, so this is the old
+        # `result in V3_UNIQUE_TARGET_CAPS` behaviour. cap_of_key gates
+        # the bump: an uncapped member of a CAPPED group still counts
+        # (its group has a cap), while a truly uncapped cp does not.
+        _ck = resolve_cap_key(result)
+        if cap_of_key(_ck, V3_UNIQUE_TARGET_CAPS) is not None:
+            _placed_counts[_ck] = _placed_counts.get(_ck, 0) + 1
     return result
 
 

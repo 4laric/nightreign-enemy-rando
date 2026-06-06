@@ -67,6 +67,8 @@ pre-existing callers verbatim.
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 
+from engine.cap_groups import cap_of_key, members_of_key
+
 
 @dataclass
 class RunContext:
@@ -248,9 +250,18 @@ class RunContext:
         if caps is None:
             self.msb_blocked_cps = None  # no freeze -> picker uses live caps
         else:
-            self.msb_blocked_cps = {
-                cp for cp, n in self.unique_placed_counts.items()
-                if n >= caps.get(cp, 1 << 30)}
+            # v0.29.x: group-aware freeze. Resolve each count-key's cap
+            # via cap_of_key (cap-group key -> shared cap; cp -> own cap;
+            # uncapped / variant-group tuple -> None) and, when a key is
+            # at/over cap, block every cp it covers — a shared-cap group
+            # blocks all its members at once. Equivalent to the old
+            # caps.get(cp, 1<<30) comprehension for ungrouped cps.
+            _blocked = set()
+            for _k, _n in self.unique_placed_counts.items():
+                _cap = cap_of_key(_k, caps)
+                if _cap is not None and _n >= _cap:
+                    _blocked |= members_of_key(_k)
+            self.msb_blocked_cps = _blocked
 
     def end_msb(self) -> None:
         """Disarm the per-MSB size gates after a shuffle_msb_v3 call."""

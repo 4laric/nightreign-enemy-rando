@@ -3061,6 +3061,14 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         self._progress_callback('Building Generate tab…')
         self._build_main_tab(tab1)
 
+        # v0.29.x: Import Elden Ring promoted to the 2nd tab (most prominent
+        # slot, right after Generate). ER asset import — heritage chr + script
+        # file import for the me3 profile.
+        tab_chr = ttk.Frame(nb)
+        nb.add(tab_chr, text='  Import Elden Ring  ')
+        self._progress_callback('Building Import Elden Ring tab…')
+        self._build_chr_inventory_tab(tab_chr)
+
         # Tab 2: Pools & Caps (replaces the old Excluded Enemies tab —
         # pool membership / include-exclude is now the first sub-tab here,
         # alongside caliber-pool and per-chr cap controls). Falls back to a
@@ -3083,12 +3091,6 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         nb.add(tab_h, text='  Heritage / Multiplayer  ')
         self._progress_callback('Building Heritage tab…')
         self._build_heritage_tab(tab_h)
-
-        # Tab 4: ER asset import — heritage chr + script file import for me3 profile
-        tab_chr = ttk.Frame(nb)
-        nb.add(tab_chr, text='  Import Elden Ring  ')
-        self._progress_callback('Building Import Elden Ring tab…')
-        self._build_chr_inventory_tab(tab_chr)
 
         # v0.26.x: Tier 3 UX #11 — Spoiler viewer. Loads the engine's
         # _spoilers.json output and renders a filterable, searchable

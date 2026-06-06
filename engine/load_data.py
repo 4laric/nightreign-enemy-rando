@@ -704,6 +704,13 @@ def load_data(ns):
     #   tier) per Alaric — a couple of sightings/seed, not a dozen.
     _RARE_NOVELTY_CAPS = {
         'c4442': 4,
+        # c4960 / c4961 Giant Skeleton Torso — torso-only oddity the rando
+        # is the sole source of (V3-excluded until v0.29.x; c4960 unbanned
+        # this version). Shared cap 2 via the giant_skeleton_torso group in
+        # cap_groups.json, so the two variants TOGETHER read as a rare
+        # surprise rather than wallpaper. Per Alaric.
+        'c4960': 2,
+        'c4961': 2,
     }
     _rn_capped = 0
     for _cp, _cap in _RARE_NOVELTY_CAPS.items():
@@ -715,6 +722,34 @@ def load_data(ns):
     if _rn_capped:
         print(f"v0.27.27: rare-novelty caps — {_rn_capped} chr(s) capped "
               f"below grunt-40 ({', '.join(f'{k}={v}' for k, v in _RARE_NOVELTY_CAPS.items())})")
+
+    # v0.29.x: cap-group member alignment. These SoTE re-imports share a
+    # chr identity (and a cap_groups.json group) with a vanilla prefix
+    # that's already capped, but the tier sweeps above gave them a
+    # different value (or none). Pin them to the vanilla member's cap so
+    # every shared-cap group is fully-capped and audit-clean:
+    #   c5790 Guardian Golem        -> c4660's 2 (was the miniboss default 4)
+    #   c5960 Ulcerated Tree Spirit -> c4640's 2 (was uncapped)
+    # The four troll/runebear/revenant groups need no entry here — both
+    # members already carry the same cap (4).
+    for _cp, _cap in (('c5790', 2), ('c5960', 2)):
+        V3_UNIQUE_TARGET_CAPS[_cp] = _cap
+
+    # v0.29.x: validate the cap-group config now that caps + tags are
+    # populated. Fail-open — a malformed groups file logs and DISABLES
+    # grouping (resolve_cap_key then returns cps unchanged) rather than
+    # crashing a run; a missing file just means the feature is off.
+    try:
+        from engine.cap_groups import audit_cap_groups, load_cap_groups
+        load_cap_groups()
+        audit_cap_groups(tags, V3_UNIQUE_TARGET_CAPS)
+    except FileNotFoundError:
+        pass
+    except ValueError as _cg_err:
+        print("cap_groups audit FAILED — shared-cap grouping disabled this "
+              f"run:\n{_cg_err}")
+        from engine import cap_groups as _cg
+        _cg.use_cap_groups_for_test({'groups': {}})
 
     # v0.27.13: build the all-SOTE target set from the fully-merged tag
     # DB. Computed every load_data() so it tracks tag edits with no

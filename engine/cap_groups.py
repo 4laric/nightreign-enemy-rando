@@ -141,6 +141,38 @@ def all_groups() -> Dict[str, FrozenSet[str]]:
     return dict(_GROUP_TO_MEMBERS)
 
 
+def cap_of_key(key, caps: dict) -> Optional[int]:
+    """Resolve the placement cap for a cap-accounting key.
+
+    For a group key: the shared cap — the minimum cap across members that
+    carry one. Members share a value when the config is audit-clean; min
+    is the conservative reading if they ever diverge (and matches the
+    rarity intent — the lower cap wins). For a c-prefix key: caps.get(key).
+    Returns None (uncapped) when neither the key nor any group member has
+    a cap entry — including for keys that aren't strings (e.g. the
+    variant-group (cp, group) tuple keys that also live in the counts
+    dict), so those stay OUT of the per-prefix cap machinery exactly as
+    they did before this layer existed.
+    """
+    if isinstance(key, str) and is_group_key(key):
+        vals = [caps[m] for m in group_members(key) if m in caps]
+        return min(vals) if vals else None
+    if isinstance(key, str):
+        return caps.get(key)
+    return None
+
+
+def members_of_key(key) -> Set[str]:
+    """C-prefixes a cap key covers: all members for a group key, else the
+    key itself. Used to expand a cap-exhausted key into the cps to block —
+    the engine subtracts cp strings from the candidate pool, so a group
+    must contribute its members, not its name.
+    """
+    if isinstance(key, str) and is_group_key(key):
+        return set(group_members(key))
+    return {key}
+
+
 def explain_key(key: str) -> str:
     """Human-readable description of a cap key for logs/spoilers.
 

@@ -433,7 +433,9 @@ V3_EXCLUDE_PREFIXES = {
     # Player + nightfarer templates
     'c0000','c0010','c0100','c0110','c0120','c1000','c2070',
     # Sub-components and non-combat
-    'c4960','c4000','c6001','c8130','c8131','c8132',
+    # c4960 unbanned in v0.29.x: Giant Skeleton Torso, now placeable with a
+    # shared cap of 2 alongside c4961 (giant_skeleton_torso cap group).
+    'c4000','c6001','c8130','c8131','c8132',
     # c4491 unbanned in v0.28.x: had 1 merchant variant + 6 hostile
     # exploding Small Living Jar variants (team=6, 1615x spEffect
     # family). The blanket prefix exclusion was over-broad — the

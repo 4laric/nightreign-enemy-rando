@@ -23,6 +23,55 @@
         "c6251"
       ],
       "rationale": "Both are mounted Tree Sentinel — same chr identity. c3251 is the ER duo / Altus overworld variant; c6251 is the SoTE-area variant."
+    },
+    "giant_skeleton_torso": {
+      "members": [
+        "c4960",
+        "c4961"
+      ],
+      "rationale": "v0.29.x: Giant Skeleton Torso — two variants of the same torso-only oddity. c4960 unbanned this version. Shared cap 2 (authored in _RARE_NOVELTY_CAPS) so the pair reads as a rare surprise, not wallpaper."
+    },
+    "guardian_golem_iconic": {
+      "members": [
+        "c4660",
+        "c5790"
+      ],
+      "rationale": "v0.29.x fold: Guardian Golem. c4660 (vanilla GIGA, cap 2) + c5790 (SoTE XL re-import, pinned 4->2 to match). Shared cap 2."
+    },
+    "royal_revenant_iconic": {
+      "members": [
+        "c4020",
+        "c6270"
+      ],
+      "rationale": "v0.29.x fold: Royal Revenant. c4020 + c6270 both already cap 4. Shared cap 4 (CAP_FOLD doc's '8' was stale)."
+    },
+    "runebear_iconic": {
+      "members": [
+        "c4630",
+        "c5780"
+      ],
+      "rationale": "v0.29.x fold: Runebear. c4630 + c5780 both already cap 4. Shared cap 4 (CAP_FOLD doc's '2' was stale)."
+    },
+    "troll_iconic": {
+      "members": [
+        "c4600",
+        "c5390"
+      ],
+      "rationale": "v0.29.x fold: Troll. c4600 + c5390 both already cap 4. Shared cap 4 (CAP_FOLD doc's '6' was stale)."
+    },
+    "troll_knight_iconic": {
+      "members": [
+        "c4601",
+        "c5391"
+      ],
+      "rationale": "v0.29.x fold: Troll Knight. c4601 + c5391 both already cap 4. Shared cap 4 (CAP_FOLD doc's '6' was stale)."
+    },
+    "ulcerated_tree_spirit_iconic": {
+      "members": [
+        "c4640",
+        "c5960"
+      ],
+      "rationale": "v0.29.x fold: Ulcerated Tree Spirit. c4640 (vanilla, cap 2) + c5960 (SoTE re-import, pinned uncapped->2 to match). Shared cap 2."
     }
   },
   "_pending_after_other_cps_wired": {

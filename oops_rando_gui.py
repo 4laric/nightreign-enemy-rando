@@ -8038,11 +8038,26 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             parent=self.root)
         return False
 
+    def _status_now(self, msg):
+        """Set the status line and force an immediate repaint. Used during the
+        synchronous pre-worker phase of a run (validation, vanilla prefetch,
+        asset-pack detect, Oodle resolve) so the window shows what it's doing
+        instead of appearing frozen for a couple of seconds."""
+        try:
+            self.status_var.set(msg)
+            self.root.update_idletasks()
+        except Exception:
+            pass
+
     def _run_shuffle(self):
         if self.worker_thread and self.worker_thread.is_alive():
             messagebox.showwarning("Already running",
                 "A rando is already being generated. Wait for it to finish.")
             return
+
+        # v0.31: acknowledge the click immediately — the synchronous pre-worker
+        # phase below can take a couple of seconds and otherwise looks frozen.
+        self._status_now("Preparing run…")
 
         # v0.26.x: track run start for duration in the post-run summary
         # panel. Use monotonic so DST / wall-clock changes don't produce
@@ -8520,37 +8535,42 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             pass
 
         # v0.28.x: auto-popup. If imported chrs are missing their installed
-        # files, offer the guided importer before committing to a run — that
-        # importer is the tool that fixes them, and presence-gating would
-        # otherwise just silently skip them. Cheap detect-only check (no
-        # regulation/roster load), on the main thread before any work starts
-        # (so there's no mid-run import race). Choosing "Yes" opens the
-        # importer and cancels this run; "No" randomizes without them. Fully
-        # guarded so it can never block a run.
+        # files, offer the guided importer before committing to a run.
+        # v0.31: gated on having an MMV source dir. The missing chrs are
+        # MMV/heritage imports; with no MMV dir there's nothing to import them
+        # from, so the check is pure noise — they're silently skipped at
+        # runtime either way. Only nag when the user is actually set up to
+        # import. Cheap detect-only check (no regulation/roster load), on the
+        # main thread before any work starts (so there's no mid-run import
+        # race). "Yes" opens the importer and cancels this run; "No"
+        # randomizes without them. Fully guarded so it can never block a run.
         try:
-            _ov = oops_v3
+            _mmv = bool(getattr(self, 'roster_mmv_dir_var', None)
+                        and self.roster_mmv_dir_var.get().strip())
             _tcd = config.get('target_chr_dir') or ''
-            _absent = []
-            if _tcd:
+            if _mmv and _tcd:
+                self._status_now("Checking installed characters…")
+                _ov = oops_v3
+                _absent = []
                 for _info in (_ov.detect_asset_packs(_tcd) or {}).values():
                     _absent.extend(_info.get('missing') or [])
-            _absent = sorted(set(_absent))
-            if _absent:
-                _extra = (f"\n  …(+{len(_absent) - 24} more)"
-                          if len(_absent) > 24 else "")
-                if messagebox.askyesno(
-                        "Missing imported chrs",
-                        f"{len(_absent)} imported chr(s) aren't installed and "
-                        f"will be skipped this run:\n\n"
-                        f"{', '.join(_absent[:24])}{_extra}\n\n"
-                        f"Open the guided importer to copy them in now?\n"
-                        f"(Choose No to randomize without them.)",
-                        parent=self.root):
-                    self.run_btn.config(text="⚙   Randomize", state='normal',
-                                        command=self._run_shuffle)
-                    self.status_var.set("Ready")
-                    self._open_er_import_wizard()
-                    return
+                _absent = sorted(set(_absent))
+                if _absent:
+                    _extra = (f"\n  …(+{len(_absent) - 24} more)"
+                              if len(_absent) > 24 else "")
+                    if messagebox.askyesno(
+                            "Missing imported chrs",
+                            f"{len(_absent)} imported chr(s) aren't installed and "
+                            f"will be skipped this run:\n\n"
+                            f"{', '.join(_absent[:24])}{_extra}\n\n"
+                            f"Open the guided importer to copy them in now?\n"
+                            f"(Choose No to randomize without them.)",
+                            parent=self.root):
+                        self.run_btn.config(text="⚙   Randomize", state='normal',
+                                            command=self._run_shuffle)
+                        self.status_var.set("Ready")
+                        self._open_er_import_wizard()
+                        return
         except Exception:
             pass
 
@@ -8558,12 +8578,14 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # touches any .dcx (decompress on read, compress on write). Replaces
         # the first-launch wizard's upfront Oodle step. Main thread, fail-fast
         # — beats dying deep inside the run with a FileNotFoundError.
+        self._status_now("Checking Oodle…")
         if not self._ensure_oodle_available():
             self.run_btn.config(text="⚙   Randomize", state='normal',
                                 command=self._run_shuffle)
             self.status_var.set("Ready")
             return
 
+        self._status_now("Running rando…")
         self.worker_thread = threading.Thread(
             target=self._worker, args=(config,), daemon=True)
         self.worker_thread.start()

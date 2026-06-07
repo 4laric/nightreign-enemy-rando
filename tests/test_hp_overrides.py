@@ -98,18 +98,27 @@ def test_no_vanilla_nr_chrs_touched(overrides, nid_to_cp, tags):
         '\n  '.join(f'nid={n} cp={c}' for n, c in violators[:10]))
 
 
-def test_overrides_are_reductions_not_buffs(overrides, vanilla_hp):
-    """The script caps DOWNWARD only. If any override raises HP above
-    vanilla, the script's policy semantics broke."""
-    buffs = []
+BAND_TIERS = ('field_boss', 'night_boss')
+
+
+def test_only_band_tiers_buff_others_cap_down(overrides, vanilla_hp, nid_to_cp, tags):
+    """v0.31 policy: field_boss/night_boss get a two-sided clamp — a p50 FLOOR
+    may raise cold imports UP. Every other tier stays cap-down only. A buff
+    outside a band tier means the policy broke."""
+    illegal = []
     for nid, new_hp in overrides.items():
         old_hp = vanilla_hp.get(nid)
-        if old_hp is None: continue
-        if new_hp > old_hp:
-            buffs.append((nid, old_hp, new_hp))
-    assert not buffs, (
-        f'HP overrides include BUFFS (policy says cap-down only):\n  ' +
-        '\n  '.join(f'nid={n} {o} → {h} (+{h-o})' for n, o, h in buffs[:10]))
+        if old_hp is None or new_hp <= old_hp:
+            continue
+        cp = nid_to_cp.get(nid)
+        tier = (tags.get(cp, {}) or {}).get('tier')
+        if tier not in BAND_TIERS:
+            illegal.append((nid, cp, tier, old_hp, new_hp))
+    assert not illegal, (
+        'HP buffs found outside band tiers (only field_boss/night_boss may '
+        'floor up):\n  ' +
+        '\n  '.join(f'nid={n} cp={c} tier={t} {o} → {h}'
+                    for n, c, t, o, h in illegal[:10]))
 
 
 def test_all_overridden_cps_are_in_eligible_tiers(overrides, nid_to_cp, tags):

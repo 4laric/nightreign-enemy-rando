@@ -113,6 +113,9 @@ DEFAULT_TIER_CAPS = {
 }
 
 VANILLA_SOURCE = 'nr_placed'
+# v0.31: tiers that get a two-sided clamp (p50 floor + p75 cap) on the
+# per-cp-max basis. Other tiers keep the legacy variant-level cap (reduce-only).
+BAND_TIERS = ('field_boss', 'night_boss')
 
 
 def load_inputs():
@@ -163,6 +166,29 @@ def parse_tier_caps_arg(args_list):
     return out
 
 
+def percpmax_band(tags, cp_variants, npc_by_id, tier, source=VANILLA_SOURCE):
+    """Return (p50, p75) of the PER-CP representative HP (max variant per cp)
+    for `source` chrs in `tier`, or None. Per-cp-max is the right lens for a
+    boss's full-health value — pooling raw variants (the legacy cap basis)
+    mixes each boss's difficulty-variants together and understates the tier.
+    """
+    reps = []
+    for cp, t in tags.items():
+        if (t or {}).get('tier') != tier:
+            continue
+        if (t or {}).get('_source') != source:
+            continue
+        hs = [hp_of(npc_by_id, nid) for nid in cp_variants.get(cp, [])]
+        hs = [h for h in hs if h is not None and h > 100]
+        if hs:
+            reps.append(max(hs))
+    if not reps:
+        return None
+    reps.sort()
+    pct = lambda p: reps[min(len(reps) - 1, int(round(p * (len(reps) - 1))))]
+    return pct(0.50), pct(0.75)
+
+
 def main():
     ap = argparse.ArgumentParser(
         description=__doc__,
@@ -170,11 +196,15 @@ def main():
     ap.add_argument('--check', action='store_true',
                     help='Report only; do not write the CSV.')
     ap.add_argument('--tier-caps', nargs='*', default=[],
-                    help='Override default tier caps. '
+                    help='Override per-tier HP caps (downward clamp). '
                     'Format: miniboss=1300 field_boss=2500 ...')
+    ap.add_argument('--tier-floors', nargs='*', default=[],
+                    help='Override per-tier HP floors (upward clamp, band '
+                    'tiers only). Format: field_boss=2400 night_boss=2500 ...')
     args = ap.parse_args()
 
     tier_caps_override = parse_tier_caps_arg(args.tier_caps)
+    tier_floors_override = parse_tier_caps_arg(args.tier_floors)
 
     tags, roster, npc_by_id = load_inputs()
     cp_variants = cp_to_variants(roster)
@@ -199,13 +229,32 @@ def main():
             # Fallback to hardcoded if no data available
             computed_caps[tier] = DEFAULT_TIER_CAPS[tier]
 
+    # v0.31: two-sided clamp for the boss tiers the player measures imports
+    # against. For BAND_TIERS, recompute the cap on the consistent per-cp-max
+    # basis (p75) and add a p50 FLOOR so cold imports — the ER/SoTE "tourists"
+    # that ran below vanilla — are scaled UP to the median placed vanilla boss
+    # rather than left soft. Other tiers keep the legacy variant-level cap and
+    # stay reduce-only. Floors apply to imports only (vanilla is never touched)
+    # and scale uniformly per cp, so phase-2 stays above phase-1.
+    tier_floors = {}
+    for tier in BAND_TIERS:
+        band = percpmax_band(tags, cp_variants, npc_by_id, tier)
+        if band:
+            p50, p75 = band
+            tier_floors[tier] = p50
+            computed_caps[tier] = p75
+
     tier_caps = dict(computed_caps)
     tier_caps.update(tier_caps_override)
+    tier_floors.update(tier_floors_override)
 
-    print(f'HP overrides — tier caps: {tier_caps}')
+    print(f'HP overrides — tier caps (downward): {tier_caps}')
+    print(f'               band floors (p50, upward): {tier_floors}')
     if tier_caps_override:
-        print(f'  (caller overrode defaults via --tier-caps: {tier_caps_override})')
-    print(f'  (live vanilla NR p75 from current data: {computed_caps})')
+        print(f'  (caller overrode --tier-caps: {tier_caps_override})')
+    if tier_floors_override:
+        print(f'  (caller overrode --tier-floors: {tier_floors_override})')
+    print(f'  (live vanilla NR caps from current data: {computed_caps})')
     print(f'Loaded: {len(tags)} cps in tags, '
           f'{sum(len(v) for v in cp_variants.values())} variants, '
           f'{len(npc_by_id)} NpcParam rows\n')
@@ -231,11 +280,14 @@ def main():
             continue
         max_hp = max(h for _, h in var_hps)
         cap = tier_caps[tier]
-        if max_hp <= cap:
+        floor = tier_floors.get(tier)
+        if max_hp > cap:
+            ratio = cap / max_hp          # hot import — clamp down to p75
+        elif floor is not None and max_hp < floor:
+            ratio = floor / max_hp        # cold import — floor up to vanilla p50
+        else:
             n_skipped += 1
             continue
-        # Scale ratio
-        ratio = cap / max_hp
         n_scaled_cps += 1
         for nid, old_hp in var_hps:
             new_hp = max(1, int(round(old_hp * ratio)))

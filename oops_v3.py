@@ -27,7 +27,7 @@ from collections import Counter, defaultdict
 # changes every release; if a stale .pyc is being loaded, the fingerprint
 # in the spoiler header won't match the source's value, making the
 # install-layering bug obvious from the spoiler alone.
-V3_ENGINE_VERSION = 'v0.31'
+V3_ENGINE_VERSION = 'v0.31.1'
 V3_ENGINE_FINGERPRINT = 'v0.31'  # MUST bump on each release — appears in spoilers
 
 # v0.28.x (Phase 2 POI recycling): default on. Flip to False to revert

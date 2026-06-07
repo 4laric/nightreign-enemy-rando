@@ -20,7 +20,7 @@ me3 profiles dir it looks like:
         ├── nightreign-enemy-rando.me3          ← pre-wired (generated here)
         ├── randomize.pyw / randomize.sh        ← double-click launchers
         ├── README.md / INSTALL.md / CHANGELOG.md / ...
-        ├── package/                            ← the me3 PACKAGE (path = "package/")
+        ├── nrando/                             ← the me3 PACKAGE (path = "nrando/")
         │   ├── regulation.bin                  ← bundled, at deploy path
         │   ├── script/  material/  sfx/  ...   ← bundled deps at deploy paths
         │   ├── map/  chr/                      ← rando output / heritage chrs
@@ -29,12 +29,12 @@ me3 profiles dir it looks like:
             ├── oops_rando_gui.py  oops_v3.py  engine/  data/  dev/  ...
             └── bundled_regulation/ bundled_aicommon/ bundled_sfx/  ← reset sources
 
-Why nested `package/` instead of `path = "."`?
+Why nested `nrando/` instead of `path = "."`?
 -----------------------------------------------
 me3 maps a package directory's *contents* into the game VFS ("as if they
 were next to eldenring.exe"). Every documented me3 example points a
 package at a SUBFOLDER (`path = 'mod'`), never at the profile root. With
-`path = "package/"` me3 only ever sees real game-asset dirs; the .me3,
+`path = "nrando/"` me3 only ever sees real game-asset dirs; the .me3,
 the docs, the launchers and `_rando/` sit OUTSIDE the package where me3
 can't trip over them. Cost: one directory level. Benefit: zero ambiguity
 — which is the entire point of this pivot. Set PACKAGE_SUBDIR = '' below
@@ -90,7 +90,7 @@ PROFILE_DIR_NAME = 'nightreign-enemy-rando'   # top folder in the zip = extracte
 PROFILE_ID = 'nightreign-enemy-rando'         # me3 package id
 ME3_FILENAME = 'nightreign-enemy-rando.me3'   # pre-wired profile file at profile root
 RANDO_SUBDIR = '_rando'                       # tool code (invisible to me3)
-PACKAGE_SUBDIR = 'package'                     # '' => flat `path = "."`; 'package' => nested `path = "package/"`
+PACKAGE_SUBDIR = 'nrando'                      # '' => flat `path = "."`; 'nrando' => nested `path = "nrando/"`
 SHIP_BUNDLE_REFERENCE_COPIES = True            # master switch: ship bundled_*/ under _rando/ as reset-to-defaults sources
 # Bundles to deploy to package/ but NOT also ship a reference copy of under
 # _rando/. The reference copy only feeds the in-app "reinstall bundled

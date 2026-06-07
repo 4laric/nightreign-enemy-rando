@@ -90,7 +90,7 @@ if getattr(sys, 'frozen', False):
 else:
     _RANDO_DIR = HERE
 PROFILE_ROOT = os.path.dirname(_RANDO_DIR)
-PACKAGE_DIR = os.path.join(PROFILE_ROOT, 'package')
+PACKAGE_DIR = os.path.join(PROFILE_ROOT, 'nrando')
 
 # Name of the shipped profile's own .me3 (kept in sync with
 # scripts/build_release.py ME3_FILENAME).
@@ -8246,7 +8246,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     _hdr += ['', 'Active DLL mods (natives):']
                     _hdr += [f'  {d}' for d in _dll_natives]
                 _res = _m3p.write_profile_me3(
-                    _me3_path, 'package/', game='nightreign',
+                    _me3_path, 'nrando/', game='nightreign',
                     package_id='nightreign-enemy-rando',
                     natives=_dll_natives, header_lines=_hdr)
                 if _res['action'] == 'written':

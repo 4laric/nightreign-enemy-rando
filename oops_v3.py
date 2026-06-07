@@ -432,9 +432,20 @@ V3_TARGET_ONLY_SOURCES = frozenset({'er_heritage_v1'})  # v0.27.x: dropped 'scri
 V3_EXCLUDE_PREFIXES = {
     # Player + nightfarer templates
     'c0000','c0010','c0100','c0110','c0120','c1000','c2070',
+    # Fail on a fresh install (no loadable enemy assets when placed) — v0.31:
+    #   c3501, c8101  post_dlc_dump phantoms, no .chrbnd (c8101 dups the
+    #                 Wheeled Ballista by name/hp).
+    #   c5680         Wheeled Ballista, SoTE heritage, no IMPORT_PLAN path
+    #                 (cf. c6031 Bear); not bundled on a fresh install.
+    #   c8910         team=26 system/UI chr, not a combat enemy.
+    #   c4960, c4961  Giant Skeleton Torso — torso-only, break when relocated
+    #                 (c4961 _special_story team=6; c4960 team=33). Reverts the
+    #                 v0.29.x c4960 unban; c4961 was also mislabeled "Sebastian
+    #                 — safe" in V3_FRAGILE_SAFE_CONFIRMED (removed below). The
+    #                 giant_skeleton_torso cap group + _RARE_NOVELTY_CAPS
+    #                 entries for c4960/c4961 are now dead config.
+    'c3501','c4960','c4961','c5680','c8101','c8910',
     # Sub-components and non-combat
-    # c4960 unbanned in v0.29.x: Giant Skeleton Torso, now placeable with a
-    # shared cap of 2 alongside c4961 (giant_skeleton_torso cap group).
     'c4000','c6001','c8130','c8131','c8132',
     # c4491 unbanned in v0.28.x: had 1 merchant variant + 6 hostile
     # exploding Small Living Jar variants (team=6, 1615x spEffect
@@ -4817,7 +4828,6 @@ V3_FRAGILE_SAFE_CONFIRMED = {
               #   c3610 broke and large c3620 worked) — anim handling
               #   differs per c-prefix.
     'c4491',  # Small Jar Merchant (S humanoid mt=None) — safe.
-    'c4961',  # [Revenant] Sebastian (M humanoid mt=None) — safe.
     'c8130',  # Training Post - Small (S misc mt=None) — safe.
               #   Training posts are inert objects with no real AI;
               #   they "work" in the sense of being placeable but

@@ -5860,7 +5860,10 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             else:
                 sys.path.insert(0, HERE)
                 import oops_v3 as ov3
-            report = ov3.compatibility_preflight(target)
+            er_available = bool(
+                getattr(self, 'er_install_var', None)
+                and self.er_install_var.get().strip())
+            report = ov3.compatibility_preflight(target, er_available=er_available)
         except Exception as e:
             # Don't let a banner failure crash the tab — just suppress
             ttk.Label(self._compat_banner_frame,
@@ -5885,6 +5888,37 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                        foreground=THEME['success'],
                        background=THEME['bg']
                        ).pack(side='left')
+            return
+
+        # Friendly informational prompt (e.g. "import Elden Ring characters?")
+        # — rendered in the inviting accent color, NOT as an error.
+        if status == 'info':
+            info_color = THEME['accent']
+            banner = ttk.LabelFrame(self._compat_banner_frame,
+                                     text="Elden Ring characters",
+                                     padding=8)
+            banner.pack(fill='x')
+            row = ttk.Frame(banner); row.pack(fill='x')
+            ttk.Label(row, text=report['summary'],
+                       foreground=info_color,
+                       background=THEME['surface'],
+                       font=(self.ui_font, 10, 'bold')
+                       ).pack(side='left')
+            for chk in report.get('checks', []):
+                if chk.get('severity') != 'info':
+                    continue
+                ttk.Label(banner, text=f"  {chk.get('detail') or chk['message']}",
+                           style='Dim.TLabel', wraplength=720, justify='left'
+                           ).pack(anchor='w', pady=(2, 0))
+            btns = ttk.Frame(banner); btns.pack(fill='x', pady=(6, 0))
+            ttk.Button(btns, text="Import characters →",
+                       command=self._jump_to_chr_inventory_tab,
+                       style='TButton'
+                       ).pack(side='left')
+            ttk.Button(btns, text="Refresh",
+                       command=self._refresh_compat_banner,
+                       style='TButton'
+                       ).pack(side='left', padx=(6, 0))
             return
 
         # Warn or fail — render a more prominent banner
@@ -6094,7 +6128,10 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             else:
                 sys.path.insert(0, HERE)
                 import oops_v3 as ov3
-            report = ov3.compatibility_preflight(target)
+            er_available = bool(
+                getattr(self, 'er_install_var', None)
+                and self.er_install_var.get().strip())
+            report = ov3.compatibility_preflight(target, er_available=er_available)
             text = ov3.render_compatibility_report_text(report)
             self.root.clipboard_clear()
             self.root.clipboard_append(text)

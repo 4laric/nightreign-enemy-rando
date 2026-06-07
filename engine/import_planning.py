@@ -64,7 +64,8 @@ from collections import defaultdict
 _NON_PLACEABLE_TIERS = frozenset({'cinematic', 'non_combat', 'mount_component'})
 
 
-def compatibility_preflight(ns, target_chr_dir, reg=None, roster=None):
+def compatibility_preflight(ns, target_chr_dir, reg=None, roster=None,
+                            er_available=False):
     """v0.23.72-late: comprehensive compatibility check rolling up all the
     things that have to be true before a rando run will work without CTDs.
 
@@ -101,37 +102,39 @@ def compatibility_preflight(ns, target_chr_dir, reg=None, roster=None):
     checks = []
     target = (target_chr_dir or '').strip()
 
-    # === Check 1: target chr/ dir exists ===
-    if not target:
-        checks.append({
-            'id': 'target_chr_dir_set',
-            'name': 'Target chr/ folder configured',
-            'severity': 'warn',
-            'message': "No me3 profile chr/ folder set. Compatibility detection skipped.",
-            'detail': ("Open the 'chr/ Inventory' tab and point 'Target chr/ folder' "
-                       "at your me3 profile's chr/ subfolder so the rando can verify "
-                       "your installed chr assets."),
-        })
+    # === Check 1: target chr/ dir ===
+    # The chr/ folder only matters for importing cross-game (Elden Ring)
+    # characters. With no Elden Ring source there is nothing to import, so a
+    # missing or unset chr/ folder is NOT a problem and we say nothing. With
+    # Elden Ring present it's a friendly, optional invitation (the folder is
+    # auto-created on import) — never a hard "fix before generating" error.
+    def _no_chr_target_outcome():
+        if er_available:
+            return {
+                'status': 'info',
+                'summary': "Elden Ring found — import characters? (optional)",
+                'checks': [{
+                    'id': 'chr_import_available',
+                    'name': 'Import Elden Ring characters?',
+                    'severity': 'info',
+                    'message': ("Elden Ring detected — you can import its characters "
+                                "into the randomizer."),
+                    'detail': ("Open the 'Elden Ring Assets' tab to import characters. "
+                               "This is optional — Nightreign's own enemies are randomized "
+                               "either way, and the chr/ folder is created automatically "
+                               "when you import."),
+                }],
+                'asset_packs': {},
+            }
         return {
-            'status': 'warn',
-            'summary': "Compatibility check incomplete — target chr/ folder not set.",
-            'checks': checks,
+            'status': 'ok',
+            'summary': "Compatibility: all checks passed.",
+            'checks': [],
             'asset_packs': {},
         }
-    if not os.path.isdir(target):
-        checks.append({
-            'id': 'target_chr_dir_exists',
-            'name': 'Target chr/ folder exists',
-            'severity': 'fail',
-            'message': f"Target chr/ folder doesn't exist: {target}",
-            'detail': "Check the path on the 'chr/ Inventory' tab — there's a typo or the directory was moved.",
-        })
-        return {
-            'status': 'fail',
-            'summary': "Target chr/ folder path is broken.",
-            'checks': checks,
-            'asset_packs': {},
-        }
+
+    if not target or not os.path.isdir(target):
+        return _no_chr_target_outcome()
     checks.append({
         'id': 'target_chr_dir_exists',
         'name': 'Target chr/ folder exists',

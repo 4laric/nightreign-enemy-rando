@@ -865,6 +865,48 @@ def wizard_summary_lines(config):
     return lines
 
 
+def _read_vanilla_into_cache(game, cache, want_events=False,
+                             loose_event_dir=None, on_progress=None):
+    """Read the canonical vanilla map (and, when want_events, event) files out
+    of a packed Nightreign install's archives into `cache`.
+
+    Shared by the first-launch wizard's prep step and the on-demand prefetch
+    in RandoGUI._maybe_prefetch_vanilla, so both read exactly the same set the
+    same way. `on_progress(n, total, rel)` is called from the CALLING thread —
+    the wizard runs this on a worker thread; the on-demand path runs it on the
+    main thread.
+
+    Returns a result dict on success:
+        {'n_ok', 'failed', 'total', 'cache_map', 'cache_event'}
+    or None if the archives couldn't be opened or produced no map files (the
+    caller then falls back to using the input folder as-is).
+    """
+    from vanilla_source import VanillaSource, load_manifest
+    bundled_msbs = os.path.join(HERE, 'vanilla_msbs')
+    man = load_manifest()
+    rels = list(man.get('mapstudio', []))
+    if want_events:
+        rels += list(man.get('event', []))
+    src = VanillaSource(
+        game,
+        loose_map_dir=bundled_msbs if os.path.isdir(bundled_msbs) else None,
+        loose_event_dir=loose_event_dir if want_events else None)
+    if not src.has_archive:
+        return None
+    n_ok, failed = src.materialize(rels, cache, on_progress=on_progress)
+    cache_map = os.path.join(cache, 'map', 'mapstudio')
+    cache_event = os.path.join(cache, 'event')
+    try:
+        got_maps = os.path.isdir(cache_map) and any(
+            f.endswith('.msb.dcx') for f in os.listdir(cache_map))
+    except OSError:
+        got_maps = False
+    if not got_maps:
+        return None
+    return {'n_ok': n_ok, 'failed': failed, 'total': len(rels),
+            'cache_map': cache_map, 'cache_event': cache_event}
+
+
 class FirstLaunchWizard:
     """3-screen modal wizard for first-launch configuration.
 
@@ -896,6 +938,10 @@ class FirstLaunchWizard:
         self.config = dict(initial_config or {})
         self.completed = False
         self.current = 0
+        # v0.31: screen sequence is dynamic — the 'prep' screen is inserted
+        # only for a packed install with no cache yet (see _compute_screens).
+        # SCREEN_NAMES stays the static default; nav reads self.screen_names.
+        self.screen_names = self._compute_screens()
         # Indicators built lazily per-screen so they're available for
         # _validate_current_screen to consult.
         self._screen_indicators = {}
@@ -984,10 +1030,10 @@ class FirstLaunchWizard:
         self._screen_indicators.clear()
         # Update header
         self._step_label.configure(
-            text=f'Step {idx + 1} of {len(self.SCREEN_NAMES)}')
+            text=f'Step {idx + 1} of {len(self.screen_names)}')
         # Update nav buttons
         self.back_btn.configure(state='normal' if idx > 0 else 'disabled')
-        if idx == len(self.SCREEN_NAMES) - 1:
+        if idx == len(self.screen_names) - 1:
             # v0.27.15 (note 6): 'All set.' read oddly as a button label.
             # 'Finish' is a clearer call-to-action. (The wizard saves paths
             # and opens the app — it doesn't "install" anything, so we don't
@@ -996,7 +1042,7 @@ class FirstLaunchWizard:
         else:
             self.next_btn.configure(text='Next →')
         # Build screen
-        screen_name = self.SCREEN_NAMES[idx]
+        screen_name = self.screen_names[idx]
         builder = getattr(self, f'_build_{screen_name}')
         builder()
 
@@ -1007,7 +1053,11 @@ class FirstLaunchWizard:
     def _on_next(self):
         if not self._validate_current():
             return
-        if self.current >= len(self.SCREEN_NAMES) - 1:
+        # Leaving the welcome screen: the install path is now set, so
+        # (re)decide whether the one-time prep screen is needed.
+        if self.screen_names[self.current] == 'welcome':
+            self.screen_names = self._compute_screens()
+        if self.current >= len(self.screen_names) - 1:
             self._finish()
         else:
             self._show(self.current + 1)
@@ -1187,6 +1237,133 @@ class FirstLaunchWizard:
             ).pack(anchor='w', pady=(16, 0))
 
         self._set_validator(lambda: True)
+
+    # ---- v0.31: conditional one-time packed-install prep ----
+
+    def _compute_screens(self):
+        """Screen sequence for this run. The 'prep' screen is inserted only
+        when the configured install is packed and the vanilla cache isn't
+        built yet — so the one-time archive read happens here, at setup time
+        (responsive, with a progress bar), instead of freezing the user's
+        first Randomize click."""
+        screens = ['welcome']
+        if self._needs_prep((self.config.get('game_install') or '').strip()):
+            screens.append('prep')
+        screens.append('done')
+        return screens
+
+    @staticmethod
+    def _needs_prep(game):
+        """True iff `game` is a packed install (no unpacked map/mapstudio)
+        AND the vanilla cache isn't already populated."""
+        if not game:
+            return False
+
+        def _has(dir_, *exts):
+            try:
+                return os.path.isdir(dir_) and any(
+                    f.endswith(exts) for f in os.listdir(dir_))
+            except OSError:
+                return False
+        # Unpacked install — the rando reads the loose mapstudio directly.
+        if _has(os.path.join(game, 'map', 'mapstudio'), '.msb.dcx', '.msb'):
+            return False
+        # Cache already built (this or a prior session).
+        if _has(os.path.join(HERE, '.vanilla_cache', 'map', 'mapstudio'),
+                '.msb.dcx'):
+            return False
+        return True
+
+    def _build_prep(self):
+        """Screen — one-time packed-install vanilla-data prep."""
+        head = ttk.Label(self.body, text="Preparing your install",
+                         font=(_pick_ui_font(), 16, 'bold'))
+        head.pack(anchor='w', pady=(0, 4))
+        ttk.Label(self.body,
+            text="Your Nightreign install is packed (not UXM-unpacked). I can "
+                 "make a one-time local copy of the vanilla map data (~20 "
+                 "seconds) so you don't need UXM and your first randomize is "
+                 "instant.",
+            wraplength=620, justify='left', style='Dim.TLabel'
+            ).pack(anchor='w', pady=(0, 12))
+
+        self._prep_status = ttk.Label(self.body, text="", wraplength=620,
+                                      justify='left')
+        self._prep_status.pack(anchor='w', pady=(0, 4))
+        self._prep_bar = ttk.Progressbar(self.body, mode='determinate',
+                                        length=420)
+        self._prep_bar.pack(anchor='w', fill='x', pady=(0, 10))
+        self._prep_btn = ttk.Button(
+            self.body, text="Prepare now  (~20s, one-time)",
+            command=self._start_prep, style='Accent.TButton')
+        self._prep_btn.pack(anchor='w')
+
+        ttk.Label(self.body,
+            text="Optional — you can click Next to skip this, and the rando "
+                 "will prepare the data on your first run instead (that run "
+                 "takes the ~20s once).",
+            wraplength=620, justify='left', style='Dim.TLabel'
+            ).pack(anchor='w', pady=(10, 0))
+        self._set_validator(lambda: True)
+
+    def _start_prep(self):
+        """Kick off the archive read on a worker thread; poll for progress on
+        the main thread so the window stays responsive (unlike the on-demand
+        path, which blocks the main thread)."""
+        game = (self.config.get('game_install') or '').strip()
+        if not game:
+            return
+        cache = os.path.join(HERE, '.vanilla_cache')
+        self._prep_prog = (0, 0)
+        self._prep_result = None  # None=running, dict=ok, False=failed
+        self._prep_btn.configure(state='disabled')
+        self._prep_bar.configure(value=0, maximum=1)
+        self._prep_status.configure(text="Reading vanilla map data…")
+
+        def _work():
+            def _cb(n, tot, rel):
+                self._prep_prog = (n, tot)
+            try:
+                res = _read_vanilla_into_cache(
+                    game, cache, want_events=False, on_progress=_cb)
+                self._prep_result = res if res else False
+            except Exception:
+                self._prep_result = False
+
+        threading.Thread(target=_work, daemon=True).start()
+        self._poll_prep()
+
+    def _poll_prep(self):
+        """Main-thread poller: mirror worker progress into the bar/label until
+        the thread reports done."""
+        n, tot = getattr(self, '_prep_prog', (0, 0))
+        if tot:
+            self._prep_bar.configure(maximum=tot, value=n)
+            self._prep_status.configure(
+                text=f"Reading vanilla map data… {n}/{tot}")
+        res = getattr(self, '_prep_result', None)
+        if res is None:  # still running
+            try:
+                self.top.after(120, self._poll_prep)
+            except tk.TclError:
+                pass
+            return
+        if res:
+            try:
+                self._prep_bar.configure(value=self._prep_bar['maximum'])
+            except Exception:
+                pass
+            self._prep_status.configure(
+                foreground=THEME['success'],
+                text=f"✓ Done — {res['n_ok']} vanilla files cached. Your first "
+                     f"randomize will be instant. Click Next.")
+        else:
+            self._prep_btn.configure(state='normal')
+            self._prep_status.configure(
+                foreground=THEME['warn'],
+                text="Couldn't read the game archives. You can still "
+                     "continue — the rando will prepare the data on your "
+                     "first run instead.")
 
 
 # --------------------------------------------------------------------------
@@ -7883,76 +8060,74 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             ev = (self.vanilla_emevd_dir_var.get() or '').strip()
         want_events = bool(ev) and not os.path.isdir(ev)
 
-        try:
-            from vanilla_source import VanillaSource, load_manifest
-        except Exception as e:
-            self._log(f"Packed-install reader unavailable ({e}); point the "
-                      f"input folder at an unpacked map/mapstudio dir.\n")
-            return in_dir
-
         cache = os.path.join(HERE, '.vanilla_cache')
-        bundled_msbs = os.path.join(HERE, 'vanilla_msbs')
-        try:
-            man = load_manifest()
-            rels = list(man.get('mapstudio', []))
-            if want_events:
-                rels += list(man.get('event', []))
-            src = VanillaSource(
-                game,
-                loose_map_dir=bundled_msbs if os.path.isdir(bundled_msbs) else None,
-                loose_event_dir=ev if (want_events and os.path.isdir(ev)) else None)
-            if not src.has_archive:
-                self._log("Couldn't open the NR archives (keys/format) — using "
-                          "the input folder as-is.\n")
-                return in_dir
+        cache_map = os.path.join(cache, 'map', 'mapstudio')
+        cache_event = os.path.join(cache, 'event')
 
-            total = len(rels)
-            what = "map + event" if want_events else "map"
-            self._log(f"Packed install detected: reading vanilla {what} data "
-                      f"from the game archives ({total} files, one-time)…\n")
-            self.status_var.set(f"Reading vanilla {what} data… 0/{total}")
+        # If the vanilla cache is already populated — e.g. the first-launch
+        # wizard's prep step ran, or a previous session filled it — use it
+        # directly instead of re-reading the archives. materialize() doesn't
+        # skip files that already exist, so this short-circuit is what keeps
+        # the slow archive read genuinely one-time. Only skip the read when
+        # everything THIS run needs is cached: maps always, events too when
+        # the event step is on.
+        def _cache_has(dir_, ext):
             try:
-                self.root.update_idletasks()
-            except Exception:
-                pass
+                return os.path.isdir(dir_) and any(
+                    f.endswith(ext) for f in os.listdir(dir_))
+            except OSError:
+                return False
+        if _cache_has(cache_map, '.msb.dcx') and (
+                not want_events or _cache_has(cache_event, '.emevd.dcx')):
+            self.input_dir_var.set(cache_map)
+            if want_events and os.path.isdir(cache_event):
+                self.vanilla_emevd_dir_var.set(cache_event)
+            self._log("Using cached vanilla data (packed install) — no "
+                      "re-read needed.\n")
+            return cache_map
 
-            def _prog(n, tot, rel):
-                if n % 50 == 0 or n == tot:
-                    self.status_var.set(f"Reading vanilla {what} data… {n}/{tot}")
-                    try:
-                        self.root.update_idletasks()
-                    except Exception:
-                        pass
+        what = "map + event" if want_events else "map"
+        self._log(f"Packed install detected: reading vanilla {what} data "
+                  f"from the game archives (one-time)…\n")
+        self.status_var.set(f"Reading vanilla {what} data…")
+        try:
+            self.root.update_idletasks()
+        except Exception:
+            pass
 
-            n_ok, failed = src.materialize(rels, cache, on_progress=_prog)
+        def _prog(n, tot, rel):
+            if n % 50 == 0 or n == tot:
+                self.status_var.set(f"Reading vanilla {what} data… {n}/{tot}")
+                try:
+                    self.root.update_idletasks()
+                except Exception:
+                    pass
+
+        try:
+            res = _read_vanilla_into_cache(
+                game, cache, want_events=want_events,
+                loose_event_dir=ev if (want_events and os.path.isdir(ev)) else None,
+                on_progress=_prog)
         except Exception as e:
             self._log(f"Vanilla prefetch failed ({e}); using the input folder "
                       f"as-is.\n")
             return in_dir
-
-        cache_map = os.path.join(cache, 'map', 'mapstudio')
-        cache_event = os.path.join(cache, 'event')
-        try:
-            got_maps = os.path.isdir(cache_map) and any(
-                f.endswith('.msb.dcx') for f in os.listdir(cache_map))
-        except OSError:
-            got_maps = False
-        if not got_maps:
-            self._log("Vanilla prefetch produced no map files; using the input "
-                      "folder as-is.\n")
+        if not res:
+            self._log("Couldn't read the NR archives (keys/format), or they "
+                      "produced no map files; using the input folder as-is.\n")
             return in_dir
 
-        self.input_dir_var.set(cache_map)
-        msg = f"Read {n_ok} vanilla files into {cache}\n"
-        if want_events and os.path.isdir(cache_event):
-            self.vanilla_emevd_dir_var.set(cache_event)
-            msg += f"Vanilla event folder set to {cache_event}\n"
-        if failed:
-            msg += (f"  {len(failed)} file(s) not in the base archives "
-                    f"(need the dlc01 key): {failed[:3]}"
-                    f"{' …' if len(failed) > 3 else ''}\n")
+        self.input_dir_var.set(res['cache_map'])
+        msg = f"Read {res['n_ok']} vanilla files into {cache}\n"
+        if want_events and os.path.isdir(res['cache_event']):
+            self.vanilla_emevd_dir_var.set(res['cache_event'])
+            msg += f"Vanilla event folder set to {res['cache_event']}\n"
+        if res['failed']:
+            msg += (f"  {len(res['failed'])} file(s) not in the base archives "
+                    f"(need the dlc01 key): {res['failed'][:3]}"
+                    f"{' …' if len(res['failed']) > 3 else ''}\n")
         self._log(msg)
-        return cache_map
+        return res['cache_map']
 
     def _ensure_oodle_available(self):
         """On-demand Oodle resolution. Returns True if a usable

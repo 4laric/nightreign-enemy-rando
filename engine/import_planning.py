@@ -1024,7 +1024,10 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
     copies -- the bundles are shared and not per-chr matchable. Idempotent
     skip-existing keeps re-runs cheap.
 
-    sd/ (v0.28.x): the FMOD sound banks (.fsb/.fsbm). A cross-game chr NR
+    sd/ (v0.28.x; filtered v0.31): the per-chr Wwise character sound banks,
+    named cs_c<NNNN>.bnk. ONLY these are copied now -- the source sd/ also
+    carries large global banks (main/music/voice) that were being dragged in
+    wholesale ("way too much in sd/"). A cross-game chr NR
     never shipped (most MMV boss ports) has no sound bank in NR's own sd/,
     so without this the boss spawns SILENT -- no vocalizations, no attack
     foley. MMV ships an sd/ for exactly this reason; the GUI's MMV tooltip
@@ -1058,7 +1061,7 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
     (material_files_copied is always 0 as of v0.28.2 -- see above.)
     """
     # (no module-level dependencies)
-    import os, shutil
+    import os, re, shutil
 
     tgt = plan.get('target_dirs', {})
     tgt_chr = (tgt.get('chr') or '').strip()
@@ -1132,6 +1135,11 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
         return ''
 
     tgt_parent = os.path.dirname(os.path.abspath(tgt_chr))
+    # v0.31: sd/ holds per-chr Wwise character banks (cs_c<NNNN>.bnk) plus a
+    # lot of global sound data; only the per-chr banks are wanted for a
+    # heritage import. sfx/ is intentionally NOT filtered -- its shared
+    # sfxbnd_commoneffects/dlc bundles are required and not per-chr matchable.
+    _sd_bank_re = re.compile(r'cs_c\d+\.bnk$', re.IGNORECASE)
     for name, key in (('sfx', 'sfx_files_copied'),
                       ('sd', 'sd_files_copied')):
         src_dir = _pick_subdir(name)
@@ -1142,6 +1150,9 @@ def execute_roster_import(ns, plan, mmv_dir, er_dir,
         for fn in sorted(os.listdir(src_dir)):
             sp = os.path.join(src_dir, fn)
             if not os.path.isfile(sp):
+                continue
+            if name == 'sd' and not _sd_bank_re.match(fn):
+                res['files_skipped'] += 1
                 continue
             dp = os.path.join(dst_dir, fn)
             if os.path.exists(dp) and not overwrite:

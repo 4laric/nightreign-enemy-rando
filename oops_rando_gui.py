@@ -8064,6 +8064,10 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # negative durations.
         import time as _time
         self._run_start_time = _time.monotonic()
+        # v0.31 (diagnostic): per-phase timing of the synchronous pre-worker
+        # phase, dumped as one [profile] log line just before the worker spawns.
+        self._prof = {}
+        self._prof_t0 = _time.perf_counter()
         # If a previous summary panel is visible, hide it now — the new
         # run hasn't completed yet and the old summary is misleading.
         self._hide_post_run_summary()
@@ -8084,7 +8088,9 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # when the Vanilla event field is set-but-packed, event) data straight
         # from the game's .bhd/.bdt archives into a local cache and use that.
         # Silently no-ops to the existing behavior on any problem (see method).
+        _t = _time.perf_counter()
         in_dir = self._maybe_prefetch_vanilla(in_dir)
+        self._prof['prefetch'] = _time.perf_counter() - _t
         if not os.path.isdir(in_dir):
             messagebox.showerror("Bad input directory",
                 f"Input directory does not exist:\n{in_dir or '(blank)'}\n\n"
@@ -8437,6 +8443,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             terrain_test_targets = dict(DEFAULT_VALIDATION_TERRAIN_TEST_TARGETS)
 
         # Snapshot config for the worker
+        _t = _time.perf_counter()
         config = {
             'seed': seed,
             'shop_rando': bool(self.shop_rando_var.get()),
@@ -8520,6 +8527,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 config['settings_dict'])
         except Exception:
             config['settings_code'] = None
+        self._prof['config'] = _time.perf_counter() - _t
 
         # v0.20.89: clear any lingering cancel flag from a prior cancelled
         # run before starting the worker. Without this reset, the second
@@ -8528,11 +8536,13 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # would exit at its first checkpoint with no apparent action taken.
         # Symptom that surfaced this: "after you hit the gui cancel button
         # once, you can't randomize until you restart the gui".
+        _t = _time.perf_counter()
         try:
             import oops_v3
             oops_v3.set_cancel_requested(False)
         except Exception:
             pass
+        self._prof['import_oops_v3'] = _time.perf_counter() - _t
 
         # v0.28.x: auto-popup. If imported chrs are missing their installed
         # files, offer the guided importer before committing to a run.
@@ -8550,11 +8560,13 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             _tcd = config.get('target_chr_dir') or ''
             if _mmv and _tcd:
                 self._status_now("Checking installed characters…")
+                _t = _time.perf_counter()
                 _ov = oops_v3
                 _absent = []
                 for _info in (_ov.detect_asset_packs(_tcd) or {}).values():
                     _absent.extend(_info.get('missing') or [])
                 _absent = sorted(set(_absent))
+                self._prof['detect'] = _time.perf_counter() - _t
                 if _absent:
                     _extra = (f"\n  …(+{len(_absent) - 24} more)"
                               if len(_absent) > 24 else "")
@@ -8579,11 +8591,25 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # the first-launch wizard's upfront Oodle step. Main thread, fail-fast
         # — beats dying deep inside the run with a FileNotFoundError.
         self._status_now("Checking Oodle…")
-        if not self._ensure_oodle_available():
+        _t = _time.perf_counter()
+        _oodle_ok = self._ensure_oodle_available()
+        self._prof['oodle'] = _time.perf_counter() - _t
+        if not _oodle_ok:
             self.run_btn.config(text="⚙   Randomize", state='normal',
                                 command=self._run_shuffle)
             self.status_var.set("Ready")
             return
+
+        try:
+            _tot = _time.perf_counter() - self._prof_t0
+            _named = sum(self._prof.values())
+            _parts = ' '.join(f"{k} {v:.2f}s"
+                              for k, v in self._prof.items())
+            self._log(
+                f"[profile] pre-worker {_tot:.2f}s  "
+                f"({_parts} other {_tot - _named:.2f}s)\n", 'dim')
+        except Exception:
+            pass
 
         self._status_now("Running rando…")
         self.worker_thread = threading.Thread(

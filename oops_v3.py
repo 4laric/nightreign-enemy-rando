@@ -2397,7 +2397,7 @@ V3_PREFER_CANONICAL_VARIANTS = False
 # The MSB stamp is runtime (this flag, per generate). The matching EMEVD
 # wakes are baked from the catalog when patched_emevd/ is (re)generated
 # with this flag on — see stamp_test.py header + the writeup.
-V3_STAMP_TEST = False
+V3_STAMP_TEST = True
 V3_STAMP_TEST_RADIUS = 15        # metres, player-to-part wake radius
 
 

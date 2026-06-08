@@ -2345,7 +2345,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         self.sote_mode_var = tk.BooleanVar(value=False)
 
         # v0.31 (EXPERIMENTAL): maximal stamp test. Default OFF.
-        self.stamp_test_var = tk.BooleanVar(value=False)
+        self.stamp_test_var = tk.BooleanVar(value=True)
 
         self.excluded = set(DEFAULT_EXCLUDED)
         self.hub_maps = set(DEFAULT_HUB_MAPS)
@@ -9501,7 +9501,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 # v0.31 (EXPERIMENTAL): maximal stamp test. Applies to the
                 # DCX path (rando_pipeline Step 2c). When off, the pipeline
                 # writes an empty wake catalog so no stale wakes leak.
-                oops_v3.V3_STAMP_TEST = bool(config.get('stamp_test', False))
+                oops_v3.V3_STAMP_TEST = bool(config.get('stamp_test', True))
                 # Auto-detect input format: if the input dir has any .msb.dcx
                 # files, run the full DCX pipeline (decompress → shuffle →
                 # recompress). Otherwise treat as raw MSB input.

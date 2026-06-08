@@ -1,3 +1,27 @@
+## v0.32 — open-evergaols EMEVD toggle (off by default)
+
+Adds `open_evergaols`, a registered `emevd_patch` patch that removes the
+Stonesword Key requirement from field Evergaols. Off by default (vanilla
+behaviour: key required and consumed); enabled with `patch --open-evergaols`
+or by setting the `OPEN_EVERGAOLS` module global before `cmd_patch`, mirroring
+the `EARLY_BOSS_SPAWN` toggle pattern.
+
+`emevd_patch.patch_open_evergaols`:
+- Edits only the shared field-Evergaol opener `$Event(90045000)` in
+  `common_func` — the template every Limveld gaol routes through via
+  `$InitializeCommonEvent` (~9 call sites across m46_50/m46_60), so one edit
+  covers every field gaol and only `common_func.emevd.dcx` is regenerated; the
+  per-map binaries are reused, same as the early-spawn switch.
+- Deletes the `PlayerHasItem(Goods, 8000)` possession check (with its need-key
+  `RecordUserDispLog` + `RestartEvent` loop) and the
+  `RemoveItemFromPlayer(Goods, 8000, 1)` consume line, so the action button
+  (9231) falls through to `SetNetworkconnectedEventFlagID(eventFlagId, ON)` and
+  opens the gaol unconditionally. Idempotent (deleted lines can't re-match).
+- Scope-limited: the `m60_44_38_00/30/50` special gates (legendary key,
+  Goods 8005, `$Event(1044382350)`) are left untouched pending classification.
+  The action-button prompt label lives in `ActionButtonParam`/FMG, so a stale
+  'requires Stonesword Key' prompt may persist cosmetically.
+
 ## v0.31 — per-seed loot & economy (regulation), boss-wake fixes
 
 Grows the per-seed regulation pass. v0.29 added shop randomization on top of

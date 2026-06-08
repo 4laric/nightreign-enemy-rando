@@ -153,6 +153,32 @@ PUBLISH_MODE = True
 EARLY_BOSS_SPAWN = False
 
 
+# v0.32.x: QoL switch to remove the Stonesword Key requirement from field
+# Evergaols. DEFAULT FALSE -> shipped behaviour is vanilla (a key is required
+# to open a gaol, and one is consumed on open).
+#
+# When True, the shared field-Evergaol opener in common_func -- $Event(90045000),
+# the template every Limveld gaol routes through via $InitializeCommonEvent
+# (~9 call sites across m46_50/m46_60) -- drops its key gate: the
+# PlayerHasItem(Goods, 8000) possession check (with its need-key RecordUserDispLog
+# + RestartEvent loop) and the RemoveItemFromPlayer(Goods, 8000, 1) consume line
+# are removed, so pressing the action button (9231) falls straight through to
+# SetNetworkconnectedEventFlagID(eventFlagId, ON) and opens the gaol unconditionally.
+#
+# Scope mirrors EARLY_BOSS_SPAWN: ONLY the common_func body of 90045000 changes,
+# so the per-map .emevd.dcx binaries are reused as-is and only common_func is
+# regenerated.
+#
+# NOT touched: the m60_44_38_00/30/50 special gates (legendary key, Goods 8005,
+# $Event(1044382350)) -- a separate, unconfirmed interaction. The action-button
+# prompt label lives in ActionButtonParam/FMG, not here, so a stale
+# 'requires Stonesword Key' prompt string may persist cosmetically.
+#
+# Toggled by the `patch --open-evergaols` CLI flag (and by callers that set this
+# module global before invoking cmd_patch), exactly like EARLY_BOSS_SPAWN.
+OPEN_EVERGAOLS = False
+
+
 def register(name):
     def deco(fn):
         PATCHES[name] = fn
@@ -3019,6 +3045,53 @@ def patch_preboss_wave_timeout(content, filename):
     return content, n
 
 
+@register('open_evergaols')
+def patch_open_evergaols(content, filename):
+    """QoL: remove the Stonesword Key gate from field Evergaols (common_func 90045000).
+
+    Symptom this addresses:
+    - Field Evergaols can't be opened without a Stonesword Key (Goods 8000),
+      and opening one consumes the key.
+
+    Cause: the shared opener $Event(90045000) -- the template every Limveld gaol
+    routes through via $InitializeCommonEvent (~9 call sites in m46_50/m46_60) --
+    gates on PlayerHasItem(Goods, 8000) (looping on a need-key RecordUserDispLog +
+    RestartEvent) and consumes one via RemoveItemFromPlayer(Goods, 8000, 1).
+
+    Fix: delete the possession-check block and the consume line, so the action
+    button (9231) falls straight through to SetNetworkconnectedEventFlagID(
+    eventFlagId, ON) and opens the gaol unconditionally.
+
+    No-op unless OPEN_EVERGAOLS is True (default: vanilla key requirement kept).
+    Idempotent: the deleted lines can't re-match on a second pass. Only applies
+    to common_func.emevd.dcx.js.
+    """
+    if not OPEN_EVERGAOLS:
+        return content, 0
+    if not filename.startswith('common_func'):
+        return content, 0
+
+    total = 0
+
+    # (1) Delete the key-possession check block (incl. need-key log + restart loop).
+    check_block = (
+        r'[ \t]*if \(!PlayerHasItem\(ItemType\.Goods, 8000\)\) \{\r?\n'
+        r'[ \t]*RecordUserDispLog\(10108, entityId, LogObjectType\.Goods, 8000\);\r?\n'
+        r'[ \t]*WaitFixedTimeSeconds\(3\);\r?\n'
+        r'[ \t]*RestartEvent\(\);\r?\n'
+        r'[ \t]*\}\r?\n'
+    )
+    content, n = replace_in_event(content, 90045000, check_block, '')
+    total += n
+
+    # (2) Delete the key consumption line.
+    consume_line = r'[ \t]*RemoveItemFromPlayer\(ItemType\.Goods, 8000, 1\);\r?\n'
+    content, n = replace_in_event(content, 90045000, consume_line, '')
+    total += n
+
+    return content, total
+
+
 # ============================================================================
 # CLI
 # ============================================================================
@@ -3352,6 +3425,11 @@ def main():
                          'per-map binaries are reused. Compile the resulting '
                          'common_func .js and ship it as '
                          'patched_emevd/early_spawn/common_func.emevd.dcx.')
+    pp.add_argument('--open-evergaols', action='store_true', dest='open_evergaols',
+                    help='Remove the Stonesword Key requirement from field '
+                         'Evergaols (event 90045000): pressing the action button '
+                         'opens the gaol without holding or consuming a key. Only '
+                         'common_func changes; the per-map binaries are reused.')
 
     args = p.parse_args()
 
@@ -3379,6 +3457,13 @@ def main():
                   "use the proximity trigger (full RoR2 early-spawn build).")
             print("Only common_func.emevd.dcx changes; ship it as "
                   "patched_emevd/early_spawn/common_func.emevd.dcx.")
+            print()
+        if getattr(args, 'open_evergaols', False):
+            global OPEN_EVERGAOLS
+            OPEN_EVERGAOLS = True
+            print("OPEN_EVERGAOLS=ON — open_evergaols will strip the "
+                  "Stonesword Key gate from field Evergaols (90045000).")
+            print("Only common_func.emevd.dcx changes; recompile and ship it.")
             print()
         cmd_patch(args.input_dir, args.output_dir, args.patches)
 

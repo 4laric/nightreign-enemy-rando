@@ -540,6 +540,24 @@ def load_data(ns):
     # cannot place a variantless chr, so it only ever wasted a pool slot.
     V3_EXCLUDE_TARGET_PREFIXES.add('c6201')
 
+    # v0.31 (Alaric): exclude c2030 / c2031 Rennala — two-entity swap.
+    # phase_transition_imports.json _excluded.two_entity_swaps documents
+    # the c2030->c2031 mechanism (phase 2 is a SEPARATE chr warped in, not
+    # the single-entity marker re-enable), but that _excluded block is
+    # documentation only — emevd_patch._load_phase_transition_imports reads
+    # the `markers` dict, never `_excluded` — so Rennala was never actually
+    # gated and remained live in the heritage pool. Playtest surfaced a
+    # phase-2 anomaly (visible as texture issues on the phase-2 summon
+    # attack; suspected masking a transition failure, since c2031 is the
+    # warped-in second entity with no second-entity placement handling).
+    # TEMPORARY ban pending the second-entity placement work tracked in
+    # dev/TODO_c2030_rennala_two_entity_swap.md. UN-BAN both prefixes once
+    # that lands. NOTE the MMV-side ai_broken note (c2030 "floating-in-air
+    # pose") is a SEPARATE, milder symptom from a different (disabled) path;
+    # do not assume it's the same bug.
+    V3_EXCLUDE_TARGET_PREFIXES.add('c2030')
+    V3_EXCLUDE_TARGET_PREFIXES.add('c2031')
+
     # v0.27.8: 'trash' tier collapsed into 'grunt'. As of v0.27.13 this is
     # baked into the source data (dev/dump_runtime_tier_overrides.py wrote
     # the collapse into nr_enemy_tags.json / mmv_imports.json, marked

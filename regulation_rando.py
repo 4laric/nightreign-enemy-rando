@@ -54,7 +54,8 @@ def deps_available():
 
 def randomize_regulation(in_bin, out_bin, seed, *, data_dir=None,
                          price_range=None, zstd_level=17, spoiler_path=None,
-                         drop_rate_multiplier=None, log=None, **_legacy):
+                         drop_rate_multiplier=None, more_weapons=False,
+                         log=None, **_legacy):
     """Decrypt in_bin, randomize the expedition-merchant shop, every enemy and
     map drop lot, map a reward onto every miniboss-or-above enemy that drops
     nothing, and floor each roster chr's getSoul to its tier median, all for
@@ -87,11 +88,14 @@ def randomize_regulation(in_bin, out_bin, seed, *, data_dir=None,
     # derived seed so it isn't a shadow of the enemy pass.
     mult = drop_rate_multiplier or _drops.DEFAULT_RATE_MULTIPLIER
     # Fold the baked More Weapons set (data/more_weapons_pool.json) into the
-    # weapon drop category if present. None when MW isn't installed -> identical
-    # behaviour to before. NOTE: only meaningful when in_bin is MW's regulation
-    # (the rows must exist in the regulation being patched) and MW's assets are
-    # in the me3 load order; see dev/extract_more_weapons.py.
-    extra = _drops.load_extra_weapon_pool(data_dir)
+    # weapon drop category, but ONLY when the caller opts in (more_weapons=True,
+    # the GUI's diagnostic checkbox). Even then load_extra_weapon_pool returns
+    # None if the pool isn't baked, so "enabled but not baked" is a harmless
+    # no-op. None -> identical behaviour to before. NOTE: only meaningful when
+    # in_bin is MW's regulation (the rows must exist in the regulation being
+    # patched) and MW's assets are in the me3 load order; see
+    # dev/extract_more_weapons.py.
+    extra = _drops.load_extra_weapon_pool(data_dir) if more_weapons else None
     drop_data = _drops.extract(reg, _drops.ENEMY_PARAM, extra_pools=extra)
     drop_patches, drop_spoiler = _drops.roll(drop_data, seed, rate_multiplier=mult)
     n_drops = _drops.apply_patches(reg, drop_patches, _drops.ENEMY_PARAM)

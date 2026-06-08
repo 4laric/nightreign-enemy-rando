@@ -1490,6 +1490,7 @@ _RUN_SETTING_FLAGS = [
     ('randomize_all_nb_arenas',   'Randomize all NB arenas',         False),
     ('early_boss_spawn',          'Early night-boss spawn (RoR2)',   False),
     ('disable_resilient_filter',  'DIAGNOSTIC: baseline-everywhere', False),
+    ('more_weapons',              'More Weapons drop pool',          False),
 ]
 
 
@@ -2285,6 +2286,18 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # rolling against ~100 untested c-prefixes. Empty = full untested
         # pool (existing v0.20.37 behavior).
         self.diagnostic_test_targets_var = tk.StringVar(value="")
+
+        # v0.31.x: More Weapons drop-pool opt-in (diagnostic section). When ON,
+        # regulation_rando folds data/more_weapons_pool.json into the weapon
+        # drop category so MoreWeaponsTM weapons can drop. Sticky across runs
+        # (set-once UX). Inert unless the pool is baked AND the run patches MW's
+        # regulation with MW assets in the load order -- see the checkbox
+        # tooltip + dev/extract_more_weapons.py. Default OFF.
+        self.more_weapons_var = tk.BooleanVar(
+            value=saved_settings.get('more_weapons_enabled', False))
+        self.more_weapons_var.trace_add('write',
+            lambda *_: self._save_settings(
+                more_weapons_enabled=bool(self.more_weapons_var.get())))
 
         # v0.23.05 / v0.24.0: user force-include for boss-tier targets
         # normally blocked by V3_EXCLUDE_TARGET_PREFIXES /
@@ -4480,6 +4493,36 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             "coordinated swap (mount slot gets a random mount, rider slot "
             "a random humanoid) is cut 2, pending playtest input on the "
             "pre-attached visual-mount behaviour."
+        ))
+
+        # v0.31.x: More Weapons drop-pool opt-in.
+        mw_row = ttk.Frame(diag_frame); mw_row.pack(fill='x', pady=(8, 0))
+        mw_check = ttk.Checkbutton(mw_row,
+                         text="More Weapons: add MoreWeaponsTM weapons to the drop pool",
+                         variable=self.more_weapons_var,
+                         style='TCheckbutton')
+        mw_check.pack(side='left')
+        Tooltip(mw_check,
+                "When ON, the per-seed regulation pass folds the baked More "
+                "Weapons set (data/more_weapons_pool.json) into the weapon drop "
+                "category, so MoreWeaponsTM weapons can drop wherever a weapon "
+                "already drops.\n\n"
+                "Inert unless: (1) you've baked the pool with "
+                "dev/extract_more_weapons.py, (2) the run patches MW's "
+                "regulation.bin as base, and (3) MW's assets are in your me3 "
+                "load order. Without all three the ids resolve to whatever "
+                "weapon currently occupies those vanilla rows.")
+        make_info_icon(mw_row, tooltip_text=(
+            "Default: OFF\n\n"
+            "ON  — regulation_rando loads data/more_weapons_pool.json (if baked) "
+            "and merges its weapon ids into the drop category. No pool baked = "
+            "harmless no-op.\n"
+            "OFF — drops are byte-identical to a no-MW run.\n\n"
+            "Bake the pool:\n"
+            "  python3 dev/extract_more_weapons.py --mw <MoreWeaponsTM>/regulation.bin\n\n"
+            "Only yields working weapons when the run is built on MW's "
+            "regulation + assets; otherwise the repurposed rows show as their "
+            "vanilla occupants."
         ))
 
         # v0.27.24: all-SOTE mode toggle.
@@ -7276,6 +7319,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             'randomize_all_nb_arenas': _b('randomize_all_nb_arenas_var'),
             'early_boss_spawn': _b('early_boss_spawn_var'),
             'disable_resilient_filter': _b('disable_resilient_filter_var'),
+            'more_weapons': _b('more_weapons_var'),
             'excluded': sorted(self.excluded)
                         if getattr(self, 'excluded', None) else [],
             'force_include': sorted(self.force_include_targets)
@@ -7319,7 +7363,8 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 ('randomize_safe_nb_arenas_var', 'randomize_safe_nb_arenas'),
                 ('randomize_all_nb_arenas_var', 'randomize_all_nb_arenas'),
                 ('early_boss_spawn_var', 'early_boss_spawn'),
-                ('disable_resilient_filter_var', 'disable_resilient_filter')):
+                ('disable_resilient_filter_var', 'disable_resilient_filter'),
+                ('more_weapons_var', 'more_weapons')):
             if hasattr(self, attr):
                 getattr(self, attr).set(bool(d[key]))
                 applied.append(key)
@@ -9056,6 +9101,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         config = {
             'seed': seed,
             'shop_rando': bool(self.shop_rando_var.get()),
+            'more_weapons': bool(self.more_weapons_var.get()),
             'me3_package': self.me3_package_var.get().strip(),
             'in_dir': in_dir,
             'out_dir': out_dir,
@@ -9646,7 +9692,8 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             if os.path.isfile(dest):
                 shutil.copy2(dest, dest + '.bak')
             res = regulation_rando.randomize_regulation(
-                src, dest, seed, log=lambda line: q.put(line))
+                src, dest, seed, more_weapons=bool(config.get('more_weapons')),
+                log=lambda line: q.put(line))
             tag(f"  \u2713 merchant shop randomized: {res['shop_slots']} slots "
                 f"(seed {seed})\n", 'success')
             tag(f"    \u2192 {dest}\n", 'success')

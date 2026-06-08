@@ -3392,6 +3392,14 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         self._build_setup_status_panel()
         self._refresh_setup_status()
 
+        # v0.31: one-time packed-install prep affordance, anchored directly
+        # below the Setup Status box. Shown only when prep is actionable
+        # (see _refresh_setup_prep_row); the read otherwise happens lazily on
+        # first run, so this never blocks a working setup.
+        self._setup_prep_frame = ttk.Frame(parent)
+        self._build_setup_prep_row()
+        self._refresh_setup_prep_row()
+
         # v0.23.72-late: compatibility banner — surfaces failed/warned
         # checks before the user starts generating. Pulls from oops_v3's
         # compatibility_preflight(); the chr/ Inventory tab's existing
@@ -5264,6 +5272,125 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             text_label.pack(side='left', fill='x', expand=True)
             self._setup_status_rows[key] = (indicator, text_label, label)
 
+    # ---- v0.31: one-time packed-install prep affordance ----
+    # Auto-detected packed installs skip the first-launch wizard (and thus its
+    # prep screen) entirely, so the Setup Status area is the only place the
+    # upfront vanilla-data read is offered on the happy path. The read still
+    # happens lazily on first run via _maybe_prefetch_vanilla; this just lets
+    # the user pay the one-time ~20s now instead of mid-run.
+    def _build_setup_prep_row(self):
+        """Build (but don't show) the prep affordance. Visibility is controlled
+        by _refresh_setup_prep_row()."""
+        if not hasattr(self, '_setup_prep_frame'):
+            return
+        self._setup_prep_running = False
+        inner = ttk.LabelFrame(self._setup_prep_frame, text='Packed install',
+                               padding=6)
+        inner.pack(fill='x')
+        row = ttk.Frame(inner)
+        row.pack(fill='x')
+        self._setup_prep_ind = StatusIndicator(
+            row, 'warn', 'Vanilla map data not cached yet')
+        self._setup_prep_ind.pack(side='left', padx=(0, 6))
+        self._setup_prep_btn = ttk.Button(
+            row, text='Prepare vanilla data now (~20s, one-time)',
+            command=self._start_setup_prep)
+        self._setup_prep_btn.pack(side='left')
+        Tooltip(self._setup_prep_btn,
+                "Your install is packed (not UXM-unpacked), so the rando reads "
+                "vanilla map data straight from the game archives. Do that read "
+                "now as a one-time step so your first randomize isn't slow. "
+                "Optional — it happens automatically on first run otherwise.")
+        self._setup_prep_label = ttk.Label(
+            inner, style='Dim.TLabel', wraplength=560,
+            text="Optional: the rando reads this automatically on your first "
+                 "run if you skip it. Doing it now keeps that first run fast.")
+        self._setup_prep_label.pack(anchor='w', pady=(4, 0))
+
+    def _refresh_setup_prep_row(self):
+        """Show the prep affordance only when actionable — a packed install
+        with no vanilla cache yet — and never mid-run. Reuses
+        FirstLaunchWizard._needs_prep so the trigger can't drift from the
+        wizard's prep screen."""
+        if not hasattr(self, '_setup_prep_frame'):
+            return
+        if getattr(self, '_setup_prep_running', False):
+            return  # leave it visible while the worker runs
+        nr = (self.game_install_var.get().strip()
+              if hasattr(self, 'game_install_var') else '')
+        try:
+            needed = bool(nr) and FirstLaunchWizard._needs_prep(nr)
+        except Exception:
+            needed = False
+        mapped = (self._setup_prep_frame.winfo_manager() == 'pack')
+        if needed and not mapped:
+            self._setup_prep_frame.pack(fill='x', padx=8, pady=(8, 0),
+                                        after=self._setup_status_frame)
+        elif not needed and mapped:
+            self._setup_prep_frame.pack_forget()
+
+    def _start_setup_prep(self):
+        """Run the one-time vanilla-data read on a worker thread, with progress
+        in the Setup Status area. On success the cache is populated and the
+        affordance hides on the next refresh."""
+        if getattr(self, '_setup_prep_running', False):
+            return
+        nr = (self.game_install_var.get().strip()
+              if hasattr(self, 'game_install_var') else '')
+        if not nr:
+            return
+        self._setup_prep_running = True
+        self._setup_prep_prog = (0, 0)
+        self._setup_prep_result = None  # None=running, dict=ok, False=failed
+        self._setup_prep_btn.configure(state='disabled')
+        self._setup_prep_ind.set('unknown', 'Reading vanilla map data…')
+        self._setup_prep_label.configure(text='Reading vanilla map data…')
+        cache = os.path.join(HERE, '.vanilla_cache')
+
+        def _prog(n, tot, rel):
+            self._setup_prep_prog = (n, tot)
+
+        def _work():
+            try:
+                res = _read_vanilla_into_cache(
+                    nr, cache, want_events=False, on_progress=_prog)
+                self._setup_prep_result = res if res else False
+            except Exception:
+                self._setup_prep_result = False
+
+        threading.Thread(target=_work, daemon=True).start()
+        self._poll_setup_prep()
+
+    def _poll_setup_prep(self):
+        """Main-thread poller for _start_setup_prep's worker."""
+        n, tot = getattr(self, '_setup_prep_prog', (0, 0))
+        if tot:
+            self._setup_prep_label.configure(
+                text=f'Reading vanilla map data… {n}/{tot}')
+        res = getattr(self, '_setup_prep_result', None)
+        if res is None:
+            self.root.after(120, self._poll_setup_prep)
+            return
+        self._setup_prep_running = False
+        if res:
+            self._setup_prep_ind.set('ok', 'Vanilla data cached')
+            self._setup_prep_label.configure(
+                text=f"Done — cached {res.get('n_ok', '?')} vanilla map files. "
+                     f"First run will be fast.")
+            try:
+                self._log('Vanilla map data prepared and cached (one-time).\n')
+            except Exception:
+                pass
+        else:
+            self._setup_prep_ind.set('warn',
+                                     'Prep failed — will read on first run')
+            self._setup_prep_label.configure(
+                text="Couldn't read the archives just now — the rando will "
+                     "prepare this automatically on your first run instead.")
+            self._setup_prep_btn.configure(state='normal')
+        # On success _needs_prep flips false, so this hides the affordance.
+        self._refresh_setup_status()
+
     def _refresh_setup_status(self, *_args):
         """Re-evaluate all environment checks and push state to the
         indicators + labels. Cheap enough to call on every path change
@@ -5359,6 +5486,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         if _prev != _all_ok:
             self._setup_status_collapsed = _all_ok
         self._apply_setup_status_collapse()
+        self._refresh_setup_prep_row()
 
     def _apply_setup_status_collapse(self):
         """Show or hide the six checklist rows per the collapse state.

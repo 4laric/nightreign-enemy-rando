@@ -133,6 +133,10 @@ INCLUDE_FILES = [
     # Pipeline modules
     'dcx.py',
     'dcx_batch.py',
+    # stamp_test: dcx_batch's pipeline imports this unconditionally (step 2c
+    # writes data/stamp_test_wake_entities.json even when V3_STAMP_TEST is off,
+    # via write_empty_catalog), so it must ship or every shuffle ImportErrors.
+    'stamp_test.py',
     'emevd_patch.py',
     # v0.29 merchant / regulation subsystem (imported by the GUI + oops_v3).
     # regulation_rando -> regulation_io + merchant_shop_fill + mob_drop_fill +
@@ -151,6 +155,10 @@ INCLUDE_FILES = [
     # v0.30 shipped-profile model its auto-register path is vestigial, but the
     # GUI still imports it, so it must ship to avoid a ModuleNotFoundError.
     'me3_profile.py',
+    # me3 coherence core (imported by the GUI's Randomize / Launch / Install
+    # paths). Pure, no Tk; resolves the active profile/package/output so the
+    # three actions agree. Must ship or those actions ImportError at runtime.
+    'me3_coherence.py',
     # Auxiliary / debug tools
     'check_patched_deep.py',
     'diff_vanilla_vs_patched.py',

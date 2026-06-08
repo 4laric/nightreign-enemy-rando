@@ -86,11 +86,17 @@ def randomize_regulation(in_bin, out_bin, seed, *, data_dir=None,
     # (treasure / breakables / secondary enemy lots) -- with the map pass on a
     # derived seed so it isn't a shadow of the enemy pass.
     mult = drop_rate_multiplier or _drops.DEFAULT_RATE_MULTIPLIER
-    drop_data = _drops.extract(reg, _drops.ENEMY_PARAM)
+    # Fold the baked More Weapons set (data/more_weapons_pool.json) into the
+    # weapon drop category if present. None when MW isn't installed -> identical
+    # behaviour to before. NOTE: only meaningful when in_bin is MW's regulation
+    # (the rows must exist in the regulation being patched) and MW's assets are
+    # in the me3 load order; see dev/extract_more_weapons.py.
+    extra = _drops.load_extra_weapon_pool(data_dir)
+    drop_data = _drops.extract(reg, _drops.ENEMY_PARAM, extra_pools=extra)
     drop_patches, drop_spoiler = _drops.roll(drop_data, seed, rate_multiplier=mult)
     n_drops = _drops.apply_patches(reg, drop_patches, _drops.ENEMY_PARAM)
 
-    map_data = _drops.extract(reg, _drops.MAP_PARAM)
+    map_data = _drops.extract(reg, _drops.MAP_PARAM, extra_pools=extra)
     map_patches, map_spoiler = _drops.roll(map_data, f"{seed}_map", rate_multiplier=mult)
     n_map = _drops.apply_patches(reg, map_patches, _drops.MAP_PARAM)
 

@@ -50,6 +50,25 @@ BP_OFF = 0x40      # u16 x8
 DEFAULT_RATE_MULTIPLIER = 2.0
 
 
+def load_extra_weapon_pool(data_dir):
+    """Return {weapon_category: [ids]} from data/more_weapons_pool.json, or None
+    if the file isn't present. Lets the per-seed drop randomizer fold the baked
+    More Weapons set into the weapon drop category without any code change when
+    MW isn't installed (file absent -> None -> extract() behaves exactly as before).
+    """
+    import json
+    import os
+    path = os.path.join(data_dir, "more_weapons_pool.json")
+    if not os.path.exists(path):
+        return None
+    d = json.load(open(path, encoding="utf-8"))
+    cat = d.get("_meta", {}).get("weapon_lot_category")
+    ids = d.get("weapon_drop_ids") or []
+    if cat is None or not ids:
+        return None
+    return {int(cat): list(ids)}
+
+
 def seed_to_int(seed):
     if isinstance(seed, int):
         return seed & 0xFFFFFFFF
@@ -61,7 +80,7 @@ def seed_to_int(seed):
         return int(hashlib.sha256(s.encode("utf-8")).hexdigest(), 16) & 0xFFFFFFFF
 
 
-def extract(reg, param=PARAM):
+def extract(reg, param=PARAM, extra_pools=None):
     """Read an ItemLotParam (ENEMY_PARAM or MAP_PARAM) out of a loaded
     Regulation into a plain {targets, pools} map so roll() can stay pure /
     reg-free (like the shop's baked slot json). Built on the fly because the
@@ -72,6 +91,14 @@ def extract(reg, param=PARAM):
       targets: [{"row": id, "items": [(slot, cat, weight)],
                  "nothings": [(slot, weight)]}]  (rows with >= 1 item only)
       pools:   {category_value: sorted([item_id, ...])}  (lotItemId != 0)
+
+    `extra_pools` ({category: [item_id, ...]}) merges extra ids into the derived
+    pools BUT only into categories that the regulation already drops -- so a lot
+    that already gives a weapon (cat 6) can roll the extra weapons, while a
+    category that never appears in this param stays empty (no new lot slots are
+    created, no wrong-id-space contamination). Used to fold the baked More
+    Weapons set (data/more_weapons_pool.json) into the weapon drop category;
+    inert if the regulation being patched doesn't actually carry those rows.
     """
     off, _size, rows = reg._param(param)
     bnd = reg.bnd
@@ -91,6 +118,15 @@ def extract(reg, param=PARAM):
                 nothings.append((i, bps[i]))
         if items:                      # nothing to randomize in an item-less lot
             targets.append({"row": rid, "items": items, "nothings": nothings})
+
+    # Fold in extra ids, but ONLY for categories the regulation already drops in
+    # this param. A category absent here (no existing slot of that type) gets no
+    # entry, so roll() never invents a slot or reaches into a wrong id space.
+    if extra_pools:
+        for cat, ids in extra_pools.items():
+            if cat in pools:
+                pools[cat].update(int(i) for i in ids)
+
     return {"targets": targets, "pools": {c: sorted(v) for c, v in pools.items()}}
 
 

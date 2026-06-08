@@ -791,6 +791,36 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                                 field_upgrade_nightboss_pct=field_upgrade_nightboss_pct,
                                 fieldboss_to_nightboss_promote_pct=fieldboss_to_nightboss_promote_pct)
 
+        # v0.31 (EXPERIMENTAL): MAXIMAL stamp test. Runs over the SHUFFLED
+        # MSBs (after the swap, before recompress) so each stamped entity id
+        # rides along with whatever the randomizer placed. Stamps every
+        # EID-0 Enemy Part and writes data/stamp_test_wake_entities.json,
+        # which patch_proximity_wake unions in. Stamping changes the bytes,
+        # so these files automatically opt out of Step 3's identity-skip and
+        # get recompressed. When OFF, write an empty catalog so a stale
+        # on-run catalog can't leak wakes into this run's EMEVD bake.
+        # NOTE: the MSB stamp here is the runtime half; the matching wakes
+        # bake into patched_emevd/ only when that overlay is (re)generated
+        # with V3_STAMP_TEST on. See stamp_test.py header.
+        import stamp_test as _stamp_test
+        _stamp_catalog = os.path.join(HERE, 'data',
+                                      'stamp_test_wake_entities.json')
+        if getattr(oops_v3, 'V3_STAMP_TEST', False):
+            print(f"\n=== Step 2c/4: MAXIMAL stamp test (EXPERIMENTAL) ===")
+            _n_maps, _n_parts = _stamp_test.stamp_dir(
+                shuffled_dir, _stamp_catalog)
+            print(f"  stamped {_n_parts} EID-0 Enemy Parts across "
+                  f"{_n_maps} maps -> {_stamp_catalog}")
+            print(f"  (regenerate patched_emevd/ with V3_STAMP_TEST on to "
+                  f"bake the matching proximity wakes)")
+            oops_v3.V3_PIPELINE_METADATA['stamp_test'] = {
+                'enabled': True, 'maps': _n_maps, 'stamped': _n_parts,
+                'catalog': _stamp_catalog,
+            }
+        else:
+            _stamp_test.write_empty_catalog(_stamp_catalog)
+            oops_v3.V3_PIPELINE_METADATA['stamp_test'] = {'enabled': False}
+
         print(f"\n=== Step 3/4: Recompressing shuffled MSBs to DCX ===")
         # v0.23.07: pass vanilla_dir + in_dcx_dir to enable identity-skip.
         # Files whose shuffled bytes match vanilla bytes get their

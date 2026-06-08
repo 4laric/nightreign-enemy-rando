@@ -2385,6 +2385,22 @@ V3_AVOID_VARIANT_NPC_IDS = {
 V3_PREFER_CANONICAL_VARIANTS = False
 
 
+# v0.31 (Alaric, EXPERIMENTAL): MAXIMAL stamp test. Default OFF.
+# When True, rando_pipeline stamps a reserved, per-map, collision-free
+# entity id onto EVERY EID-0 Enemy Part in the shuffled corpus (see
+# stamp_test.py), writes data/stamp_test_wake_entities.json, and that
+# catalog is unioned into patch_proximity_wake so each stamped part gets
+# a proximity wake. This is the "unfreeze the overworld and see what
+# happens" probe: it wakes ~3,300 parts across 133 maps, including ones
+# that are EID-0 deliberately (cutscene actors, despawn-default ambushers,
+# script-spawn placeholders), so expect surprises — that is the point.
+# The MSB stamp is runtime (this flag, per generate). The matching EMEVD
+# wakes are baked from the catalog when patched_emevd/ is (re)generated
+# with this flag on — see stamp_test.py header + the writeup.
+V3_STAMP_TEST = False
+V3_STAMP_TEST_RADIUS = 15        # metres, player-to-part wake radius
+
+
 # v0.27.x: REDUNDANT-VARIANT PRUNE LIST
 # ----------------------------------------------------------------------------
 # The NR roster carries ~3100 NpcParam rows, but most are the SAME enemy

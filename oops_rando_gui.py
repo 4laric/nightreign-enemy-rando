@@ -2314,6 +2314,9 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # rando_pipeline (DCX) / cmd_shuffle_v3 (raw MSB).
         self.sote_mode_var = tk.BooleanVar(value=False)
 
+        # v0.31 (EXPERIMENTAL): maximal stamp test. Default OFF.
+        self.stamp_test_var = tk.BooleanVar(value=False)
+
         self.excluded = set(DEFAULT_EXCLUDED)
         self.hub_maps = set(DEFAULT_HUB_MAPS)
 
@@ -4495,6 +4498,39 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             "folder or the game CTDs on cell-load. An all-SOTE run on a base "
             "NR install will mostly no-target."
         ))
+
+        # v0.31 (EXPERIMENTAL): maximal stamp-test toggle.
+        stamp_row = ttk.Frame(diag_frame); stamp_row.pack(fill='x', pady=(8, 0))
+        stamp_check = ttk.Checkbutton(
+            stamp_row,
+            text=('Maximal stamp test (wake EVERY frozen overworld enemy) '
+                  '\u2014 EXPERIMENTAL'),
+            variable=self.stamp_test_var,
+            style='TCheckbutton')
+        stamp_check.pack(side='left')
+        Tooltip(stamp_check, (
+            'When ON, the pipeline stamps a reserved entity id onto EVERY '
+            'EID-0 Enemy Part (~3,300 across 133 maps) and emits a proximity '
+            'wake for each, so enemies vanilla never wakes activate when you '
+            'approach. A "see what happens" probe for the frozen-overworld '
+            'problem, not a polished feature.'))
+        make_info_icon(stamp_row, tooltip_text=(
+            'Default: OFF\n\n'
+            'Engine V3_STAMP_TEST. Two coupled halves:\n'
+            '  - MSB (runtime, this checkbox): stamp_test.py stamps every '
+            'EID-0 Enemy Part on the shuffled corpus (rando_pipeline Step 2c) '
+            'and writes data/stamp_test_wake_entities.json.\n'
+            '  - EMEVD (bake): patch_proximity_wake unions that catalog and '
+            'emits the wakes. patched_emevd/ ships pre-baked as an overlay, so '
+            'the wakes appear only after you REGENERATE patched_emevd/ with '
+            'this flag on (python emevd_patch.py patch <vanilla_emevd> '
+            '<bundle>). The MSB stamp alone gives the entities ids; the wakes '
+            'are what make them activate.\n\n'
+            'EXPECT SURPRISES: many parts are EID-0 on purpose (cutscene '
+            'actors, despawn-default ambushers, script-spawn placeholders). '
+            'Waking them can produce enemies in odd spots, double-spawns, or '
+            'perf cost (~150 extra proximity checks on the dense m34 '
+            'interiors). The wake catalog shows exactly what got stamped.'))
 
         # v0.23.23: Heritage essay converted from always-visible body text
         # to a collapsible "Read more" expander. The full text is preserved
@@ -7178,6 +7214,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             'multiplayer_safe': _b('multiplayer_safe_var'),
             'mmv_enabled': _b('mmv_enabled_var'),
             'sote_mode': _b('sote_mode_var'),
+            'stamp_test': _b('stamp_test_var'),
             'chaos_mode': _b('chaos_mode_var'),
             'merchant_model_swap': _b('merchant_model_swap_var'),
             'mount_rider_swap': _b('mount_rider_swap_var'),
@@ -7221,6 +7258,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 ('multiplayer_safe_var', 'multiplayer_safe'),
                 ('mmv_enabled_var', 'mmv_enabled'),
                 ('sote_mode_var', 'sote_mode'),
+                ('stamp_test_var', 'stamp_test'),
                 ('chaos_mode_var', 'chaos_mode'),
                 ('merchant_model_swap_var', 'merchant_model_swap'),
                 ('mount_rider_swap_var', 'mount_rider_swap'),
@@ -8864,6 +8902,8 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             'mount_rider_swap': bool(self.mount_rider_swap_var.get()),
             # v0.27.24: all-SOTE mode toggle.
             'sote_mode': bool(self.sote_mode_var.get()),
+            # v0.31 (EXPERIMENTAL): maximal stamp test.
+            'stamp_test': bool(self.stamp_test_var.get()),
             # v0.27.15 (note 18): snapshot the run-relevant settings (and a
             # shareable code) on the main thread so the worker can print the
             # "Active settings" summary without touching Tk vars.
@@ -9188,6 +9228,10 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 import oops_v3
                 oops_v3.V3_PREFER_CANONICAL_VARIANTS = bool(
                     config.get('prefer_canonical_variants', False))
+                # v0.31 (EXPERIMENTAL): maximal stamp test. Applies to the
+                # DCX path (rando_pipeline Step 2c). When off, the pipeline
+                # writes an empty wake catalog so no stale wakes leak.
+                oops_v3.V3_STAMP_TEST = bool(config.get('stamp_test', False))
                 # Auto-detect input format: if the input dir has any .msb.dcx
                 # files, run the full DCX pipeline (decompress → shuffle →
                 # recompress). Otherwise treat as raw MSB input.

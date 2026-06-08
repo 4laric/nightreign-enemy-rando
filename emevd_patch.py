@@ -2425,6 +2425,34 @@ def _load_stamped_boss_wake_entities():
     return _STAMPED_BOSS_WAKE_ENTITIES
 
 
+# v0.31 (EXPERIMENTAL): MAXIMAL stamp-test wake catalog. stamp_test.py
+# writes data/stamp_test_wake_entities.json with a reserved entity id for
+# EVERY EID-0 Enemy Part when V3_STAMP_TEST is on, and writes it EMPTY when
+# off. So this union is unconditional and self-gating: an off-run's empty
+# catalog contributes nothing. The same per-entity guards in the JSON pass
+# (already-seen, exclude set, idempotent, explicit-EnableCharacterAI)
+# dedup any overlap with the boss/fragile/evergaol/catalog sets.
+_STAMP_TEST_WAKE_ENTITIES = None      # None = not yet loaded; dict once loaded
+
+
+def _load_stamp_test_wake_entities():
+    """Lazy-load + cache data/stamp_test_wake_entities.json. Returns the
+    {map_stem: [entity_id, ...]} dict, or {} if absent/empty (off). Keys are
+    EMEVD stems (no .msb)."""
+    global _STAMP_TEST_WAKE_ENTITIES
+    if _STAMP_TEST_WAKE_ENTITIES is not None:
+        return _STAMP_TEST_WAKE_ENTITIES
+    path = _emevd_data_path('stamp_test_wake_entities.json')
+    try:
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+        _STAMP_TEST_WAKE_ENTITIES = data.get(
+            'stamp_test_wake_entities', {}) or {}
+    except (OSError, ValueError):
+        _STAMP_TEST_WAKE_ENTITIES = {}
+    return _STAMP_TEST_WAKE_ENTITIES
+
+
 def _load_boss_catalog_wake_eids():
     """Lazy-load + cache the per-map boss-slot entity ids from
     data/nr_boss_slots.json. Returns {map_stem: [entity_id, ...]} for every
@@ -2647,6 +2675,15 @@ def patch_proximity_wake(content, filename):
     for _seid in stamped_by_map.get(stem, []):
         if _seid not in wake_eids:
             wake_eids.append(_seid)
+    # v0.31 (EXPERIMENTAL): MAXIMAL stamp-test eids — every EID-0 Enemy Part
+    # given a reserved id by stamp_test.py. Empty (no-op) unless V3_STAMP_TEST
+    # was on for this bake. Per-entity guards below dedup against every set
+    # above. This is the union that turns "stamp the overworld" into actual
+    # in-game wakes; without it the stamped ids would exist but never fire.
+    stamp_test_by_map = _load_stamp_test_wake_entities()
+    for _teid in stamp_test_by_map.get(stem, []):
+        if _teid not in wake_eids:
+            wake_eids.append(_teid)
     if wake_eids:
         pending = []
         for eid_i in wake_eids:

@@ -3912,6 +3912,23 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         self.dll_natives_text.insert('1.0', '\n'.join(lines))
         self._persist_dll_natives()
 
+    def _refresh_paths_summary(self, *_a):
+        """Paint the compact (dim, read-only) summary of what the rando reads
+        from / writes to. Advisory only — the override rows are the editable
+        source of truth; this is just an at-a-glance confirmation."""
+        if not hasattr(self, '_paths_summary_read'):
+            return
+        nr = (self.game_install_var.get().strip()
+              if hasattr(self, 'game_install_var') else '')
+        me3 = (self.me3_package_var.get().strip()
+               if hasattr(self, 'me3_package_var') else '')
+        self._paths_summary_read.configure(
+            text="Reading vanilla data from:  "
+                 + (nr or "(not set \u2014 set Game install on the Generate tab)"))
+        self._paths_summary_write.configure(
+            text="Writing output to:  "
+                 + (me3 or "(not set \u2014 pick an me3 profile below)"))
+
     def _build_paths_tab(self, parent):
         """v0.24.10: every individual path picker lives here. Most users
         never need to touch this tab — set Game install and me3 package
@@ -3925,99 +3942,72 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         banner = ttk.Frame(parent, padding=(16, 12, 16, 0))
         banner.pack(fill='x')
         ttk.Label(banner,
-            text="These paths auto-fill from Game install + me3 package on the Generate tab. "
-                 "Edit individual rows here only if your layout differs from the convention.",
+            text="Where the rando reads vanilla data and writes output. Everything "
+                 "auto-fills from your Game install and me3 profile \u2014 you only "
+                 "need the overrides below if your layout is non-standard.",
             style='Dim.TLabel', wraplength=720, justify='left').pack(side='left', anchor='w')
         self._add_help_button(banner, 'paths')
 
-        # === Vanilla side ===
-        # v0.28.x: vanilla map/event/chr data is read automatically from the
-        # game install (packed or unpacked) via the archive reader, so these
-        # read-path rows are now optional overrides — tucked into a collapsed
-        # section instead of shown up-front.
-        ttk.Label(parent,
-            text="Vanilla map / event / chr data is read automatically from your "
-                 "game install — packed or unpacked, no UXM unpack needed. The "
-                 "fields below are optional overrides (e.g. point Vanilla MSBs at a "
-                 "prior shuffle's mapstudio); leave them blank otherwise.",
-            style='Dim.TLabel', wraplength=720, justify='left').pack(
-                fill='x', padx=16, pady=(8, 0))
-        _van_section = CollapsibleSection(
-            parent, "Vanilla read-path overrides (optional)", expanded=False)
-        _van_section.pack(fill='x', padx=16, pady=(0, 4))
-        f_van = _van_section.body
-        # v0.27.15 (note 16): each row now carries a live status indicator
-        # (kind drives validate_path_kind), registered into the Paths-tab
-        # indicator list.
-        for label, var, browse_cmd, kind in [
-            ("Vanilla MSBs:", self.input_dir_var,
-             lambda v=self.input_dir_var: self._browse_dir(v), 'mapstudio_dir'),
-            ("Vanilla event/:", self.vanilla_emevd_dir_var,
-             lambda v=self.vanilla_emevd_dir_var: self._browse_dir(v), 'event_dir'),
-            ("Vanilla chr/:", self.chr_source_dir_var,
-             lambda v=self.chr_source_dir_var: self._browse_dir(v), 'chr_dir'),
-            # v0.24.109: removed "Vanilla msg:" row. vanilla_msg_bundle_var
-            # now derives silently from game_install_var via
-            # _discover_msg_bundle_basename + _apply_msg_basename_derivation
-            # (no user-facing widget). If the auto-discovery fails (NR
-            # install isn't UXM-unpacked, msg/engUS/ missing, etc.) the
-            # var stays empty and dcx_batch's Phase 2 splice no-ops —
-            # Phase 3 fallback ("Crucible Knight and more") handles
-            # everything cleanly.
-        ]:
-            row = ttk.Frame(f_van); row.pack(fill='x', pady=2)
-            ttk.Label(row, text=label, width=19).pack(side='left')
-            indicator = StatusIndicator(row)
-            indicator.pack(side='left', padx=(0, 4))
-            self._register_pathstab_indicator(indicator, var, kind)
-            ttk.Entry(row, textvariable=var).pack(
-                side='left', fill='x', expand=True, padx=4)
-            ttk.Button(row, text="Browse...", command=browse_cmd).pack(side='left')
+        # v0.31 (Stage 2): this tab is a derived/advanced surface. A compact,
+        # de-emphasized summary shows what's actually in use; the me3-profile
+        # action (which drives every write path) stays visible; and ALL the
+        # editable path rows live behind one collapsed section so the common
+        # case is a glance, not a field forest.
+        #
+        # Compact read-only summary (dim). Updates live via path-var traces.
+        _sum = ttk.Frame(parent, padding=(16, 4, 16, 0))
+        _sum.pack(fill='x')
+        self._paths_summary_read = ttk.Label(_sum, style='Dim.TLabel',
+                                              wraplength=720, justify='left')
+        self._paths_summary_read.pack(anchor='w')
+        self._paths_summary_write = ttk.Label(_sum, style='Dim.TLabel',
+                                               wraplength=720, justify='left')
+        self._paths_summary_write.pack(anchor='w')
+        for _v in (self.game_install_var, self.me3_package_var):
+            _v.trace_add('write', lambda *_a: self._refresh_paths_summary())
 
-        # === Mod side ===
-        f_mod = ttk.LabelFrame(parent, text="Mod (write)", padding=8)
-        f_mod.pack(fill='x', padx=16, pady=4)
-        # v0.31: me3-profile actions live here now (Paths is the path hub).
-        # Creating/picking a profile sets me3_package, which derives every
-        # write path below — so the action belongs at the top of this section.
-        _me3_row = ttk.Frame(f_mod)
-        _me3_row.pack(fill='x', pady=(0, 4))
-        ttk.Label(_me3_row, text="me3 profile:", width=19).pack(side='left')
-        _create_btn = ttk.Button(_me3_row, text="Create new…",
+        # me3 profile action — the one thing most users come to this tab for.
+        # Picking/creating a profile sets me3_package, which derives the write
+        # paths in the overrides below.
+        _me3_row = ttk.Frame(parent, padding=(16, 6, 16, 0))
+        _me3_row.pack(fill='x')
+        ttk.Label(_me3_row, text="me3 profile:", width=12).pack(side='left')
+        _create_btn = ttk.Button(_me3_row, text="Create new\u2026",
                                   command=self._create_me3_profile)
         _create_btn.pack(side='left', padx=(0, 4))
         Tooltip(_create_btn,
                 "Create a fresh, self-contained me3 profile to write output "
                 "into. Sets the Mod paths below automatically.")
-        _addto_btn = ttk.Button(_me3_row, text="Add to existing…",
+        _addto_btn = ttk.Button(_me3_row, text="Add to existing\u2026",
                                 command=self._add_to_existing_me3_profile)
         _addto_btn.pack(side='left')
         Tooltip(_addto_btn,
                 "Point the rando at an me3 profile you already maintain. Adds "
-                "a nightreign-enemy-rando package to it (append-only — your "
+                "a nightreign-enemy-rando package to it (append-only \u2014 your "
                 "other mods are untouched) and sets the Mod paths below.")
-        ttk.Label(f_mod, style='Dim.TLabel', wraplength=620,
-                  text="The Mod paths below derive from your me3 profile — "
-                       "edit them only if your layout is non-standard.").pack(
-                  anchor='w', pady=(0, 6))
-        # Mod-side dirs are write targets that may not exist until Run, so
-        # 'me3_profile' (exists-or-parent-exists) is the right kind — it
-        # warns rather than errors on a not-yet-created folder.
+
+        # All editable path rows, collapsed by default. They auto-fill from
+        # Game install + me3 profile; touch them only for a non-standard layout
+        # (heritage chr from a non-NR path, a prior shuffle's mapstudio, a
+        # scratch output folder, ...).
+        _ov = CollapsibleSection(
+            parent, "Path overrides \u2014 advanced (auto-filled; rarely needed)",
+            expanded=False)
+        _ov.pack(fill='x', padx=16, pady=(8, 4))
+        _ovb = _ov.body
+
+        ttk.Label(_ovb, text="Vanilla (read)", style='Dim.TLabel').pack(
+            anchor='w', pady=(2, 0))
         for label, var, browse_cmd, kind in [
-            ("Output:", self.output_dir_var,
-             lambda v=self.output_dir_var: self._browse_dir(v), 'me3_profile'),
-            ("Mod map/mapstudio:", self.mod_map_dir_var,
-             lambda v=self.mod_map_dir_var: self._browse_dir(v), 'me3_profile'),
-            ("Mod event/:", self.output_emevd_dir_var,
-             lambda v=self.output_emevd_dir_var: self._browse_dir(v), 'me3_profile'),
-            ("Mod chr/:", self.chr_target_dir_var,
-             lambda v=self.chr_target_dir_var: self._browse_dir(v), 'me3_profile'),
-            # v0.24.109: removed "Mod msg:" row. mod_msg_bundle_var derives
-            # silently from me3_package_var (see counterpart comment in
-            # the Vanilla section above).
+            ("Vanilla MSBs:", self.input_dir_var,
+             lambda v=self.input_dir_var: self._browse_dir(v), 'mapstudio_dir'),
+            ("Vanilla event/:", self.vanilla_emevd_dir_var,
+             lambda v=self.vanilla_emevd_dir_var: self._browse_dir(v), 'event_dir'),
+            ("Vanilla chr/ (Elden Ring):", self.chr_source_dir_var,
+             lambda v=self.chr_source_dir_var: self._browse_dir(v), 'chr_dir'),
         ]:
-            row = ttk.Frame(f_mod); row.pack(fill='x', pady=2)
-            ttk.Label(row, text=label, width=19).pack(side='left')
+            row = ttk.Frame(_ovb); row.pack(fill='x', pady=2)
+            ttk.Label(row, text=label, width=24).pack(side='left')
             indicator = StatusIndicator(row)
             indicator.pack(side='left', padx=(0, 4))
             self._register_pathstab_indicator(indicator, var, kind)
@@ -4025,21 +4015,37 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 side='left', fill='x', expand=True, padx=4)
             ttk.Button(row, text="Browse...", command=browse_cmd).pack(side='left')
 
-        # v0.27.15 (note 19): clarify Output vs Mod map. They used to
-        # auto-fill to the same folder, making "Mod map" look mandatory and
-        # the auto-copy pointless. Spell out that Mod map is now an optional
-        # second copy target only.
-        ttk.Label(f_mod,
-            text="Output is where the rando writes shuffled MSBs — normally "
-                 "your me3 profile's map/mapstudio. 'Mod map/mapstudio' is an "
-                 "optional second copy target: only set it if Output points "
-                 "at a scratch folder and you want the .msb.dcx files copied "
-                 "into the profile afterward. Leave it blank otherwise.",
-            style='Dim.TLabel', wraplength=720, justify='left'
-            ).pack(anchor='w', pady=(6, 0))
+        ttk.Label(_ovb, text="Mod (write)", style='Dim.TLabel').pack(
+            anchor='w', pady=(8, 0))
+        for label, var, browse_cmd, kind in [
+            ("Output (shuffled MSBs):", self.output_dir_var,
+             lambda v=self.output_dir_var: self._browse_dir(v), 'me3_profile'),
+            ("Also copy MSBs into:", self.mod_map_dir_var,
+             lambda v=self.mod_map_dir_var: self._browse_dir(v), 'me3_profile'),
+            ("Mod event/:", self.output_emevd_dir_var,
+             lambda v=self.output_emevd_dir_var: self._browse_dir(v), 'me3_profile'),
+            ("Mod chr/:", self.chr_target_dir_var,
+             lambda v=self.chr_target_dir_var: self._browse_dir(v), 'me3_profile'),
+        ]:
+            row = ttk.Frame(_ovb); row.pack(fill='x', pady=2)
+            ttk.Label(row, text=label, width=24).pack(side='left')
+            indicator = StatusIndicator(row)
+            indicator.pack(side='left', padx=(0, 4))
+            self._register_pathstab_indicator(indicator, var, kind)
+            ttk.Entry(row, textvariable=var).pack(
+                side='left', fill='x', expand=True, padx=4)
+            ttk.Button(row, text="Browse...", command=browse_cmd).pack(side='left')
+        ttk.Label(_ovb,
+            text="'Output' is where shuffled MSBs are written \u2014 normally your "
+                 "me3 profile's map/mapstudio. 'Also copy MSBs into' is an optional "
+                 "second copy target: set it only if Output is a scratch folder you "
+                 "want copied into the profile afterward.",
+            style='Dim.TLabel', wraplength=700, justify='left').pack(
+                anchor='w', pady=(6, 0))
 
         # Paint initial indicator state now that the rows + vars exist.
         self._refresh_pathstab_indicators()
+        self._refresh_paths_summary()
 
         # === DLL mods / natives (v0.30) ===
         # me3 "natives" are DLL mods (e.g. SeamlessCoop's nrsc.dll) loaded

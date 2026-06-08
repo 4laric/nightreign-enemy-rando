@@ -101,10 +101,21 @@ class Sections:
         self.instructions = raw[in_start:in_end]
         self.event_layers = raw[el_start:ar_start] \
             if h.event_layer_count > 0 else b''
-        self.args = raw[ar_start:pa_start] if pa_start >= ar_start \
-            else raw[ar_start:ar_start + h.args_size]
+        # v0.31: slice Args by its KNOWN size, and derive Parameters from the
+        # end of Args rather than from parameter_offset. SoulsFormats writes
+        # parameter_offset == args_offset for zero-parameter files (synth.py
+        # mirrors this), and the old `raw[ar_start:pa_start]` slice then
+        # produced an EMPTY args section and folded the real arg bytes into
+        # `parameters`. reserialize_identity still round-tripped (the bytes
+        # are merely relabeled), which is why the identity test never caught
+        # it — but the append path must separate Args from Parameters to grow
+        # Args, and there the mis-slice corrupts the output. Slicing Args by
+        # args_size is byte-identical on the normal [args][params] layout
+        # (params immediately follow args) and correct on the aliased layout.
+        self.args = raw[ar_start:ar_start + h.args_size]
+        params_start = ar_start + h.args_size
         # parameters run to linked_files.
-        self.parameters = raw[pa_start:lf_start]
+        self.parameters = raw[params_start:lf_start]
         self.linked_files = raw[lf_start:st_start]
         self.strings = raw[st_start:st_end]
         # Anything after strings (alignment padding some files carry).

@@ -961,6 +961,37 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                         exclude_files=hb_exclude,
                         # compose_show_arrow=True,  # ← debug mode
                     )
+                    # v0.31 (EXPERIMENTAL): maximal stamp-test wakes, the
+                    # RUNTIME binary path. patched_emevd/ now holds every
+                    # decompressed map EMEVD (healthbar-patched, overlay
+                    # already applied so common_func carries the 99055500
+                    # proximity_wake BODY). Append one InitializeCommonEvent
+                    # (0, 99055500, eid, R) per stamped part to each map's
+                    # constructor — pure-Python, no DSAS3, no overlay rebuild.
+                    # Idempotent vs any wakes the overlay already baked.
+                    # Targets patched_emevd/, so NB arenas (excluded above)
+                    # are skipped for free, matching proximity_wake.
+                    if getattr(oops_v3, 'V3_STAMP_TEST', False):
+                        import json as _json
+                        from wake_inject import inject_wakes_dir as _inject_wakes
+                        _stc_path = os.path.join(HERE, 'data',
+                                                 'stamp_test_wake_entities.json')
+                        try:
+                            with open(_stc_path, encoding='utf-8') as _f:
+                                _stc = _json.load(_f).get(
+                                    'stamp_test_wake_entities', {}) or {}
+                        except (OSError, ValueError):
+                            _stc = {}
+                        if _stc:
+                            _nf, _nw = _inject_wakes(
+                                patched_emevd, _stc,
+                                radius=getattr(oops_v3, 'V3_STAMP_TEST_RADIUS', 15),
+                                log=print)
+                            print(f"  stamp-test wakes: appended {_nw} "
+                                  f"InitializeCommonEvent regs across {_nf} "
+                                  f"map EMEVDs (binary, no DSAS3)")
+                            oops_v3.V3_PIPELINE_METADATA.setdefault(
+                                'stamp_test', {})['wakes_injected'] = _nw
                     # Recompress patched .emevd -> .emevd.dcx into emevd_out_dir
                     emevd_compress_dir(patched_emevd, emevd_out_dir, oodle)
                     # v0.24.x: mirror healthbar diagnostic artifacts into

@@ -548,12 +548,26 @@ def validate_path_kind(path, kind):
     # Common: does the path itself exist?
     if not os.path.isdir(path):
         if kind == 'me3_profile':
-            # me3 profile output dir gets auto-created on Run; check parent
-            parent = os.path.dirname(path.rstrip(os.sep)) or path
-            if os.path.isdir(parent):
-                return ('warn', f"Doesn't exist yet (parent OK; will be "
-                                f"created on Run): {path}")
-            return ('error', f"Parent directory missing: {parent}")
+            # me3 write dirs are created (whole tree) by os.makedirs on Run,
+            # so a not-yet-existing target is normal — never an error as long
+            # as SOME ancestor exists to create it under. Walk up to the
+            # nearest existing ancestor rather than checking only the immediate
+            # parent (which red-X'd a two-levels-deep output like
+            # <pkg>/map/mapstudio purely for its nesting depth).
+            anc = os.path.dirname(path.rstrip(os.sep))
+            while anc and not os.path.isdir(anc):
+                nxt = os.path.dirname(anc)
+                if nxt == anc:
+                    break
+                anc = nxt
+            if anc and os.path.isdir(anc):
+                if os.access(anc, os.W_OK):
+                    return ('warn', f"Doesn't exist yet (created on Run under "
+                                    f"{anc}): {path}")
+                return ('error', f"Can't create {path}: {anc} is not "
+                                 f"writable.")
+            return ('error', f"No existing parent directory to create "
+                             f"{path} under.")
         if kind == 'me3_launcher_exe':
             # File kind, not a directory — the early isdir gate doesn't
             # apply. Fall through to its own branch below, which treats
@@ -3291,6 +3305,11 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         nb.add(tab4, text='  About  ')
         self._build_about_tab(tab4)
 
+        # v0.31: Paths is the path-config hub — promote it to 2nd from the left
+        # (right after Generate). insert() moves the already-built tab, so the
+        # build order (and its var dependencies) is unchanged.
+        nb.insert(1, tab_paths)
+
         # Status bar
         statusbar = tk.Frame(self.root, bg=THEME['surface'], height=24)
         statusbar.pack(fill='x', side='bottom')
@@ -3673,13 +3692,9 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             # without leaving the rando to do it manually. Only the
             # me3_profile row gets this button; the others are existing
             # installs the rando can't create from scratch.
-            if kind == 'me3_profile':
-                ttk.Button(row, text="Create new…",
-                           command=self._create_me3_profile
-                           ).pack(side='left', padx=(2, 0))
-                ttk.Button(row, text="Add to existing…",
-                           command=self._add_to_existing_me3_profile
-                           ).pack(side='left', padx=(2, 0))
+            # v0.31: the "Create new… / Add to existing…" me3-profile actions
+            # moved to the Paths tab (now 2nd from the left), the path-config
+            # hub — the me3 choice drives every Mod-write path shown there.
             # v0.26.x: Re-detect button + "(auto-detected)" badge for the
             # two root paths (Tier 1 UX #5). The me3 package isn't
             # auto-detectable from anywhere, so it gets neither.
@@ -3951,7 +3966,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             # everything cleanly.
         ]:
             row = ttk.Frame(f_van); row.pack(fill='x', pady=2)
-            ttk.Label(row, text=label, width=16).pack(side='left')
+            ttk.Label(row, text=label, width=19).pack(side='left')
             indicator = StatusIndicator(row)
             indicator.pack(side='left', padx=(0, 4))
             self._register_pathstab_indicator(indicator, var, kind)
@@ -3962,6 +3977,29 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # === Mod side ===
         f_mod = ttk.LabelFrame(parent, text="Mod (write)", padding=8)
         f_mod.pack(fill='x', padx=16, pady=4)
+        # v0.31: me3-profile actions live here now (Paths is the path hub).
+        # Creating/picking a profile sets me3_package, which derives every
+        # write path below — so the action belongs at the top of this section.
+        _me3_row = ttk.Frame(f_mod)
+        _me3_row.pack(fill='x', pady=(0, 4))
+        ttk.Label(_me3_row, text="me3 profile:", width=19).pack(side='left')
+        _create_btn = ttk.Button(_me3_row, text="Create new…",
+                                  command=self._create_me3_profile)
+        _create_btn.pack(side='left', padx=(0, 4))
+        Tooltip(_create_btn,
+                "Create a fresh, self-contained me3 profile to write output "
+                "into. Sets the Mod paths below automatically.")
+        _addto_btn = ttk.Button(_me3_row, text="Add to existing…",
+                                command=self._add_to_existing_me3_profile)
+        _addto_btn.pack(side='left')
+        Tooltip(_addto_btn,
+                "Point the rando at an me3 profile you already maintain. Adds "
+                "a nightreign-enemy-rando package to it (append-only — your "
+                "other mods are untouched) and sets the Mod paths below.")
+        ttk.Label(f_mod, style='Dim.TLabel', wraplength=620,
+                  text="The Mod paths below derive from your me3 profile — "
+                       "edit them only if your layout is non-standard.").pack(
+                  anchor='w', pady=(0, 6))
         # Mod-side dirs are write targets that may not exist until Run, so
         # 'me3_profile' (exists-or-parent-exists) is the right kind — it
         # warns rather than errors on a not-yet-created folder.
@@ -3979,7 +4017,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             # the Vanilla section above).
         ]:
             row = ttk.Frame(f_mod); row.pack(fill='x', pady=2)
-            ttk.Label(row, text=label, width=16).pack(side='left')
+            ttk.Label(row, text=label, width=19).pack(side='left')
             indicator = StatusIndicator(row)
             indicator.pack(side='left', padx=(0, 4))
             self._register_pathstab_indicator(indicator, var, kind)

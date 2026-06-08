@@ -1891,6 +1891,20 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                       f"package {PACKAGE_DIR!r}")
                 _me3_pkg_default = PACKAGE_DIR
         self.me3_package_var = tk.StringVar(value=_me3_pkg_default)
+        # v0.31.1: track the active .me3 PROFILE as first-class state, not a
+        # value re-discovered independently by Randomize / Launch / Install
+        # (which used two different finders and could disagree). Create new /
+        # Add to existing set this to the exact file; everything else reads it.
+        # Inside a shipped profile we own the .me3 at PROFILE_ROOT; otherwise
+        # start from the saved value (may be '' -> falls back to discovery).
+        _saved_me3_profile = _root_paths_init.get('me3_profile', '')
+        if _running_inside_profile():
+            _prof_default = _profile_me3_path()
+        elif _saved_me3_profile and os.path.isfile(_saved_me3_profile):
+            _prof_default = _saved_me3_profile
+        else:
+            _prof_default = ''
+        self.me3_profile_var = tk.StringVar(value=_prof_default)
         # v0.26.x: me3 launcher binary path. Optional — find_me3_binary
         # auto-discovers in most cases. The Launch button uses this if
         # set, otherwise falls back to runtime discovery. Saved across
@@ -1932,6 +1946,8 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     'game_install': self.game_install_var.get().strip(),
                     'er_install': self.er_install_var.get().strip(),
                     'me3_package': self.me3_package_var.get().strip(),
+                    'me3_profile': (self.me3_profile_var.get().strip()
+                                    if hasattr(self, 'me3_profile_var') else ''),
                     'me3_launcher': self.me3_launcher_var.get().strip(),
                     'msg_basename': self.msg_bundle_basename_var.get().strip(),
                 })
@@ -2106,6 +2122,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # v0.26.x: me3_launcher persists like the others but has no
         # derivation chain (it's a leaf — no child paths derived from it).
         self.me3_launcher_var.trace_add('write', _persist_root_paths)
+        self.me3_profile_var.trace_add('write', _persist_root_paths)
         # Stash for later — we call these once at end of __init__ after
         # all child vars exist, to propagate any persisted parent paths
         # to their derived children on startup.
@@ -5819,11 +5836,29 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         try:
             sys.path.insert(0, os.path.join(HERE, 'dev'))
             import install_discovery
+            import me3_coherence as _mc
             binary = install_discovery.find_me3_binary()
-            pkg = (self.me3_package_var.get().strip()
-                   if hasattr(self, 'me3_package_var') else '')
-            profile = (install_discovery.find_me3_profile_for_package(pkg)
-                       if pkg else None)
+            # v0.31.1: resolve the SAME way Randomize/Install do -- prefer the
+            # tracked me3_profile_var (the file the user picked), fall back to
+            # the one stem-preferring finder. Previously this used a second,
+            # alphabetical finder (install_discovery) that could pick a
+            # DIFFERENT .me3 than the one Randomize registered into, so Launch
+            # booted a profile with no shuffled MSBs in it.
+            if _running_inside_profile():
+                pkg = PACKAGE_DIR
+                tracked = _profile_me3_path()
+            else:
+                pkg = (self.me3_package_var.get().strip()
+                       if hasattr(self, 'me3_package_var') else '')
+                tracked = (self.me3_profile_var.get().strip()
+                           if hasattr(self, 'me3_profile_var') else '')
+            profile = _mc.resolve_profile(tracked, pkg) if pkg else None
+            # Adopt the resolved profile back into the tracked var so the next
+            # call (and Randomize/Install) stay locked on the same file.
+            if profile and hasattr(self, 'me3_profile_var') \
+                    and not _running_inside_profile() \
+                    and self.me3_profile_var.get().strip() != profile:
+                self.me3_profile_var.set(profile)
         except Exception as e:
             return {'ready': False, 'me3_binary': None, 'profile': None,
                     'reason': f'Discovery error: {e}'}
@@ -5894,6 +5929,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 messagebox.showinfo(
                     "Launch not ready", state['reason'],
                     parent=self.root)
+            return
+        # v0.31.1: a manual Launch is the moment the vanilla-run bug bit, so
+        # gate on coherence here too. Auto-launch skips it -- the just-finished
+        # Randomize already gated and (if needed) auto-fixed.
+        if not from_auto_launch and not self._gate_profile_coherence(
+                action="launch"):
             return
 
         import subprocess
@@ -6037,6 +6078,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # the choice; _refresh_path_indicators / _refresh_setup_status
         # update the visual indicators.
         self.me3_package_var.set(result['package_dir'])
+        # v0.31.1: track the new profile's .me3 explicitly and FORCE the output
+        # paths into the new package (a profile switch must repoint output, or
+        # Randomize writes to the old profile while Launch boots the new one).
+        if result.get('me3_file'):
+            self.me3_profile_var.set(result['me3_file'])
+        self._bind_paths_to_package(result['package_dir'], force=True)
 
         # Step 4 — celebrate. Tell the user what was created and where.
         messagebox.showinfo("Profile created",
@@ -6116,6 +6163,11 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # Point output at the new package (fires _derive_from_me3, which
         # fills the map/chr/event paths and persists the choice).
         self.me3_package_var.set(package_dir)
+        # v0.31.1: record the EXACT .me3 the user picked (no re-discovery later)
+        # and FORCE-repoint output into this package. Without the force, a switch
+        # from a previous profile left output_dir stale -> vanilla runs.
+        self.me3_profile_var.set(me3_path)
+        self._bind_paths_to_package(package_dir, force=True)
 
         pkg_line = ("Registered the package in your .me3"
                     if reg['action'] == 'added'
@@ -6442,6 +6494,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         for key, attr in (('game_install', 'game_install_var'),
                           ('er_install',   'er_install_var'),
                           ('me3_package',  'me3_package_var'),
+                          ('me3_profile',  'me3_profile_var'),
                           ('me3_launcher', 'me3_launcher_var')):
             try:
                 paths[key] = getattr(self, attr).get().strip()
@@ -7591,6 +7644,142 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     pass
         return created
 
+    def _bind_paths_to_package(self, pkg, *, force=False):
+        """Point the package-relative output paths (shuffled MSBs, patched
+        EMEVDs, chr target) at `pkg`'s canonical locations.
+
+        force=False : fill only EMPTY fields (startup / typing convenience;
+                      preserves the v0.24.43 "don't clobber a saved custom
+                      output_dir" behaviour).
+        force=True  : repoint regardless of current value -- used when the user
+                      DELIBERATELY switches profiles (Create new / Add to
+                      existing) or accepts the coherence auto-fix. This is the
+                      fix for the reported bug: a profile switch used to leave
+                      output_dir pointing at the OLD profile, so Randomize wrote
+                      there while Launch booted the new (empty) profile -> vanilla
+                      run. Returns the list of (label, value) it changed.
+        """
+        if not pkg:
+            return []
+        import me3_coherence as _mc
+        want = _mc.package_paths(pkg)
+        changed = []
+        for label, var_name, key in (
+                ("Output (shuffled MSBs)", "output_dir_var", "output"),
+                ("Mod event/", "output_emevd_dir_var", "event"),
+                ("Mod chr/", "chr_target_dir_var", "chr")):
+            if not hasattr(self, var_name):
+                continue
+            var = getattr(self, var_name)
+            cur = var.get().strip()
+            if force or not cur:
+                if not _mc.paths_equal(cur, want[key]):
+                    var.set(want[key])
+                    changed.append((label, want[key]))
+        return changed
+
+    def _active_profile_diagnosis(self):
+        """Single source of truth for 'what profile/package is active and is
+        everything pointing at it'. Used by Randomize, Launch, and Install so
+        they never disagree. Returns a me3_coherence.Diagnosis.
+
+        Inside a shipped profile the layout is owned (profile = PROFILE_ROOT's
+        .me3, package = PACKAGE_DIR), so we feed those; otherwise we feed the
+        tracked me3_profile_var + me3_package_var and let me3_coherence resolve
+        (tracked file wins; falls back to the one stem-preferring finder)."""
+        import me3_coherence as _mc
+        if _running_inside_profile():
+            prof = _profile_me3_path()
+            pkg = PACKAGE_DIR
+        else:
+            prof = (self.me3_profile_var.get().strip()
+                    if hasattr(self, 'me3_profile_var') else '')
+            pkg = (self.me3_package_var.get().strip()
+                   if hasattr(self, 'me3_package_var') else '')
+        out = (self.output_dir_var.get().strip()
+               if hasattr(self, 'output_dir_var') else '')
+        evt = (self.output_emevd_dir_var.get().strip()
+               if hasattr(self, 'output_emevd_dir_var') else None)
+        return _mc.diagnose(profile_path=prof, package_dir=pkg,
+                            output_dir=out, event_dir=evt)
+
+    def _gate_profile_coherence(self, *, action="run"):
+        """Pre-flight gate shared by Randomize and Launch. If the active layout
+        is incoherent in a way that would silently yield a vanilla result
+        (output not at <package>/map/mapstudio, package not registered, etc.),
+        show the problems and offer to auto-fix. Returns True to proceed, False
+        to abort. Self-contained profiles never gate (they own their layout)."""
+        if _running_inside_profile():
+            return True
+        # Only gate when the user has actually opted into the me3-package
+        # workflow. With no package configured they're on the legacy "write
+        # MSBs to a folder I manage myself" path -- nothing to reconcile, and
+        # gating would wrongly block them.
+        pkg = (self.me3_package_var.get().strip()
+               if hasattr(self, 'me3_package_var') else '')
+        if not pkg:
+            return True
+        diag = self._active_profile_diagnosis()
+        blocking = diag.blocking
+        if not blocking:
+            # Non-blocking issues (e.g. package not yet registered) are repaired
+            # silently here so Launch/Randomize stay coherent without nagging.
+            self._autofix_profile_coherence(diag, announce=False)
+            return True
+
+        fixable = [p for p in blocking if p.fixable]
+        unfixable = [p for p in blocking if not p.fixable]
+        lines = [f"The me3 profile and output paths don't line up, so this "
+                 f"{action} would likely produce a NON-randomized (vanilla) "
+                 f"result:\n"]
+        for p in blocking:
+            lines.append("  \u2022 " + p.message.replace("\n", "\n    "))
+            lines.append("")
+        if unfixable:
+            lines.append("Fix the items above (Paths tab) and try again.")
+            messagebox.showerror(f"Can't {action} yet", "\n".join(lines),
+                                 parent=self.root)
+            return False
+        lines.append("Auto-fix now? This repoints the output paths into the "
+                     "active package and registers it in your .me3 "
+                     "(append-only \u2014 your other mods are untouched).")
+        if not messagebox.askokcancel(f"Fix before {action}?",
+                                       "\n".join(lines), parent=self.root):
+            return False
+        self._autofix_profile_coherence(diag, announce=True)
+        diag2 = self._active_profile_diagnosis()
+        if diag2.blocking:
+            messagebox.showerror(
+                f"Still can't {action}",
+                "Auto-fix didn't resolve everything:\n\n  \u2022 "
+                + "\n  \u2022 ".join(p.message.splitlines()[0]
+                                     for p in diag2.blocking),
+                parent=self.root)
+            return False
+        return True
+
+    def _autofix_profile_coherence(self, diag, *, announce):
+        """Repair the fixable coherence problems in `diag`: repoint output paths
+        into the package and register the package in the tracked .me3."""
+        codes = {p.code for p in diag.problems}
+        if {"OUTPUT_NOT_CANONICAL", "EVENT_NOT_CANONICAL"} & codes:
+            changed = self._bind_paths_to_package(diag.package, force=True)
+            if announce and changed:
+                for label, val in changed:
+                    self._log(f"coherence fix: repointed {label} -> {val}\n",
+                              'info')
+        if "PROFILE_MISSING_PACKAGE" in codes and diag.profile:
+            try:
+                import me3_profile as _m3p
+                res = _m3p.ensure_package_registered(diag.profile, diag.package)
+                _m3p.ensure_supports_nightreign(diag.profile)
+                if announce and res.get('action') == 'added':
+                    self._log(f"coherence fix: registered package in "
+                              f"{os.path.basename(diag.profile)}\n", 'info')
+            except Exception as e:
+                self._log(f"coherence fix: couldn't register package ({e})\n",
+                          'warn')
+
     def _install_bundled_files(self):
         """Generic installer for everything in the BUNDLED_INSTALLS
         registry — currently regulation.bin, aicommon AI manifests,
@@ -7742,6 +7931,31 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         self._log(f"\n✓ Bundled files installed ({copied_total} file(s) "
                   f"across {len(plan)} bundle(s))\n", 'success')
         self._log(f"   {package_root}\n", 'success')
+
+        # v0.31.1: make sure the package we just populated is actually
+        # registered in the tracked profile -- otherwise me3 ignores the
+        # bundled regulation.bin / sfx / material at launch (same class of
+        # "files on disk but not loaded" bug as the MSB output). Append-only;
+        # silent no-op if already registered or no profile is tracked.
+        if not _running_inside_profile():
+            try:
+                import me3_coherence as _mc
+                import me3_profile as _m3p
+                tracked = (self.me3_profile_var.get().strip()
+                           if hasattr(self, 'me3_profile_var') else '')
+                prof = _mc.resolve_profile(tracked, package_root)
+                if prof:
+                    if hasattr(self, 'me3_profile_var') \
+                            and self.me3_profile_var.get().strip() != prof:
+                        self.me3_profile_var.set(prof)
+                    reg = _m3p.ensure_package_registered(prof, package_root)
+                    _m3p.ensure_supports_nightreign(prof)
+                    if reg.get('action') == 'added':
+                        self._log(f"   registered package in "
+                                  f"{os.path.basename(prof)}\n", 'success')
+            except Exception as e:
+                self._log(f"   (couldn't auto-register package: {e})\n", 'warn')
+
         messagebox.showinfo("Bundled files installed",
             f"{copied_total} file(s) copied to:\n{package_root}\n\n"
             f"Launch the game via me3 to test. If anything fails to load "
@@ -8510,6 +8724,16 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # Becomes more reachable since v0.24.43 also removed the
         # project-default `shuffled_msbs` fallback (which always made
         # out_dir non-empty regardless of user setup).
+        # v0.31.1: coherence gate -- catch the "output is pointing at the wrong
+        # (old) profile" footgun BEFORE writing anything, and offer to repoint
+        # into the active package. No-ops on the legacy manual-output workflow
+        # (no me3 package set) and on self-contained profiles. Re-read out_dir
+        # afterwards: an accepted fix may have repointed output_dir_var.
+        if not self._gate_profile_coherence(action="randomize"):
+            self.status_var.set("Ready")
+            return
+        out_dir = self.output_dir_var.get()
+
         if not out_dir.strip():
             messagebox.showerror("Output directory not set",
                 "Please pick an output directory for the shuffled MSBs.\n\n"

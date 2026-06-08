@@ -1,2 +1,14 @@
-* text=auto
+# Auto-detect text vs binary. Store text as LF in the repo AND check it out as
+# LF on every platform (Windows included), so the working tree always matches
+# the index and tools that read files outside git never see CRLF.
+* text=auto eol=lf
+
+# Windows batch files are happiest as CRLF.
+*.bat text eol=crlf
+
+# Binary assets — never apply EOL conversion or diffing.
+*.dcx binary
+*.bin binary
+
+# Git LFS-tracked asset (must come last so the LFS filter wins).
 bundled_sfx/sfxbnd_c0000.ffxbnd.dcx filter=lfs diff=lfs merge=lfs -text

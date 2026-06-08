@@ -5661,6 +5661,45 @@ def _load_off_mesh_slots():
     return V3_OFF_MESH_SLOTS
 
 
+# v0.31: wake-rescuable enemy set, derived from ThrowParam backstab data.
+# An enemy that the proximity wake can actually un-freeze is one a player
+# could backstab — both force the same AI state transition. backstab_tiers.json
+# (generated from ThrowParam: throwType 24 = backstab-from-behind) tiers every
+# throwable chr; the `full_backstab` tier (24-count >= 4, the humanoid 8-
+# directional cluster) is the set that empirically wakes. Used to gate off-mesh
+# slots: with slot repositions retired, an off-mesh part is left at its vanilla
+# position, so only enemies the wake can rescue are allowed to land there.
+V3_BACKSTAB_RESCUABLE_PREFIXES = None  # populated on first call to the loader
+
+
+def _load_backstab_rescuable_prefixes():
+    """Lazy-load the full-backstab (wake-rescuable) c-prefix set.
+
+    Returns a frozenset of c-prefixes (e.g. 'c4373') whose tier in
+    data/backstab_tiers.json is 'full_backstab'. Cached as a module-level
+    global so the JSON parse only happens once per engine invocation
+    (mirrors _load_off_mesh_slots).
+    """
+    global V3_BACKSTAB_RESCUABLE_PREFIXES
+    if V3_BACKSTAB_RESCUABLE_PREFIXES is not None:
+        return V3_BACKSTAB_RESCUABLE_PREFIXES
+    path = _data_path('backstab_tiers.json')
+    try:
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        # Without the tier file we can't identify the rescuable pool. Cache
+        # an empty set; the off-mesh gate treats empty as "no restriction
+        # data" and falls through (see pick_target_cp) rather than blanking
+        # every off-mesh slot.
+        V3_BACKSTAB_RESCUABLE_PREFIXES = frozenset()
+        return V3_BACKSTAB_RESCUABLE_PREFIXES
+    out = {cp for cp, info in data.get('chrs', {}).items()
+           if isinstance(info, dict) and info.get('tier') == 'full_backstab'}
+    V3_BACKSTAB_RESCUABLE_PREFIXES = frozenset(out)
+    return V3_BACKSTAB_RESCUABLE_PREFIXES
+
+
 # v0.27.4: per-slot face_dist cache for the geometry-aware size gate.
 _V3_SLOT_FACE_DIST = None  # populated on first call to _load_slot_face_dist()
 

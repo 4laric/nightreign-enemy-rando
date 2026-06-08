@@ -70,7 +70,19 @@ PLACED_PART_FORCE_CP = None        # e.g., 'c4373' for foot-soldier baseline
 #   as the relocated Y coordinate. Center is fine for most leaves; floor
 #   is safer for slanted polys where center-Y can float above the surface.
 # =============================================================================
-SLOT_REPOSITIONS_PATH = os.path.join(HERE, 'data', 'slot_repositions.json')
+# v0.31: SLOT REPOSITIONS RETIRED. Rewriting Part position fields to drag
+# off-mesh slots onto the nearest navmesh leaf produced janky-looking
+# placements (enemies snapped to odd spots / floating off the intended
+# geometry). Instead of altering geometry, off-mesh slots are now handled
+# entirely in the picker: the part stays at its vanilla position and the
+# target pool is hard-restricted to the wake-rescuable (full-backstab) set,
+# so only enemies the proximity wake can un-freeze land there. See the
+# off-mesh gate in engine/picker.py pick_target_cp and
+# _load_backstab_rescuable_prefixes in oops_v3.py.
+#
+# Set SLOT_REPOSITIONS_PATH back to the JSON path to re-enable the old
+# geometry pass; the data file and dev/apply_slot_repositions.py are kept.
+SLOT_REPOSITIONS_PATH = None  # was data/slot_repositions.json; retired v0.31
 SLOT_REPOSITIONS_ONLY_MAPS = None  # e.g., {'m60_43_37_00.msb', ...} or None
 SLOT_REPOSITIONS_USE_FLOOR = False
 
@@ -573,6 +585,18 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
     oops_v3.V3_PIPELINE_METADATA['out_dcx_dir'] = out_dcx_dir
     oops_v3.V3_PIPELINE_METADATA['spawn_pool_source_dir'] = spawn_pool_source_dir
     oops_v3.V3_PIPELINE_METADATA['pipeline'] = 'dcx_batch.rando_pipeline'
+    # v0.31: record stamp-test INTENT here, before cmd_shuffle writes the
+    # spoiler. The maps/stamped/wakes counts are filled in later (Step 2c /
+    # Step 4), AFTER the spoiler is finalized, so they live in the catalog
+    # + console rather than the spoiler — but at least the spoiler shows
+    # whether the feature was on for the run.
+    oops_v3.V3_PIPELINE_METADATA['stamp_test'] = {
+        'enabled': bool(getattr(oops_v3, 'V3_STAMP_TEST', False)),
+        'radius': getattr(oops_v3, 'V3_STAMP_TEST_RADIUS', 15),
+        'note': 'counts (maps/stamped/wakes_injected) are written after the '
+                'spoiler is finalized; see data/stamp_test_wake_entities.json '
+                'and the Step 2c/Step 4 console output for the live numbers.',
+    }
 
     # v0.26.16: night-boss-arena preservation gate. All 25 NB arenas
     # ship byte-vanilla on the EMEVD side; the healthbar step below
@@ -738,6 +762,15 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                 'n_written':    _total_written,
                 'maps_touched': _maps_touched,
                 'per_map':      _per_map_log,
+            }
+        else:
+            # v0.31: repositions retired — record the disabled state so the
+            # spoiler shows it was an intentional choice, not a missing file.
+            oops_v3.V3_PIPELINE_METADATA['slot_repositions'] = {
+                'disabled': True,
+                'note': 'slot repositions retired v0.31; off-mesh slots are '
+                        'restricted to the full-backstab pool in the picker '
+                        'instead of being geometrically relocated',
             }
 
         cluster_label = ('IGNORED (per-Part chaos)' if not cluster_aware

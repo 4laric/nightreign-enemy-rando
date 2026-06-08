@@ -144,6 +144,7 @@ def pick_target_cp(ns, recipient_cp, tags,
     # oops_v3 helper functions (underscore-prefixed internals):
     _choose_with_budget = ns['_choose_with_budget']
     _load_off_mesh_slots = ns['_load_off_mesh_slots']
+    _load_backstab_rescuable_prefixes = ns['_load_backstab_rescuable_prefixes']
     _selected_swap_family = ns['_selected_swap_family']
     _slot_decision_rng = ns['_slot_decision_rng']
     # oops_v3 public helpers:
@@ -934,6 +935,28 @@ def pick_target_cp(ns, recipient_cp, tags,
     _is_scripted_intro = _slot_is_arena or _slot_is_night_boss
 
     chosen_pool = list(pool)
+
+    # v0.31: off-mesh slots -> hard-restrict to the wake-rescuable
+    # (full-backstab) pool. Slot repositions (geometry alteration) are
+    # retired because dragging a Part onto navmesh produced janky-looking
+    # placements; instead the off-mesh part stays at its vanilla position
+    # and we only allow enemies the proximity wake can actually un-freeze
+    # there. Backstab-ability (ThrowParam type-24) is the data signal: a
+    # full-backstab humanoid animates and engages in place once woken,
+    # where a floater/giant/odd-rig chr just glitches. Applies to ALL
+    # off-mesh slots (fragile or not); the fragile / SENSITIVE / EXTRA_BANS
+    # filters below further narrow within the rescuable pool. The off-mesh
+    # set is V3_OFF_MESH_STATUSES = {force_off_mesh, off_mesh} (~500 slots).
+    # If the tier file is missing the rescuable set is empty -> we skip the
+    # restriction rather than blanking every off-mesh slot to vanilla.
+    if slot_msb_name is not None and slot_pi is not None:
+        _backstab_rescuable = _load_backstab_rescuable_prefixes()
+        if (_backstab_rescuable
+                and (slot_msb_name, slot_pi) in _load_off_mesh_slots()):
+            chosen_pool = [cp for cp in chosen_pool
+                           if cp in _backstab_rescuable]
+            if not chosen_pool:
+                return None  # no rescuable enemy fits — slot stays vanilla
 
     # v0.20.34: SENSITIVE-only slots — softer than full fragile. Subtracts
     # V3_FRAGILE_SENSITIVE_TARGETS without restricting to RESILIENT.

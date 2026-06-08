@@ -138,6 +138,7 @@ INCLUDE_FILES = [
     # via write_empty_catalog), so it must ship or every shuffle ImportErrors.
     'stamp_test.py',
     'emevd_patch.py',
+    'stamp_test.py',         # v0.31 maximal stamp-test (imported by dcx_batch when V3_STAMP_TEST)
     # v0.29 merchant / regulation subsystem (imported by the GUI + oops_v3).
     # regulation_rando -> regulation_io + merchant_shop_fill + mob_drop_fill +
     # npcparam_reward_fill + npcparam_getsoul_fill, so all ship together;

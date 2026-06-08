@@ -1,0 +1,6 @@
+{
+  "_meta": {
+    "note": "empty default \u2014 populated only when V3_STAMP_TEST runs"
+  },
+  "stamp_test_wake_entities": {}
+}

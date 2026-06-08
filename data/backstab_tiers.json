@@ -1,0 +1,1504 @@
+{
+  "_meta": {
+    "source": "ThrowParam.csv (AtkChrId==0 player throws); throwType 24=backstab-from-behind, 25=riposte",
+    "tiers": {
+      "full_backstab": "24>=4 (humanoid 8-directional) \u2014 wake-rescuable",
+      "token_backstab": "24 in 1..3 \u2014 vestigial; treat as NOT wake-rescuable",
+      "riposte_only": "24==0,25>0 \u2014 staggers/riposte only, no behind-backstab",
+      "absent": "chr not present as a player DefChrId at all (e.g. c4181 Jellyfish, c4450 Mausoleum) \u2014 no critical path"
+    },
+    "wake_rescuable_definition": "full_backstab only"
+  },
+  "chrs": {
+    "c0": {
+      "backstab24": 0,
+      "riposte25": 0,
+      "tier": "throw_none"
+    },
+    "c1260": {
+      "backstab24": 0,
+      "riposte25": 0,
+      "tier": "throw_none"
+    },
+    "c1310": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c2010": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c2031": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c2100": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c2110": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c2120": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c2130": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c2140": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c2190": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c2200": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c2240": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c2270": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c2272": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c2274": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c2276": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c2500": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3000": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3010": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3020": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3050": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3060": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3061": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3070": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3080": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3100": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3110": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c3150": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3170": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3180": {
+      "backstab24": 8,
+      "riposte25": 1,
+      "tier": "full_backstab"
+    },
+    "c3181": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c3200": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3201": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3300": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3320": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c3350": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3360": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3361": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3370": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3371": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3400": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3450": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3451": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3460": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3470": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3471": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3500": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3510": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3550": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3560": {
+      "backstab24": 1,
+      "riposte25": 2,
+      "tier": "token_backstab"
+    },
+    "c3570": {
+      "backstab24": 1,
+      "riposte25": 2,
+      "tier": "token_backstab"
+    },
+    "c3600": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3610": {
+      "backstab24": 1,
+      "riposte25": 2,
+      "tier": "token_backstab"
+    },
+    "c3620": {
+      "backstab24": 1,
+      "riposte25": 2,
+      "tier": "token_backstab"
+    },
+    "c3630": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c3650": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3660": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3661": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3662": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3664": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3665": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3666": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3670": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3700": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3701": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3702": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3703": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3704": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3750": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3800": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3810": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3850": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3860": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3900": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3901": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3910": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c3950": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c3970": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4000": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4020": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4021": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4050": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4090": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4100": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4101": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4120": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4130": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4220": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4240": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4260": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4270": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4280": {
+      "backstab24": 3,
+      "riposte25": 3,
+      "tier": "token_backstab"
+    },
+    "c4290": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4300": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4310": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4311": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4312": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4313": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4314": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4315": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4316": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4321": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4340": {
+      "backstab24": 7,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4350": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4351": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4352": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4353": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4354": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4355": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4356": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4358": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4370": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4371": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4372": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4373": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4374": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4375": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4376": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4377": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4380": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4381": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4382": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4383": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4384": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4385": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4386": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c4420": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4440": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4441": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4442": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4460": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4480": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4482": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4500": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4501": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4502": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4503": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4505": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4510": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4511": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4520": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4550": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4560": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4561": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4570": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4580": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4600": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4601": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4602": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4603": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4604": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4620": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4630": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c4640": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4650": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4660": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4670": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4680": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4690": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4720": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4721": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4730": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4750": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4760": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4770": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4800": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4810": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4811": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4820": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c4900": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4901": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4910": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4911": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c4980": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5000": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5010": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5011": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5020": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5030": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5040": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5050": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5051": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5060": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5061": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5070": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5071": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5080": {
+      "backstab24": 1,
+      "riposte25": 2,
+      "tier": "token_backstab"
+    },
+    "c5081": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5090": {
+      "backstab24": 0,
+      "riposte25": 8,
+      "tier": "riposte_only"
+    },
+    "c5120": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5130": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5160": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5170": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5190": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5192": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5200": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5210": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5220": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5230": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5240": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5241": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5250": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5251": {
+      "backstab24": 0,
+      "riposte25": 0,
+      "tier": "throw_none"
+    },
+    "c5260": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5270": {
+      "backstab24": 1,
+      "riposte25": 2,
+      "tier": "token_backstab"
+    },
+    "c5271": {
+      "backstab24": 1,
+      "riposte25": 2,
+      "tier": "token_backstab"
+    },
+    "c5280": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5300": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5311": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5312": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5320": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5360": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5370": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5380": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5390": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5391": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5392": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5500": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5501": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5511": {
+      "backstab24": 8,
+      "riposte25": 1,
+      "tier": "full_backstab"
+    },
+    "c5512": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5513": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5550": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5570": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5580": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5581": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5600": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5630": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5640": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5651": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5661": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5700": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5701": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5720": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5730": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5740": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5761": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5780": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5790": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5800": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5810": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5820": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c5830": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5840": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5860": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5870": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5880": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c5900": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5920": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5930": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5931": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5950": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c5960": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c5980": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c6200": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c6210": {
+      "backstab24": 8,
+      "riposte25": 4,
+      "tier": "full_backstab"
+    },
+    "c6220": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c6221": {
+      "backstab24": 1,
+      "riposte25": 1,
+      "tier": "token_backstab"
+    },
+    "c6231": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c6232": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c6233": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c6260": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c6270": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c6290": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c6291": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c6310": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c6320": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c7000": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c7001": {
+      "backstab24": 8,
+      "riposte25": 0,
+      "tier": "full_backstab"
+    },
+    "c7100": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c7500": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7510": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7511": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7520": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7530": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7540": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7560": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7561": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7580": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c7600": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7610": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7620": {
+      "backstab24": 1,
+      "riposte25": 2,
+      "tier": "token_backstab"
+    },
+    "c7650": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c7651": {
+      "backstab24": 8,
+      "riposte25": 2,
+      "tier": "full_backstab"
+    },
+    "c7660": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7700": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7710": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7720": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c7800": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c7820": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c7900": {
+      "backstab24": 0,
+      "riposte25": 2,
+      "tier": "riposte_only"
+    },
+    "c7910": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7920": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c7930": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c8200": {
+      "backstab24": 0,
+      "riposte25": 1,
+      "tier": "riposte_only"
+    },
+    "c9051": {
+      "backstab24": 0,
+      "riposte25": 0,
+      "tier": "throw_none"
+    },
+    "c9100": {
+      "backstab24": 0,
+      "riposte25": 0,
+      "tier": "throw_none"
+    }
+  }
+}

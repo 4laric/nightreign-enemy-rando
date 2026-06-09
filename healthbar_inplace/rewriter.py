@@ -45,6 +45,35 @@ import json
 from collections import Counter, defaultdict
 from dataclasses import dataclass, asdict
 from typing import Optional
+import re as _re
+
+
+# Trailing/inline qualifiers the rando appends to a placed enemy's name to
+# disambiguate slot context — scaling, location, phase, weapon loadout, etc.
+# (e.g. "(Field Boss)", "(Encampment)", "(Large)", "(SoTE)", "(Phase 2)",
+# "(Sword and Shield)"). They are useful in the spoiler but clutter the
+# in-game boss healthbar, which should read just the enemy's name. The
+# reuse_vanilla path already shows the clean vanilla FMG string; this
+# normalizer cleans the names the rewriter SPLICES (fresh allocation,
+# heterogeneous composites, and the compose inputs).
+_NAME_QUALIFIER_RE = _re.compile(r"\s*\([^()]*\)")
+
+
+def strip_name_qualifiers(name):
+    """Remove parenthetical qualifier groups from a display name and
+    collapse leftover whitespace. Falls back to the original if stripping
+    would leave nothing (e.g. a name that is ONLY a parenthetical)."""
+    if not name:
+        return name
+    prev = None
+    cleaned = name
+    # loop handles the rare nested "((...))" case
+    while cleaned != prev:
+        prev = cleaned
+        cleaned = _NAME_QUALIFIER_RE.sub("", cleaned)
+    cleaned = " ".join(cleaned.split()).strip()
+    return cleaned or name
+
 
 
 # Fresh-allocation base. nameIds are stored as uint32 in the compiled
@@ -155,7 +184,8 @@ def decide_rewrites(
             continue
 
         # Project to display names + c-prefixes
-        names = [s['name'] if s else None for s in swapped_chrs]
+        names = [strip_name_qualifiers(s['name']) if s else None
+                 for s in swapped_chrs]
         prefixes = [s['c_prefix'] if s else None for s in swapped_chrs]
 
         # Filter out None slots (for shared bars where only some are swapped)
@@ -180,7 +210,8 @@ def decide_rewrites(
                 if roll < int(compose_probability * 10000):
                     # Pull "original" identity from first present-chr's spoiler info
                     swap_info = next(s for s in swapped_chrs if s is not None)
-                    original_name = swap_info.get('old_name') or None
+                    original_name = strip_name_qualifiers(
+                        swap_info.get('old_name')) or None
                     original_c = swap_info.get('old_c_prefix')
                     composed_text = compose_name(
                         original_name=original_name,

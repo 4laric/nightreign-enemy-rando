@@ -93,14 +93,16 @@ RANDO_SUBDIR = '_rando'                       # tool code (invisible to me3)
 PACKAGE_SUBDIR = 'nrando'                      # '' => flat `path = "."`; 'nrando' => nested `path = "nrando/"`
 SHIP_BUNDLE_REFERENCE_COPIES = True            # master switch: ship bundled_*/ under _rando/ as reset-to-defaults sources
 # Bundles to deploy to package/ but NOT also ship a reference copy of under
-# _rando/. The reference copy only feeds the in-app "reinstall bundled
-# files" button; for a large, static dependency that the rando never
-# rewrites (the ~182MB sfx blob) the duplication isn't worth it — the
-# deploy-path copy is enough, and re-extracting the zip is a fine recovery
-# in the rare corruption case. The in-app button degrades gracefully: it
-# skips any bundle whose reference dir is absent and logs that it did, while
-# still reinstalling the others (regulation, aicommon).
-SKIP_REFERENCE_COPY_FOR = {'bundled_sfx'}
+# _rando/ (the reference copy is the source the in-app "Install bundled mod
+# files" button reads from). Empty: every bundle ships a reference copy so
+# the button can (re)install ALL of them uniformly — including the ~182MB
+# sfx blob. This duplicates the sfx in the zip (once at the deploy path,
+# once as the reference copy), a deliberate trade of ~182MB of archive size
+# for a button that never silently skips a bundle. To exclude a bundle from
+# the reference copy again (and shrink the zip), add its dir name here; the
+# button then skips it gracefully and verify_release asserts its reference
+# copy is ABSENT.
+SKIP_REFERENCE_COPY_FOR = set()
 SUPPORTED_GAME = 'nightreign'
 
 
@@ -701,10 +703,10 @@ def main():
     parser.add_argument('--no-zip', action='store_true',
         help='Stage to disk only; skip zip creation.')
     parser.add_argument('--no-bundle-refs', action='store_true',
-        help='Drop ALL bundled_*/ reference copies under _rando/. The big '
-             'sfx blob already ships once by default (see SKIP_REFERENCE_'
-             'COPY_FOR); this additionally drops the small regulation/'
-             'aicommon reset sources, disabling the in-app reinstall button.')
+        help='Drop ALL bundled_*/ reference copies under _rando/ (including '
+             'the ~182MB sfx blob), saving archive size at the cost of '
+             'disabling the in-app "Install bundled mod files" button — the '
+             'deploy-path copies still ship, so the mod itself works.')
     parser.add_argument('--out-dir', default=None,
         help='Output dir for staging + zip (default: <repo>/build/)')
     parser.add_argument('--name', default=None,

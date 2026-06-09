@@ -520,6 +520,27 @@ def include_spawn_pool_msbs(vanilla_dir, spawn_pool_source_dir, oodle=None):
     return (n_added, n_already_present, n_missing)
 
 
+def night_boss_hb_exclude(o):
+    """Return the set of .emevd basenames for night-boss arenas to
+    EXCLUDE from healthbar nameId patching.
+
+    An arena is excluded iff its boss Part is PRESERVED (not randomized).
+    This mirrors engine.picker._force_rando_nb exactly so the enemy-swap
+    gate (MSB side) and the healthbar-name gate (EMEVD side) can never
+    drift. When they drifted, a swapped boss kept its vanilla name — the
+    "Beast Clergyman labeled Night's Cavalry" bug. `o` is the oops_v3
+    module (or any object exposing the same V3_* attributes).
+    """
+    randomized_nb = set(getattr(o, 'V3_NB_RANDOMIZE_WHITELIST', set()) or set())
+    if getattr(o, 'V3_RANDOMIZE_ALL_NB_ARENAS', False):
+        randomized_nb |= set(o.V3_NIGHT_BOSS_ARENA_MSBS)
+    if getattr(o, 'V3_RANDOMIZE_SAFE_NB_ARENAS', False):
+        randomized_nb |= set(getattr(o, 'V3_SAFE_NB_RANDOMIZE_MSBS', set()))
+    return {m.replace('.msb', '.emevd')
+            for m in o.V3_NIGHT_BOSS_ARENA_MSBS
+            if m not in randomized_nb}
+
+
 def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     keep_intermediates=False, oops_all_target_cp=None,
                     randomize_clusters=False, cluster_shape=False,
@@ -923,13 +944,21 @@ def rando_pipeline(in_dcx_dir, out_dcx_dir, seed=42, mode='loose',
                     _hb_t0 = time.time()
                     raw_emevd = os.path.join(work_dir, 'raw_emevd')
                     patched_emevd = os.path.join(work_dir, 'patched_emevd')
-                    # v0.26.16: the 25 night-boss arenas ship byte-
-                    # vanilla — exclude them from healthbar patching so
-                    # they are never written to the mod event/ dir (me3
-                    # then serves the vanilla emevd). Mirrors the MSB-side
-                    # V3_PRESERVE_NIGHT_BOSS_ARENAS gate.
-                    hb_exclude = {m.replace('.msb', '.emevd')
-                                  for m in oops_v3.V3_NIGHT_BOSS_ARENA_MSBS}
+                    # v0.26.16: night-boss arenas whose boss Part is
+                    # PRESERVED ship byte-vanilla — exclude them from
+                    # healthbar patching so they are never written to the
+                    # mod event/ dir (me3 then serves the vanilla emevd).
+                    # v0.31.x: only EXCLUDE the still-preserved arenas. An
+                    # arena the picker actually randomizes (picker.py
+                    # _force_rando_nb: V3_RANDOMIZE_ALL_NB_ARENAS /
+                    # V3_RANDOMIZE_SAFE_NB_ARENAS / V3_NB_RANDOMIZE_WHITELIST)
+                    # MUST flow through the patcher, or its boss nameId
+                    # stays vanilla while the enemy is swapped (the
+                    # "Beast Clergyman labeled Night's Cavalry" bug). This
+                    # mirror keeps the two gates in lock-step. Add-randomize
+                    # arenas preserve the boss Part itself, so they are NOT
+                    # in _force_rando_nb and correctly stay excluded.
+                    hb_exclude = night_boss_hb_exclude(oops_v3)
                     if hb_exclude:
                         print(f"  Night-boss arenas: preserving "
                               f"{len(hb_exclude)} vanilla "

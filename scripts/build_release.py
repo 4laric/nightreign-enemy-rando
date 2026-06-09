@@ -708,7 +708,7 @@ def main():
     parser.add_argument('--out-dir', default=None,
         help='Output dir for staging + zip (default: <repo>/build/)')
     parser.add_argument('--name', default=None,
-        help='Archive basename (default: nightreign-enemy-rando-<version>.me3-profile.zip)')
+        help='Archive basename (default: nightreign-enemy-rando-<version>.zip)')
     parser.add_argument('--dry-run', action='store_true',
         help='Show what would be copied without writing anything.')
     parser.add_argument('--quiet', action='store_true',
@@ -719,7 +719,7 @@ def main():
     ship_refs = SHIP_BUNDLE_REFERENCE_COPIES and not args.no_bundle_refs
     version = read_engine_version(REPO_ROOT)
     out_dir = args.out_dir or os.path.join(REPO_ROOT, 'build')
-    archive_name = args.name or f'nightreign-enemy-rando-{version}.me3-profile.zip'
+    archive_name = args.name or f'nightreign-enemy-rando-{version}.zip'
     if not archive_name.endswith('.zip'):
         archive_name += '.zip'
     staging_subdir = os.path.splitext(archive_name)[0]

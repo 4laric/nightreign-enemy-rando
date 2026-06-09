@@ -93,16 +93,16 @@ RANDO_SUBDIR = '_rando'                       # tool code (invisible to me3)
 PACKAGE_SUBDIR = 'nrando'                      # '' => flat `path = "."`; 'nrando' => nested `path = "nrando/"`
 SHIP_BUNDLE_REFERENCE_COPIES = True            # master switch: ship bundled_*/ under _rando/ as reset-to-defaults sources
 # Bundles to deploy to package/ but NOT also ship a reference copy of under
-# _rando/ (the reference copy is the source the in-app "Install bundled mod
-# files" button reads from). Empty: every bundle ships a reference copy so
-# the button can (re)install ALL of them uniformly — including the ~182MB
-# sfx blob. This duplicates the sfx in the zip (once at the deploy path,
-# once as the reference copy), a deliberate trade of ~182MB of archive size
-# for a button that never silently skips a bundle. To exclude a bundle from
-# the reference copy again (and shrink the zip), add its dir name here; the
-# button then skips it gracefully and verify_release asserts its reference
-# copy is ABSENT.
-SKIP_REFERENCE_COPY_FOR = set()
+# _rando/. The reference copy is one of two sources the in-app "Install
+# bundled mod files" button reads from (see bundle_installer
+# .resolve_bundle_source): (1) the _rando/<bundle>/ reference copy, or
+# (2) a fallback to the bundle's already-deployed copy at PACKAGE_DIR/
+# <target_subpath>/. For a large, static dependency that the rando never
+# rewrites (the ~182MB sfx blob) we ship it ONCE at the deploy path and let
+# the button use the fallback — so a pointed-at external profile still gets
+# sfx without bloating the zip with a 182MB duplicate. verify_release
+# asserts the reference copy is ABSENT for these (no accidental dupe).
+SKIP_REFERENCE_COPY_FOR = {'bundled_sfx'}
 SUPPORTED_GAME = 'nightreign'
 
 
@@ -703,10 +703,11 @@ def main():
     parser.add_argument('--no-zip', action='store_true',
         help='Stage to disk only; skip zip creation.')
     parser.add_argument('--no-bundle-refs', action='store_true',
-        help='Drop ALL bundled_*/ reference copies under _rando/ (including '
-             'the ~182MB sfx blob), saving archive size at the cost of '
-             'disabling the in-app "Install bundled mod files" button — the '
-             'deploy-path copies still ship, so the mod itself works.')
+        help='Drop ALL bundled_*/ reference copies under _rando/, saving '
+             'archive size but disabling the reference-copy source for the '
+             'in-app "Install bundled mod files" button. Deploy-path copies '
+             'still ship, so the mod works and the button can still source '
+             'bundles via its deploy-path fallback.')
     parser.add_argument('--out-dir', default=None,
         help='Output dir for staging + zip (default: <repo>/build/)')
     parser.add_argument('--name', default=None,

@@ -140,7 +140,8 @@ def _running_inside_profile():
 
 # v0.28.x: bundled-file installer config. Lives in its own module so
 # the lock tests can verify the registry without importing tkinter.
-from bundle_installer import BUNDLED_INSTALLS, list_bundle_content_files
+from bundle_installer import (BUNDLED_INSTALLS, list_bundle_content_files,
+                              resolve_bundle_source)
 _list_bundle_content_files = list_bundle_content_files  # internal alias
 
 # v0.28.x: night-boss arena → role labels for the spoiler viewer's
@@ -7847,19 +7848,19 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         plan = []   # list of (entry, content_files)
         missing = []
         for entry in BUNDLED_INSTALLS:
-            bundle_abs = os.path.join(HERE, entry['bundle_dir'])
-            content = _list_bundle_content_files(bundle_abs)
-            critical = os.path.join(bundle_abs, entry['critical_file'])
-            if not os.path.isdir(bundle_abs) or not os.path.exists(critical):
+            # Source from the _rando/<bundle>/ reference copy, or fall back
+            # to the bundle's single deploy-path copy in the rando's OWN
+            # package (PACKAGE_DIR) — the latter is how large ship-once
+            # bundles like sfx (no reference copy) still install into a
+            # pointed-at external profile. See bundle_installer
+            # .resolve_bundle_source.
+            resolved = resolve_bundle_source(entry, HERE, PACKAGE_DIR)
+            if resolved is None:
                 missing.append(
                     f"{entry['bundle_dir']}/ "
                     f"(missing: {entry['critical_file']})")
                 continue
-            if not content:
-                missing.append(
-                    f"{entry['bundle_dir']}/ (empty after filtering "
-                    f"READMEs / dotfiles)")
-                continue
+            _src_dir, content = resolved
             plan.append((entry, content))
 
         if not plan:
@@ -7949,6 +7950,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             for src in content:
                 fname = os.path.basename(src)
                 final_dest = os.path.join(target_dir, fname)
+                # deploy-path fallback can resolve src == dest when the user
+                # points at the rando's OWN profile (the file is already
+                # where it belongs) — copying onto itself would raise.
+                if os.path.abspath(src) == os.path.abspath(final_dest):
+                    self._log(f"  • {fname} already in place (skipped)\n", 'dim')
+                    continue
                 if os.path.exists(final_dest):
                     backup = final_dest + '.bak'
                     try:

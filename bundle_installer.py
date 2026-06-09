@@ -98,6 +98,47 @@ def list_bundle_content_files(bundle_dir_abs: str) -> list[str]:
     return out
 
 
+def resolve_bundle_source(entry: dict, rando_dir: str,
+                          package_dir: str | None = None):
+    """Resolve where the "Install bundled mod files" button should copy a
+    bundle's files FROM.
+
+    Two candidate sources, in preference order:
+      1. Reference copy under ``<rando_dir>/<bundle_dir>/`` — shipped for
+         most bundles; the full-fidelity source (all deployable files).
+      2. Deploy-path fallback under ``<package_dir>/<target_subpath>/`` —
+         for bundles in build_release.SKIP_REFERENCE_COPY_FOR that ship
+         ONCE at their deploy path (e.g. the ~182MB sfx blob, never
+         duplicated as a reference copy). ``package_dir`` is the rando's
+         OWN me3 package (oops_rando_gui.PACKAGE_DIR), where the build
+         deployed the single copy. This is what lets the button still
+         install such a bundle into a DIFFERENT, pointed-at profile.
+
+    A candidate qualifies only if it actually contains the bundle's
+    ``critical_file``.
+
+    Returns ``(source_dir, [abs_file_paths])`` to copy, or ``None`` if the
+    bundle can't be sourced from either location.
+
+    Note: the deploy-path fallback can only reliably identify the bundle's
+    ``critical_file`` (the deploy dir may hold other game files), so it
+    returns just that file. SKIP_REFERENCE_COPY_FOR is reserved for
+    single-blob bundles, where that is the whole payload.
+    """
+    ref_dir = os.path.join(rando_dir, entry['bundle_dir'])
+    if os.path.isfile(os.path.join(ref_dir, entry['critical_file'])):
+        files = list_bundle_content_files(ref_dir)
+        if files:
+            return ref_dir, files
+    if package_dir:
+        deploy_dir = (os.path.join(package_dir, entry['target_subpath'])
+                      if entry['target_subpath'] else package_dir)
+        crit = os.path.join(deploy_dir, entry['critical_file'])
+        if os.path.isfile(crit):
+            return deploy_dir, [crit]
+    return None
+
+
 def check_bundled_files_installed(package_root: str) -> dict:
     """Inspect the user's me3 package and report which bundles are
     deployed vs missing.

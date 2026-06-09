@@ -77,12 +77,31 @@ class TestCanonicalVariantPreference:
 
     # --- Picker tests -------------------------------------------------------
 
-    def test_picker_prefers_canonical_when_available(self, engine, loaded):
-        """At any slot tier, when canonical variants exist, picker picks them."""
+    def test_picker_prefers_canonical_when_available(self, engine, loaded,
+                                                     monkeypatch):
+        """When canonical-prefer is ENABLED, and canonical variants exist,
+        the picker picks them at any slot tier.
+
+        v0.28.2: V3_PREFER_CANONICAL_VARIANTS now defaults False (variety
+        pass — see the flag's rationale block in oops_v3). This test
+        exercises the filter's behaviour, so it force-enables the flag
+        rather than relying on the default; the default itself is locked
+        by test_v3_prefer_canonical_default_is_false below.
+        """
         roster, tags, prefix_variants = loaded
         import random
-        # c4640 has 1 canonical (46400020) + 5 ghosts. Canonical-prefer is ON
-        # by default, so 100% of picks should land on 46400020.
+        monkeypatch.setattr(engine, 'V3_PREFER_CANONICAL_VARIANTS', True)
+        # Disable the variant prune list so we test canonical-prefer in
+        # ISOLATION — same pattern as test_picker_with_canonical_pref_disabled.
+        # The prune list is a separate, unconditional gate that runs before
+        # canonical-preference; with it active for c4640 it currently drops
+        # the canonical (46400020) and keeps a ghost (see docs/TODO.md prune-
+        # list finding), which is a prune-data bug tracked separately, not a
+        # canonical-prefer regression.
+        monkeypatch.setattr(engine, '_V3_VARIANT_PRUNE_IDS', set())
+        monkeypatch.setattr(engine, 'V3_APPLY_VARIANT_PRUNE_LIST', False)
+        # c4640 has 1 canonical (46400020) + 5 ghosts. With canonical-prefer
+        # ON, 100% of picks should land on 46400020.
         picks = set()
         for seed in range(50):
             rng = random.Random(seed)
@@ -178,19 +197,22 @@ class TestCanonicalVariantPreference:
 
     # --- Config sanity ------------------------------------------------------
 
-    def test_v3_prefer_canonical_default_is_true(self, engine):
-        # v0.24.101: flipped True->False ("open the floodgates" variety
-        # pass). v0.24.109: briefly True, reverted.
-        # v0.26.16: flipped back to True and exposed as a GUI checkbox
-        # ("Prefer canonical variants", beside test-mode). True is the
-        # default for non-GUI / CLI / test callers; the GUI sets it per
-        # run from the checkbox. Ghost variants stay reachable via the
-        # soft filter (a c-prefix with only ghosts is still pickable)
-        # and via turning the checkbox off.
-        assert engine.V3_PREFER_CANONICAL_VARIANTS is True, (
-            'V3_PREFER_CANONICAL_VARIANTS should default True as of '
-            'v0.26.16 — canonical-preferred for visual stability, with '
-            'the GUI checkbox / soft filter as the variety escape hatch.')
+    def test_v3_prefer_canonical_default_is_false(self, engine):
+        # History: v0.24.101 True->False ("open the floodgates" variety).
+        # v0.24.109 briefly True. v0.26.16 flipped back to True + GUI
+        # checkbox. v0.28.2 flipped to False again — the bad ghost
+        # variants that motivated the True stance are now isolated by
+        # other mechanisms (per-chr exclusions, the variant prune list,
+        # prefix-level filters), so the soft canonical-prefer filter is
+        # no longer load-bearing and the default restores the fuller
+        # variant pool for variety. The filter, GUI checkbox, and soft
+        # fallback all remain intact for anyone who wants the old
+        # behaviour. See the flag's rationale block in oops_v3.
+        assert engine.V3_PREFER_CANONICAL_VARIANTS is False, (
+            'V3_PREFER_CANONICAL_VARIANTS should default False as of '
+            'v0.28.2 — variety pass; bad ghosts are isolated at their '
+            'proper level (per-variant blocklist / prefix exclusion), '
+            'and the GUI checkbox re-enables canonical-prefer on demand.')
 
 
 class TestDumpOnlyChrHardExclude:
@@ -600,9 +622,19 @@ class TestVariantPruneList:
         prune = engine._variant_prune_ids()
         if not prune:
             pytest.skip('no prune list present in data/')
+        # A target-excluded c-prefix is never in the random placement pool,
+        # so an empty variant pool for it is harmless — skip those (otherwise
+        # e.g. c3200 Nomadic Merchant / c61003 Wylder Remembrance, both
+        # excluded, false-positive here). The invariant only matters for
+        # c-prefixes the picker can actually land on.
+        excluded = (engine.V3_EXCLUDE_TARGET_PREFIXES
+                    | engine.V3_EXCLUDE_PREFIXES
+                    | engine.V3_GHOST_EXCLUDE_TARGET_PREFIXES)
         emptied = []
         for cp, pool in prefix_variants.items():
             if not pool:
+                continue
+            if cp in excluded:
                 continue
             v = engine.pick_variant_for_tier(
                 cp, False, prefix_variants, random.Random(0), tags=tags)

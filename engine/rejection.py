@@ -108,6 +108,11 @@ def reject_target_for_slot(ns, target_cp, src_cp, src_variant_name, tags,
     # pre-extraction code (no ns[] noise); locals also use
     # LOAD_FAST opcodes instead of LOAD_GLOBAL.
     V3_BIG_PROXIMITY_ENABLED = ns['V3_BIG_PROXIMITY_ENABLED']
+    # v0.32.x: when the hash tie-break post-pass owns proximity, the
+    # forward (visit-order) gate is bypassed so the post-pass is
+    # authoritative. .get keeps older synthetic ns dicts working.
+    V3_BIG_PROXIMITY_HASH_TIEBREAK = ns.get(
+        'V3_BIG_PROXIMITY_HASH_TIEBREAK', False)
     V3_BIG_PROXIMITY_RADIUS = ns['V3_BIG_PROXIMITY_RADIUS']
     V3_BIG_SIZE_CLASSES = ns['V3_BIG_SIZE_CLASSES']
     V3_BOSS_BAR_GATED_TIERS = ns['V3_BOSS_BAR_GATED_TIERS']
@@ -584,7 +589,9 @@ def reject_target_for_slot(ns, target_cp, src_cp, src_variant_name, tags,
                 if run_ctx.msb_l_count >= run_ctx.msb_l_cap:
                     return 'density_l'
             # Gate 8: proximity (XL+ only)
-            if (V3_BIG_PROXIMITY_ENABLED and _is_xl
+            if (V3_BIG_PROXIMITY_ENABLED
+                    and not V3_BIG_PROXIMITY_HASH_TIEBREAK
+                    and _is_xl
                     and slot_pos is not None
                     and run_ctx.msb_big_positions):
                 _px, _py, _pz = slot_pos
@@ -595,6 +602,74 @@ def reject_target_for_slot(ns, target_cp, src_cp, src_variant_name, tags,
                         return 'big_proximity'
 
     return None
+
+
+
+# ---------------------------------------------------------------------------
+# Order-independent proximity tie-break (v0.32.x, opt-in)
+# ---------------------------------------------------------------------------
+#
+# The forward Gate 8 (proximity) above resolves big-vs-big overcrowding in
+# Part-index visit order: the first XL+ placed in a neighbourhood survives,
+# any later XL+ within V3_BIG_PROXIMITY_RADIUS is rejected. That is the
+# "low-pi wins" survivorship the TODO flagged — which slot keeps its big is
+# an artefact of iteration order, not of anything about the slots.
+#
+# This helper re-resolves the SAME contest by a deterministic priority key
+# instead of visit order. It is a pure function: feed it every committed XL+
+# placement in an MSB plus a priority function (a hash of seed+msb+pi), and
+# it returns the set of placements to demote. Because it walks slots in
+# priority order rather than the order they are supplied, permuting the
+# input yields an identical demotion set — the order-dependence is gone.
+#
+# It does NOT touch Gate 9 (density), which is a counted cap and is left
+# strictly in canonical-order consumption so it stays identical to
+# simulate_engine.py's sorted(part_index) pass (the v0.28 parity guarantee).
+def resolve_big_proximity_priority(big_slots, radius_sq, priority_of):
+    """Resolve big-enemy proximity conflicts by priority, not visit order.
+
+    Args:
+        big_slots: iterable of (pi, pos) for every committed XL+ placement
+            in one MSB. `pi` is the Part index (the identity key used
+            downstream — swap_plan, spoilers, repositions). `pos` is the
+            slot's (x, y, z) world position, or None if unknown.
+        radius_sq: squared proximity radius (V3_BIG_PROXIMITY_RADIUS ** 2).
+        priority_of: callable pi -> orderable key, HIGHER wins. Must be a
+            pure function of slot identity (e.g. a seed+msb+pi hash) so the
+            outcome is reproducible per seed and independent of the order
+            `big_slots` is supplied in.
+
+    Returns:
+        set[int] of pi to DEMOTE (revert to vanilla) — the losers of each
+        proximity contest. Winners are not returned; a slot with no
+        neighbour within radius is never demoted.
+
+    Greedy by priority: walk slots highest-priority first; a slot wins iff
+    it is not within radius of an already-accepted winner, else it is
+    demoted. The globally highest-priority slot in any neighbourhood always
+    survives, and the walk order is the priority key (not the input order),
+    so the result is permutation-invariant. Ties on the priority key fall
+    back to higher pi, keeping the total order fully deterministic.
+    """
+    slots = sorted(
+        ((pi, pos) for pi, pos in big_slots),
+        key=lambda s: (priority_of(s[0]), s[0]),
+        reverse=True,
+    )
+    winners = []  # positions of accepted winners so far
+    demoted = set()
+    for pi, pos in slots:
+        if pos is None:
+            # No usable position — proximity can't be tested. Mirrors the
+            # forward gate, which only fires when slot_pos is not None.
+            continue
+        px, py, pz = pos
+        if any((px - wx) ** 2 + (py - wy) ** 2 + (pz - wz) ** 2 < radius_sq
+               for wx, wy, wz in winners):
+            demoted.add(pi)
+        else:
+            winners.append(pos)
+    return demoted
 
 
 

@@ -369,6 +369,46 @@ def load_avoid_ids(root):
     return ids
 
 
+def load_dead_think_ids(root, variants):
+    """npc_param_ids whose think_param_id is ABSENT from the regulation's
+    NpcThinkParam — the DYNAMIC half of the runtime avoid-list.
+
+    The runtime think-param guard (oops_v3 / engine.load_data, v0.27.24)
+    validates every variant's think_param_id against
+    data/valid_think_param_ids.json and HARD-avoid-lists any whose think id
+    isn't present (the chr would spawn with no AI). load_avoid_ids() above
+    only scrapes the STATIC V3_AVOID_VARIANT_NPC_IDS literal from oops_v3.py
+    source, so on its own the generator is blind to this dynamic set — and
+    can keep a think-dead row as a genuine cluster's sole representative
+    while pruning its think-LIVE siblings. At runtime the avoid-filter then
+    drops the dead survivors and EMPTIES the c-prefix's pickable pool. That
+    is exactly the c3360 Ancestral Follower bug (its only two think-live
+    variants, 33600010 / 33600510, were pruned). Folding this set into the
+    survivability check makes the generator prefer a think-live
+    representative.
+
+    Returns a set of ints; empty if the manifest is missing or empty
+    (fail-open, mirroring the runtime guard).
+    """
+    path = os.path.join(root, "data", "valid_think_param_ids.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            valid = set(json.load(f).get("valid_think_param_ids", []))
+    except (OSError, json.JSONDecodeError, ValueError, TypeError):
+        return set()
+    if not valid:
+        return set()
+    dead = set()
+    for v in variants:
+        th = v.get("think_param_id")
+        npc = v.get("npc_param_id")
+        if th is None or npc is None:
+            continue
+        if int(th) not in valid:
+            dead.add(int(npc))
+    return dead
+
+
 def _code_lines(block):
     """Yield the code portion (before any '#' comment) of non-blank
     lines in a source block. Lets the scanners ignore numbers/strings
@@ -585,7 +625,12 @@ def main():
     if args.emit_prune_list:
         markers = load_trigger_markers(root)
         emerge_markers = load_emerge_markers(root)
-        avoid_ids = load_avoid_ids(root)
+        # Static avoid literal + the DYNAMIC think-dead set (see
+        # load_dead_think_ids). The survivability rule in compute_prune
+        # treats both as "non-survivable", so a think-dead row is never
+        # kept as a cluster's sole representative while its think-live
+        # siblings are pruned (the c3360 emptied-pool bug).
+        avoid_ids = load_avoid_ids(root) | load_dead_think_ids(root, variants)
         prune, kept, rstats = compute_prune(
             records, args.collapse_canonical, markers, emerge_markers,
             avoid_ids)

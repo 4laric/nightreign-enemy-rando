@@ -11,15 +11,17 @@ Two real issues in the variant prune list (data/ + `_variant_prune_ids`),
 both AWAITING A DECISION — not auto-fixed because they're data/balance
 calls:
 
-- **Prune drops the canonical, keeps a ghost — c4640.** With the prune
-  list active, c4640's pickable pool collapses to ghost npc=46400000;
-  the one canonical variant (46400020, the only one with sample_maps)
-  is pruned away. Canonical-prefer can't rescue it because the prune
-  gate runs first. Net: c4640 placements get a (potentially
-  visually-glitched / AI-incomplete) ghost. Reproduce: pick_variant_for_tier
-  with prune on vs off (off → 46400020, on → 46400000). The
-  canonical-prefer test now disables prune to test the flag in isolation;
-  the prune bug is NOT masked, it's tracked here.
+- ~~**Prune drops the canonical, keeps a ghost — c4640.**~~ NOT A BUG
+  (reviewed w/ Alaric). c4640 Ulcerated Tree Spirit (XXL field boss):
+  the kept variant 46400000 is think-LIVE and has_reward — a fully
+  working boss. It's just not the vanilla-placed (canonical) row. "Ghost"
+  = "vanilla never instantiated this NPCParam row", NOT "broken".
+  Canonical-prefer is a SOFT visual-stability preference whose default is
+  intentionally OFF (v0.28.2, variety), so preferring a working ghost
+  here is fine. Distinct from c3360, where the kept rows were think-DEAD
+  (no AI) → genuinely unplaceable. The canonical-prefer test disables
+  prune to test the flag in isolation (correct — it tests the flag, not
+  the prune list).
 - ~~**Prune empties the pool entirely — c3360.**~~ FIXED (v0.32.x,
   Alaric direction: un-prune). Root cause: c3360 Ancestral Follower's
   ONLY two think-live variants (33600010, 33600510) were pruned as
@@ -35,11 +37,20 @@ calls:
   original v0.24.39 ban was an INVISIBLE-render report; render has not
   been per-chr playtest-confirmed since the v0.24.65 lift — if c3360
   still renders invisible in play, hard-exclude it instead.
-  Follow-up (not done): teach dev/audit_genuine_variants.py to prefer a
-  think-LIVE representative so the keep-list isn't needed for future
-  cases. (The emptied-pool test now also skips target-excluded cps, so
-  c3200 Nomadic Merchant + c61003 Wylder Remembrance no longer
-  false-positive.)
+  Generator follow-up: DONE (v0.32.x). dev/audit_genuine_variants.py now
+  folds the DYNAMIC think-dead set (data/valid_think_param_ids.json, via
+  new load_dead_think_ids) into its survivability check, so it never
+  keeps a think-dead row as a cluster's sole representative while pruning
+  think-live siblings. Previously load_avoid_ids only saw the STATIC
+  V3_AVOID_VARIANT_NPC_IDS literal and was blind to the v0.27.24 runtime
+  guard. Verified roster-wide: with the fixed generator, ZERO c-prefixes
+  are left with no think-live survivor (was c3360). The SHIPPED
+  data/variant_prune_list.json was NOT regenerated — that's a +50-variant
+  change to live placements and the file says "REVIEW before shipping",
+  so it's deferred to a conscious regen+playtest. The keep-list remains
+  the active fix for c3360 in shipped data; the two coexist cleanly.
+  (The emptied-pool test now also skips target-excluded cps, so c3200
+  Nomadic Merchant + c61003 Wylder Remembrance no longer false-positive.)
 
 ## Stale test fixtures after v0.32 bump (2026-06-09)
 
@@ -53,28 +64,43 @@ assertions weren't regenerated. Cleaned up in this pass:
 - `data/placement_budget.json` — already regenerated for the miniboss-cap
   work (swept up pre-existing c2031/c5790/c5960 drift).
 
-STILL STALE — left for a conscious re-bless, NOT auto-regenerated:
-- `tests/fixtures/swap_plan_seed_lock.json` — blesses end-to-end per-seed
-  placement output. Do NOT regenerate until the prune-list findings above
-  are triaged (otherwise the buggy ghost/empty placements get locked in
-  as the baseline) AND the v0.28→v0.32 output deltas are confirmed
-  intended. Regen path: `python3 tests/test_swap_plan_seed_lock.py
-  --regenerate`.
+RE-BLESSED (2026-06-09, Alaric direction):
+- `tests/fixtures/swap_plan_seed_lock.json` — REGENERATED against the
+  current v0.32 engine + this session's cap/ban edits. All 12 cases pass.
+  Headline deltas vs the old v0.28-era baseline are consistent across all
+  seeds: ~26 fewer placements and ~25-30 MORE no-target (vanilla) slots
+  per seed, with n_distinct_targets down a few. Attribution: the shift
+  shows up even in chaos_mode (which bypasses the gate/cap machinery),
+  so the BULK is structural v0.28→v0.32 drift (the maturing think-param
+  guard marking more variants dead → more slots stay vanilla), not the
+  cap/ban edits; the Kaiden ban + Black-Knight/Elder-Lion cap cuts add a
+  smaller share. WATCH: the higher per-seed no-target count means
+  modestly fewer randomized enemies than the old baseline — if that
+  reads as too many vanilla slots in play, investigate the think-param
+  guard's growth (separate from this re-bless).
 
 ## v0.27.5 follow-ups (2026-05-26)
 
 Queued after the size-handling refactor (v0.27.4 geometry gate +
 v0.27.5 proximity/density gates). Alaric's list.
 
-- **Grunt-tier density pass.** Apply the same per-MSB budgeting the
-  v0.27.5 Gate 9 gives L+/XL+ sizes to the grunt tier - a per-MSB cap
-  on grunt-tier placements so a single map can't fill with grunts.
-  Mechanism is already there: add a grunt counter to the RunContext
-  per-MSB state, a V3_DENSITY_CAP_GRUNT constant, and a grunt branch
-  in the Gate 9 block of _reject_target_for_slot. Open question to
-  confirm with Alaric: is this a tier-count cap (grunt-tier targets per
-  MSB) or a size-count thing, and does proximity (Gate 8) also want a
-  grunt variant? Filed as count-cap by default.
+- **Grunt-tier density pass.** MECHANISM DONE (v0.32.x), default OFF —
+  needs a tuned cap + playtest before shipping live. Implemented as a
+  per-MSB count-cap (the filed default) on grunt-tier chrs, mirroring the
+  L+/XL+ Gate 9: V3_DENSITY_CAP_GRUNT (+ _TUNNEL_ variant) and
+  V3_DENSITY_CAP_GRUNT_ENABLED constants in oops_v3; RunContext gains
+  msb_grunt_count/msb_grunt_cap (begin_msb arg) + register_grunt();
+  shuffler counts grunt commits and passes the cap; Gate 9b in
+  engine.rejection rejects 'density_grunt' once the MSB grunt count hits
+  the cap. Keys on the chr's intrinsic tier=='grunt'. Unit-tested
+  (tests/test_grunt_density_cap.py); inert when disabled (verified the
+  seed-lock output is unchanged). REMAINING (needs Alaric/playtest):
+  (1) pick real cap values — V3_DENSITY_CAP_GRUNT=25 /
+  V3_TUNNEL_DENSITY_CAP_GRUNT=12 are untuned placeholders; (2) flip
+  V3_DENSITY_CAP_GRUNT_ENABLED on; (3) the original open question about a
+  grunt PROXIMITY (Gate 8) variant was NOT implemented — count-cap only,
+  per the filed default; revisit if density alone doesn't fix the
+  grunt-cluster feel.
 
 - **Randomize the pi order in the slot loop.** ~~Shuffle the (pi, po)
   list with rng so iteration is not pi-ascending biased.~~ SUPERSEDED by

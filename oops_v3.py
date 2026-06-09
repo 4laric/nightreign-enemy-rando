@@ -3964,6 +3964,24 @@ V3_DENSITY_CAP_XL_PLUS = 3   # max XL/XXL/GIGA per MSB
 V3_DENSITY_CAP_L_PLUS = 10   # max L/XL/XXL/GIGA per MSB
 V3_DENSITY_L_SIZE_CLASSES = frozenset({'L', 'XL', 'XXL', 'GIGA'})
 
+# v0.32.x GRUNT-TIER DENSITY CAP (opt-in, default OFF)
+# ---------------------------------------------------
+# The size-based density cap above (L+/XL+) leaves the grunt tier
+# uncapped, so a single MSB can fill with grunt-tier enemies. This is the
+# parallel per-MSB count-cap for grunt-tier chrs (Gate 9b in
+# engine.rejection), mirroring the L+/XL+ caps but keying on the chr's
+# intrinsic tier == 'grunt' rather than size class. Once an MSB's
+# committed grunt count hits the cap, further grunt targets are rejected
+# and the picker organically selects something else.
+#
+# OFF by default: the cap value below is an untuned starting point and the
+# effect on map feel needs a playtest pass before it ships live. Flip
+# V3_DENSITY_CAP_GRUNT_ENABLED to True to arm it. Tunnel MSBs carry their
+# own (tighter) value, matching the L+/XL+ tunnel profile.
+V3_DENSITY_CAP_GRUNT_ENABLED = False
+V3_DENSITY_CAP_GRUNT = 25         # max grunt-tier per MSB (untuned)
+V3_TUNNEL_DENSITY_CAP_GRUNT = 12  # tighter grunt cap in tunnels (untuned)
+
 # v0.28: master kill switch for the merchant model-swap post-pass. Off for
 # now — the model-only merchant swaps add chrbnd load for non-combat NPCs
 # (and showed up as "(still merchant — model only)" placements). Flip to

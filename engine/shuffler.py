@@ -125,6 +125,12 @@ def shuffle_msb_v3(ns, input_path, output_path, rng, tags, prefix_variants, pref
     V3_BOSS_TIER_PINNED_SLOTS = ns['V3_BOSS_TIER_PINNED_SLOTS']
     V3_DENSITY_CAP_L_PLUS = ns['V3_DENSITY_CAP_L_PLUS']
     V3_DENSITY_CAP_XL_PLUS = ns['V3_DENSITY_CAP_XL_PLUS']
+    # v0.32.x grunt-tier density cap (opt-in). .get keeps legacy callers
+    # and the pre-feature engine working.
+    V3_DENSITY_CAP_GRUNT_ENABLED = ns.get('V3_DENSITY_CAP_GRUNT_ENABLED', False)
+    V3_DENSITY_CAP_GRUNT = ns.get('V3_DENSITY_CAP_GRUNT', 1 << 30)
+    V3_TUNNEL_DENSITY_CAP_GRUNT = ns.get('V3_TUNNEL_DENSITY_CAP_GRUNT',
+                                         V3_DENSITY_CAP_GRUNT)
     V3_DENSITY_L_SIZE_CLASSES = ns['V3_DENSITY_L_SIZE_CLASSES']
     V3_DIAGNOSTIC_INVENTORY_MSBS = ns['V3_DIAGNOSTIC_INVENTORY_MSBS']
     V3_EXCLUDE_PREFIXES = ns['V3_EXCLUDE_PREFIXES']
@@ -432,12 +438,14 @@ def shuffle_msb_v3(ns, input_path, output_path, rng, tags, prefix_variants, pref
             run_ctx.begin_msb(V3_TUNNEL_DENSITY_CAP_XL_PLUS,
                               V3_TUNNEL_DENSITY_CAP_L_PLUS,
                               distinct_budget=_msb_budget,
-                              caps=V3_UNIQUE_TARGET_CAPS)
+                              caps=V3_UNIQUE_TARGET_CAPS,
+                              grunt_cap=V3_TUNNEL_DENSITY_CAP_GRUNT)
         else:
             run_ctx.begin_msb(V3_DENSITY_CAP_XL_PLUS,
                               V3_DENSITY_CAP_L_PLUS,
                               distinct_budget=_msb_budget,
-                              caps=V3_UNIQUE_TARGET_CAPS)
+                              caps=V3_UNIQUE_TARGET_CAPS,
+                              grunt_cap=V3_DENSITY_CAP_GRUNT)
     # v0.27.13: per-MSB random slot order. The swap loop previously
     # iterated parts in strict ascending pi. That gave low-pi slots a
     # systematic advantage in any order-sensitive per-MSB accounting —
@@ -1073,6 +1081,15 @@ def shuffle_msb_v3(ns, input_path, output_path, rng, tags, prefix_variants, pref
             _committed_sz = _effective_size_class(target_cp, tags)
             if _committed_sz in V3_DENSITY_L_SIZE_CLASSES:
                 run_ctx.register_big(_committed_sz, slot_pos)
+            # v0.32.x: count grunt-tier commits for the Gate 9b grunt
+            # density cap. Keyed on the chr's intrinsic tier (matches the
+            # gate). Only meaningful when the cap is armed, but counting
+            # unconditionally keeps the count correct if it's enabled
+            # mid-run and is cheap. hasattr guards older RunContext snapshots.
+            if (V3_DENSITY_CAP_GRUNT_ENABLED
+                    and hasattr(run_ctx, 'register_grunt')
+                    and (tags.get(target_cp) or {}).get('tier') == 'grunt'):
+                run_ctx.register_grunt()
             # v0.32.x: record XL+ commits for the hash priority proximity
             # post-pass (XL/XXL/GIGA only — Gate 8 proximity is XL+).
             if (V3_BIG_PROXIMITY_HASH_TIEBREAK

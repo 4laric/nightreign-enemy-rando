@@ -108,6 +108,9 @@ def reject_target_for_slot(ns, target_cp, src_cp, src_variant_name, tags,
     # pre-extraction code (no ns[] noise); locals also use
     # LOAD_FAST opcodes instead of LOAD_GLOBAL.
     V3_BIG_PROXIMITY_ENABLED = ns['V3_BIG_PROXIMITY_ENABLED']
+    # v0.32.x: grunt-tier density cap toggle. .get keeps older synthetic
+    # ns dicts (and the pre-feature engine) working — defaults to off.
+    V3_DENSITY_CAP_GRUNT_ENABLED = ns.get('V3_DENSITY_CAP_GRUNT_ENABLED', False)
     # v0.32.x: when the hash tie-break post-pass owns proximity, the
     # forward (visit-order) gate is bypassed so the post-pass is
     # authoritative. .get keeps older synthetic ns dicts working.
@@ -579,6 +582,22 @@ def reject_target_for_slot(ns, target_cp, src_cp, src_variant_name, tags,
     # chaos-overrideable.
     if (run_ctx is not None
             and getattr(run_ctx, 'msb_size_gate_active', False)):
+        # Gate 9b: grunt-tier per-MSB density (v0.32.x, opt-in). Mirrors
+        # the L+/XL+ caps above but keys on the chr's intrinsic tier
+        # ('grunt') rather than its size class, so a single map can't fill
+        # with grunts. Independent of the size gate (grunts are typically
+        # XS/S/M, below V3_DENSITY_L_SIZE_CLASSES). Count-cap (per the TODO
+        # default): once the MSB's committed grunt-tier count hits the cap,
+        # further grunt-tier targets are rejected and the picker organically
+        # selects something else. Default OFF (V3_DENSITY_CAP_GRUNT_ENABLED)
+        # pending a tuned cap + playtest. .get keeps older synthetic ns dicts
+        # working.
+        if V3_DENSITY_CAP_GRUNT_ENABLED:
+            _ttier = (tags.get(target_cp) or {}).get('tier')
+            if (_ttier == 'grunt'
+                    and run_ctx.msb_grunt_count
+                    >= getattr(run_ctx, 'msb_grunt_cap', 1 << 30)):
+                return 'density_grunt'
         _gsz = _effective_size_class(target_cp, tags)
         if _gsz in V3_DENSITY_L_SIZE_CLASSES:  # L / XL / XXL / GIGA
             _is_xl = _gsz in V3_BIG_SIZE_CLASSES  # XL / XXL / GIGA

@@ -49,6 +49,20 @@ CAT_OFF = 0x20     # s32 x8
 BP_OFF = 0x40      # u16 x8
 DEFAULT_RATE_MULTIPLIER = 2.0
 
+# Ability/passive "buff" goods live in EquipParamGoods id band 8,000,000+
+# (e.g. 8500100-8500102 dropped by specific enemies). They carry no loot-
+# rarity name prefix, so they were never in the randomizer's `good` pool —
+# without this guard the in-category reroll replaced every buff drop with a
+# pooled pot AND could scatter buffs into unrelated drops. We do neither:
+# a slot already awarding a buff is PRESERVED (left vanilla), and buff ids
+# are kept out of the reroll pools so no other slot can roll into one.
+ABILITY_BUFF_ID_LO = 8_000_000
+ABILITY_BUFF_ID_HI = 8_999_999
+
+
+def is_ability_buff(item_id):
+    return ABILITY_BUFF_ID_LO <= item_id <= ABILITY_BUFF_ID_HI
+
 
 def load_extra_weapon_pool(data_dir):
     """Return {weapon_category: [ids]} from data/more_weapons_pool.json, or None
@@ -109,15 +123,19 @@ def extract(reg, param=PARAM, extra_pools=None):
         ids = struct.unpack_from("<8i", bnd, base + ID_OFF)
         cats = struct.unpack_from("<8i", bnd, base + CAT_OFF)
         bps = struct.unpack_from("<8H", bnd, base + BP_OFF)
-        items, nothings = [], []
+        items, nothings, preserve = [], [], []
         for i in range(N_SLOTS):
             if ids[i] != 0:
                 items.append((i, cats[i], bps[i]))
-                pools[cats[i]].add(ids[i])
+                if is_ability_buff(ids[i]):
+                    preserve.append(i)          # keep this buff drop as-is
+                else:
+                    pools[cats[i]].add(ids[i])  # buffs never enter the pool
             elif bps[i] > 0:
                 nothings.append((i, bps[i]))
         if items:                      # nothing to randomize in an item-less lot
-            targets.append({"row": rid, "items": items, "nothings": nothings})
+            targets.append({"row": rid, "items": items,
+                            "nothings": nothings, "preserve": preserve})
 
     # Fold in extra ids, but ONLY for categories the regulation already drops in
     # this param. A category absent here (no existing slot of that type) gets no
@@ -145,7 +163,11 @@ def roll(drop_data, seed, *, rate_multiplier=DEFAULT_RATE_MULTIPLIER):
         fields = []
 
         # 1) reroll each occupied item slot's id, staying in its category.
+        #    Slots awarding an ability buff (8M band) are preserved vanilla.
+        preserve = set(t.get("preserve", ()))
         for slot, cat, _w in t["items"]:
+            if slot in preserve:
+                continue
             pool = pools.get(cat)
             if not pool:
                 continue

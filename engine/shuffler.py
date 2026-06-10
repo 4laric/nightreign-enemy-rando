@@ -74,6 +74,8 @@ import os
 import struct
 from collections import Counter, defaultdict
 
+from engine.rejection import resolve_big_proximity_priority
+
 
 def shuffle_msb_v3(ns, input_path, output_path, rng, tags, prefix_variants, prefix_count,
                     spoiler_entries=None,
@@ -114,11 +116,21 @@ def shuffle_msb_v3(ns, input_path, output_path, rng, tags, prefix_variants, pref
     #
     # V3_* state — read-only configuration:
     V3_BINARY_SEARCH_VANILLA_PINS = ns['V3_BINARY_SEARCH_VANILLA_PINS']
+    V3_BIG_PROXIMITY_HASH_TIEBREAK = ns.get('V3_BIG_PROXIMITY_HASH_TIEBREAK', False)
+    V3_BIG_PROXIMITY_RADIUS = ns['V3_BIG_PROXIMITY_RADIUS']
+    V3_BIG_SIZE_CLASSES = ns['V3_BIG_SIZE_CLASSES']
+    _big_proximity_priority = ns['_big_proximity_priority']
     V3_BOSSY_PROMOTE_SLOTS = ns['V3_BOSSY_PROMOTE_SLOTS']
     V3_BOSS_SLOT_CATALOG = ns['V3_BOSS_SLOT_CATALOG']
     V3_BOSS_TIER_PINNED_SLOTS = ns['V3_BOSS_TIER_PINNED_SLOTS']
     V3_DENSITY_CAP_L_PLUS = ns['V3_DENSITY_CAP_L_PLUS']
     V3_DENSITY_CAP_XL_PLUS = ns['V3_DENSITY_CAP_XL_PLUS']
+    # v0.32.x grunt-tier density cap (opt-in). .get keeps legacy callers
+    # and the pre-feature engine working.
+    V3_DENSITY_CAP_GRUNT_ENABLED = ns.get('V3_DENSITY_CAP_GRUNT_ENABLED', False)
+    V3_DENSITY_CAP_GRUNT = ns.get('V3_DENSITY_CAP_GRUNT', 1 << 30)
+    V3_TUNNEL_DENSITY_CAP_GRUNT = ns.get('V3_TUNNEL_DENSITY_CAP_GRUNT',
+                                         V3_DENSITY_CAP_GRUNT)
     V3_DENSITY_L_SIZE_CLASSES = ns['V3_DENSITY_L_SIZE_CLASSES']
     V3_DIAGNOSTIC_INVENTORY_MSBS = ns['V3_DIAGNOSTIC_INVENTORY_MSBS']
     V3_EXCLUDE_PREFIXES = ns['V3_EXCLUDE_PREFIXES']
@@ -426,12 +438,14 @@ def shuffle_msb_v3(ns, input_path, output_path, rng, tags, prefix_variants, pref
             run_ctx.begin_msb(V3_TUNNEL_DENSITY_CAP_XL_PLUS,
                               V3_TUNNEL_DENSITY_CAP_L_PLUS,
                               distinct_budget=_msb_budget,
-                              caps=V3_UNIQUE_TARGET_CAPS)
+                              caps=V3_UNIQUE_TARGET_CAPS,
+                              grunt_cap=V3_TUNNEL_DENSITY_CAP_GRUNT)
         else:
             run_ctx.begin_msb(V3_DENSITY_CAP_XL_PLUS,
                               V3_DENSITY_CAP_L_PLUS,
                               distinct_budget=_msb_budget,
-                              caps=V3_UNIQUE_TARGET_CAPS)
+                              caps=V3_UNIQUE_TARGET_CAPS,
+                              grunt_cap=V3_DENSITY_CAP_GRUNT)
     # v0.27.13: per-MSB random slot order. The swap loop previously
     # iterated parts in strict ascending pi. That gave low-pi slots a
     # systematic advantage in any order-sensitive per-MSB accounting —
@@ -479,6 +493,10 @@ def shuffle_msb_v3(ns, input_path, output_path, rng, tags, prefix_variants, pref
     else:
         _slot_order = list(enumerate(parts['entry_offsets']))
     _current_cluster = None  # tracks POI scope transitions inside the loop
+    # v0.32.x: every committed XL+ placement (pi, slot_pos), collected for
+    # the optional hash priority proximity post-pass below. Populated at the
+    # same commit point that registers bigs into run_ctx size state.
+    _big_placements = []
     for pi, po in _slot_order:
         # v0.28.x Phase 2: cluster-transition detection. When the
         # cluster_id for this pi differs from the active one, close the
@@ -1063,6 +1081,20 @@ def shuffle_msb_v3(ns, input_path, output_path, rng, tags, prefix_variants, pref
             _committed_sz = _effective_size_class(target_cp, tags)
             if _committed_sz in V3_DENSITY_L_SIZE_CLASSES:
                 run_ctx.register_big(_committed_sz, slot_pos)
+            # v0.32.x: count grunt-tier commits for the Gate 9b grunt
+            # density cap. Keyed on the chr's intrinsic tier (matches the
+            # gate). Only meaningful when the cap is armed, but counting
+            # unconditionally keeps the count correct if it's enabled
+            # mid-run and is cheap. hasattr guards older RunContext snapshots.
+            if (V3_DENSITY_CAP_GRUNT_ENABLED
+                    and hasattr(run_ctx, 'register_grunt')
+                    and (tags.get(target_cp) or {}).get('tier') == 'grunt'):
+                run_ctx.register_grunt()
+            # v0.32.x: record XL+ commits for the hash priority proximity
+            # post-pass (XL/XXL/GIGA only — Gate 8 proximity is XL+).
+            if (V3_BIG_PROXIMITY_HASH_TIEBREAK
+                    and _committed_sz in V3_BIG_SIZE_CLASSES):
+                _big_placements.append((pi, slot_pos))
 
     if run_ctx is not None:
         # v0.28.x Phase 2: close any active POI scope before end_msb.
@@ -1115,6 +1147,36 @@ def shuffle_msb_v3(ns, input_path, output_path, rng, tags, prefix_variants, pref
             continue  # drop this entry → slot stays vanilla
         _filtered_swap_plan.append(entry)
     swap_plan = _filtered_swap_plan
+
+    # === v0.32.x BIG-PROXIMITY HASH TIE-BREAK (opt-in) ===
+    # Re-resolve big-vs-big overcrowding by a deterministic seed+msb+pi
+    # priority hash instead of Part-index visit order. The forward Gate 8
+    # was bypassed (V3_BIG_PROXIMITY_HASH_TIEBREAK above) so this post-pass
+    # is the sole proximity authority. Losers revert to vanilla — the
+    # entry is dropped from swap_plan, mirroring the historical v0.21
+    # BIG_PROXIMITY post-pass. Gate 9 density is untouched. No-op when the
+    # flag is off (the placements list is empty) or when fewer than two
+    # bigs landed in this MSB.
+    if V3_BIG_PROXIMITY_HASH_TIEBREAK and len(_big_placements) > 1:
+        _msb_for_prox = os.path.basename(input_path)
+        _demoted_pis = resolve_big_proximity_priority(
+            _big_placements,
+            V3_BIG_PROXIMITY_RADIUS ** 2,
+            lambda _pi: _big_proximity_priority(_msb_for_prox, _pi),
+        )
+        if _demoted_pis:
+            _kept = []
+            for entry in swap_plan:
+                if entry[0] in _demoted_pis:
+                    _V3_TRACE_BUFFER.append({
+                        'event': 'BIG_PROXIMITY_HASH_DEMOTE',
+                        'map': _msb_for_prox,
+                        'pi': entry[0],
+                        'demoted_cp': entry[1],
+                    })
+                    continue  # drop → slot stays vanilla
+                _kept.append(entry)
+            swap_plan = _kept
 
     # Step 1: ensure all target c-prefixes exist in Models section
     n_added = 0

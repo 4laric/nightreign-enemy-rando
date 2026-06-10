@@ -30,117 +30,13 @@
   ],
   "seeds": {
     "12345": {
-      "n_distinct_targets": 282,
-      "n_no_target": 57,
-      "n_placements": 3959,
-      "n_reservations": 117,
+      "n_distinct_targets": 276,
+      "n_no_target": 82,
+      "n_placements": 3933,
+      "n_reservations": 115,
       "placed_counts_top_10": [
         [
-          "c3661",
-          41
-        ],
-        [
-          "c3080",
-          40
-        ],
-        [
-          "c3451",
-          40
-        ],
-        [
-          "c3500",
-          40
-        ],
-        [
-          "c3662",
-          40
-        ],
-        [
-          "c3664",
-          40
-        ],
-        [
-          "c3703",
-          40
-        ],
-        [
-          "c4040",
-          40
-        ],
-        [
-          "c4120",
-          40
-        ],
-        [
-          "c3020",
-          39
-        ]
-      ],
-      "swap_plan_sha256": "e39fbae6c3573b66c9139c94aec6c7f31e749acd3ca37bb99442a7d1961406f4",
-      "unique_reservation_count": 270
-    },
-    "42": {
-      "n_distinct_targets": 278,
-      "n_no_target": 54,
-      "n_placements": 3962,
-      "n_reservations": 117,
-      "placed_counts_top_10": [
-        [
-          "c4313",
-          42
-        ],
-        [
-          "c3500",
-          41
-        ],
-        [
-          "c3020",
-          40
-        ],
-        [
-          "c3650",
-          40
-        ],
-        [
-          "c3661",
-          40
-        ],
-        [
-          "c3662",
-          40
-        ],
-        [
-          "c4100",
-          40
-        ],
-        [
-          "c4162",
-          40
-        ],
-        [
-          "c4373",
-          40
-        ],
-        [
-          "c3451",
-          39
-        ]
-      ],
-      "swap_plan_sha256": "89b21ea501eaa3c06255873848d16b2dab059ea0f3faa7ea02ec45fbe7f1892d",
-      "unique_reservation_count": 269
-    },
-    "789157": {
-      "n_distinct_targets": 284,
-      "n_no_target": 51,
-      "n_placements": 3965,
-      "n_reservations": 117,
-      "placed_counts_top_10": [
-        [
-          "c3750",
-          41
-        ],
-        [
-          "c4120",
+          "c4110",
           41
         ],
         [
@@ -152,15 +48,19 @@
           40
         ],
         [
+          "c3450",
+          40
+        ],
+        [
+          "c3661",
+          40
+        ],
+        [
           "c3662",
           40
         ],
         [
-          "c3703",
-          40
-        ],
-        [
-          "c3950",
+          "c3664",
           40
         ],
         [
@@ -168,7 +68,7 @@
           40
         ],
         [
-          "c4250",
+          "c4120",
           40
         ],
         [
@@ -176,27 +76,135 @@
           40
         ]
       ],
-      "swap_plan_sha256": "456afa7bdf9b6540a8cd071e224602fd8f7444545f8dc5b11dc2c23aaf8ab7ef",
+      "swap_plan_sha256": "cdc3b886b511bc64db393fbc83d58d377236c9d9f1bf9f89c1754859f572c413",
+      "unique_reservation_count": 270
+    },
+    "42": {
+      "n_distinct_targets": 279,
+      "n_no_target": 81,
+      "n_placements": 3934,
+      "n_reservations": 115,
+      "placed_counts_top_10": [
+        [
+          "c4100",
+          43
+        ],
+        [
+          "c3020",
+          41
+        ],
+        [
+          "c3650",
+          41
+        ],
+        [
+          "c3662",
+          41
+        ],
+        [
+          "c5700",
+          41
+        ],
+        [
+          "c3000",
+          40
+        ],
+        [
+          "c3451",
+          40
+        ],
+        [
+          "c3500",
+          40
+        ],
+        [
+          "c3664",
+          40
+        ],
+        [
+          "c3950",
+          40
+        ]
+      ],
+      "swap_plan_sha256": "1fb1261dee37b67807ddbfef188159e4afb6e4b94b2d4a94b35729299b379e4d",
+      "unique_reservation_count": 270
+    },
+    "789157": {
+      "n_distinct_targets": 276,
+      "n_no_target": 80,
+      "n_placements": 3935,
+      "n_reservations": 115,
+      "placed_counts_top_10": [
+        [
+          "c3000",
+          41
+        ],
+        [
+          "c3020",
+          41
+        ],
+        [
+          "c3662",
+          41
+        ],
+        [
+          "c4385",
+          41
+        ],
+        [
+          "c5651",
+          41
+        ],
+        [
+          "c3080",
+          40
+        ],
+        [
+          "c3451",
+          40
+        ],
+        [
+          "c3650",
+          40
+        ],
+        [
+          "c3661",
+          40
+        ],
+        [
+          "c3750",
+          40
+        ]
+      ],
+      "swap_plan_sha256": "a636a8d7654014d51abca1c511dcf256280493ba8f430ba83fdac4499015eccf",
       "unique_reservation_count": 272
     }
   },
   "settings_cases": {
     "42_chaos_mode": {
-      "n_distinct_targets": 280,
-      "n_no_target": 54,
-      "n_placements": 3962,
-      "n_reservations": 117,
+      "n_distinct_targets": 276,
+      "n_no_target": 80,
+      "n_placements": 3935,
+      "n_reservations": 115,
       "placed_counts_top_10": [
         [
-          "c4110",
+          "c3451",
           42
         ],
         [
-          "c3020",
+          "c3664",
+          42
+        ],
+        [
+          "c4380",
+          41
+        ],
+        [
+          "c3000",
           40
         ],
         [
-          "c3451",
+          "c3020",
           40
         ],
         [
@@ -212,103 +220,95 @@
           40
         ],
         [
-          "c3664",
-          40
-        ],
-        [
-          "c4040",
-          40
-        ],
-        [
           "c4100",
           40
         ],
         [
-          "c4162",
+          "c4120",
           40
         ]
       ],
-      "swap_plan_sha256": "3f25f2ceb9abaad62d74965c1d50aee71fc5fec5b37bcababf172121a5050b99",
-      "unique_reservation_count": 271
+      "swap_plan_sha256": "8ef834790388f25c960ce400219ed79172be57237f6de364cad7721178925873",
+      "unique_reservation_count": 273
     },
     "42_mp_safe": {
-      "n_distinct_targets": 140,
-      "n_no_target": 950,
-      "n_placements": 3066,
-      "n_reservations": 60,
+      "n_distinct_targets": 137,
+      "n_no_target": 1012,
+      "n_placements": 3003,
+      "n_reservations": 59,
       "placed_counts_top_10": [
         [
-          "c7810",
-          48
-        ],
-        [
-          "c4382",
-          47
-        ],
-        [
-          "c3664",
-          46
-        ],
-        [
           "c4150",
-          46
+          50
+        ],
+        [
+          "c4181",
+          50
+        ],
+        [
+          "c4381",
+          50
+        ],
+        [
+          "c4491",
+          50
         ],
         [
           "c4165",
-          46
+          49
         ],
         [
-          "c5240",
+          "c2041",
           46
-        ],
-        [
-          "c4160",
-          45
         ],
         [
           "c4170",
+          46
+        ],
+        [
+          "c3450",
           45
         ],
         [
-          "c5750",
+          "c3661",
           45
         ],
         [
-          "c4080",
-          44
+          "c4311",
+          45
         ]
       ],
-      "swap_plan_sha256": "833ab21bd77118cdf8b07ec631e51b4cd1f677c7c78706d20e0b849e29751efb",
+      "swap_plan_sha256": "3060627f570eacc66aafac38d52376604b96d76caf85403d1cb143375869898f",
       "unique_reservation_count": 140
     },
     "42_sote_mode": {
-      "n_distinct_targets": 100,
-      "n_no_target": 192,
-      "n_placements": 3824,
-      "n_reservations": 117,
+      "n_distinct_targets": 97,
+      "n_no_target": 222,
+      "n_placements": 3793,
+      "n_reservations": 115,
       "placed_counts_top_10": [
         [
           "c5060",
-          243
+          227
         ],
         [
-          "c5193",
-          77
+          "c5700",
+          79
         ],
         [
           "c6290",
-          75
+          77
+        ],
+        [
+          "c5193",
+          76
+        ],
+        [
+          "c5526",
+          74
         ],
         [
           "c5600",
-          74
-        ],
-        [
-          "c5630",
-          74
-        ],
-        [
-          "c6233",
           74
         ],
         [
@@ -316,20 +316,20 @@
           73
         ],
         [
-          "c5526",
+          "c5630",
           73
         ],
         [
-          "c5940",
+          "c5651",
           73
         ],
         [
-          "c5700",
-          72
+          "c6210",
+          73
         ]
       ],
-      "swap_plan_sha256": "fdffddfe3b5fad065415b2b05fdde6462ba954857c460b859af97aeaa0e32c42",
-      "unique_reservation_count": 167
+      "swap_plan_sha256": "6757e5b125987dca2f41e5473fe6870ee07197cab2875dae0d87363d0122e43a",
+      "unique_reservation_count": 170
     }
   }
 }

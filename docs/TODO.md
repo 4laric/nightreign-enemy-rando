@@ -4,35 +4,127 @@ Living list of open items, deferred fixes, and ideas worth circling back to.
 Add date next to entries when noted; remove when resolved (and document the
 fix in CHANGELOG.md).
 
+## Variant prune-list findings (2026-06-09, surfaced during fixture cleanup)
+
+Found while triaging stale test fixtures after the v0.32 engine bump.
+Two real issues in the variant prune list (data/ + `_variant_prune_ids`),
+both AWAITING A DECISION — not auto-fixed because they're data/balance
+calls:
+
+- ~~**Prune drops the canonical, keeps a ghost — c4640.**~~ NOT A BUG
+  (reviewed w/ Alaric). c4640 Ulcerated Tree Spirit (XXL field boss):
+  the kept variant 46400000 is think-LIVE and has_reward — a fully
+  working boss. It's just not the vanilla-placed (canonical) row. "Ghost"
+  = "vanilla never instantiated this NPCParam row", NOT "broken".
+  Canonical-prefer is a SOFT visual-stability preference whose default is
+  intentionally OFF (v0.28.2, variety), so preferring a working ghost
+  here is fine. Distinct from c3360, where the kept rows were think-DEAD
+  (no AI) → genuinely unplaceable. The canonical-prefer test disables
+  prune to test the flag in isolation (correct — it tests the flag, not
+  the prune list).
+- ~~**Prune empties the pool entirely — c3360.**~~ FIXED (v0.32.x,
+  Alaric direction: un-prune). Root cause: c3360 Ancestral Follower's
+  ONLY two think-live variants (33600010, 33600510) were pruned as
+  redundant duplicates, leaving only think-dead variants that the hard
+  avoid-filter then dropped → empty pool → silently unplaceable despite
+  the v0.24.65 lift. The prune generator (dev/audit_genuine_variants.py)
+  picks representatives by (behaviorVariationId, think//1000, has_reward,
+  lowest id) and does NOT consider think-param LIVENESS. c3360 was the
+  ONLY c-prefix in the roster with this exact pathology (roster-wide
+  scan). Fix: new durable KEEP-list data/variant_prune_keep.json, whose
+  ids are subtracted from the merged prune set at load (survives audit
+  regeneration). c3360 now places its 2 working-AI variants. CAVEAT: the
+  original v0.24.39 ban was an INVISIBLE-render report; render has not
+  been per-chr playtest-confirmed since the v0.24.65 lift — if c3360
+  still renders invisible in play, hard-exclude it instead.
+  Generator follow-up: DONE (v0.32.x). dev/audit_genuine_variants.py now
+  folds the DYNAMIC think-dead set (data/valid_think_param_ids.json, via
+  new load_dead_think_ids) into its survivability check, so it never
+  keeps a think-dead row as a cluster's sole representative while pruning
+  think-live siblings. Previously load_avoid_ids only saw the STATIC
+  V3_AVOID_VARIANT_NPC_IDS literal and was blind to the v0.27.24 runtime
+  guard. Verified roster-wide: with the fixed generator, ZERO c-prefixes
+  are left with no think-live survivor (was c3360). The SHIPPED
+  data/variant_prune_list.json was NOT regenerated — that's a +50-variant
+  change to live placements and the file says "REVIEW before shipping",
+  so it's deferred to a conscious regen+playtest. The keep-list remains
+  the active fix for c3360 in shipped data; the two coexist cleanly.
+  (The emptied-pool test now also skips target-excluded cps, so c3200
+  Nomadic Merchant + c61003 Wylder Remembrance no longer false-positive.)
+
+## Stale test fixtures after v0.32 bump (2026-06-09)
+
+The engine fingerprint moved to v0.32 but several locked fixtures /
+assertions weren't regenerated. Cleaned up in this pass:
+- `tests/fixtures/load_data_lock.json` — REGENERATED (roster growth +
+  the v0.32.x cap edits). Passing.
+- `test_pick_target_variants_and_tags` canonical-default assertion —
+  UPDATED to the v0.28.2 intentional default (V3_PREFER_CANONICAL_VARIANTS
+  = False); the "prefers canonical" test now force-enables the flag.
+- `data/placement_budget.json` — already regenerated for the miniboss-cap
+  work (swept up pre-existing c2031/c5790/c5960 drift).
+
+RE-BLESSED (2026-06-09, Alaric direction):
+- `tests/fixtures/swap_plan_seed_lock.json` — REGENERATED against the
+  current v0.32 engine + this session's cap/ban edits. All 12 cases pass.
+  Headline deltas vs the old v0.28-era baseline are consistent across all
+  seeds: ~26 fewer placements and ~25-30 MORE no-target (vanilla) slots
+  per seed, with n_distinct_targets down a few. Attribution: the shift
+  shows up even in chaos_mode (which bypasses the gate/cap machinery),
+  so the BULK is structural v0.28→v0.32 drift (the maturing think-param
+  guard marking more variants dead → more slots stay vanilla), not the
+  cap/ban edits; the Kaiden ban + Black-Knight/Elder-Lion cap cuts add a
+  smaller share. WATCH: the higher per-seed no-target count means
+  modestly fewer randomized enemies than the old baseline — if that
+  reads as too many vanilla slots in play, investigate the think-param
+  guard's growth (separate from this re-bless).
+
 ## v0.27.5 follow-ups (2026-05-26)
 
 Queued after the size-handling refactor (v0.27.4 geometry gate +
 v0.27.5 proximity/density gates). Alaric's list.
 
-- **Grunt-tier density pass.** Apply the same per-MSB budgeting the
-  v0.27.5 Gate 9 gives L+/XL+ sizes to the grunt tier - a per-MSB cap
-  on grunt-tier placements so a single map can't fill with grunts.
-  Mechanism is already there: add a grunt counter to the RunContext
-  per-MSB state, a V3_DENSITY_CAP_GRUNT constant, and a grunt branch
-  in the Gate 9 block of _reject_target_for_slot. Open question to
-  confirm with Alaric: is this a tier-count cap (grunt-tier targets per
-  MSB) or a size-count thing, and does proximity (Gate 8) also want a
-  grunt variant? Filed as count-cap by default.
+- **Grunt-tier density pass.** MECHANISM DONE (v0.32.x), default OFF —
+  needs a tuned cap + playtest before shipping live. Implemented as a
+  per-MSB count-cap (the filed default) on grunt-tier chrs, mirroring the
+  L+/XL+ Gate 9: V3_DENSITY_CAP_GRUNT (+ _TUNNEL_ variant) and
+  V3_DENSITY_CAP_GRUNT_ENABLED constants in oops_v3; RunContext gains
+  msb_grunt_count/msb_grunt_cap (begin_msb arg) + register_grunt();
+  shuffler counts grunt commits and passes the cap; Gate 9b in
+  engine.rejection rejects 'density_grunt' once the MSB grunt count hits
+  the cap. Keys on the chr's intrinsic tier=='grunt'. Unit-tested
+  (tests/test_grunt_density_cap.py); inert when disabled (verified the
+  seed-lock output is unchanged). REMAINING (needs Alaric/playtest):
+  (1) pick real cap values — V3_DENSITY_CAP_GRUNT=25 /
+  V3_TUNNEL_DENSITY_CAP_GRUNT=12 are untuned placeholders; (2) flip
+  V3_DENSITY_CAP_GRUNT_ENABLED on; (3) the original open question about a
+  grunt PROXIMITY (Gate 8) variant was NOT implemented — count-cap only,
+  per the filed default; revisit if density alone doesn't fix the
+  grunt-cluster feel.
 
-- **Randomize the pi order in the slot loop.** shuffle_msb_v3 walks
-  `for pi, po in enumerate(parts['entry_offsets'])` - strictly
-  pi-ascending. Shuffle the (pi, po) list with rng so iteration is
-  seed-deterministic but not positionally biased. pi must stay the
-  real Part index (it keys swap_plan, repositions, bans). Interactions
-  to be aware of, NOT blockers:
-    - v0.27.5 Gates 8/9 currently resolve ties "low-pi wins" (first big
-      placed survives, later ones rejected) because the loop is
-      pi-ascending. Randomized order makes it "random-order wins" -
-      still deterministic per seed; removes the low-pi survivorship
-      bias. Likely desirable, but it is a deliberate behaviour change.
-    - Unique-cap allocation is first-come-first-served in loop order;
-      randomizing spreads capped chrs more uniformly across slots.
-    - Reservations are computed in the pre-pass and are unaffected.
+- **Randomize the pi order in the slot loop.** ~~Shuffle the (pi, po)
+  list with rng so iteration is not pi-ascending biased.~~ SUPERSEDED by
+  the v0.28 refactor — do NOT do the global shuffle. The slot loop moved
+  to `engine/shuffler.py`; lines ~454-460 there document that the order
+  was deliberately reverted FROM an rng.shuffle BACK to canonical
+  pi-ascending, because (a) the per-slot hashed pick `_slot_decision_rng`
+  already makes which-enemy-a-slot-gets independent of visit order, and
+  (b) canonical order keeps `target_count` cap consumption identical to
+  `simulate_engine.py`'s `sorted(part_index)` pass. Re-introducing a
+  global shuffle would re-break that parity. Of the original sub-concerns:
+    - Candidate-selection positional bias: already gone (hashed pick).
+    - Unique-cap allocation order: intentionally canonical (sim parity).
+    - **Gate 8 (proximity) "low-pi wins" survivorship**: this was the one
+      live concern. ADDRESSED (v0.32.x, opt-in) by
+      `V3_BIG_PROXIMITY_HASH_TIEBREAK` — a post-pass
+      (`engine.rejection.resolve_big_proximity_priority`) that re-resolves
+      big-vs-big proximity by a deterministic seed+msb+pi hash instead of
+      visit order; the forward Gate 8 is bypassed when it's on, losers
+      revert to vanilla. Gate 9 density left canonical (cap parity). Pure
+      resolver + wiring are unit-tested
+      (tests/test_big_proximity_priority.py). Default OFF pending a
+      playtest A/B — flip the flag, reroll a busy-encampment seed, compare
+      which big survives in tight clusters.
 
 - **Geometry data sufficiency check.** The v0.27.4 geometry gate uses
   only face_dist (distance to nearest collision face) from
@@ -45,14 +137,32 @@ v0.27.5 proximity/density gates). Alaric's list.
   audit a sample of XXL/GIGA slots, confirm whether face_dist-only
   produces wrong calls, and if so add a ceiling-height metric.
 
-- **Lower miniboss caps to 4.** v0.27.3 normalized previously-uncapped
-  minibosses to cap=6. Bring the whole miniboss tier to cap=4 (power of
-  2): the v0.27.3 cap=6 block in load_data() becomes 4, and the cap=8
-  outliers c4270 Elder Lion and c4020 Royal Revenant come down to 4.
-  Open question for Alaric: a few miniboss chrs carry an explicit
-  cap=1/2 - "lower all to 4" can't lower those; confirm whether they
-  stay as deliberate exceptions or are also set to 4. Pairs with the
-  v0.27.3 floor=1 (floor 1 + ceiling 4 instead of 6).
+- ~~**Lower miniboss caps to 4.**~~ DONE (v0.32.x, Alaric direction).
+  The premise had drifted: by the time this was actioned the whole
+  active miniboss tier was already at cap=4 (the cap loop now lives in
+  engine/load_data.py, sourced from data/placement_budget.json, not the
+  old load_data cap=6 block). What actually remained:
+    - c4270 Elder Lion 8 → 4 (JSON-sourced cap; it's now tagged
+      field_boss but the ceiling drop was still wanted).
+    - c4020 Royal Revenant was ALREADY 4 (TODO was stale).
+    - c5840 Black Knight 30 → 8. It carries mount_role 'rider' so the
+      v0.27.13 mount-role loop forced cap=30; the live rider pool is
+      empty, so that 30 only inflated its ordinary miniboss placements.
+      Added a single-chr editorial override after that loop.
+    - c4050 Kaiden Sellsword BANNED (exclude=true) — represented by the
+      vanilla mounted instance; on-foot duplicates suppressed. Also
+      guarded the mount-role loop so it never assigns a role cap to an
+      excluded chr (would be a dead cap; audit flags it HIGH).
+    - The 9 remaining uncapped (cap=null) "minibosses" are all EXCLUDED
+      already, so they never place — left untouched. c4420 Giant
+      Crayfish (cap=0) and the cap=1/2 cases the original note worried
+      about don't exist in the live data.
+  data/placement_budget.json regenerated via
+  dev/extract_placement_budget.py (the regen also swept up pre-existing
+  staleness: c2031/c5790/c5960 + fingerprint).
+  NOTE (separate, pre-existing): the v0_26_0 audit still reports ONE
+  HIGH dead-cap finding, c2030 — unrelated to this work, present on a
+  clean tree. Worth a follow-up.
 
 ## High priority — known bugs awaiting data
 

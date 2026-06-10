@@ -221,7 +221,8 @@ class RunContext:
     def begin_msb(self, xl_cap: int, l_cap: int,
                   distinct_budget: int = 0,
                   caps: Optional[Dict[str, int]] = None,
-                  resident_seed: Optional[Set[str]] = None) -> None:
+                  resident_seed: Optional[Set[str]] = None,
+                  grunt_cap: int = 1 << 30) -> None:
         """Reset per-MSB size state and arm the proximity/density gates
         at the start of a shuffle_msb_v3 call. xl_cap/l_cap are the
         per-MSB caps (tunnel profile or global default).
@@ -245,6 +246,11 @@ class RunContext:
         self.msb_l_count = 0
         self.msb_xl_cap = xl_cap
         self.msb_l_cap = l_cap
+        # v0.32.x: grunt-tier density cap state (Gate 9b). Default cap is
+        # effectively unbounded so the gate is a no-op unless a real cap is
+        # passed AND V3_DENSITY_CAP_GRUNT_ENABLED arms it.
+        self.msb_grunt_count = 0
+        self.msb_grunt_cap = grunt_cap
         self.msb_distinct_budget = distinct_budget
         self.msb_resident_cps = set(resident_seed) if resident_seed else set()
         if caps is None:
@@ -328,6 +334,14 @@ class RunContext:
             self.msb_xl_count += 1
             if pos is not None:
                 self.msb_big_positions.append(pos)
+
+    def register_grunt(self) -> None:
+        """Record a committed grunt-tier placement into per-MSB state so
+        later slots see it for the Gate 9b grunt density cap. Called from
+        the commit site in shuffle_msb_v3 when the placed chr's intrinsic
+        tier is 'grunt'. Counterpart to register_big (size) — kept separate
+        because the grunt cap keys on tier, not size class."""
+        self.msb_grunt_count += 1
 
     def reset(self) -> None:
         """Clear all counters/dicts/logs in place.

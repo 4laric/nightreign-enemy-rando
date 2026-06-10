@@ -1,0 +1,14 @@
+{
+  "_comment": "KEEP-list: npc_param_ids force-UN-pruned. Subtracted from the merged prune set (variant_prune_list.json auto + variant_prune_empirical.json) at load time, so it overrides both and survives audit regeneration. Use when the auto prune generator (dev/audit_genuine_variants.py) prunes a c-prefix's only think-LIVE variants and keeps only think-dead ones — the hard avoid-filter then drops the dead survivors and empties the pool, making an otherwise-eligible chr unplaceable. The generator's representative selection (behaviorVariationId, think//1000, has_reward, lowest id) does not consider whether the kept think id actually exists in the regulation.",
+  "keep_npc_param_ids": [
+    33600010,
+    33600510
+  ],
+  "_entries": {
+    "c3360": {
+      "npc_param_ids": [33600010, 33600510],
+      "reason": "Ancestral Follower. These are c3360's ONLY two think-live variants (every other variant points at a think id absent from the regulation -> dead AI -> hard avoid-listed). The auto prune list pruned both as redundant duplicates, leaving only think-dead representatives, which the avoid-filter dropped -> empty pool -> c3360 silently unplaceable despite the v0.24.65 lift (the whole-MMV-roster lift, cap=1). Force-keeping these restores it to placeable with working AI so it can finally be playtested. NOTE: c3360's original v0.24.39 ban was an INVISIBLE-render report (seed 798229); the v0.24.65 lift assumed the MMV asset deploy fixed render, but that has not been per-chr playtest-confirmed for c3360. If it still renders invisible in play, exclude it via the hard target-exclude instead.",
+      "since": "v0.32.x"
+    }
+  }
+}

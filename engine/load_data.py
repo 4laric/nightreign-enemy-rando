@@ -647,6 +647,12 @@ def load_data(ns):
     for _cp, _t in tags.items():
         if not isinstance(_t, dict):
             continue
+        # v0.32.x: never assign a role cap to an excluded chr — exclude
+        # wins, so the cap would be dead code (audit flags it HIGH). This
+        # is what lets the Kaiden (c4050) ban null out its cap instead of
+        # carrying a phantom cap=30.
+        if _cp in _mb_exclude:
+            continue
         if _t.get('mount_role') in ('rider', 'mount'):
             if V3_UNIQUE_TARGET_CAPS.get(_cp) != 30:
                 V3_UNIQUE_TARGET_CAPS[_cp] = 30
@@ -654,6 +660,20 @@ def load_data(ns):
     if _role_capped:
         print(f"v0.27.13: mount-role chrs — cap=30 set on {_role_capped} "
               f"chrs (overrides miniboss cap=4 so role slots can fill)")
+
+    # v0.32.x (Alaric direction): Black Knight (c5840) ceiling = 8.
+    # c5840 is tagged mount_role 'rider', so the v0.27.13 loop above set
+    # cap=30 to let it fill rider slots. But the live rider pool is empty
+    # (c5840 is filtered out of it under the SOTE pool — see the v0.27.45
+    # note in oops_v3 that the c5840/c5890 mounted pair is dead
+    # scaffolding), so that 30 only inflated its ORDINARY miniboss
+    # placements. The other rider, Kaiden (c4050), is banned outright
+    # (it's represented by the vanilla mounted instance), so the rider
+    # mechanism seats neither chr. Cap Black Knight as the normal
+    # miniboss it now is. Single-chr editorial override, applied AFTER
+    # the mount-role loop so it wins; idempotent.
+    if tags.get('c5840', {}).get('tier') == 'miniboss':
+        V3_UNIQUE_TARGET_CAPS['c5840'] = 8
 
     # v0.27.8: grunt tier (grunt + the now-collapsed trash) — tier-wide
     # cap=40. Alaric direction. The 20-seed sim showed the tier

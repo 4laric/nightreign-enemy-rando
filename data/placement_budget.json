@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "_engine_fingerprint": "v0.28.2",
+    "_engine_fingerprint": "v0.32",
     "_generator": "dev/extract_placement_budget.py",
     "_notes": [
       "Sparse: only c-prefixes with at least one non-default fact",
@@ -303,9 +303,9 @@
     },
     "c2030": {
       "arena_only": false,
-      "cap": 0,
+      "cap": null,
       "exclude": true,
-      "exclude_reason": null,
+      "exclude_reason": "Target-excluded (Rennala phase 1 doesnt work without field trip); cap removed to clear dead-cap audit finding.",
       "fragile_sensitive": false,
       "ghost_exclude": false,
       "history": [],
@@ -324,7 +324,7 @@
     "c2031": {
       "arena_only": false,
       "cap": null,
-      "exclude": false,
+      "exclude": true,
       "exclude_reason": null,
       "fragile_sensitive": false,
       "ghost_exclude": false,
@@ -2167,9 +2167,9 @@
     },
     "c4050": {
       "arena_only": false,
-      "cap": 30,
-      "exclude": false,
-      "exclude_reason": null,
+      "cap": null,
+      "exclude": true,
+      "exclude_reason": "Banned (Alaric, v0.32.x): Kaiden Sellsword is represented in-world by the vanilla mounted instance left intact; suppress duplicate on-foot placements.",
       "fragile_sensitive": false,
       "ghost_exclude": false,
       "history": [],
@@ -2911,7 +2911,7 @@
     },
     "c4270": {
       "arena_only": false,
-      "cap": 8,
+      "cap": 4,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": true,
@@ -6859,7 +6859,7 @@
     },
     "c5790": {
       "arena_only": false,
-      "cap": 4,
+      "cap": 2,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -6959,7 +6959,7 @@
     },
     "c5840": {
       "arena_only": false,
-      "cap": 30,
+      "cap": 8,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,
@@ -7202,7 +7202,7 @@
     },
     "c5960": {
       "arena_only": false,
-      "cap": null,
+      "cap": 2,
       "exclude": false,
       "exclude_reason": null,
       "fragile_sensitive": false,

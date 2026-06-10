@@ -94,7 +94,7 @@ def seed_to_int(seed):
         return int(hashlib.sha256(s.encode("utf-8")).hexdigest(), 16) & 0xFFFFFFFF
 
 
-def extract(reg, param=PARAM, extra_pools=None):
+def extract(reg, param=PARAM, extra_pools=None, tier_model=None):
     """Read an ItemLotParam (ENEMY_PARAM or MAP_PARAM) out of a loaded
     Regulation into a plain {targets, pools} map so roll() can stay pure /
     reg-free (like the shop's baked slot json). Built on the fly because the
@@ -123,10 +123,11 @@ def extract(reg, param=PARAM, extra_pools=None):
         ids = struct.unpack_from("<8i", bnd, base + ID_OFF)
         cats = struct.unpack_from("<8i", bnd, base + CAT_OFF)
         bps = struct.unpack_from("<8H", bnd, base + BP_OFF)
-        items, nothings, preserve = [], [], []
+        items, nothings, preserve, orig_ids = [], [], [], {}
         for i in range(N_SLOTS):
             if ids[i] != 0:
                 items.append((i, cats[i], bps[i]))
+                orig_ids[i] = ids[i]
                 if is_ability_buff(ids[i]):
                     preserve.append(i)          # keep this buff drop as-is
                 else:
@@ -134,8 +135,8 @@ def extract(reg, param=PARAM, extra_pools=None):
             elif bps[i] > 0:
                 nothings.append((i, bps[i]))
         if items:                      # nothing to randomize in an item-less lot
-            targets.append({"row": rid, "items": items,
-                            "nothings": nothings, "preserve": preserve})
+            targets.append({"row": rid, "items": items, "nothings": nothings,
+                            "preserve": preserve, "orig_ids": orig_ids})
 
     # Fold in extra ids, but ONLY for categories the regulation already drops in
     # this param. A category absent here (no existing slot of that type) gets no
@@ -145,10 +146,30 @@ def extract(reg, param=PARAM, extra_pools=None):
             if cat in pools:
                 pools[cat].update(int(i) for i in ids)
 
+    # tier-gated rarity (optional): learn the category->kind fallback from the
+    # lots being randomized, then tag each lot with its enemy tier. Map lots
+    # that are guaranteed and already hold a Rare/Legendary get the juiced
+    # "chest" curve (the rare-chest proxy); other map lots get "unknown".
+    if tier_model is not None:
+        tier_model.observe_categories(
+            (cat, t["orig_ids"][slot])
+            for t in targets for slot, cat, _w in t["items"])
+        is_map = (param == MAP_PARAM)
+        for t in targets:
+            if is_map:
+                guaranteed = not t["nothings"]
+                has_rare = any(
+                    tier_model.id_to_rarity.get(i) in ("Rare", "Legendary")
+                    for i in t["orig_ids"].values())
+                t["tier"] = "chest" if (guaranteed and has_rare) else "unknown"
+            else:
+                t["tier"] = tier_model.tier_for_lot(t["row"])
+
     return {"targets": targets, "pools": {c: sorted(v) for c, v in pools.items()}}
 
 
-def roll(drop_data, seed, *, rate_multiplier=DEFAULT_RATE_MULTIPLIER):
+def roll(drop_data, seed, *, rate_multiplier=DEFAULT_RATE_MULTIPLIER,
+         tier_model=None):
     """Roll new item ids + nothing weights for every enemy lot. Returns
     (patches, spoiler) where patches = {row_id: [(field_off, fmt, value), ...]}.
     Deterministic for `seed`. Item weights, categories, and quantities are
@@ -162,16 +183,30 @@ def roll(drop_data, seed, *, rate_multiplier=DEFAULT_RATE_MULTIPLIER):
         rid = t["row"]
         fields = []
 
-        # 1) reroll each occupied item slot's id, staying in its category.
-        #    Slots awarding an ability buff (8M band) are preserved vanilla.
+        # 1) reroll each occupied item slot's id. Ability-buff (8M band)
+        #    slots are preserved vanilla. With a tier_model the new item's
+        #    rarity is biased by the lot's enemy tier via a per-slot
+        #    deterministic RNG (order-independent); without one it's a uniform
+        #    draw within the slot's lotItemCategory (legacy behavior).
         preserve = set(t.get("preserve", ()))
+        tier = t.get("tier", "unknown")
+        orig_ids = t.get("orig_ids", {})
         for slot, cat, _w in t["items"]:
             if slot in preserve:
                 continue
-            pool = pools.get(cat)
-            if not pool:
-                continue
-            fields.append((ID_OFF + 4 * slot, "<i", rng.choice(pool)))
+            new_id = None
+            if tier_model is not None:
+                kind = tier_model.kind_for(orig_ids.get(slot), cat)
+                if kind:
+                    srng = random.Random(
+                        (seed_to_int(seed) * 1000003 + rid) * 131 + slot)
+                    new_id = tier_model.pick_item(srng, kind, tier)
+            if new_id is None:
+                pool = pools.get(cat)
+                if not pool:
+                    continue
+                new_id = rng.choice(pool)
+            fields.append((ID_OFF + 4 * slot, "<i", new_id))
 
         # 2) shrink the nothing weight so P(any item) *= rate_multiplier (cap 1).
         #    Item weights are unchanged, so item_w is the same before/after; a

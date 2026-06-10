@@ -96,12 +96,27 @@ def randomize_regulation(in_bin, out_bin, seed, *, data_dir=None,
     # patched) and MW's assets are in the me3 load order; see
     # dev/extract_more_weapons.py.
     extra = _drops.load_extra_weapon_pool(data_dir) if more_weapons else None
-    drop_data = _drops.extract(reg, _drops.ENEMY_PARAM, extra_pools=extra)
-    drop_patches, drop_spoiler = _drops.roll(drop_data, seed, rate_multiplier=mult)
+    # Tier-gated rarity: bias each drop's quality by the owning enemy's tier
+    # (grunt->common ... night boss->legendary), with the rare-chest proxy on
+    # map lots. Graceful fallback to the flat in-category reroll if the model's
+    # data files are missing. See dev/DESIGN_tiered_drop_rarity.md.
+    try:
+        import drop_tiers as _dt
+        tier_model = _dt.DropTierModel(data_dir)
+    except Exception as _e:               # pragma: no cover - data-missing path
+        tier_model = None
+        if log:
+            log("  (tier-gated drops unavailable: " + str(_e) + "; flat reroll)\n")
+    drop_data = _drops.extract(reg, _drops.ENEMY_PARAM, extra_pools=extra,
+                               tier_model=tier_model)
+    drop_patches, drop_spoiler = _drops.roll(drop_data, seed, rate_multiplier=mult,
+                                             tier_model=tier_model)
     n_drops = _drops.apply_patches(reg, drop_patches, _drops.ENEMY_PARAM)
 
-    map_data = _drops.extract(reg, _drops.MAP_PARAM, extra_pools=extra)
-    map_patches, map_spoiler = _drops.roll(map_data, f"{seed}_map", rate_multiplier=mult)
+    map_data = _drops.extract(reg, _drops.MAP_PARAM, extra_pools=extra,
+                              tier_model=tier_model)
+    map_patches, map_spoiler = _drops.roll(map_data, f"{seed}_map", rate_multiplier=mult,
+                                           tier_model=tier_model)
     n_map = _drops.apply_patches(reg, map_patches, _drops.MAP_PARAM)
 
     # Reward mapping on the SAME reg: ensure every miniboss-or-above roster chr

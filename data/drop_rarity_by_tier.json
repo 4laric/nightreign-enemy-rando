@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "what": "Per-enemy-tier rarity weights for the tier-gated item drop randomizer (mob_drop_fill / drop_tiers). Rows are weights over the 4 rarities; they are renormalized at runtime over the rarities each item KIND actually has (e.g. talismans have only Uncommon/Rare). Soft gating: small cross-tier tails are intentional.",
+    "tiers": "Keys match nr_enemy_tags.json tier strings: grunt, miniboss, field_boss, night_boss, nightlord. 'unknown' is the neutral fallback for lots with no resolved enemy tier and for map pickups. 'chest' is applied to guaranteed map lots that already contain a Rare/Legendary (the rare-chest proxy).",
+    "rarities": ["Common", "Uncommon", "Rare", "Legendary"],
+    "epic_note": "Epic tier (chaos / red 2-buff-1-debuff weapons) is DEFERRED — see dev/DESIGN_tiered_drop_rarity.md. When added it slots between Rare and Legendary."
+  },
+  "tiers": {
+    "grunt":      {"Common": 0.60, "Uncommon": 0.33, "Rare": 0.07, "Legendary": 0.00},
+    "miniboss":   {"Common": 0.20, "Uncommon": 0.45, "Rare": 0.30, "Legendary": 0.05},
+    "field_boss": {"Common": 0.05, "Uncommon": 0.30, "Rare": 0.50, "Legendary": 0.15},
+    "night_boss": {"Common": 0.00, "Uncommon": 0.12, "Rare": 0.43, "Legendary": 0.45},
+    "nightlord":  {"Common": 0.00, "Uncommon": 0.05, "Rare": 0.30, "Legendary": 0.65},
+    "unknown":    {"Common": 0.45, "Uncommon": 0.35, "Rare": 0.17, "Legendary": 0.03},
+    "chest":      {"Common": 0.05, "Uncommon": 0.20, "Rare": 0.45, "Legendary": 0.30}
+  }
+}

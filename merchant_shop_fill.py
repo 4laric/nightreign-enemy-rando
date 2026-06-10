@@ -48,10 +48,16 @@ def load_slots(json_path):
             "price_range": tuple(d.get("price_range", DEFAULT_PRICE_RANGE))}
 
 
-def roll(slot_data, seed, *, price_range=None, distinct_per_group=True):
+def roll(slot_data, seed, *, price_range=None, distinct_per_group=True,
+         top_compress=0.5):
     """Roll a new (equipId, value) for every merchant row. Returns
     (patches, spoiler) where patches = {row_id: (equip_id, price)}.
-    Deterministic for `seed`."""
+    Deterministic for `seed`.
+
+    `top_compress` shrinks the top of the price range: any rolled price above
+    the range median is pulled toward the median, keeping `top_compress` of its
+    above-median distance (0.5 = halve the expensive tail; cheap prices are
+    untouched). 1.0 disables it (full vanilla-style spread)."""
     rng = random.Random(seed_to_int(seed))
     pools = slot_data["pools"]
     targets = slot_data["targets"]
@@ -73,8 +79,11 @@ def roll(slot_data, seed, *, price_range=None, distinct_per_group=True):
             k = len(ts)
             ids = (rng.sample(pool, k) if distinct_per_group and k <= len(pool)
                    else [rng.choice(pool) for _ in ts])
+            mid = (lo + hi) / 2.0
             for t, eid in zip(ts, ids):
                 price = rng.randint(lo, hi)
+                if top_compress is not None and price > mid:
+                    price = int(round(mid + (price - mid) * top_compress))
                 patches[t["id"]] = (eid, price)
                 spoiler.append({"row": t["id"], "group": gk, "pool": pool_key,
                                 "equip_id": eid, "price": price})

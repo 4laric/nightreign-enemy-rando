@@ -47,6 +47,14 @@ class DropTierModel:
         for (kind, rar) in self.by_kind_rarity:
             self.kind_rarities.setdefault(kind, set()).add(rar)
 
+        # id -> set of kinds it belongs to (ids are NOT unique across kinds:
+        # a talisman and a good can share an integer). Used to learn the
+        # category->kind mapping from UNAMBIGUOUS ids only.
+        self.id_kinds = {}
+        for (kind, _r), ids in self.by_kind_rarity.items():
+            for i in ids:
+                self.id_kinds.setdefault(i, set()).add(kind)
+
         self.matrix = json.load(open(
             _data_path(data_dir, "drop_rarity_by_tier.json"),
             encoding="utf-8"))["tiers"]
@@ -100,9 +108,9 @@ class DropTierModel:
         import collections
         counts = collections.defaultdict(collections.Counter)
         for cat, iid in cat_id_pairs:
-            k = self.id_to_kind.get(iid)
-            if k:
-                counts[cat][k] += 1
+            kinds = self.id_kinds.get(iid)
+            if kinds and len(kinds) == 1:        # unambiguous ids only
+                counts[cat][next(iter(kinds))] += 1
         for cat, c in counts.items():
             self.cat_to_kind[cat] = c.most_common(1)[0][0]
 
@@ -151,6 +159,128 @@ class DropTierModel:
             if b:
                 return b
         return None
+
+    # ---- ItemTableParam (loot-table) reroll -----------------------------
+    # Entry layout within an ItemTableParam row: 10 entries x 36 bytes;
+    # each entry has itemCategory @ +4 (u8) and itemId @ +8 (s32). Derived +
+    # validated against the Smithbox dump (table 4000000 -> cat4/id6110, ...).
+    _TBL_ENTRY_STRIDE = 36
+    _TBL_ID_OFF = 8
+
+    def _kind_of_item(self, iid, W, A, G, P):
+        in_a, in_w, in_g = iid in A, iid in W, iid in G
+        if in_a and not in_w and not in_g: return "talisman"
+        if in_w and not in_a and not in_g: return "weapon"
+        if in_g and not in_a and not in_w: return "good"
+        if iid in P: return "protector"
+        if in_a: return "talisman"          # ambiguous -> prefer accessory
+        if in_g: return "good"
+        if in_w: return "weapon"
+        return None
+
+    def load_tables(self, reg):
+        """Classify the regulation's ItemTableParam rows by resolved kind +
+        rarity and build table pools for the within-kind table reroll. Cached;
+        safe no-op if ItemTableParam is absent. Only weapon/talisman/good
+        tables are rerollable; protector/unknown/nested-dead tables are left
+        for the caller to preserve."""
+        if getattr(self, "_tables_loaded", False):
+            return
+        self._tables_loaded = True
+        self.table_kind = {}
+        self.table_by_kind = {}
+        self.table_by_kind_rarity = {}
+        self.table_kind_rarities = {}
+        import struct
+        import collections as _c
+        try:
+            off, _sz, rows = reg._param("ItemTableParam")
+            W = set(reg.param_rows("EquipParamWeapon"))
+            A = set(reg.param_rows("EquipParamAccessory"))
+            G = set(reg.param_rows("EquipParamGoods"))
+        except Exception:
+            return
+        try:
+            P = set(reg.param_rows("EquipParamProtector"))
+        except Exception:
+            P = set()
+        bnd = reg.bnd
+        soffs = sorted(rows.values())
+        stride = (soffs[1] - soffs[0]) if len(soffs) > 1 else 360
+        table_ids = set(rows)
+        kid_rar = {(k, i): r for (k, r), ids in self.by_kind_rarity.items()
+                   for i in ids}
+
+        def entries(tid):
+            o = off + rows[tid]
+            out = []
+            for e in range(0, stride, self._TBL_ENTRY_STRIDE):
+                if e + 12 > stride:
+                    break
+                iid = struct.unpack_from("<i", bnd, o + e + self._TBL_ID_OFF)[0]
+                if iid:
+                    out.append(iid)
+            return out
+
+        seen = {}
+
+        def classify(tid, depth=0):
+            if tid in seen:
+                return seen[tid]
+            if depth > 4:
+                return None
+            seen[tid] = None  # cycle guard
+            ks = _c.Counter()
+            for iid in entries(tid):
+                k = (classify(iid, depth + 1) if iid in table_ids
+                     else self._kind_of_item(iid, W, A, G, P))
+                if k:
+                    ks[k] += 1
+            res = ks.most_common(1)[0][0] if ks else None
+            seen[tid] = res
+            return res
+
+        def rarity_of(tid):
+            rs = _c.Counter()
+            for iid in entries(tid):
+                if iid in table_ids:
+                    continue
+                for kk in ("talisman", "weapon", "good"):
+                    if (kk, iid) in kid_rar:
+                        rs[kid_rar[(kk, iid)]] += 1
+            return rs.most_common(1)[0][0] if rs else None
+
+        for tid in table_ids:
+            k = classify(tid)
+            self.table_kind[tid] = k
+            if k in ("weapon", "talisman", "good"):
+                self.table_by_kind.setdefault(k, []).append(tid)
+                rar = rarity_of(tid)
+                if rar:
+                    self.table_by_kind_rarity.setdefault((k, rar), []).append(tid)
+                    self.table_kind_rarities.setdefault(k, set()).add(rar)
+        for k in self.table_by_kind:
+            self.table_by_kind[k].sort()
+        for key in self.table_by_kind_rarity:
+            self.table_by_kind_rarity[key].sort()
+
+    def table_kind_of(self, table_id):
+        return getattr(self, "table_kind", {}).get(table_id)
+
+    def pick_table(self, rng, kind, tier):
+        """Reroll a table-ref to another table of the same `kind`, rarity-gated
+        by `tier`. Falls back to any table of the kind (incl. unranked)."""
+        present = getattr(self, "table_kind_rarities", {}).get(kind, set())
+        base = self.matrix.get(tier) or self.matrix["unknown"]
+        pairs = [(r, base.get(r, 0.0)) for r in RARITIES if r in present]
+        tot = sum(w for _, w in pairs)
+        if pairs and tot > 0:
+            rar = _weighted_choice(rng, [(r, w / tot) for r, w in pairs])
+            bucket = self.table_by_kind_rarity.get((kind, rar))
+            if bucket:
+                return rng.choice(bucket)
+        allk = getattr(self, "table_by_kind", {}).get(kind)
+        return rng.choice(allk) if allk else None
 
 
 def _weighted_choice(rng, pairs):

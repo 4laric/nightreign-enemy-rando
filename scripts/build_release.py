@@ -117,6 +117,7 @@ INCLUDE_FILES = [
     # Runtime entry points
     'oops_rando_gui.py',
     'oops_rando_gui.pyw',   # power-user launcher (run from inside _rando/)
+    'run_preflight.py',     # v0.33: pure pre-run validation (imported by the GUI)
     'check_setup.py',
     # Engine + core
     'oops_v3.py',
@@ -151,6 +152,10 @@ INCLUDE_FILES = [
     'regulation_io.py',
     'merchant_shop_fill.py',
     'mob_drop_fill.py',
+    # v0.33 tier-gated drop rarity (imported by regulation_rando; graceful
+    # fallback to flat reroll if missing, so a gap here ships SILENTLY —
+    # data/drop_rarity_by_tier.json already ships via INCLUDE_DIRS 'data').
+    'drop_tiers.py',
     'npcparam_reward_fill.py',
     'npcparam_getsoul_fill.py',
     'night_role.py',

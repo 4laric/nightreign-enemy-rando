@@ -1,0 +1,17 @@
+# Nightreign Enemy Randomizer — Python dependencies.
+#
+# The core randomizer and GUI are pure stdlib (tkinter ships with Python).
+# These packages enable the optional-but-default extras:
+#
+#   cryptography  — AES-256-CBC for regulation.bin (shop/drop randomization).
+#                   Without it the bundled regulation is copied unchanged.
+#   zstandard     — ZSTD DCX layer of regulation.bin (same fallback).
+#
+# Dev/test only:
+#   pytest        — test suite (pytest tests/  ... see CONTRIBUTING.md).
+
+cryptography>=41
+zstandard>=0.21
+
+# -- dev --
+pytest>=7

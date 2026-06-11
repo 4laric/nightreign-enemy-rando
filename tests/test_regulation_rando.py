@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""Tests for the v0.29 per-seed merchant-shop regulation randomizer.
+"""Tests for the per-seed merchant-shop regulation randomizer.
 
-Pure tests (baked-pool loading, seeded roll) always run against the shipped
-data/regulation_pools.json. The end-to-end tests run only when the bundled
-regulation is present AND the crypto/compression deps are installed:
+Updated for the v0.32 PURE-CHAOS shop model: every merchant row (Always +
+all Sets, all families) is randomized in-place from realm-split pools baked
+into data/merchant_shop_slots.json ({targets, pools, price_range}), with
+top-price compression. The old 46-slot curated manifest + regulation_pools
+shop API (load_pools_baked, merchants/slots schema) is gone.
+
+Pure tests (manifest shape, seeded roll) always run. The end-to-end tests
+run only when the bundled regulation is present AND the crypto/compression
+deps are installed:
 
     pip install cryptography zstandard
     pytest tests/test_regulation_rando.py -v
@@ -14,7 +20,6 @@ deps are missing, so these tests skip rather than fail in that case.)
 
 import hashlib
 import importlib
-import json
 import os
 import sys
 
@@ -28,7 +33,6 @@ R = importlib.import_module("regulation_io")
 SHOP = importlib.import_module("merchant_shop_fill")
 
 REG = os.path.join(ROOT, "bundled_regulation", "regulation.bin")
-POOLS = os.path.join(ROOT, "data", "regulation_pools.json")
 MANIFEST = os.path.join(ROOT, "data", "merchant_shop_slots.json")
 
 need_reg = pytest.mark.skipif(not os.path.exists(REG), reason="no bundled regulation.bin")
@@ -37,32 +41,56 @@ need_deps = pytest.mark.skipif(not RR.deps_available(),
 
 
 # --------------------------------------------------------------------------- #
-# pure (use the shipped baked pools)
+# pure (use the shipped chaos manifest)
 # --------------------------------------------------------------------------- #
-def test_baked_pools_present_and_sane():
-    pools = SHOP.load_pools_baked(POOLS)
-    assert set(pools) == {"weapon", "talisman", "good"}
-    assert len(pools["weapon"]) == 377 and len(pools["talisman"]) == 61 and len(pools["good"]) == 92
-    eid, name, rar = pools["weapon"][0]
-    assert isinstance(eid, int) and rar in ("Common", "Uncommon", "Rare", "Legendary")
+def test_chaos_manifest_sane():
+    sd = SHOP.load_slots(MANIFEST)
+    # Realm-split weapon pools + global goods/talisman pools (see
+    # merchant_shop_fill module docstring for the id-space rationale).
+    assert set(sd["pools"]) == {"W#normal", "W#DoN", "G", "T"}
+    for key, pool in sd["pools"].items():
+        assert pool and all(isinstance(e, int) for e in pool), key
+    ids = [t["id"] for t in sd["targets"]]
+    assert len(ids) == 1206 and len(set(ids)) == 1206  # every row, no dupes
+    for t in sd["targets"]:
+        assert t["pool_key"] in sd["pools"]
+        assert t["group_key"]
+    lo, hi = sd["price_range"]
+    assert 1 <= lo < hi
 
 
-def test_manifest_has_46_rows():
-    man = json.load(open(MANIFEST, encoding="utf-8"))
-    rows = [r for m in man["merchants"] for r in m["slots"]]
-    assert len(rows) == 46 and len(set(rows)) == 46
+def test_roll_deterministic_priced_and_in_pool():
+    sd = SHOP.load_slots(MANIFEST)
+    p1, s1 = SHOP.roll(sd, 8675309)
+    p2, _ = SHOP.roll(sd, 8675309)
+    p3, _ = SHOP.roll(sd, 42)
+    assert p1 == p2 and p1 != p3
+    assert len(p1) == len(sd["targets"])  # no pool_key in the manifest is empty
+
+    # Prices respect the range AND the default top_compress=0.5: anything
+    # above the median is pulled halfway back toward it.
+    lo, hi = sd["price_range"]
+    mid = (lo + hi) / 2.0
+    cap = int(round(mid + (hi - mid) * 0.5))
+    assert any(price > mid for _eid, price in p1.values())  # tail exists
+    for _eid, price in p1.values():
+        assert lo <= price <= cap
+
+    # Every rolled equipId comes from the target's declared pool.
+    pools = sd["pools"]
+    for s in s1:
+        assert s["equip_id"] in pools[s["pool"]]
 
 
-def test_roll_deterministic_and_priced():
-    pools = SHOP.load_pools_baked(POOLS)
-    man = json.load(open(MANIFEST, encoding="utf-8"))
-    tw = {"weapon": 0.85, "talisman": 0.10, "good": 0.05}
-    p1, _ = SHOP.roll(man, pools, 8675309, tw, (100, 2000), allow_dups=False)
-    p2, _ = SHOP.roll(man, pools, 8675309, tw, (100, 2000), allow_dups=False)
-    p3, _ = SHOP.roll(man, pools, 42, tw, (100, 2000), allow_dups=False)
-    assert p1 == p2 and p1 != p3 and len(p1) == 46
-    for etype, _eid, price in p1.values():
-        assert 100 <= price <= 2000 and etype in (0, 2, 3)
+def test_roll_no_top_compress_spans_range():
+    sd = SHOP.load_slots(MANIFEST)
+    p, _ = SHOP.roll(sd, 8675309, top_compress=1.0)
+    lo, hi = sd["price_range"]
+    mid = (lo + hi) / 2.0
+    cap = int(round(mid + (hi - mid) * 0.5))
+    prices = [price for _eid, price in p.values()]
+    assert all(lo <= price <= hi for price in prices)
+    assert max(prices) > cap  # compression off -> the expensive tail survives
 
 
 # --------------------------------------------------------------------------- #
@@ -80,21 +108,34 @@ def test_aes_roundtrip_byte_identical():
 def test_randomize_writes_and_rereads(tmp_path):
     out = str(tmp_path / "regulation.bin")
     res = RR.randomize_regulation(REG, out, "8675309")
-    assert res["shop_slots"] == 46
+    sd = SHOP.load_slots(MANIFEST)
+    assert res["shop_slots"] == len(sd["targets"]) == 1206
 
+    # Every spoiler row's equipId + price landed in the param; equipType
+    # is never touched (apply_patches contract).
     reg = R.Regulation.load(out)
-    code = {"weapon": 0, "talisman": 2, "good": 3}
+    base = R.Regulation.load(REG)
     for s in res["spoiler"]:
         rid = s["row"]
-        got = (reg.read_param_field("ShopLineupParam", rid, R.SHOP_EQUIPTYPE_OFF, "<B"),
-               reg.read_param_field("ShopLineupParam", rid, R.SHOP_EQUIPID_OFF, "<i"),
-               reg.read_param_field("ShopLineupParam", rid, R.SHOP_VALUE_OFF, "<i"))
-        assert got == (code[s["type"]], s["equip_id"], s["price"])
+        assert reg.read_param_field("ShopLineupParam", rid,
+                                    R.SHOP_EQUIPID_OFF, "<i") == s["equip_id"]
+        assert reg.read_param_field("ShopLineupParam", rid,
+                                    R.SHOP_VALUE_OFF, "<i") == s["price"]
+        assert (reg.read_param_field("ShopLineupParam", rid,
+                                     R.SHOP_EQUIPTYPE_OFF, "<B")
+                == base.read_param_field("ShopLineupParam", rid,
+                                         R.SHOP_EQUIPTYPE_OFF, "<B"))
 
-    base = R.Regulation.load(REG)
-    for rid in (100004, 900000):
+    # Non-merchant ShopLineupParam rows stay byte-identical to vanilla.
+    target_ids = {t["id"] for t in sd["targets"]}
+    untouched = [rid for rid in reg.param_rows("ShopLineupParam")
+                 if rid not in target_ids][:25]
+    assert untouched, "expected some non-merchant rows to exist"
+    for rid in untouched:
         assert (base.read_param_field("ShopLineupParam", rid, R.SHOP_EQUIPID_OFF, "<i")
                 == reg.read_param_field("ShopLineupParam", rid, R.SHOP_EQUIPID_OFF, "<i"))
+        assert (base.read_param_field("ShopLineupParam", rid, R.SHOP_VALUE_OFF, "<i")
+                == reg.read_param_field("ShopLineupParam", rid, R.SHOP_VALUE_OFF, "<i"))
 
 
 @need_reg

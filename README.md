@@ -65,6 +65,7 @@ and cached locally.
 
 ## Project docs
 
+- `CONTRIBUTING.md` — dev setup, running the tests, conventions.
 - `PATCH_NOTES.md` — user-facing release notes.
 - `CHANGELOG.md` — full per-version engineering history.
 - `docs/TODO.md` — open work and deferred features.

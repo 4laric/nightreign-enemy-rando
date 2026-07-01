@@ -160,3 +160,86 @@ Rare/Legendary** item. Options:
    ~50th-percentile price? scale prices above a threshold by 0.5? compress the
    top quartile? (I'd default to: prices above the median are scaled toward the
    median by 50%.)
+
+---
+
+# Revision 3 — MAJOR: ItemTableParam indirection (the scarab bug)
+
+## Root cause (definitive, via Smithbox mod_dump)
+`lotItemCategory == 7` does NOT award a direct item — it references an
+**ItemTableParam** row that resolves to the real item. Example: the lot named
+`[Scarab]` (24191000) awards `category 7, id 4000000`; `ItemTableParam[4000000]`
+= "[Rare] Ancestral Spirit's Horn" → `category 4 (talisman), id 6110`. So
+scarabs drop a **talisman via the table**, not a direct item.
+
+The drop randomizer (both the pre-existing flat reroll AND the new tiered one)
+treated category 7 as a direct item and rerolled the id → a raw weapon, which
+the game can no longer resolve as a table → the drop silently breaks. This is
+the "scarabs stopped dropping talismans" bug.
+
+## Scope — this is the MAJORITY of drops
+Enemy `ItemLotParam` category distribution (all slots):
+`cat7=2845, cat1=551, cat6=434, cat2=303, cat3=115, cat4=4`.
+So **category 7 (table refs) is ~67% of enemy drop slots.** They resolve to
+protectors, accessories, nested tables, etc. The flat randomizer had been
+corrupting most table-driven drops mod-wide.
+
+(Also corrects an earlier mistake: the volume heuristic mislabeled cat7 as
+"weapon" because table ids like 4000000 collide with weapon ids in the partial
+pool. The Smithbox dump is authoritative; cat7 = ItemTableParam.)
+
+## Fix shipped now: PRESERVE table references
+`mob_drop_fill` now preserves any slot that is `category 7` OR whose
+`lotItemId` is an `ItemTableParam` row (`load_table_item_ids` reads the param's
+row ids straight from the regulation — no offsets needed). Preserved slots are
+never pooled and never rerolled. This instantly un-breaks scarabs and every
+table-driven drop (they revert to correct vanilla behavior). Buff-band (8M)
+preservation is unchanged. Tests: `test_is_table_ref_logic`,
+`test_scarab_table_drops_preserved` (regulation-gated).
+
+## Consequence + open decision
+With table refs preserved, the tier-gated randomization now only touches the
+**direct-item** slots (weapon/accessory/good categories) — the majority
+(table) drops are vanilla again, NOT randomized.
+
+To ALSO randomize table-driven drops (the real goal — "scarabs keep dropping
+*randomized* talismans"), the table-aware approach:
+1. Classify every `ItemTableParam` row by its resolved (kind, rarity) — the
+   Smithbox `ItemTableParam.csv` gives each table's `itemCategory`/`itemId`
+   (resolve nested tables transitively).
+2. For a table-ref drop slot, reroll the **table reference** to a different
+   table of the **same resolved kind**, tier-gated by rarity (scarab's
+   talisman-table → a random talisman-table). Keeps the indirection valid; no
+   category rewrite needed.
+   (Alternative: resolve→replace with a direct item, rewriting category 7→the
+   kind's category. Simpler per-slot but loses the table semantics.)
+
+DECISION NEEDED: ship preserve-only now (tables vanilla, direct items gated),
+or build the table-reroll layer so table drops are randomized within-kind too?
+
+---
+
+# Revision 4 — table reroll IMPLEMENTED (scarabs randomize within-kind)
+
+Table-driven drops are now randomized too. `drop_tiers.DropTierModel.load_tables(reg)`
+classifies every `ItemTableParam` row by resolved kind+rarity at runtime:
+parse each row's entries (10 x 36-byte, itemId @ +8), resolve each item's kind
+via the regulation's own EquipParam* membership (recursing nested tables), and
+read rarity from `regulation_pools.json` where tagged.
+
+`pick_table(rng, kind, tier)` rerolls a table reference to a *different table of
+the same kind*, rarity-gated by the tier curve (renormalized over the rarities
+that kind's tables actually have; falls back to any same-kind table incl.
+unranked). `mob_drop_fill` routes each table-ref slot: weapon/talisman/good
+tables → within-kind reroll; protector/unknown/nested → preserved vanilla.
+
+Result (bundled regulation, enemy lots): 1820 table slots reroll within-kind
+(weapon 1366 / good 446 / talisman 8), 1074 preserved. The `[Scarab]` lots
+(talisman tables) reroll to other talisman tables — scarabs drop a *randomized*
+talisman, exactly as asked. Deterministic; verified by
+`test_table_classification_and_pick_table_kind` and
+`test_scarab_rerolls_to_a_talisman_table` (regulation-gated).
+
+Net coverage: direct-item slots gate by tier (Rev 1-2); table-ref slots
+(the majority) reroll within-kind, tier-gated (Rev 4); ability buffs and
+protector/unknown tables preserved.

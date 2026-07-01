@@ -29,7 +29,9 @@ current SoulsFormatsNEXT; the byte-identical round-trip test is the canary.
 """
 
 import io
+import os
 import struct
+import tempfile
 
 # --- ShopLineupParam field offsets within a 64-byte row (empirically derived
 #     and validated against the param CSV across all merchant rows). ----------
@@ -293,5 +295,28 @@ class Regulation:
         return aes_encrypt(dcx, key, pkcs7=False)
 
     def save(self, path: str, key: bytes = NR_REGULATION_KEY, level: int = 17) -> None:
-        with open(path, "wb") as f:
-            f.write(self.to_bytes(key, level))
+        """Atomically write the re-encrypted regulation to `path`.
+
+        The common caller (the GUI's shop stage) patches the deployed
+        regulation IN PLACE (src == dest), so a mid-write failure — disk
+        full, interrupt, crash — must never leave a truncated regulation
+        behind. Serialize fully in memory first, then write to a temp file
+        in the same directory and os.replace() it over the destination
+        (atomic on POSIX and Windows for same-volume renames). On any
+        failure the destination is untouched and the temp file is removed.
+        """
+        blob = self.to_bytes(key, level)   # any serialization error fires
+        d = os.path.dirname(os.path.abspath(path)) or "."
+        fd, tmp = tempfile.mkstemp(prefix=".regulation_io_", suffix=".tmp", dir=d)
+        try:
+            with os.fdopen(fd, "wb") as f:
+                f.write(blob)
+                f.flush()
+                os.fsync(f.fileno())
+            os.replace(tmp, path)
+        except BaseException:
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass
+            raise

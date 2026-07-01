@@ -2254,6 +2254,14 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # can grow SENSITIVE empirically and eventually retire RESILIENT.
         # Default OFF; only useful for diagnostic playtests.
         self.disable_resilient_filter_var = tk.BooleanVar(value=False)
+        # v0.33: keep the pipeline's intermediate work dir (decompressed
+        # vanilla + shuffled MSBs) by copying it to <out_dir>/_intermediate
+        # after the run. Surfaces dcx_batch's --keep-intermediates recovery
+        # flag in the GUI so a failed/cancelled recompress doesn't cost the
+        # whole shuffle. Recovery/diagnostic aid; deliberately not persisted
+        # across launches (default OFF every launch, like the resilient-
+        # filter toggle below).
+        self.keep_intermediates_var = tk.BooleanVar(value=False)
         # v0.26.16: prefer canonical variants. When ON, the picker filters
         # each c-prefix to the variants vanilla NR actually placed
         # (sample_maps non-empty), skipping untested ghost variants that
@@ -4426,6 +4434,29 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             "those 4 c-prefixes. Bypasses RESILIENT / SAFE / SENSITIVE filters; "
             "user is in full control. CTDs in this run are attributable to one "
             "of the listed c-prefixes."
+        ))
+
+        # v0.33: keep-intermediates — surfaces dcx_batch's recovery flag.
+        ki_row = ttk.Frame(diag_frame); ki_row.pack(fill='x', pady=(8, 0))
+        ki_check = ttk.Checkbutton(ki_row,
+                         text="Keep intermediate files (recovery aid)",
+                         variable=self.keep_intermediates_var,
+                         style='TCheckbutton')
+        ki_check.pack(side='left')
+        Tooltip(ki_check,
+                "After the run, copy the pipeline's work folder (decompressed "
+                "vanilla + shuffled .msb files) to <output>/_intermediate.\n\n"
+                "Recovery aid: if the recompress step fails or is cancelled, "
+                "the shuffled MSBs survive there, so the roll isn't lost.\n\n"
+                "OFF (default) = the work folder is deleted after the run.")
+        make_info_icon(ki_row, tooltip_text=(
+            "Default: OFF\n\n"
+            "When ON, the pipeline's temp work folder is copied to "
+            "<output>/_intermediate after the run (shuffled .msb files, "
+            "pre-recompress). Use it to recover a roll when compression "
+            "fails mid-run, or to inspect what the shuffle produced. "
+            "Delete the folder when you're done — it's ~the size of a "
+            "full mapstudio dump."
         ))
 
         # v0.26.16: prefer-canonical-variants toggle.
@@ -8742,7 +8773,11 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         _t = _time.perf_counter()
         in_dir = self._maybe_prefetch_vanilla(in_dir)
         self._prof['prefetch'] = _time.perf_counter() - _t
-        if not os.path.isdir(in_dir):
+        # v0.33: pure validation extracted to run_preflight (unit-tested);
+        # this method keeps only the dialog text per status code.
+        import run_preflight
+        _in_status = run_preflight.check_input_dir(in_dir)
+        if _in_status == 'missing':
             messagebox.showerror("Bad input directory",
                 f"Input directory does not exist:\n{in_dir or '(blank)'}\n\n"
                 f"Set the input folder to your NR install's mapstudio dir,\n"
@@ -8754,15 +8789,10 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 f"in .bhd/.bdt archives — run UXM Selective Unpacker first:\n"
                 f"  https://github.com/Nordgaren/UXM-Selective-Unpack")
             return
-        # Sanity-check: input dir exists but has no .msb files? Most likely
-        # they pointed at an unpacked dir but UXM didn't unpack the map files,
-        # or they pointed somewhere wrong entirely.
-        try:
-            has_msb = any(f.endswith('.msb') or f.endswith('.msb.dcx')
-                          for f in os.listdir(in_dir))
-        except OSError:
-            has_msb = False
-        if not has_msb:
+        if _in_status == 'no_msbs':
+            # Input dir exists but has no .msb files — most likely they
+            # pointed at an unpacked dir but UXM didn't unpack the map
+            # files, or they pointed somewhere wrong entirely.
             messagebox.showerror("No map files in input",
                 f"Input directory exists but contains no .msb or .msb.dcx files:\n{in_dir}\n\n"
                 f"Expected to see m*.msb.dcx files (NR's vanilla map data).\n"
@@ -8786,7 +8816,8 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             return
         out_dir = self.output_dir_var.get()
 
-        if not out_dir.strip():
+        _out_status, _out_detail = run_preflight.ensure_output_dir(out_dir)
+        if _out_status == 'unset':
             messagebox.showerror("Output directory not set",
                 "Please pick an output directory for the shuffled MSBs.\n\n"
                 "Typical choice is your me3 mod profile's map/mapstudio/ folder.\n"
@@ -8794,9 +8825,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 "from it — leave the field empty and re-pick the me3 path, "
                 "or type/Browse a custom output dir.")
             return
-        try:
-            os.makedirs(out_dir, exist_ok=True)
-        except PermissionError:
+        if _out_status == 'permission':
             messagebox.showerror("Output dir — permission denied",
                 f"Can't create the output directory:\n  {out_dir}\n\n"
                 f"Windows is blocking writes to that path. Common causes:\n"
@@ -8807,21 +8836,17 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                 f"    folder to your AV's exclusion list.\n"
                 f"  • A read-only flag was set on a parent directory.")
             return
-        except FileNotFoundError:
-            # makedirs(exist_ok=True) only raises FileNotFoundError if a
-            # parent directory in the path is itself missing AND can't be
-            # created — usually because the drive doesn't exist (typo'd
-            # drive letter) or a symlink in the path is broken.
+        if _out_status == 'parent_missing':
             messagebox.showerror("Output dir — invalid path",
                 f"The output directory's parent doesn't exist:\n  {out_dir}\n\n"
                 f"Most likely you typo'd a drive letter (D:\\ when you meant\n"
                 f"C:\\), or the path refers to a removable drive that isn't\n"
                 f"mounted. Try Browse... to pick a real folder.")
             return
-        except OSError as e:
+        if _out_status == 'oserror':
             messagebox.showerror("Output dir — couldn't create",
                 f"Couldn't create the output directory:\n  {out_dir}\n\n"
-                f"Filesystem error: {e}\n\n"
+                f"Filesystem error: {_out_detail}\n\n"
                 f"Try a different location, ideally under your user profile.")
             return
         # Validate mod map folder if set — we don't auto-create it because
@@ -9056,36 +9081,30 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                              command=self._cancel_shuffle)
         self.status_var.set("Running rando…")
 
-        # Resolve Oops! All target if mode is Oops! All
-        oops_all_target_cp = None
-        oops_all_nb_target_cp = None
-        oops_all_nb_marker_scope = None
+        # Resolve Oops! All target if mode is Oops! All. Pure resolution
+        # (display string -> c_prefix, raw c_prefix accepted) lives in
+        # run_preflight; only the error dialogs stay here.
         run_mode = self.run_mode_var.get()
-        if run_mode.startswith("Oops! All NB"):
-            picked = self.oops_all_nb_target_var.get().strip()
-            if not picked:
-                messagebox.showerror(
-                    "No target picked",
-                    "Oops! All NB mode requires picking a target enemy "
-                    "from the dropdown.")
-                self.run_btn.config(text="⚙   Randomize", state='normal',
-                                     command=self._run_shuffle)
-                self.status_var.set("Ready")
-                return
-            oops_all_nb_target_cp = self.oops_all_lookup.get(picked, picked.split()[0])
-            oops_all_nb_marker_scope = self.oops_all_nb_scope_var.get() or 'broad'
-        elif run_mode.startswith("Oops"):
-            picked = self.oops_all_target_var.get().strip()
-            if not picked:
-                messagebox.showerror(
-                    "No target picked",
-                    "Oops! All mode requires picking a target enemy from the dropdown.")
-                self.run_btn.config(text="⚙   Randomize", state='normal',
-                                     command=self._run_shuffle)
-                self.status_var.set("Ready")
-                return
-            # Resolve display string back to c_prefix; also accept a raw c_prefix
-            oops_all_target_cp = self.oops_all_lookup.get(picked, picked.split()[0])
+        _targets, _target_err = run_preflight.resolve_oops_targets(
+            run_mode,
+            nb_pick=self.oops_all_nb_target_var.get(),
+            all_pick=self.oops_all_target_var.get(),
+            lookup=self.oops_all_lookup,
+            nb_scope=self.oops_all_nb_scope_var.get())
+        if _target_err:
+            messagebox.showerror(
+                "No target picked",
+                "Oops! All NB mode requires picking a target enemy "
+                "from the dropdown." if _target_err == 'nb_target_missing'
+                else "Oops! All mode requires picking a target enemy "
+                     "from the dropdown.")
+            self.run_btn.config(text="⚙   Randomize", state='normal',
+                                 command=self._run_shuffle)
+            self.status_var.set("Ready")
+            return
+        oops_all_target_cp = _targets['oops_all_target_cp']
+        oops_all_nb_target_cp = _targets['oops_all_nb_target_cp']
+        oops_all_nb_marker_scope = _targets['oops_all_nb_marker_scope']
 
         # v0.20.67: Validation mode — rats at on-mesh slots (the
         # "should-be-safe" slots), jellies at off-mesh slots (the
@@ -9142,6 +9161,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             # thread so the worker never reads the Tk var off-thread.
             'early_boss_spawn': bool(self.early_boss_spawn_var.get()),
             'disable_resilient_filter': bool(self.disable_resilient_filter_var.get()),
+            'keep_intermediates': bool(self.keep_intermediates_var.get()),
             'prefer_canonical_variants': bool(self.prefer_canonical_variants_var.get()),
             'randomize_safe_nb_arenas': bool(self.randomize_safe_nb_arenas_var.get()),
             'randomize_all_nb_arenas': bool(self.randomize_all_nb_arenas_var.get()),
@@ -9443,38 +9463,12 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     f"*** Field/grunt slots randomize normally; this is a "
                     f"surgical CTD-isolation mode for cross-game imports. ***\n")
 
-            # Common kwargs for both DCX and direct paths.
-            engine_kwargs = dict(
-                seed=config['seed'],
-                oops_all_target_cp=config['oops_all_target_cp'],
-                oops_all_nb_target_cp=config.get('oops_all_nb_target_cp'),
-                oops_all_nb_marker_scope=config.get('oops_all_nb_marker_scope'),
-                merchant_model_swap=config['merchant_model_swap'],
-                excluded_prefixes=set(config['excluded']),
-                hub_maps=set(config['hub_maps']),
-                multiplayer_safe=bool(config.get('multiplayer_safe')),
-                disable_resilient_filter=bool(config.get('disable_resilient_filter')),
-                non_fragile_baseline_cp=config.get('non_fragile_baseline_cp'),
-                diagnostic_test_targets=config.get('diagnostic_test_targets'),
-                terrain_test_targets=config.get('terrain_test_targets'),
-                force_include_targets=config.get('force_include_targets'),
-                chaos_mode=bool(config.get('chaos_mode')),
-                mount_rider_swap=bool(config.get('mount_rider_swap')),
-                sote_mode=bool(config.get('sote_mode')),
-                # v0.27.x: Pools & Caps overrides — threaded into both the
-                # rando_pipeline (DCX) and cmd_shuffle_v3 (raw MSB) paths
-                # via **engine_kwargs. None when the tab is untouched.
-                unique_cap_overrides=config.get('unique_cap_overrides'),
-                caliber_pool_extras=config.get('caliber_pool_extras'),
-                caliber_pool_removals=config.get('caliber_pool_removals'),
-                # v0.28.x: Boutique Pool — per-run promotion-rate overrides.
-                # Defaults to None when the Boutique Pool panel didn't load,
-                # so non-GUI callers and broken-tab scenarios both no-op.
-                field_upgrade_miniboss_pct=config.get('field_upgrade_miniboss_pct'),
-                field_upgrade_fieldboss_pct=config.get('field_upgrade_fieldboss_pct'),
-                field_upgrade_nightboss_pct=config.get('field_upgrade_nightboss_pct'),
-                fieldboss_to_nightboss_promote_pct=config.get('fieldboss_to_nightboss_promote_pct'),
-            )
+            # Common kwargs for both DCX and direct paths. v0.33: the pure
+            # config->kwargs mapping moved to run_preflight.build_engine_kwargs
+            # (unit-tested; reusable headless) — the key set is locked by
+            # tests/test_run_preflight.py against drift.
+            import run_preflight
+            engine_kwargs = run_preflight.build_engine_kwargs(config)
 
             # Temporarily redirect the backend's prints to our log queue
             import io
@@ -9580,6 +9574,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                         chr_to_nameid_path=chr_nameid if os.path.exists(chr_nameid) else None,
                         randomize_safe_nb_arenas=bool(config.get('randomize_safe_nb_arenas')),
                         randomize_all_nb_arenas=bool(config.get('randomize_all_nb_arenas')),
+                        keep_intermediates=bool(config.get('keep_intermediates')),
                         **engine_kwargs)
                 else:
                     # cmd_shuffle_v3 takes (input_dir, output_dir, seed, ...)

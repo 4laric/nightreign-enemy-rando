@@ -619,6 +619,13 @@ def load_data(ns):
             continue
         if _cp in _mb_exclude:
             continue
+        # v0.33: don't floor a pulled-from-rotation chr. v0.28.2 made the
+        # cap branch respect an explicit JSON cap=0 (c4420), but the floor
+        # branch still seated floor=1 over that ceiling=0 -- unsatisfiable
+        # by definition (trips test_v3_reservation_floors' floor<=ceiling
+        # structural lock). A banned miniboss gets neither floor nor cap.
+        if V3_UNIQUE_TARGET_CAPS.get(_cp, 1) <= 0:
+            continue
         if _cp not in V3_RESERVATION_FLOORS:
             V3_RESERVATION_FLOORS[_cp] = 1
             _mb_floored += 1

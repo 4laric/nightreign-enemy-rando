@@ -64,6 +64,30 @@ def is_ability_buff(item_id):
     return ABILITY_BUFF_ID_LO <= item_id <= ABILITY_BUFF_ID_HI
 
 
+# Nightreign loot-table indirection. A lot slot with lotItemCategory 7 (or any
+# slot whose lotItemId is an ItemTableParam row) doesn't award a direct item —
+# it references an ItemTableParam table that resolves to the real item (often a
+# talisman/armor reward, e.g. the [Scarab] lot -> a talisman). Rerolling such a
+# slot's id as if it were a direct item DESTROYS the table reference (the game
+# can no longer resolve it), silently breaking the drop. The randomizer must
+# PRESERVE these slots. (This is the bulk of enemy drops.)
+TABLE_CATEGORY = 7
+
+
+def load_table_item_ids(reg):
+    """Set of ItemTableParam row ids, used to detect table-reference lot slots.
+    Empty if the param is absent (older/odd regulations) — then only the
+    category-7 check applies."""
+    try:
+        return set(reg.param_rows("ItemTableParam"))
+    except Exception:
+        return set()
+
+
+def _is_table_ref(category, item_id, table_ids):
+    return category == TABLE_CATEGORY or item_id in table_ids
+
+
 def load_extra_weapon_pool(data_dir):
     """Return {weapon_category: [ids]} from data/more_weapons_pool.json, or None
     if the file isn't present. Lets the per-seed drop randomizer fold the baked
@@ -116,6 +140,9 @@ def extract(reg, param=PARAM, extra_pools=None, tier_model=None):
     """
     off, _size, rows = reg._param(param)
     bnd = reg.bnd
+    table_ids = load_table_item_ids(reg)
+    if tier_model is not None:
+        tier_model.load_tables(reg)
     pools = defaultdict(set)
     targets = []
     for rid in sorted(rows):
@@ -123,20 +150,28 @@ def extract(reg, param=PARAM, extra_pools=None, tier_model=None):
         ids = struct.unpack_from("<8i", bnd, base + ID_OFF)
         cats = struct.unpack_from("<8i", bnd, base + CAT_OFF)
         bps = struct.unpack_from("<8H", bnd, base + BP_OFF)
-        items, nothings, preserve, orig_ids = [], [], [], {}
+        items, nothings, preserve, orig_ids, table_slots = [], [], [], {}, {}
         for i in range(N_SLOTS):
             if ids[i] != 0:
                 items.append((i, cats[i], bps[i]))
                 orig_ids[i] = ids[i]
                 if is_ability_buff(ids[i]):
-                    preserve.append(i)          # keep this buff drop as-is
+                    preserve.append(i)          # buff: keep as-is
+                elif _is_table_ref(cats[i], ids[i], table_ids):
+                    tk = (tier_model.table_kind_of(ids[i])
+                          if tier_model is not None else None)
+                    if tk in ("weapon", "talisman", "good"):
+                        table_slots[i] = tk     # reroll within-kind table
+                    else:
+                        preserve.append(i)      # protector/unknown table: vanilla
                 else:
-                    pools[cats[i]].add(ids[i])  # buffs never enter the pool
+                    pools[cats[i]].add(ids[i])  # direct item -> normal pool
             elif bps[i] > 0:
                 nothings.append((i, bps[i]))
         if items:                      # nothing to randomize in an item-less lot
             targets.append({"row": rid, "items": items, "nothings": nothings,
-                            "preserve": preserve, "orig_ids": orig_ids})
+                            "preserve": preserve, "orig_ids": orig_ids,
+                            "table_slots": table_slots})
 
     # Fold in extra ids, but ONLY for categories the regulation already drops in
     # this param. A category absent here (no existing slot of that type) gets no
@@ -191,16 +226,21 @@ def roll(drop_data, seed, *, rate_multiplier=DEFAULT_RATE_MULTIPLIER,
         preserve = set(t.get("preserve", ()))
         tier = t.get("tier", "unknown")
         orig_ids = t.get("orig_ids", {})
+        table_slots = t.get("table_slots", {})
         for slot, cat, _w in t["items"]:
             if slot in preserve:
                 continue
             new_id = None
             if tier_model is not None:
-                kind = tier_model.kind_for(orig_ids.get(slot), cat)
-                if kind:
-                    srng = random.Random(
-                        (seed_to_int(seed) * 1000003 + rid) * 131 + slot)
-                    new_id = tier_model.pick_item(srng, kind, tier)
+                srng = random.Random(
+                    (seed_to_int(seed) * 1000003 + rid) * 131 + slot)
+                if slot in table_slots:
+                    # reroll the ItemTableParam reference within its kind
+                    new_id = tier_model.pick_table(srng, table_slots[slot], tier)
+                else:
+                    kind = tier_model.kind_for(orig_ids.get(slot), cat)
+                    if kind:
+                        new_id = tier_model.pick_item(srng, kind, tier)
             if new_id is None:
                 pool = pools.get(cat)
                 if not pool:

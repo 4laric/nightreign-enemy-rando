@@ -97,3 +97,6 @@ oo2core_*.dll
 # Local cache of ER chr/script/sfx read from the ER archives (er_source) for
 # heritage imports. Regenerable; never commit.
 /.er_cache/
+
+# Dev param-dump scratch (regenerable via dev/ emitters); never commit.
+/equipparamgoods_dump.csv

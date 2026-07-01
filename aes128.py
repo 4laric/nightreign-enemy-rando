@@ -3,7 +3,7 @@
 Pure standard library. Tables are *generated* from the GF(2^8) definition,
 not transcribed, so there is nothing to typo. Used to decrypt the AES-
 protected byte ranges in Nightreign's dvdbnd entries without any pip install.
-Self-test at the bottom checks the FIPS-197 known-answer vector.
+FIPS-197 known-answer vectors are locked in tests/test_aes128.py.
 """
 from __future__ import annotations
 

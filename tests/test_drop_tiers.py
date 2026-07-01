@@ -161,3 +161,97 @@ def test_shop_compress_pulls_top_toward_median():
         if r > mid:
             assert c == int(round(mid + (r - mid) * 0.5))
     assert max(p for _, p in comp.values()) <= mid + (60000 - mid) * 0.5 + 1
+
+
+# ── ItemTableParam (category-7) reference preservation ─────────────────
+def test_is_table_ref_logic():
+    # category 7 is always a table lookup; any id that is an ItemTableParam
+    # row is a table ref regardless of category.
+    assert md._is_table_ref(7, 4000000, set()) is True
+    assert md._is_table_ref(2, 12345, {12345}) is True
+    assert md._is_table_ref(2, 5, set()) is False
+
+
+def test_scarab_table_drops_preserved():
+    """Regulation-gated: the [Scarab] lots reference ItemTableParam (which
+    resolves to a talisman). They must be PRESERVED, never rerolled into a
+    raw item — the bug that broke scarab talismans. Skips if the regulation
+    reader deps aren't installed."""
+    import os
+    import pytest
+    try:
+        import regulation_rando as _rr
+        import regulation_io as _rio
+    except Exception:
+        pytest.skip("regulation reader unavailable")
+    if not _rr.deps_available():
+        pytest.skip("cryptography/zstandard not installed")
+    reg_path = os.path.join(REPO_ROOT, "bundled_regulation", "regulation.bin")
+    if not os.path.isfile(reg_path):
+        pytest.skip("bundled regulation not present")
+    reg = _rio.Regulation.load(reg_path)
+    dd = md.extract(reg, md.ENEMY_PARAM)
+    scar = {24191000, 24191010, 24191020}
+    seen = 0
+    for t in dd["targets"]:
+        if t["row"] in scar:
+            seen += 1
+            occupied = {s for s, _c, _w in t["items"]}
+            assert occupied == set(t["preserve"]), (
+                f"scarab lot {t['row']} has unpreserved table-ref slots")
+    assert seen == len(scar), "did not find all scarab lots"
+    # and no table id leaked into the reroll pools
+    table_ids = md.load_table_item_ids(reg)
+    pooled = {i for ids in dd["pools"].values() for i in ids}
+    assert pooled.isdisjoint(table_ids), "ItemTableParam id leaked into a pool"
+
+
+# ── ItemTableParam within-kind reroll (regulation-gated) ───────────────
+def _load_reg_or_skip():
+    import os
+    import pytest
+    try:
+        import regulation_rando as _rr
+        import regulation_io as _rio
+    except Exception:
+        pytest.skip("regulation reader unavailable")
+    if not _rr.deps_available():
+        pytest.skip("cryptography/zstandard not installed")
+    reg_path = os.path.join(REPO_ROOT, "bundled_regulation", "regulation.bin")
+    if not os.path.isfile(reg_path):
+        pytest.skip("bundled regulation not present")
+    return _rio.Regulation.load(reg_path)
+
+
+def test_table_classification_and_pick_table_kind():
+    reg = _load_reg_or_skip()
+    m = drop_tiers.DropTierModel(DATA)
+    m.load_tables(reg)
+    # scarab table resolves to talisman
+    assert m.table_kind_of(4000000) == "talisman"
+    # pick_table stays within kind
+    rng = random.Random(0)
+    for kind in ("weapon", "talisman", "good"):
+        for _ in range(100):
+            tid = m.pick_table(rng, kind, "miniboss")
+            if tid is not None:
+                assert m.table_kind_of(tid) == kind
+
+
+def test_scarab_rerolls_to_a_talisman_table():
+    reg = _load_reg_or_skip()
+    m = drop_tiers.DropTierModel(DATA)
+    dd = md.extract(reg, md.ENEMY_PARAM, tier_model=m)
+    scar = {24191000, 24191010, 24191020}
+    targets = {t["row"]: t for t in dd["targets"] if t["row"] in scar}
+    assert len(targets) == 3
+    for t in targets.values():
+        assert t["table_slots"], "scarab slot should be a rerollable table-ref"
+        assert all(k == "talisman" for k in t["table_slots"].values())
+    patches, _ = md.roll(dd, seed=7, tier_model=m)
+    for lot in scar:
+        new_id = [v for _o, _f, v in patches[lot]][0]
+        assert m.table_kind_of(new_id) == "talisman", (
+            f"scarab lot {lot} rerolled to a non-talisman table")
+    # determinism
+    assert md.roll(dd, seed=7, tier_model=m)[0] == patches

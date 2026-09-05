@@ -44,6 +44,10 @@ oo2core_*.dll
 # user-specific.
 .4laric_*.json
 
+# First-launch scaffold the GUI creates when no profile exists yet —
+# a run artifact, not source.
+me3-profile/
+
 # ---------------------------------------------------------------------
 # Bundled game-derived assets — NOT tracked in git.
 #

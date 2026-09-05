@@ -74,8 +74,13 @@ runtime passes read the live reg.
   ~1930 tests; **fully green as of the v0.32 revival**.
 - **Known environment issue:** full single-process runs can die with
   "Windows fatal exception: access violation" at random points
-  (`ast.parse`/`json.load`). Run per-file or in chunks. Environmental, not
-  a project bug — don't chase it.
+  (`ast.parse`/`json.load`) — environmental, not a project bug; don't
+  chase it. Use the chunked runner instead: `python scripts/run_tests.py`
+  (one pytest subprocess per test file; positional path args restrict
+  scope, `-v` passes through).
+- CI: `.github/workflows/tests.yml` runs `scripts/run_tests.py` on
+  windows-latest / Python 3.12 for push/PR to `master`. Tests depending
+  on gitignored game assets skip there rather than fail.
 - Determinism is a contract. Seed-lock fixtures in `tests/fixtures/`
   (`swap_plan_seed_lock.json`, `load_data_lock.json`, …) pin placement
   behavior — regenerate ONLY deliberately via the tests' sanctioned

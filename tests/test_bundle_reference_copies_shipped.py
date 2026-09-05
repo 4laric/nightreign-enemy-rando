@@ -19,6 +19,8 @@ import os
 import sys
 import tempfile
 
+import pytest
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO_ROOT, 'scripts'))
 sys.path.insert(0, REPO_ROOT)
@@ -83,11 +85,21 @@ def test_ship_once_bundles_use_the_deploy_path_fallback():
 
 
 def test_install_button_sources_exist_in_repo():
+    # Some critical files are gitignored game-derived binaries
+    # (e.g. bundled_aicommon/*.dcx) and are absent from fresh source
+    # checkouts (CI). Per AGENTS.md, asset-dependent checks must skip,
+    # not fail, when the assets are absent — so verify every bundle whose
+    # critical file IS present, then skip if any were missing.
+    missing = []
     for e in BUNDLED_INSTALLS:
         bundle_dir = os.path.join(REPO_ROOT, e['bundle_dir'])
         critical = os.path.join(bundle_dir, e['critical_file'])
         assert os.path.isdir(bundle_dir), f"missing bundle dir: {e['bundle_dir']}"
-        assert os.path.isfile(critical), (
-            f"missing critical file {e['critical_file']} in {e['bundle_dir']}/")
+        if not os.path.isfile(critical):
+            missing.append(f"{e['bundle_dir']}/{e['critical_file']}")
+            continue
         assert list_bundle_content_files(bundle_dir), (
             f"{e['bundle_dir']}/ has no deployable files after filtering")
+    if missing:
+        pytest.skip("gitignored game asset(s) not in source checkout: "
+                    + ", ".join(missing))

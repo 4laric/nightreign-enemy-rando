@@ -26,7 +26,7 @@ import pytest
 def gui_source():
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     path = os.path.join(here, 'oops_rando_gui.py')
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return f.read()
 
 
@@ -89,20 +89,25 @@ class TestDeriveFromMe3GuardsAgainstClobber:
                 f'_derive_from_me3 no longer .set()s {var}. If removed '
                 f'intentionally, update this test.'
             )
-            # Walk: find the lines around the set, look for the empty guard
-            # in the preceding ~3 lines
+            # Walk: find the .set( line, then walk upward past comment/blank
+            # lines (long rationale blocks — e.g. the v0.28.2 chr_target_dir
+            # note — may sit between the guard `if` and the `.set()`) to the
+            # nearest real code line, which must BE the empty guard.
             lines = body.splitlines()
             for i, line in enumerate(lines):
                 if set_marker in line:
-                    # Look at the preceding 1-3 lines for the guard
-                    guard_window = '\n'.join(lines[max(0, i-3):i+1])
-                    assert (f'not self.{var}.get().strip()' in guard_window or
-                            f'not self.{var}.get()' in guard_window), (
+                    j = i - 1
+                    while j >= 0 and (not lines[j].strip()
+                                      or lines[j].strip().startswith('#')):
+                        j -= 1
+                    guard_line = lines[j] if j >= 0 else ''
+                    assert (f'not self.{var}.get().strip()' in guard_line or
+                            f'not self.{var}.get()' in guard_line), (
                         f'.set({var}) at line {i} in _derive_from_me3 is not '
                         f'guarded by a `not self.{var}.get().strip()` check. '
                         f'This would re-introduce the v0.24.43 bug where '
                         f'saved {var} settings get clobbered at startup.\n'
-                        f'Surrounding code:\n{guard_window}'
+                        f'Guard candidate line: {guard_line!r}'
                     )
                     break
 
@@ -252,7 +257,7 @@ class TestApplyInstallAutodetect:
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         sys.path.insert(0, here)
         # Read source and confirm the try/except contract is in place
-        with open(os.path.join(here, 'oops_rando_gui.py')) as f:
+        with open(os.path.join(here, 'oops_rando_gui.py'), encoding="utf-8") as f:
             src = f.read()
         # v0.27.x: the install-discovery logic moved out of
         # _apply_install_autodetect (now a thin delegator) into the

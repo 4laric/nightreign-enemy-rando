@@ -5,7 +5,36 @@ that aren't blocking a release but need to be carried forward across
 sessions. Add new entries at the top of the relevant section. Resolve by
 deleting the entry and noting the CHANGELOG version where it landed.
 
-Last updated: v0.27.3.
+Last updated: 2026-09-05 triage at v0.32 (previous update: v0.27.3).
+
+## Triage 2026-09-05 (v0.32 revival)
+
+This file predates the revival and the v0.28–v0.32 releases; the table
+below records the triage verdict for every thread. Entries themselves
+are kept verbatim as a historical log — verify against the current
+engine before acting on any thread.
+
+| Thread | Verdict |
+|---|---|
+| Needs re-confirmation after the v0.26 EMEVD spawn work | UNCLEAR — arena half moot (test-mode arenas default-on since v0.26.7, regenerated to v0.29-v8); overworld cases never re-confirmed |
+| Active dormancy / EMEVD bug class — c3860 Avionette | UNCLEAR — proposed fix path (permissive_spawn_emerge) was retired at v0.24.102; any revival should target the v0.31 proximity-wake/entity-id stamping machinery |
+| ↳ Adula at Cathedral (38000850, m38_00_00_00) | UNCLEAR — queued diagnostic pass never recorded as run; arena-side probably moot under test-mode arenas |
+| ↳ c4441 Large Land Squirt suspected dormancy | UNCLEAR, leaning resolved — failure class structurally closed by v0.27.24 think-param validation + v0.27.23/26 Land-Squirt repoint; original report suspected vanilla behavior |
+| Audit blind spot: low-suffix arithmetic-inheritance variants | RESOLVED in substance — anchor cases avoid-listed/excluded (c2030/c2031 excluded v0.31; c4720 phase-2 IDs avoid-listed); data/phase_transition_imports.json is now the source of truth; still no algorithmic detector |
+| Audit blind spot: cluster-path emerge-marker filter gap | RESOLVED (moot) — entire cluster swap path removed in v0.26.13 |
+| Audit blind spot: Chinese name markers (友好/主城/满月女王/初王) | STILL OPEN but superseded — no current audit script flags these; all known variants now avoid-listed/excluded; matters only for future MMV imports |
+| c-prefixes to exclude outright (c4492, c52101/2/7, c52309/12/13, c8910/11) | RESOLVED — all 9 excluded by other mechanisms (V3_EXCLUDE_PREFIXES, broken_runtime_chrs, cinematic tier tag, empty variant_name rule) |
+| Reservation-floor chrs demoted out of reserved slot | RESOLVED v0.27.5 — Gates 8/9 in engine/rejection.py; file's own text already said so |
+| c4640 Ulcerated Tree Spirit "missing skin" | STILL OPEN — deferred at filing, never revisited; c4640 still in pool (floor removed, cap=2) |
+| me3 chr-file fallback semantics | STILL OPEN (low priority) — no definitive answer; v0.30 self-contained profile weakly bears on it |
+
+Note: the reservation-floor thread's own text was already marked
+RESOLVED at v0.27.5, but the header/tally was never updated to match —
+this triage corrects that bookkeeping.
+
+Real remaining opens: c3860/Adula dormancy re-confirmation (needs
+playtest), c4640 skin disambiguation, me3 fallback semantics,
+Chinese-marker audit extension. Everything else is resolved or moot.
 
 > **Scope note.** Active feature work and deferred-but-actionable items
 > live in `docs/TODO.md`. This file is narrower: open *questions* and

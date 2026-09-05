@@ -93,7 +93,7 @@ class TestEngineSiblingCall:
         """
         import ast
         from engine import picker
-        src = open(picker.__file__).read()
+        src = open(picker.__file__, encoding="utf-8").read()
         tree = ast.parse(src)
 
         found = False

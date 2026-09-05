@@ -1,3 +1,21 @@
+# v0.32 — what's new
+
+## Optional: open Evergaols without a Stonesword Key
+
+Field Evergaols still work the vanilla way by default — approach one and it
+asks for a Stonesword Key, consumed on use. If you'd rather skip the key
+hunt, v0.32 adds an opt-in EMEVD patch that makes every Limveld field gaol
+open unconditionally: run the EMEVD patch step with `--open-evergaols` (or
+set the `OPEN_EVERGAOLS` module global before `cmd_patch`). The patch edits
+the one shared opener event every field gaol routes through, so only
+`common_func.emevd.dcx` is regenerated — same shape as the early-spawn
+toggle.
+
+Off by default, so vanilla behavior is unchanged unless you opt in. The
+special legendary-key gates are left alone, and the action-button prompt may
+still say a key is required — that's cosmetic (the label lives in
+ActionButtonParam/FMG, not the event script).
+
 # v0.31 — what's new
 
 ## Every seed now rerolls loot, not just the shop

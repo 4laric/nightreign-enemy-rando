@@ -346,5 +346,5 @@ def test_manifest_is_deterministic(vp_module, ctx, tmp_path):
     path2 = tmp_path / 'm2.json'
     vp_module.write_manifest(rows1, str(path1))
     vp_module.write_manifest(rows2, str(path2))
-    assert path1.read_text() == path2.read_text(), \
+    assert path1.read_text(encoding="utf-8") == path2.read_text(encoding="utf-8"), \
         'same input must produce byte-identical manifest output'

@@ -49,7 +49,7 @@ def _make_ns(tmp_path):
         out = {}
         for pid, fname in (("heritage_pack_v1", "heritage_pack.json"),
                            ("mmv_imports_v1", "mmv_imports.json")):
-            cps = sorted((json.load(open(_data_path(fname))).get("tags") or {}).keys())
+            cps = sorted((json.load(open(_data_path(fname), encoding="utf-8")).get("tags") or {}).keys())
             out[pid] = {"enabled": True, "missing": [c for c in cps if c not in present]}
         return out
 

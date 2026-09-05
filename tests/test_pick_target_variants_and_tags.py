@@ -316,7 +316,7 @@ class TestDataDrivenNoFileChrs:
             'data/nr_missing_chr_files.json missing — v0.24.37 data-driven '
             'loader has no source. Hard-coded fallback still works but '
             'the migration is incomplete.')
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             d = json.load(f)
         assert 'missing_chrs' in d
         assert len(d['missing_chrs']) >= 8
@@ -325,7 +325,7 @@ class TestDataDrivenNoFileChrs:
         import json, os
         path = os.path.join(os.path.dirname(engine.__file__),
                             'data', 'nr_missing_chr_files.json')
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             d = json.load(f)
         for entry in d['missing_chrs']:
             cp = entry['c_prefix']
@@ -404,7 +404,7 @@ class TestProactiveNoTagDataBan:
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         path = os.path.join(here, 'data', 'nr_missing_chr_files.json')
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             d = json.load(f)
         proactive_set = set(self.PROACTIVE_BANS)
         for entry in d['broken_runtime_chrs']:
@@ -426,7 +426,7 @@ class TestProactiveNoTagDataBan:
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         path = os.path.join(here, 'data', 'nr_missing_chr_files.json')
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             d = json.load(f)
         for entry in d['broken_runtime_chrs']:
             if entry.get('proactive_ban', False):

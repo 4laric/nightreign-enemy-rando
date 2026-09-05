@@ -40,10 +40,63 @@ SHIPPED_FILES = [
 ]
 
 
+# Worker-script run in a SUBPROCESS to do the AST walk. ast.parse() on a
+# 500 KB module (oops_rando_gui.py / oops_v3.py) builds a large tree; late
+# in a full-suite run — with the engine's post-load state resident and
+# Windows commit charge nearly exhausted — the parser's arena allocation
+# intermittently dies with a native access violation and takes the whole
+# pytest process down. A short-lived subprocess gets a clean address
+# space and lets the OS reclaim everything on exit, making the test
+# insensitive to the parent process's memory state.
+_WORKER = r'''
+import ast, json, sys
+
+def find_text_opens_without_encoding(source):
+    tree = ast.parse(source)
+    bad = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        if not (isinstance(node.func, ast.Name) and node.func.id == 'open'):
+            continue
+        if any(kw.arg == 'encoding' for kw in node.keywords):
+            continue
+        if len(node.args) >= 2:
+            mode = node.args[1]
+            if isinstance(mode, ast.Constant) and isinstance(mode.value, str):
+                if 'b' in mode.value:
+                    continue
+            else:
+                continue
+        bad.append([node.lineno, ast.unparse(node)
+                    if hasattr(ast, 'unparse')
+                    else f'open() @ line {node.lineno}'])
+    return bad
+
+src = sys.stdin.buffer.read().decode('utf-8')
+json.dump(find_text_opens_without_encoding(src), sys.stdout)
+'''
+
+
 def find_text_opens_without_encoding(source):
     """Walk AST, return list of (lineno, call_repr) for every open()
-    Call that's text-mode AND lacks encoding= kwarg."""
-    tree = ast.parse(source)
+    Call that's text-mode AND lacks encoding= kwarg.
+
+    Runs in a subprocess — see _WORKER comment above."""
+    import json
+    import subprocess
+    import sys
+    proc = subprocess.run(
+        [sys.executable, '-c', _WORKER],
+        input=source.encode('utf-8'),
+        capture_output=True,
+        timeout=120,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(
+            f'AST worker subprocess failed (rc={proc.returncode}): '
+            f'{proc.stderr.decode("utf-8", "replace")[:500]}')
+    return [tuple(pair) for pair in json.loads(proc.stdout.decode('utf-8'))]
     bad = []
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call): continue

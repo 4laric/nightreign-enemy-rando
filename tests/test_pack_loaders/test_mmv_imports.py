@@ -345,8 +345,15 @@ class TestAgainstRealMmv:
         sys.path.insert(0, REPO_ROOT)
         import oops_v3
         buf = io.StringIO()
-        with redirect_stdout(buf):
-            roster, tags = oops_v3.load_data()
+        # The shipped pack has _meta.enabled=false (user-facing default for
+        # players without the MMV mod). This test's premise is "MMV merged
+        # at load_data time", so load through the everything_enabled pool
+        # snapshot (dev-canonical pool); state is restored on exit.
+        from conftest import (EVERYTHING_ENABLED_SNAPSHOT,
+                              isolated_pool_snapshot)
+        with isolated_pool_snapshot(EVERYTHING_ENABLED_SNAPSHOT):
+            with redirect_stdout(buf):
+                roster, tags = oops_v3.load_data()
         # Copy so we don't mutate the engine fixture other tests use.
         tags_copy = dict(tags)
         roster_copy = {'all_variants': list(roster['all_variants'])}

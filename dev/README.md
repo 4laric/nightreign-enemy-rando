@@ -5,71 +5,83 @@
 > heritage-import pipeline, and the gotchas that otherwise cost a session
 > real time to rediscover.
 
-These scripts are not part of the rando runtime. They were used during
-v0.2 development to measure placement variety and diagnose 0% prefixes.
+Nothing in `dev/` is part of the rando runtime. These are the data builders,
+audits, and simulators used to produce and validate the catalogs in `data/`.
+Most assume the project root as CWD — `cd` to the repo root and run
+`python dev/<name>.py`, or pass explicit `--` path arguments.
 
-Kept in the bundle for transparency and so future tuning passes are
-reproducible — if you change the at-risk threshold, the rescue pool cap,
-or `is_boss_tier_prefix`, re-run these to see the impact.
+## Catalog generators (write into `data/`)
 
-## coverage_sim.py
+- `emit_*.py` — override/slot emitters: `emit_hp_overrides.py`,
+  `emit_atk_overrides.py`, `emit_getsoul_overrides.py`,
+  `emit_reward_overrides.py` (the four `data/*_overrides.csv` files),
+  `emit_slot_inventory.py`, `emit_slot_metadata.py`, `emit_has_reward.py`,
+  `emit_nb_encounter_whitelist.py`, `emit_mmv_style_arena_emevd.py`.
+- `extract_*.py` — vanilla-data extractors: `extract_placement_budget.py`,
+  `extract_msb_slots.py`, `extract_boss_init_calls.py`,
+  `extract_npc_think_from_xml.py`, `extract_npc_think_pairs.py`,
+  `extract_think_param_ids.py`.
+- `build_*.py` — heavier builders: `build_slot_terrain.py` (writes
+  `data/slot_terrain.json`; imports `hkx_aabb_check.py`), `build_slot_poi_clusters.py`,
+  `build_slot_repositions.py`, `build_part_positions.py`,
+  `build_evergaol_wake_entities.py`, `build_fragile_slot_entities.py`,
+  `build_nb_wave_bypass_flags.py`, `build_heritagae_pack.py`
+  (the `heritagae` typo is historical — intentional as-is, don't rename),
+  `build_test_arena.py`.
+- Other generators: `set_nightlord_bosses.py` (nightlord_bosses_*.json
+  variants), `stamp_name_marker_boss_wakes.py`, `derive_tile_data.py`,
+  `generate_test_mode_arenas.py`, `generate_thinkparam_restore_csv.py`,
+  `er_to_nr_param_remap.py`, `register_heritage_imports.py`,
+  `heritage_chr_import.py`, `import_aicommon_scripts.py`,
+  `import_heritage_ai_scripts.py`, `patch_mmv_has_reward.py`,
+  `apply_healthbar_names.py`, `apply_slot_repositions.py`,
+  `distribute_stacked_repositions.py`,
+  `extend_repositions_to_phase_siblings.py`, `msb_authoring.py`,
+  `chr_asset_resolver.py`.
 
-Simulates N seeds and reports per-c-prefix placement rate, side-by-side
-with and without size-down rescue. Run a 200-seed sweep:
+## Audits and diagnostics (`audit_*`, `diagnose_*`, misc)
 
-    python3 dev/coverage_sim.py 200
+`audit_chr_assets_vs_roster.py`, `audit_encampment_anchors.py`,
+`audit_engine_globals.py`, `audit_genuine_variants.py`,
+`audit_healthbar_callsites.py`, `audit_heritage_chr_deployment.py`,
+`audit_placeholder_clusters.py`, `audit_placement_budget_consistency.py`,
+`audit_primary_identity.py`, `audit_source_tags.py`, `audit_team26_variants.py`,
+`audit_terrain_arena_candidates.py`, `audit_vanilla_chr.py`, plus
+`_diagnose_engine_state.py`, `ctd_lookup.py`, `diagnose_aicommon_gap.py`,
+`diagnose_problem_slots.py`, `hkx_aabb_check.py`,
+`navmesh_polygon_metrics.py`, `nva_distance_check.py`,
+`parse_overlay_emevds.py`, `validate_placements.py`,
+`verify_heritage_params.py`, `check_patches_shipped.py`,
+`install_discovery.py`, `prune_redundant_chrs.py`, `find_derand_seed.py`,
+`replay_carveout.py`, `set_nb_whitelist_target.py`,
+`spoiler_predict_nightlords.py`, `pools_caps_panel.py`, `prep_demo.py`,
+`arena_to_reroller_inputs.py`, `v0_23_07_audit.py`,
+`vanilla_night_bosses.py`, `vanilla_some_msbs.py`, `test_oodle.py`,
+`terrain_test_seed.py`.
 
-Run a quick 50-seed pass:
+## Simulators (`sim_*`)
 
-    python3 dev/coverage_sim.py 50
+`simulate_engine.py`, `simulate_seeds.py`, `sim_per_run.py`,
+`sim_fb_to_nb_promote_sweep.py`, `sim_nb_slot_outcomes.py`,
+`sim_new_add_health.py` — engine-level seed sweeps and outcome simulators
+used to validate placement/drop changes before shipping.
 
-Run baseline-only (no rescue comparison):
+## Notes, design docs, and sidecars
 
-    python3 dev/coverage_sim.py 200 --no-rescue
-
-Output sections: hard zeros, at-risk tail (<10%), soft tail (10–30%),
-top 25 most placed, before/after diff, Tree Spirit slot delta.
-
-## zero_diagnosis.py
-
-Categorizes every 0%-placement c-prefix by structural cause:
-
-- `deliberately_excluded` — in V3_EXCLUDE_PREFIXES /
-  V3_EXCLUDE_TARGET_PREFIXES / V3_GHOST_EXCLUDE_TARGET_PREFIXES
-- `field_tier` — boss-tier slots filter them out (251/262 slots are
-  boss-tier in vanilla NR)
-- `untagged` — no anim_class/size data; tagger hasn't reached them
-- `aquatic` — no aquatic slots in vanilla NR slot population
-- `flying_arena` — flying_dragon arena=True with no compat arena slots
-- `reachable_low_freq` — would land in principle, just rare; shows up at
-  higher seed counts
-
-Run:
-
-    python3 dev/zero_diagnosis.py
-
-Slow (~2 min for full diagnosis) because it probes every (slot_cp,
-candidate_cp) pair under both strict and rescue rules.
-
-## v0.23.06: scripts moved here from project root
-
-The following scripts were at the project root through v0.23.05.2 and
-moved here during the v0.23.06 tidy-up. They use bare relative paths
-(`open('nr_enemy_tags.json')`) by default, so to run them you typically
-need to `cd` to the project root first and invoke as `python3 dev/<name>.py`,
-or pass explicit `--tags ../nr_enemy_tags.json` style arguments. Most of
-them already accept `--` arguments for any path they touch.
-
-| Script | Purpose |
-|--------|---------|
-| `audit_encampment_anchors.py` | Scan vanilla MSBs for placeholder cluster anchor candidates that should be added to `data/t1_anchors.json` for SE-tile encampment fragility detection. |
-| `audit_placeholder_clusters.py` | Wider audit — finds all multi-Part clusters around T1 anchors. Output proposes candidates for V3_CLUSTER_LOCK_MAPS. |
-| `build_slot_terrain.py` | Pre-computes per-slot navmesh-derived off_mesh / roughness data. Produces `slot_terrain.json` (which is at project root). Slow — only re-run after adding new MSBs to the slot population. Imports `bnd4`, `hkx_aabb_check`. |
-| `bnd4.py` | BND4 binder reader. Imported only by `build_slot_terrain.py` and `hkx_aabb_check.py`. Not used at runtime. |
-| `hkx_aabb_check.py` | Standalone tool to verify hkx AABB classification matches expected slot positions. Sanity-check helper for `build_slot_terrain.py` output. |
-| `nva_distance_check.py` | Original v0.18 navmesh-distance tool. Superseded by `build_slot_terrain.py`'s AABB approach but kept for cross-reference. |
-| `diagnose_problem_slots.py` | Given a spoiler with reported issues, classifies each problem slot (off-mesh / cramped / encampment / etc) for triage. |
-| `heritage_scan.py` | Scans the heritage pack's NpcParam CSV against the local roster to find newly-imported chrs and propose tags. Run when bumping heritage pack version. |
-| `terrain_test_seed.py` | Generate a deterministic seed populated only with terrain test markers — useful for verifying off-mesh classification by playing a build that puts a known marker chr at every slot. |
-| `test_oodle.py` | Smoke test for the bundled Oodle DLL. Run once after install if `dcx_batch` errors. |
-| `vanilla_some_msbs.py` | Utility to copy specific vanilla MSBs into a build, e.g., for "vanilla everything except this one tile" testing. |
+- `SESSION_NOTES_2026-05-22.md`, `SESSION_NOTES_2026-05-26.md` — active
+  session-history location (the older `docs/SESSION_NOTES.md` is frozen).
+- Design/workflow docs: `AUTHORED_ARENA_WORKFLOW.md`, `BOUTIQUE_RUN_SPEC.md`,
+  `CAP_FOLD_CANDIDATES.md`, `CHR_ASSET_RESOLVER_PATCH.md`,
+  `CTD_REPORT_TEMPLATE.md`, `DESIGN_tiered_drop_rarity.md`,
+  `HERITAGE_CHR_IMPORT_README.md`, `IMPORT_PLAN_COLLISIONS.md`,
+  `PHASE1_STUBS_REVIEW.md`, `PLAYTEST_SESSION_LOG.md`, `TEST_MODE.md`,
+  `V0_28_X_FIELD_BOSS_TIER_SEPARATION.md`, `SHARED_CAP_INTEGRATION_PATCHES.md`,
+  `GIT_SETUP.md`, `WONTFIX.md`, `TODO.md`, and the per-topic `TODO_*.md`
+  threads. `NIGHTREIGN-AP-DESIGN.md` is an Archipelago design draft for a
+  separate project, kept here as dev material.
+- JSON sidecars: `all_msb_slots.json`, the `*_audit.json` results,
+  `heritage_chr_attribution.json`, `mmv_npc_think_pairs.json`,
+  `nr_vanilla_npc_think_pairs.json`, `proposed_*_anchors_v0.23.02.json`,
+  `terrain_arena_candidates.json`.
+- Subfolders: `anibnd_tools/`, `csv_imports/`, `er_heritage_csvs/`,
+  `material_merging/`, `archive/` (retired tools and docs).

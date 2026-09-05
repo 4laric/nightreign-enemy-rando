@@ -62,7 +62,7 @@ def _ast_preloads(path):
     """Find all `X = ns['X']` pre-loads in `path` using AST so we don't
     false-match commented-out lines or pattern variants. Returns
     list of (line_no, name)."""
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         src = f.read()
     tree = ast.parse(src)
     out = []

@@ -1,6 +1,8 @@
 # healthbar_inplace — in-place healthbar nameId patcher
 
-**v0.24.0-dev draft.** Bumps to v0.24.0 on next rando update.
+**Shipped.** This is the Step-4 healthbar nameId pass of
+`dcx_batch.rando_pipeline`, introduced in rando v0.24.0 (current release:
+v0.32).
 
 **Goal:** make healthbar nameIds match swapped chrs without needing
 a DarkScript3 round-trip per rando run. DSAS3 is Windows-only and

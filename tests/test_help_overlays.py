@@ -25,7 +25,7 @@ GUI_PATH = os.path.join(os.path.dirname(HERE), 'oops_rando_gui.py')
 
 @pytest.fixture(scope='module')
 def gui_source():
-    with open(GUI_PATH) as f:
+    with open(GUI_PATH, encoding="utf-8") as f:
         return f.read()
 
 

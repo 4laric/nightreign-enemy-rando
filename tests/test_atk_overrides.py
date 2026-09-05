@@ -57,7 +57,7 @@ def overrides():
         pytest.skip(f'{CSV_PATH} does not exist — '
                     f'run `python3 dev/emit_atk_overrides.py` to create it')
     out = {}
-    with open(CSV_PATH) as f:
+    with open(CSV_PATH, encoding="utf-8") as f:
         for row in csv.DictReader(f):
             out[int(row['ID'])] = {f: int(row[f]) for f in DMG_FIELDS + (STAM_FIELD,)}
     return out
@@ -65,7 +65,7 @@ def overrides():
 
 @pytest.fixture(scope='module')
 def tags():
-    with open(TAGS_PATH) as f:
+    with open(TAGS_PATH, encoding="utf-8") as f:
         return json.load(f)
 
 

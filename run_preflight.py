@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """run_preflight.py — pure pre-run validation + config mapping for the rando.
 
-v0.33: extracted from oops_rando_gui._run_shuffle / _worker so the decision
+v0.33 (unreleased; current release is v0.32): extracted from
+oops_rando_gui._run_shuffle / _worker so the decision
 logic is unit-testable (tests/test_run_preflight.py) and reusable by headless
 / CLI callers. STRICT SEPARATION: nothing in this module touches tkinter,
 shows a dialog, or reads a Tk var — callers translate the returned status

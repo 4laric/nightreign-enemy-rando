@@ -136,7 +136,7 @@ class TestScaffoldMe3Profile:
         target = tmp_path / 'p'
         result = install_discovery.scaffold_me3_profile(str(target))
         assert os.path.isfile(result['me3_file'])
-        with open(result['me3_file']) as f:
+        with open(result['me3_file'], encoding="utf-8") as f:
             content = f.read()
         assert 'profileVersion = "v1"' in content
 
@@ -167,7 +167,7 @@ class TestScaffoldMe3Profile:
         install_discovery.scaffold_me3_profile(str(target))
         readme = target / 'README.md'
         assert readme.exists()
-        text = readme.read_text()
+        text = readme.read_text(encoding="utf-8")
         # Should explain the directory structure
         assert 'me3' in text.lower()
         assert 'package' in text.lower()
@@ -213,7 +213,7 @@ class TestScaffoldMe3Profile:
         msg = str(excinfo.value).lower()
         assert 'not empty' in msg or 'exists' in msg
         # Most importantly: the existing file should be untouched
-        assert (target / 'something-important.txt').read_text() == 'keep me!'
+        assert (target / 'something-important.txt').read_text(encoding="utf-8") == 'keep me!'
 
     def test_empty_existing_dir_ok(self, tmp_path):
         """An EMPTY existing dir is fine — no risk of clobbering."""
@@ -247,7 +247,7 @@ GUI_PATH = os.path.join(os.path.dirname(HERE), 'oops_rando_gui.py')
 
 @pytest.fixture(scope='module')
 def gui_source():
-    with open(GUI_PATH) as f:
+    with open(GUI_PATH, encoding="utf-8") as f:
         return f.read()
 
 
@@ -271,29 +271,38 @@ class TestCreateProfileButtonWiring:
             'would have no command to call.')
 
     def test_button_exists_in_path_row_loop(self, gui_source):
-        """The Create new… button must be packed in the me3_profile
-        row of the Folders section, gated on kind == 'me3_profile'
-        so it only appears there (not on game_install / er_install /
-        me3_launcher rows)."""
-        # Look for the button construction site specifically (not
-        # mentions in comments). Pattern: ttk.Button(row, text="Create...
-        # is distinctive enough.
+        """The Create new… button must live on the dedicated me3-profile
+        row of the Paths tab, so it only appears there (not on
+        game_install / er_install / me3_launcher rows).
+
+        v0.31 refactor (oops_rando_gui.py:3737): the button moved out of
+        the shared path-row loop (which used a `kind == 'me3_profile'`
+        gate) into a dedicated `_me3_row` frame built once in
+        `_build_paths_tab`. Structural gating by construction: a button
+        parented to `_me3_row` cannot render on any other path row.
+        """
         import re
-        # Find the actual Button() call with Create new text
-        # Comment vs code: button construction uses ttk.Button(...
-        m = re.search(r'ttk\.Button\([^)]*text="Create new', gui_source)
+        # The button's parent must be the dedicated _me3_row frame —
+        # that IS the gating now.
+        m = re.search(
+            r'ttk\.Button\(_me3_row,\s*text="Create new', gui_source)
         assert m is not None, (
-            'No ttk.Button(text="Create new…") found in GUI source — '
-            'the Create new… button was never packed.')
-        # Look back from the Button construction site for the gating
-        # if-statement. Should be within ~200 chars (the if line is
-        # the line immediately above).
-        button_idx = m.start()
-        window = gui_source[max(0, button_idx - 400):button_idx]
-        assert "kind == 'me3_profile'" in window, (
-            'Create new… button must be gated on kind == "me3_profile" '
-            'so it only appears on the me3 package row, not on game/'
-            'er install or launcher rows.')
+            'No ttk.Button(_me3_row, text="Create new…") found in GUI '
+            'source — the Create new… button either was never packed '
+            'or lost its _me3_row parent (it must attach to the '
+            'dedicated me3-profile row, not a shared path row).')
+        # Exactly one Create new… button construction in the whole GUI —
+        # it must not also exist inside the path-row loop.
+        all_sites = re.findall(r'ttk\.Button\([^)]*text="Create new',
+                               gui_source)
+        assert len(all_sites) == 1, (
+            f'Expected exactly one "Create new…" button construction, '
+            f'found {len(all_sites)} — a duplicate inside the path-row '
+            f'loop would render it on non-me3 rows.')
+        # The handler wiring must point at the profile-scaffold handler.
+        btn_block = gui_source[m.start():m.start() + 300]
+        assert '_create_me3_profile' in btn_block, (
+            'Create new… button must call _create_me3_profile.')
 
 
 class TestCreateProfileHandlerLogic:

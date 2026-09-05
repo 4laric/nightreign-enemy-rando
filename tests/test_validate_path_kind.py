@@ -27,7 +27,7 @@ def validate_path_kind():
     Strategy: read the source, locate the function definition,
     compile just that function into a namespace. Avoids importing the
     whole GUI module."""
-    with open(GUI_PATH) as f:
+    with open(GUI_PATH, encoding="utf-8") as f:
         src = f.read()
     # Find `def validate_path_kind(` and walk to end of function
     start = src.find('def validate_path_kind(')
@@ -181,11 +181,31 @@ class TestMe3Profile:
         assert state == 'warn'
         assert 'created on Run' in detail or 'created' in detail.lower()
 
-    def test_missing_with_missing_parent_errors(self, validate_path_kind, tmp_path):
-        """If even the parent doesn't exist, this is a real problem
-        (drive typo, broken symlink) and we should flag it as error."""
+    def test_missing_deep_under_existing_ancestor_warns(self, validate_path_kind, tmp_path):
+        """validate_path_kind walks up to the NEAREST EXISTING ANCESTOR
+        rather than checking only the immediate parent (the old check
+        red-X'd a two-levels-deep output like <pkg>/map/mapstudio purely
+        for its nesting depth). A missing path two levels under an
+        existing writable ancestor is therefore 'warn' (created on Run),
+        not 'error'."""
         ghost = tmp_path / 'nope_parent' / 'profile'
         state, detail = validate_path_kind(str(ghost), 'me3_profile')
+        assert state == 'warn'
+        assert 'created on Run' in detail or 'created' in detail.lower()
+
+    def test_missing_with_no_existing_ancestor_errors(self, validate_path_kind):
+        """If NO ancestor exists (typo'd drive, broken symlink), this is a
+        real problem and we should flag it as error."""
+        import string
+        ghost = None
+        for letter in string.ascii_uppercase:
+            drive = f"{letter}:{os.sep}"
+            if not os.path.isdir(drive):
+                ghost = os.path.join(drive, 'definitely_not_real_9x7', 'profile')
+                break
+        if ghost is None:
+            pytest.skip('no nonexistent drive letter available on this host')
+        state, detail = validate_path_kind(ghost, 'me3_profile')
         assert state == 'error'
 
 

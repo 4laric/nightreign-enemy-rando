@@ -23,8 +23,15 @@ def _pv():
         # bare nr_enemy_roster.json — c-prefixes from MMV (e.g. c6200 Gael)
         # only exist in the merged roster, and the test must check against
         # the same view the engine uses.
-        roster, _ = o.load_data()
-        _PV, _ = o.build_per_prefix_data(roster)
+        # MMV ships disabled (_meta.enabled=false is the intentional
+        # user-facing default), so load through the everything_enabled
+        # pool snapshot to get the dev-canonical merged roster this data
+        # file was authored against. State is restored on context exit.
+        from conftest import (EVERYTHING_ENABLED_SNAPSHOT,
+                              isolated_pool_snapshot)
+        with isolated_pool_snapshot(EVERYTHING_ENABLED_SNAPSHOT):
+            roster, _ = o.load_data()
+            _PV, _ = o.build_per_prefix_data(roster)
     return _PV
 
 

@@ -152,7 +152,7 @@ class TestFlushSitesAreComplete:
     def test_every_write_has_a_flush(self):
         import ast
         from engine import load_data
-        src = open(load_data.__file__).read()
+        src = open(load_data.__file__, encoding="utf-8").read()
         tree = ast.parse(src)
         fn = next(n for n in ast.walk(tree)
                   if isinstance(n, ast.FunctionDef)

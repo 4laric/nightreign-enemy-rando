@@ -35,7 +35,7 @@ class TestDeathKnightTierPromotion:
         intended tier."""
         import json, os
         repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(repo, 'data/nr_enemy_tags.json')) as f:
+        with open(os.path.join(repo, 'data/nr_enemy_tags.json'), encoding="utf-8") as f:
             tags = json.load(f)
         assert tags['c5070']['tier'] == 'miniboss', (
             f"c5070 native tier should be 'miniboss' in "
@@ -68,12 +68,19 @@ class TestC5930C6220InvisibleBan:
 
     def test_c5930_capped(self, engine):
         """v0.27.8: the v0.24.53 MMV defensive cap=1 was removed; c5930
-        is now capped by its miniboss tier at 4."""
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c5930') == 4
+        was then capped by its miniboss tier at 4. Superseded: c5930 was
+        later retagged grunt (documented in dev/CAP_FOLD_CANDIDATES.md —
+        "c5930 Giant Skeleton (SoTE): tier=grunt"), so the v0.27.9 grunt
+        tier-wide cap=40 applies. Committed placement_budget.json (fresh-
+        ness-locked against the shipped-default engine state) pins 40."""
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c5930') == 40
 
     def test_c6220_capped(self, engine):
-        """v0.27.8: miniboss-tier cap=4 (defensive cap=1 removed)."""
-        assert engine.V3_UNIQUE_TARGET_CAPS.get('c6220') == 4
+        """v0.27.8: miniboss-tier cap=4 (defensive cap=1 removed).
+        Superseded like c5930: c6220 ('Wolf (SoTE)') is grunt-tier now
+        (dev/CAP_FOLD_CANDIDATES.md), so the v0.27.9 grunt cap=40
+        applies; placement_budget.json pins 40."""
+        assert engine.V3_UNIQUE_TARGET_CAPS.get('c6220') == 40
 
     def test_c2274_NOT_banned(self, engine):
         """c2274 has the same partial-tag profile but Alaric explicitly
@@ -454,7 +461,7 @@ class TestC4281DemotionLockin:
         """
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(here, 'data', 'nr_missing_chr_files.json')) as f:
+        with open(os.path.join(here, 'data', 'nr_missing_chr_files.json'), encoding="utf-8") as f:
             mcf = json.load(f)
         broken_runtime_cps = {e['c_prefix']
                               for e in mcf.get('broken_runtime_chrs', [])}
@@ -671,6 +678,23 @@ class TestNightBossSlotTierLadder:
     NB_SLOT_MSB = 'm48_40_00_00.msb'
     NB_SLOT_PI = 4
 
+    @pytest.fixture(autouse=True)
+    def _randomize_nb_arena(self, engine, monkeypatch):
+        """Make the NB-slot branches under test reachable.
+
+        m48_40_00_00.msb is in V3_NIGHT_BOSS_ARENA_MSBS and
+        V3_OVERLAY_PRESERVE_VANILLA_MSBS, and V3_PRESERVE_NIGHT_BOSS_ARENAS
+        is True in normal play — so pick_target_cp early-returns None for
+        every Part in this MSB BEFORE reaching the v0.28.x+ nightboss
+        tier-ladder branch these tests pin. m48_40 is a member of
+        V3_SAFE_NB_RANDOMIZE_MSBS, so enabling that opt-in exempts the
+        arena from all three preservation gates (_force_rando_nb) and
+        lets the ladder actually run."""
+        assert self.NB_SLOT_MSB in engine.V3_SAFE_NB_RANDOMIZE_MSBS, (
+            f'{self.NB_SLOT_MSB} left V3_SAFE_NB_RANDOMIZE_MSBS — the '
+            f'fixture arena is no longer randomizable; pick a new one')
+        monkeypatch.setattr(engine, 'V3_RANDOMIZE_SAFE_NB_ARENAS', True)
+
     def _verify_nb_catalog(self, engine):
         """Sanity-check that the slot is actually catalogued as nightboss.
         If the catalog ever moves this slot to a different tier, these
@@ -864,6 +888,19 @@ class TestNightBossSlotCapExemption:
 
     NB_SLOT_MSB = 'm48_40_00_00.msb'
     NB_SLOT_PI = 4
+
+    @pytest.fixture(autouse=True)
+    def _randomize_nb_arena(self, engine, monkeypatch):
+        """Make the NB-slot cap-exemption branch under test reachable —
+        see TestNightBossSlotTierLadder._randomize_nb_arena. m48_40 is
+        whole-MSB preserved in normal play (V3_PRESERVE_NIGHT_BOSS_ARENAS
+        + overlay-preserve), so without the safe-randomize opt-in every
+        pick here early-returns None and the exemption is never
+        exercised."""
+        assert self.NB_SLOT_MSB in engine.V3_SAFE_NB_RANDOMIZE_MSBS, (
+            f'{self.NB_SLOT_MSB} left V3_SAFE_NB_RANDOMIZE_MSBS — the '
+            f'fixture arena is no longer randomizable; pick a new one')
+        monkeypatch.setattr(engine, 'V3_RANDOMIZE_SAFE_NB_ARENAS', True)
 
     def _make_run_ctx_with_capped(self, engine, capped_cp, cap):
         """Build a RunContext whose unique_placed_counts has `capped_cp`

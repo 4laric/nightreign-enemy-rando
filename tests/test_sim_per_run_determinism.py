@@ -103,7 +103,7 @@ def test_same_settings_byte_identical_json(sim_per_run, engine_and_tags,
     path_a = tmp_path / "a.json"
     path_b = tmp_path / "b.json"
     for path, result in ((path_a, a), (path_b, b)):
-        with open(path, 'w') as f:
+        with open(path, 'w', encoding="utf-8") as f:
             json.dump(result, f, indent=2, sort_keys=True)
             f.write('\n')
     bytes_a = path_a.read_bytes()

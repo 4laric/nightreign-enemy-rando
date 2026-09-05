@@ -21,7 +21,7 @@
     "test_picker_falls_back_when_no_canonical",
     "test_picker_prefers_canonical_when_available",
     "test_picker_with_canonical_pref_disabled",
-    "test_v3_prefer_canonical_default_is_true"
+    "test_v3_prefer_canonical_default_is_false"
   ],
   "TestCaveMouthTrollYRaise": [
     "test_all_three_phases_have_pi31",
@@ -247,7 +247,8 @@
   "TestPreserveSlotsGate": [
     "test_m46_62_cavalry_evergaol_preserved",
     "test_m49_28_cavalry_nb_riders_preserved",
-    "test_non_preserved_slot_still_swaps"
+    "test_non_preserved_slot_still_swaps",
+    "test_preserve_gate_fires_for_non_whitelisted_slot"
   ],
   "TestProactiveNoTagDataBan": [
     "test_all_26_proactive_bans_capped",

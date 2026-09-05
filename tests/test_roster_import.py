@@ -73,7 +73,7 @@ class TestPlanRosterImport:
         # Use a c-prefix we know is in the MMV pack.
         import json
         mmv_data = json.load(open(os.path.join(ROOT, 'data',
-                                               'mmv_imports.json')))
+                                               'mmv_imports.json'), encoding="utf-8"))
         cp = sorted(mmv_data['tags'].keys())[0]
         _mkchr(os.path.join(dirs['mmv'], 'chr'), cp)
         _mkchr(os.path.join(dirs['er'], 'chr'), cp)  # also in ER
@@ -112,7 +112,7 @@ class TestPlanRosterImport:
         """Script files in the source script/ dir are planned."""
         import json
         mmv_data = json.load(open(os.path.join(ROOT, 'data',
-                                               'mmv_imports.json')))
+                                               'mmv_imports.json'), encoding="utf-8"))
         cp = sorted(mmv_data['tags'].keys())[0]
         _mkchr(os.path.join(dirs['mmv'], 'chr'), cp)
         _mkscript(os.path.join(dirs['mmv'], 'script'), cp)
@@ -126,7 +126,7 @@ class TestExecuteRosterImport:
     def test_copies_chr_and_script(self, dirs):
         import json
         mmv_data = json.load(open(os.path.join(ROOT, 'data',
-                                               'mmv_imports.json')))
+                                               'mmv_imports.json'), encoding="utf-8"))
         cp = sorted(mmv_data['tags'].keys())[0]
         _mkchr(os.path.join(dirs['mmv'], 'chr'), cp)
         _mkscript(os.path.join(dirs['mmv'], 'script'), cp)

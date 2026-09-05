@@ -81,7 +81,7 @@ class TestNoGlobalWrites:
 
     def test_engine_function_declares_no_globals(self):
         from engine import shuffler
-        src = open(shuffler.__file__).read()
+        src = open(shuffler.__file__, encoding="utf-8").read()
         tree = ast.parse(src)
         fn = next(
             n for n in ast.walk(tree)

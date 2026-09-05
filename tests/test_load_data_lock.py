@@ -275,7 +275,7 @@ def _load_fixture():
     exist (first-run case — use --regenerate to create it)."""
     if not FIXTURE_PATH.exists():
         return None
-    with open(FIXTURE_PATH) as f:
+    with open(FIXTURE_PATH, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -290,7 +290,7 @@ def regenerate_fixture():
         with isolated_load_data(str(path)) as (roster, tags):
             new_fixture[name] = compute_load_data_signature(roster, tags)
     FIXTURE_PATH.parent.mkdir(exist_ok=True)
-    with open(FIXTURE_PATH, 'w') as f:
+    with open(FIXTURE_PATH, 'w', encoding="utf-8") as f:
         json.dump(new_fixture, f, indent=2, sort_keys=True)
         f.write('\n')
     return new_fixture

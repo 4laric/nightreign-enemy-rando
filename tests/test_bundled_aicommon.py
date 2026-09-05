@@ -183,6 +183,17 @@ class TestCopyBundledAicommon:
         assert (target / 'aicommon.luabnd.dcx').exists()
 
 
+# The shipped .dcx assets are gitignored (game-derived binaries), so a
+# fresh source checkout (e.g. CI) lacks them. Per AGENTS.md, asset-dependent
+# tests must skip, not fail, when the assets are absent.
+_ASSETS_MISSING = not os.path.exists(
+    os.path.join(ROOT, 'bundled_aicommon', 'aicommon.luabnd.dcx'))
+_NEEDS_ASSETS = pytest.mark.skipif(
+    _ASSETS_MISSING,
+    reason="bundled_aicommon/*.dcx not in source checkout "
+           "(gitignored game assets)")
+
+
 class TestProjectBundleExists:
     """Smoke test that the actual project bundle is correctly shaped."""
 
@@ -192,6 +203,7 @@ class TestProjectBundleExists:
             "bundled_aicommon/ should exist at project root — it's "
             "what _chr_import/_chr_bulk_import deploy as of v0.24.64")
 
+    @_NEEDS_ASSETS
     def test_bundle_has_aicommon(self):
         d = os.path.join(ROOT, 'bundled_aicommon')
         expected = os.path.join(d, 'aicommon.luabnd.dcx')
@@ -199,6 +211,7 @@ class TestProjectBundleExists:
             f"bundled_aicommon must contain aicommon.luabnd.dcx — "
             f"this is the MMV-superset manifest deployed to user mod folders")
 
+    @_NEEDS_ASSETS
     def test_bundle_has_aicommon_dlc01(self):
         d = os.path.join(ROOT, 'bundled_aicommon')
         expected = os.path.join(d, 'aicommon_dlc01.luabnd.dcx')
@@ -207,6 +220,7 @@ class TestProjectBundleExists:
             f"this defines DLC-only goal constants (GOAL_DragonGuardianKnight_316000, "
             f"GOAL_Manus_850000_Battle, etc.) needed by cross-game chrs")
 
+    @_NEEDS_ASSETS
     def test_bundle_files_are_listable(self):
         d = os.path.join(ROOT, 'bundled_aicommon')
         files = list_bundled_aicommon_files(d)
@@ -215,6 +229,7 @@ class TestProjectBundleExists:
         assert 'aicommon.luabnd.dcx' in names
         assert 'aicommon_dlc01.luabnd.dcx' in names
 
+    @_NEEDS_ASSETS
     def test_aicommon_file_sizes_reasonable(self):
         """Smoke check that we didn't ship truncated or empty files.
         MMV's aicommon should be ~135KB; aicommon_dlc01 ~5KB."""

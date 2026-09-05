@@ -40,10 +40,10 @@ def env():
         spec.loader.exec_module(sim)
         o = sim.o
         roster = json.load(
-            open(os.path.join(_ROOT, "data", "nr_enemy_roster.json")))
+            open(os.path.join(_ROOT, "data", "nr_enemy_roster.json"), encoding="utf-8"))
         _r, tags = o.load_data()
         pv, pc = o.build_per_prefix_data(roster)
-    inv = json.load(open(os.path.join(_ROOT, "data", "nr_slot_inventory.json")))
+    inv = json.load(open(os.path.join(_ROOT, "data", "nr_slot_inventory.json"), encoding="utf-8"))
     return {
         'sim': sim, 'o': o, 'roster': roster, 'tags': tags,
         'pv': pv, 'pc': pc, 'inv': inv,

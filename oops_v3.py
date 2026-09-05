@@ -8942,7 +8942,14 @@ V3_GETSOUL_TIER_FLOORS = {
     # residual (c4450 Walking Mausoleum only), so the placement-
     # weighted median jumps. c4680 Full-Grown Fallingstar Beast (18
     # placements, rep=5000) anchors the new median.
-    'field_boss': 4687,
+    # v0.32-era re-derivation: 4687 -> 2625. The tier later absorbed
+    # more mid-value overworld chrs (c3350 Crystalian, c4460 Flame
+    # Chariot, c4660 Guardian Golem, c4270 Elder Lion, c3150 Night's
+    # Cavalry, c7100 Zamor Hero, ...; 38 members now vs 32 at v0.28.x),
+    # pulling the placement-weighted median down to c7100 Ancient Hero
+    # of Zamor (7 placements, rep=2625). Test surface:
+    # test_getsoul_overrides::test_floors_match_placement_weighted_medians.
+    'field_boss': 2625,
     # v0.27.13: miniboss 475 -> 450. Re-derived (placement-weighted
     # vanilla median per tier — see test_getsoul_overrides.py) after
     # c4050 Kaiden Sellsword and c5840 Black Knight were bumped into

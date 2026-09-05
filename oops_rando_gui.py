@@ -2254,7 +2254,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         # can grow SENSITIVE empirically and eventually retire RESILIENT.
         # Default OFF; only useful for diagnostic playtests.
         self.disable_resilient_filter_var = tk.BooleanVar(value=False)
-        # v0.33: keep the pipeline's intermediate work dir (decompressed
+        # v0.33 (unreleased): keep the pipeline's intermediate work dir (decompressed
         # vanilla + shuffled MSBs) by copying it to <out_dir>/_intermediate
         # after the run. Surfaces dcx_batch's --keep-intermediates recovery
         # flag in the GUI so a failed/cancelled recompress doesn't cost the
@@ -4436,7 +4436,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
             "of the listed c-prefixes."
         ))
 
-        # v0.33: keep-intermediates — surfaces dcx_batch's recovery flag.
+        # v0.33 (unreleased): keep-intermediates — surfaces dcx_batch's recovery flag.
         ki_row = ttk.Frame(diag_frame); ki_row.pack(fill='x', pady=(8, 0))
         ki_check = ttk.Checkbutton(ki_row,
                          text="Keep intermediate files (recovery aid)",
@@ -8773,7 +8773,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
         _t = _time.perf_counter()
         in_dir = self._maybe_prefetch_vanilla(in_dir)
         self._prof['prefetch'] = _time.perf_counter() - _t
-        # v0.33: pure validation extracted to run_preflight (unit-tested);
+        # v0.33 (unreleased): pure validation extracted to run_preflight (unit-tested);
         # this method keeps only the dialog text per status code.
         import run_preflight
         _in_status = run_preflight.check_input_dir(in_dir)
@@ -9463,7 +9463,7 @@ class RandoGUI(PoolsCapsPanelMixin, BoutiquePoolPanelMixin):
                     f"*** Field/grunt slots randomize normally; this is a "
                     f"surgical CTD-isolation mode for cross-game imports. ***\n")
 
-            # Common kwargs for both DCX and direct paths. v0.33: the pure
+            # Common kwargs for both DCX and direct paths. v0.33 (unreleased): the pure
             # config->kwargs mapping moved to run_preflight.build_engine_kwargs
             # (unit-tested; reusable headless) — the key set is locked by
             # tests/test_run_preflight.py against drift.
@@ -10205,7 +10205,7 @@ class SplashWindow:
         # Thin separator + version line for visual interest
         sep = tk.Frame(outer, bg=dim, height=1)
         sep.pack(fill='x', pady=(12, 6))
-        version = tk.Label(outer, text='v0.31 — 4laric',
+        version = tk.Label(outer, text='v0.32 — 4laric',
                             bg=bg, fg=dim,
                             font=('TkDefaultFont', 8))
         version.pack(anchor='w')

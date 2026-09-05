@@ -7,7 +7,7 @@ engine or the data schemas change, update it.
 ## What this is
 
 `nightreign-enemy-rando` randomizes Elden Ring Nightreign's enemy placements.
-The engine (`oops_v3.py`, ~15k lines) reads decompiled NR map files (MSBs),
+The engine (`oops_v3.py`, ~10.8k lines) reads decompiled NR map files (MSBs),
 swaps the enemy at each placement slot for another one chosen from a roster
 under tier / size / animation constraints, and writes the MSBs back.
 `oops_rando_gui.py` and `dcx_batch.py` drive it.
@@ -19,8 +19,11 @@ under tier / size / animation constraints, and writes the MSBs back.
 - `data/` — the JSON/CSV data the engine reads (schemas below).
 - `dev/` — tooling and audits; NOT part of the runtime. Index: `dev/README.md`.
 - `engine/` — pack loaders (`engine/pack_loaders/`).
-- `tests/` — pytest suite. Baseline is **56 pre-existing failures**; a change
-  should not raise that count (`python3 -m pytest -q --tb=no`).
+- `tests/` — pytest suite. **Fully green as of the v0.32 revival** (2026-09)
+  — a change should not introduce failures. On Windows, run chunked
+  per-file (`python3 -m pytest tests/test_x.py`); long single-process runs
+  can die to an environmental segfault ("Windows fatal exception: access
+  violation") that is NOT a project bug.
 - `CHANGELOG.md` — prepend an entry per engine release.
 
 ## The data files (`data/`)

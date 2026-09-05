@@ -1,3 +1,8 @@
+# Session Notes (frozen)
+
+> **Frozen as of the v0.32 revival (2026-09).** This log ends at v0.24.x.
+> Active session history lives in `dev/SESSION_NOTES_*.md` — write new
+> entries there, not here.
 
 ## v0.24.8 — FMG v2 parser/writer + BND auto-splice + GUI wire-in
 

@@ -80,7 +80,7 @@ class TestCmdShuffleFlushPattern:
 
     def test_every_write_has_a_flush(self):
         from engine import cmd_shuffle
-        src = open(cmd_shuffle.__file__).read()
+        src = open(cmd_shuffle.__file__, encoding="utf-8").read()
         tree = ast.parse(src)
         fn = next(n for n in ast.walk(tree)
                   if isinstance(n, ast.FunctionDef)
@@ -190,7 +190,7 @@ class TestImportPlanningPurity:
 
     @pytest.mark.parametrize('name', IMPORT_PLANNING_FNS)
     def test_no_global_decls(self, name):
-        src = open(import_planning.__file__).read()
+        src = open(import_planning.__file__, encoding="utf-8").read()
         tree = ast.parse(src)
         fn = next(n for n in ast.walk(tree)
                   if isinstance(n, ast.FunctionDef) and n.name == name)

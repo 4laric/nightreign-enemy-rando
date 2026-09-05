@@ -100,7 +100,7 @@ class TestSeed798229Freezes:
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         path = os.path.join(here, 'data', 'nr_missing_chr_files.json')
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             d = json.load(f)
 
         # Lift history preserved
@@ -141,9 +141,10 @@ class TestManusUnBanned:
     other gates."""
 
 
-    def test_c8500_still_mp_safe_blocked(self, engine):
+    def test_c8500_still_mp_safe_blocked(self, everything_enabled_engine):
         """Manus is mmv_import _source — MP-safe should still block him
         to protect co-op partners without the MMV mod."""
+        engine = everything_enabled_engine
         assert 'c8500' in engine.V3_MP_SAFE_BLOCKLIST, (
             'c8500 should remain MP-safe blocked (he is _source=mmv_import; '
             'co-op partners without MMV would CTD on Manus). Un-banning '
@@ -175,7 +176,7 @@ class TestManusUnBanned:
             'v0.25.0-patch3). The rando trusts MMV deploy.')
 
 
-    def test_c8500_tier_and_size(self, engine):
+    def test_c8500_tier_and_size(self, everything_enabled_engine):
         """Sanity: Manus should be tier=night_boss, size=XL, expects_boss_arena.
 
         v0.26.x size_class correction: NpcParam.csv showed Manus at
@@ -186,6 +187,7 @@ class TestManusUnBanned:
         Tier was retagged nightlord -> night_boss in the MMV-import tier
         normalization (all 19 MMV imports moved off the nightlord tier);
         this sanity check tracks the post-retag value."""
+        engine = everything_enabled_engine
         roster, tags = engine.load_data()
         t = tags['c8500']
         assert t['tier'] == 'night_boss'
@@ -212,7 +214,7 @@ class TestSwCornerFreezeRepositions:
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         path = os.path.join(here, 'data', 'slot_repositions.json')
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             sr = json.load(f)
         m = sr['proposals'].get('m60_42_36_00.msb', {})
         for pi in self.SLOTS:
@@ -225,7 +227,7 @@ class TestSwCornerFreezeRepositions:
         (smaller |X| and smaller |Z|)."""
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(here, 'data', 'slot_repositions.json')) as f:
+        with open(os.path.join(here, 'data', 'slot_repositions.json'), encoding="utf-8") as f:
             sr = json.load(f)
         m = sr['proposals']['m60_42_36_00.msb']
         for pi, expected in self.SLOTS.items():
@@ -244,7 +246,7 @@ class TestSwCornerFreezeRepositions:
         until Alaric confirms in seed re-run."""
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(here, 'data', 'slot_repositions.json')) as f:
+        with open(os.path.join(here, 'data', 'slot_repositions.json'), encoding="utf-8") as f:
             sr = json.load(f)
         m = sr['proposals']['m60_42_36_00.msb']
         for pi in self.SLOTS:
@@ -273,7 +275,7 @@ class TestCrossPhaseReposExtension:
     def test_all_three_phases_have_pi19_pi20(self):
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(here, 'data', 'slot_repositions.json')) as f:
+        with open(os.path.join(here, 'data', 'slot_repositions.json'), encoding="utf-8") as f:
             sr = json.load(f)
         for msb, pi in self.EXPECTED:
             assert msb in sr['proposals'] and pi in sr['proposals'][msb], (
@@ -285,7 +287,7 @@ class TestCrossPhaseReposExtension:
         (and same for pi=20). They're the same world slot."""
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(here, 'data', 'slot_repositions.json')) as f:
+        with open(os.path.join(here, 'data', 'slot_repositions.json'), encoding="utf-8") as f:
             sr = json.load(f)
         for pi in ('19', '20'):
             positions = [tuple(sr['proposals'][f'm60_42_36_{ph}.msb'][pi]['from_pos'])
@@ -317,7 +319,7 @@ class TestCaveMouthTrollYRaise:
     def test_all_three_phases_have_pi31(self):
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(here, 'data', 'slot_repositions.json')) as f:
+        with open(os.path.join(here, 'data', 'slot_repositions.json'), encoding="utf-8") as f:
             sr = json.load(f)
         for msb, pi in self.EXPECTED:
             assert msb in sr['proposals'] and pi in sr['proposals'][msb], (
@@ -328,7 +330,7 @@ class TestCaveMouthTrollYRaise:
         """Y should go from 67.17 to 69.17."""
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(here, 'data', 'slot_repositions.json')) as f:
+        with open(os.path.join(here, 'data', 'slot_repositions.json'), encoding="utf-8") as f:
             sr = json.load(f)
         for msb, pi in self.EXPECTED:
             entry = sr['proposals'][msb][pi]
@@ -343,7 +345,7 @@ class TestCaveMouthTrollYRaise:
         """Only Y should change. X and Z stay at the vanilla slot position."""
         import json, os
         here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(here, 'data', 'slot_repositions.json')) as f:
+        with open(os.path.join(here, 'data', 'slot_repositions.json'), encoding="utf-8") as f:
             sr = json.load(f)
         for msb, pi in self.EXPECTED:
             entry = sr['proposals'][msb][pi]
@@ -402,7 +404,7 @@ class TestSwCornerFragilityFlag:
         Both mechanisms now fire for these slots."""
         import json, os
         HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(HERE, 'data', 'slot_repositions.json')) as f:
+        with open(os.path.join(HERE, 'data', 'slot_repositions.json'), encoding="utf-8") as f:
             sr = json.load(f)
         e = sr['proposals'].get('m60_42_36_00.msb', {}).get('19')
         assert e is not None, "v0.24.49 reposition for SW corner must persist"

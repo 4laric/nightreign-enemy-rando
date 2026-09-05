@@ -28,13 +28,13 @@ INSTALL_PATH = os.path.join(os.path.dirname(HERE), 'INSTALL.md')
 
 @pytest.fixture(scope='module')
 def gui_source():
-    with open(GUI_PATH) as f:
+    with open(GUI_PATH, encoding="utf-8") as f:
         return f.read()
 
 
 @pytest.fixture(scope='module')
 def install_source():
-    with open(INSTALL_PATH) as f:
+    with open(INSTALL_PATH, encoding="utf-8") as f:
         return f.read()
 
 
@@ -221,13 +221,18 @@ class TestMmvInlineLinks:
 # ---------------------------------------------------------------------
 
 class TestInstallMdCoverage:
-    def test_install_links_uxm(self, install_source):
-        """UXM is needed for advanced workflows (heritage chr import,
-        EMEVD inspection). It should be linked in INSTALL.md."""
-        assert 'UXM-Selective-Unpack' in install_source, (
-            'INSTALL.md should link to UXM Selective Unpacker — '
-            'users following the docs need a path to it for the '
-            'Elden Ring Assets workflow.')
+    def test_install_does_not_require_uxm(self, install_source):
+        """v0.28.0 removed the UXM workflow entirely ("No more UXM
+        unpacking" — the rando reads vanilla data straight out of the
+        encrypted BHD5/BDT archives). INSTALL.md must not resurrect
+        instructions sending users down a 50 GB UXM-unpack path."""
+        lowered = install_source.lower()
+        assert 'uxm' not in lowered, (
+            'INSTALL.md references UXM, but since v0.28.0 the rando '
+            'reads vanilla game data directly from the game archives — '
+            'no UXM unpack is needed for any user workflow. Remove the '
+            'stale reference (or, if a UXM-dependent workflow was '
+            'deliberately re-added, update this test).')
 
     def test_install_links_mmv(self, install_source):
         """MMV was already linked — regression guard."""

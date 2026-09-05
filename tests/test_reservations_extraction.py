@@ -105,7 +105,7 @@ class TestNsMutationPropagation:
         silently sever the mutation-propagation channel."""
         import ast
         from engine import reservations
-        src = open(reservations.__file__).read()
+        src = open(reservations.__file__, encoding="utf-8").read()
         tree = ast.parse(src)
 
         fn = next(n for n in ast.walk(tree)

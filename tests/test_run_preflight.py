@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Tests for run_preflight.py — the pure pre-run logic extracted from
-oops_rando_gui._run_shuffle / _worker (v0.33).
+oops_rando_gui._run_shuffle / _worker (v0.33, unreleased — post-v0.32).
 
 No tkinter anywhere: this is exactly the point of the extraction. The
 engine-kwargs test doubles as a drift lock — if the GUI's config dict and

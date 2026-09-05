@@ -42,10 +42,10 @@ def data(sim):
     # Mirror dev/simulate_engine.py:main() data loading, using the sim's own
     # oops_v3 instance so the engine functions and data are consistent.
     o = sim.o
-    roster = json.load(open(os.path.join(_ROOT, "data", "nr_enemy_roster.json")))
+    roster = json.load(open(os.path.join(_ROOT, "data", "nr_enemy_roster.json"), encoding="utf-8"))
     _roster2, tags = o.load_data()
     pv, pc = o.build_per_prefix_data(roster)
-    inv = json.load(open(os.path.join(_ROOT, "data", "nr_slot_inventory.json")))
+    inv = json.load(open(os.path.join(_ROOT, "data", "nr_slot_inventory.json"), encoding="utf-8"))
     return roster, tags, pv, pc, inv
 
 

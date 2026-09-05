@@ -270,9 +270,9 @@ class TestIdempotence:
         positions_path.write_text(json.dumps(all_positions))
 
         # First pass — should find 2 candidates
-        with open(slot_repos_path) as f:
+        with open(slot_repos_path, encoding="utf-8") as f:
             sr = json.load(f)
-        with open(positions_path) as f:
+        with open(positions_path, encoding="utf-8") as f:
             ap = json.load(f)
         candidates = ext.find_extension_candidates(
             sr, ap, ext.is_manual_playtest_entry)

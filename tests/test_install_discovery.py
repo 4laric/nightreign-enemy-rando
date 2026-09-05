@@ -355,7 +355,7 @@ class TestCopyOodleDllLocal:
         result = id_.copy_oodle_dll_local(str(dest_dir))
         assert result is not None
         assert result == str(dest_dir / 'oo2core_9_win64.dll')
-        assert (dest_dir / 'oo2core_9_win64.dll').read_text() == 'STUB_DLL_BYTES'
+        assert (dest_dir / 'oo2core_9_win64.dll').read_text(encoding="utf-8") == 'STUB_DLL_BYTES'
 
     def test_idempotent_when_already_cached(self, tmp_path, monkeypatch):
         """Calling twice returns the same path; the second call doesn't
@@ -377,7 +377,7 @@ class TestCopyOodleDllLocal:
         result = id_.copy_oodle_dll_local(str(dest_dir))
         assert result == str(cached)
         # The cached file's content is unchanged (no clobber)
-        assert cached.read_text() == 'ALREADY_HERE'
+        assert cached.read_text(encoding="utf-8") == 'ALREADY_HERE'
 
     def test_returns_none_when_no_source(self, tmp_path, monkeypatch):
         """Nothing to copy → None, no exception. GUI uses the return

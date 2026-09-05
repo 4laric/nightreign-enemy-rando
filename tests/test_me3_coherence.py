@@ -107,7 +107,7 @@ def test_tracked_profile_wins_over_discovery(tmp_path):
     # A finder that would pick a DIFFERENT file must be overridden by the
     # explicitly-tracked profile.
     bogus = os.path.join(str(tmp_path / "p"), "other.me3")
-    open(bogus, "w").close()
+    open(bogus, "w", encoding="utf-8").close()
     assert C.resolve_profile(tracked, pkg, finder=lambda _p: bogus) == \
         os.path.abspath(tracked)
 

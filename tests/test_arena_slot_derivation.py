@@ -47,7 +47,7 @@ class TestArenaFieldDerivation:
         """Rule 1: vanilla chr's expects_boss_arena=True → slot is arena."""
         tags_path = os.path.join(os.path.dirname(__file__), '..', 'data',
                                   'nr_enemy_tags.json')
-        with open(tags_path) as f:
+        with open(tags_path, encoding="utf-8") as f:
             tags = json.load(f)
         for (msb, pi), e in o.V3_BOSS_SLOT_CATALOG.items():
             cp = e.get('cp')
@@ -62,7 +62,7 @@ class TestArenaFieldDerivation:
         """Rule 2: vanilla chr's size_class in {XXL, GIGA} → slot is arena."""
         tags_path = os.path.join(os.path.dirname(__file__), '..', 'data',
                                   'nr_enemy_tags.json')
-        with open(tags_path) as f:
+        with open(tags_path, encoding="utf-8") as f:
             tags = json.load(f)
         for (msb, pi), e in o.V3_BOSS_SLOT_CATALOG.items():
             cp = e.get('cp')
@@ -83,13 +83,13 @@ class TestArenaFieldDerivation:
         catalog entry to promote it to arena=True)."""
         tags_path = os.path.join(os.path.dirname(__file__), '..', 'data',
                                   'nr_enemy_tags.json')
-        with open(tags_path) as f:
+        with open(tags_path, encoding="utf-8") as f:
             tags = json.load(f)
         terrain_path = os.path.join(os.path.dirname(__file__), '..', 'data',
                                      'nr_terrain_arena_slots.json')
         terrain_keys = set()
         if os.path.isfile(terrain_path):
-            with open(terrain_path) as f:
+            with open(terrain_path, encoding="utf-8") as f:
                 td = json.load(f)
             terrain_keys = {(s['msb'], s['pi']) for s in td.get('slots', [])}
 
@@ -123,7 +123,7 @@ class TestArenaGateWiring:
         """The pick_target_cp source must reference V3_BOSS_SLOT_CATALOG
         with .get('arena', ...). Smoke test that the wiring is in place."""
         src = open(os.path.join(os.path.dirname(__file__), '..',
-                                 'oops_v3.py')).read()
+                                 'oops_v3.py'), encoding="utf-8").read()
         # The new gate path should mention catalog + arena lookup
         assert "V3_BOSS_SLOT_CATALOG.get(" in src
         # And specifically reference 'arena' as a key
@@ -140,7 +140,7 @@ class TestTerrainArenaMerge:
         assert os.path.isfile(path), (
             'data/nr_terrain_arena_slots.json should exist (output of '
             'dev/audit_terrain_arena_candidates.py)')
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         assert 'slots' in data, 'terrain file must have "slots" key'
         assert len(data['slots']) > 0, 'terrain file should have entries'
@@ -151,7 +151,7 @@ class TestTerrainArenaMerge:
         promoting an existing catalog entry."""
         terrain_path = os.path.join(os.path.dirname(__file__), '..', 'data',
                                      'nr_terrain_arena_slots.json')
-        with open(terrain_path) as f:
+        with open(terrain_path, encoding="utf-8") as f:
             terrain = json.load(f)
         for slot in terrain['slots']:
             key = (slot['msb'], slot['pi'])
@@ -166,7 +166,7 @@ class TestTerrainArenaMerge:
         the count of slots in nr_terrain_arena_slots.json."""
         terrain_path = os.path.join(os.path.dirname(__file__), '..', 'data',
                                      'nr_terrain_arena_slots.json')
-        with open(terrain_path) as f:
+        with open(terrain_path, encoding="utf-8") as f:
             terrain = json.load(f)
         n_in_file = len(terrain['slots'])
         n_new = o.V3_BOSS_SLOT_CATALOG_META.get('arena_slot_via_terrain_new', 0)

@@ -83,6 +83,17 @@ _OAA = "oops_all_anyone"
 # Names that external modules are allowed to import from
 # oops_all_anyone. Sorted for diff stability.
 EXPECTED_SURFACE: frozenset[str] = frozenset({
+    # Enemy-Part struct constants for the v0.31 boss-wake entity-id
+    # stamping pre-pass (CHANGELOG v0.31 "Boss wake — terrain-frozen
+    # holdouts"). Imported via `import oops_all_anyone as oaa` by
+    # stamp_test.py, dev/stamp_name_marker_boss_wakes.py, and
+    # tests/test_stamp_name_marker_boss_wakes.py. Same reverse-
+    # engineered file-format offsets as the PART_OFF_* block below.
+    "ENEMY_PART_ENTITY_ID_OFFSET",
+    "ENEMY_PART_NAME_OFFSET",
+    "ENEMY_PART_NPC_PARAM_OFFSET",
+    "ENEMY_PART_POS_OFFSET",
+    "ENEMY_PART_STRUCT_SIZE",
     # Byte-offset constants for parsing MSB Part records. These are
     # reverse-engineered offsets into FromSoft's binary layout; their
     # values are not arbitrary — see oops_all_anyone source for the
@@ -120,6 +131,13 @@ EXPECTED_CONSTANT_FINGERPRINTS: dict[str, str | int | tuple] = {
     "PART_OFF_NPC_PARAM":  None,  # TBD — see test below; pins are read
     "PART_OFF_POSITION":   None,  # at test-collection time from the
     "PART_OFF_THINK_PARAM": 0x2b8,  # module to avoid duplicating numbers.
+    # v0.31 stamping pre-pass offsets (see EXPECTED_SURFACE comment).
+    # Pinned by exact value — same file-format-constant rationale.
+    "ENEMY_PART_ENTITY_ID_OFFSET": 0x200,
+    "ENEMY_PART_NAME_OFFSET":      0x60,
+    "ENEMY_PART_NPC_PARAM_OFFSET": 0x25C,
+    "ENEMY_PART_POS_OFFSET":       0x3a0,
+    "ENEMY_PART_STRUCT_SIZE":      0x3e0,
 }
 
 
@@ -310,6 +328,16 @@ class TestConstantFingerprints:
             "PART_OFF_NPC_PARAM":   oops_all_anyone.PART_OFF_NPC_PARAM,
             "PART_OFF_POSITION":    oops_all_anyone.PART_OFF_POSITION,
             "PART_OFF_THINK_PARAM": oops_all_anyone.PART_OFF_THINK_PARAM,
+            "ENEMY_PART_ENTITY_ID_OFFSET":
+                oops_all_anyone.ENEMY_PART_ENTITY_ID_OFFSET,
+            "ENEMY_PART_NAME_OFFSET":
+                oops_all_anyone.ENEMY_PART_NAME_OFFSET,
+            "ENEMY_PART_NPC_PARAM_OFFSET":
+                oops_all_anyone.ENEMY_PART_NPC_PARAM_OFFSET,
+            "ENEMY_PART_POS_OFFSET":
+                oops_all_anyone.ENEMY_PART_POS_OFFSET,
+            "ENEMY_PART_STRUCT_SIZE":
+                oops_all_anyone.ENEMY_PART_STRUCT_SIZE,
         }
         mismatches = []
         for name, expected in EXPECTED_CONSTANT_FINGERPRINTS.items():

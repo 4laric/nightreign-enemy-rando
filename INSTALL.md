@@ -35,7 +35,7 @@ nightreign-enemy-rando/
 ├── randomize.pyw                ← the GUI (Windows: double-click, no console)
 ├── randomize.sh                 ← the GUI (macOS / Linux)
 ├── README.md · INSTALL.md · CHANGELOG.md · PATCH_NOTES.md
-├── package/                     ← what me3 loads. Ships pre-filled:
+├── nrando/                      ← what me3 loads. Ships pre-filled:
 │                                   regulation.bin, script/, material/,
 │                                   shader/, sfx/. (map/mapstudio/, chr/, and
 │                                   event/ are created when you Randomize.)
@@ -44,9 +44,9 @@ nightreign-enemy-rando/
 ```
 
 The pre-patched `regulation.bin` and MMV's `aicommon` / `sfx` / `material` /
-`shader` bundles are **already deployed inside `package/`** — there is nothing
+`shader` bundles are **already deployed inside `nrando/`** — there is nothing
 to copy and no "install bundled files" step. The `.me3` already points at
-`package/`. (Curious why these specific bundles? See
+`nrando/`. (Curious why these specific bundles? See
 [Why these bundles](#why-these-bundles) at the bottom.)
 
 ## Setup, in order
@@ -71,8 +71,12 @@ next to `randomize.pyw`. The exact version (`oo2core_6_win64.dll`,
 python _rando/check_setup.py
 ```
 
-Checks Python version, Tk/tkinter, that the Oodle DLL loads, that the engine
-and GUI import cleanly, and that the bundled vanilla MSB snapshot is intact.
+(In a source checkout instead of the release bundle, it's just
+`python check_setup.py` from the repo root.)
+
+Checks Python version, Tk/tkinter, that the Oodle DLL loads, and that the
+engine and GUI import cleanly. The optional `vanilla_msbs/` fallback folder
+is reported for information only — it doesn't ship, so its absence is fine.
 Each line prints `✓` or `✗` with a hint.
 
 ### 3. Randomize
@@ -89,7 +93,7 @@ Set a seed for a reproducible roll, or leave it blank for a fresh random.
 Click **Randomize**.
 
 You don't pick an output folder. Because this is the self-contained profile,
-the rando writes straight into its own `package/` — creating `map/mapstudio/`,
+the rando writes straight into its own `nrando/` — creating `map/mapstudio/`,
 `chr/`, and `event/` as needed — and drops `_spoilers.json` (machine-readable)
 and `_spoilers.md` (human summary) beside the run. The first launch may pop a
 short setup wizard for your NR install path; the package itself is already set
@@ -103,7 +107,7 @@ of grace, spawn handlers stuck mid-animation). The bundle includes pre-patched
 EMEVDs that fix the common bug classes globally.
 
 Click **Install pre-patched EMEVD** in the GUI. In the shipped profile it
-targets `package/event/` automatically and keeps `.bak` backups of anything it
+targets `nrando/event/` automatically and keeps `.bak` backups of anything it
 replaces. If a pre-patched file doesn't apply cleanly to your NR build, use
 **Apply patches manually (advanced)** and follow the on-screen flow — that path
 needs [DarkScript3](https://github.com/AinTunez/DarkScript3) to decompile /
@@ -129,7 +133,7 @@ Randomize starts the game for you.
 
 That's the only launch path. You never drag the folder into another me3
 profile — it *is* the profile, and doing so just creates a second, empty
-`package/`.
+`nrando/`.
 
 Test-mode arenas are on by default, so all 19 Night 1 / Night 2 boss arenas
 run the same validated minimal spawn template — any Nightlord is a safe pick.
@@ -140,7 +144,7 @@ with some swaps; that mode is the opt-in/experimental path.
 ## When things go wrong
 
 - **Game crashes on startup** — almost always a chr without its asset pack in
-  `package/`. Check the **chr/ Inventory** tab in the GUI to see which optional
+  `nrando/`. Check the **chr/ Inventory** tab in the GUI to see which optional
   packs (Heritage Pack, MMV) you have vs are missing, and either install them
   or exclude their c-prefixes.
 - **A specific encounter is broken** — open `_spoilers.md`, find the c-prefix
@@ -160,7 +164,7 @@ whitelist, contamination fixes, plus MMV's cross-game param rows so
 MMV-imported chrs work out of the box), MMV's matching `aicommon` AI manifests,
 MMV's `sfxbnd_c0000.ffxbnd.dcx` particle bundle, MMV's `allmaterial` material
 registries, and MMV's `shaderbdle_dlc01.shaderbdlebnd.dcx` DLC shader binder —
-all pre-deployed in `package/`.
+all pre-deployed in `nrando/`.
 
 They're a hard dependency for the rando's optional MMV cross-game imports,
 confirmed in playtest: without `regulation.bin` the param fixes silently no-op;
@@ -188,14 +192,15 @@ swap pool. See [`docs/MMV_INTEGRATION.md`](docs/MMV_INTEGRATION.md). Install MMV
 
 Check **Randomize merchant shop** (next to the Randomize button, on by default)
 and Randomize will re-roll the expedition merchant's stock for the run seed and
-write the patched `regulation.bin` into `package/`. Needs two Python packages:
+write the patched `regulation.bin` into `nrando/`. Needs two Python packages:
 
     pip install cryptography zstandard
 
 With them installed, the shop rerolls every run alongside the enemies — same
 seed = same shop. If the packages are missing, the run logs a loud "SHOP NOT
 RANDOMIZED" warning and skips just that stage; nothing else breaks.
-`python _rando/check_setup.py` reports the packages.
+`python check_setup.py` (repo) / `python _rando/check_setup.py` (release bundle)
+reports the packages.
 
 ## License
 

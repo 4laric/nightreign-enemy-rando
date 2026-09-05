@@ -30,13 +30,13 @@ INSTALL_PATH = os.path.join(os.path.dirname(HERE), 'INSTALL.md')
 
 @pytest.fixture(scope='module')
 def gui_source():
-    with open(GUI_PATH) as f:
+    with open(GUI_PATH, encoding="utf-8") as f:
         return f.read()
 
 
 @pytest.fixture(scope='module')
 def install_source():
-    with open(INSTALL_PATH) as f:
+    with open(INSTALL_PATH, encoding="utf-8") as f:
         return f.read()
 
 

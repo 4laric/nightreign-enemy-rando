@@ -40,7 +40,7 @@ def overrides():
         pytest.skip(f'{CSV_PATH} does not exist — '
                     f'run `python3 dev/emit_hp_overrides.py` to create it')
     out = {}
-    with open(CSV_PATH) as f:
+    with open(CSV_PATH, encoding="utf-8") as f:
         for row in csv.DictReader(f):
             out[int(row['ID'])] = int(row['hp'])
     return out
@@ -48,14 +48,14 @@ def overrides():
 
 @pytest.fixture(scope='module')
 def tags():
-    with open(TAGS_PATH) as f:
+    with open(TAGS_PATH, encoding="utf-8") as f:
         return json.load(f)
 
 
 @pytest.fixture(scope='module')
 def nid_to_cp():
     """npc_param_id -> c_prefix mapping from roster."""
-    with open(ROSTER_PATH) as f:
+    with open(ROSTER_PATH, encoding="utf-8") as f:
         roster = json.load(f)
     out = {}
     for v in roster.get('all_variants', []):

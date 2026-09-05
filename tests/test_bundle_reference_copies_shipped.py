@@ -44,12 +44,12 @@ def _stage_shipped_layout(tmp):
         deploy = (os.path.join(pkg, e['target_subpath'])
                   if e['target_subpath'] else pkg)
         os.makedirs(deploy, exist_ok=True)
-        open(os.path.join(deploy, e['critical_file']), 'w').write('x')
+        open(os.path.join(deploy, e['critical_file']), 'w', encoding="utf-8").write('x')
         if e['bundle_dir'] not in br.SKIP_REFERENCE_COPY_FOR:
             ref = os.path.join(rando, e['bundle_dir'])
             os.makedirs(ref, exist_ok=True)
-            open(os.path.join(ref, e['critical_file']), 'w').write('x')
-            open(os.path.join(ref, 'README.md'), 'w').write('doc')
+            open(os.path.join(ref, e['critical_file']), 'w', encoding="utf-8").write('x')
+            open(os.path.join(ref, 'README.md'), 'w', encoding="utf-8").write('doc')
     return rando, pkg
 
 

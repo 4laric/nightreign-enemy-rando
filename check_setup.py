@@ -6,7 +6,9 @@ Runs a series of checks and prints a clear ✓/✗ for each:
   2. Tk available (the GUI uses tkinter)
   3. Oodle DLL present and loadable (decompresses NR's .dcx files)
   4. Engine + GUI files importable (catches missing-file / data-file errors)
-  5. Optional: vanilla MSBs found in vanilla_msbs/ (skips if not present)
+  5. Optional: vanilla MSBs found in vanilla_msbs/ (informational only —
+     the folder doesn't ship in source checkouts, so absence is not a
+     failure)
 
 Run from this folder:
     python check_setup.py
@@ -171,20 +173,26 @@ if os.path.isdir(vanilla_dir):
         report(f"vanilla_msbs/ has {len(msbs)} .msb.dcx files", True)
     else:
         report(
-            "vanilla_msbs/ exists but is empty", False,
-            "Bundled vanilla MSB snapshot is missing. The GUI can also point\n"
-            "directly at your NR install's mapstudio folder, so this isn't\n"
-            "fatal. But filling vanilla_msbs/ with a .msb.dcx snapshot\n"
-            "(copy them from <NR install>/Game/map/mapstudio) makes the\n"
-            "default GUI flow work without picking a path each time."
+            "vanilla_msbs/ exists but is empty", True,
+        )
+        print(
+            "      -- The GUI can also point directly at your NR install's\n"
+            "         mapstudio folder, so this isn't fatal. But filling\n"
+            "         vanilla_msbs/ with a .msb.dcx snapshot (copy them from\n"
+            "         <NR install>/Game/map/mapstudio) makes the default GUI\n"
+            "         flow work without picking a path each time."
         )
 else:
     report(
-        "vanilla_msbs/ folder not found", False,
-        "Not strictly required — the GUI will let you pick any folder of\n"
-        ".msb.dcx files as input. But if you copy NR's mapstudio folder\n"
-        "into a `vanilla_msbs/` directory next to this script, the GUI\n"
-        "will default to it."
+        "vanilla_msbs/ folder not found (optional)", True,
+    )
+    print(
+        "      -- vanilla_msbs/ is not shipped in source checkouts\n"
+        "         (.gitignore excludes it — it's game data). Not required:\n"
+        "         the GUI will let you pick any folder of .msb.dcx files as\n"
+        "         input. If you copy NR's mapstudio folder into a\n"
+        "         `vanilla_msbs/` directory next to this script, the GUI\n"
+        "         will default to it."
     )
 
 # Optional: merchant-shop regulation randomization (v0.29)

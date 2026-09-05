@@ -91,7 +91,7 @@ class TestRationaleDocumented:
         import json
         import os
         ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(ROOT, 'data', 'placement_budget.json')) as f:
+        with open(os.path.join(ROOT, 'data', 'placement_budget.json'), encoding="utf-8") as f:
             return json.load(f)
 
     def test_no_sauce_rationale_in_json(self):

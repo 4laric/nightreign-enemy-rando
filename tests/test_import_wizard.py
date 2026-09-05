@@ -34,10 +34,10 @@ def _make_env(tmp_path):
     data_dir.mkdir()
     target = tmp_path / "chr"
     target.mkdir()
-    with open(data_dir / "heritage_pack.json", "w") as f:
+    with open(data_dir / "heritage_pack.json", "w", encoding="utf-8") as f:
         json.dump({"_meta": {"enabled": True},
                    "tags": {"c9001": {}, "c9002": {}}}, f)
-    with open(data_dir / "mmv_imports.json", "w") as f:
+    with open(data_dir / "mmv_imports.json", "w", encoding="utf-8") as f:
         json.dump({"_meta": {"enabled": True},
                    "tags": {"c9100": {}}}, f)
     for cp in ("c9001", "c9100"):
@@ -56,7 +56,7 @@ def _make_env(tmp_path):
         out = {}
         for pid, fname in (("heritage_pack_v1", "heritage_pack.json"),
                            ("mmv_imports_v1", "mmv_imports.json")):
-            with open(_data_path(fname)) as fh:
+            with open(_data_path(fname), encoding="utf-8") as fh:
                 cps = sorted((json.load(fh).get("tags") or {}).keys())
             out[pid] = {"enabled": True,
                         "missing": [c for c in cps if c not in present]}

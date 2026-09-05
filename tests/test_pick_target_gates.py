@@ -193,23 +193,54 @@ class TestPreserveSlotsGate:
             self, engine, tags, prefix_variants, prefix_count):
         # m49_28 pi=2 and pi=3 are Night's Cavalry rider slots. Even with
         # a permissive recipient, pick_target_cp should return None.
-        recipient = 'c3150'  # the actual source — pick anything biped-ish
+        #
+        # v0.28.x SUPERSESSION: m49_28 is in data/nb_encounter_whitelist.json
+        # (the "one-seed-many-Nightlords" sweep confirmed/predicted the
+        # arena OK under rando), and V3_NB_RANDOMIZE_WHITELIST membership
+        # makes _force_rando_nb bypass ALL THREE NB-preservation gates —
+        # including V3_PRESERVE_SLOTS. So these slots are intentionally
+        # randomizable now; asserting None here would pin the superseded
+        # pre-sweep behavior. The preserve-gate regression coverage moved
+        # to test_preserve_gate_fires_for_non_whitelisted_slot below; this
+        # test now locks the intentional whitelist override.
+        assert 'm49_28_00_00.msb' in engine.V3_NB_RANDOMIZE_WHITELIST, (
+            'm49_28 left the NB randomize whitelist — if that was '
+            'intentional (arena re-banned), restore the original '
+            'preserve-gate assertion for pi=2..5 here')
+        for pi in (2, 3, 4, 5):
+            assert ('m49_28_00_00.msb', pi) in engine.V3_PRESERVE_SLOTS, (
+                f'm49_28 pi={pi} left V3_PRESERVE_SLOTS — the whitelist '
+                f'override story has changed; revisit this test')
+
+    def test_preserve_gate_fires_for_non_whitelisted_slot(
+            self, engine, tags, prefix_variants, prefix_count):
+        """The v0.24.101 regression this class exists for: the normal swap
+        path (not just the unique-reservation pre-pass) must honor
+        V3_PRESERVE_SLOTS. Uses a preserved slot whose MSB is NOT in the
+        v0.28.x NB randomize whitelist, so _force_rando_nb doesn't bypass
+        the gate."""
+        slot_msb, slot_pi = 'm46_60_00_00.msb', 16
+        assert (slot_msb, slot_pi) in engine.V3_PRESERVE_SLOTS, (
+            f'{slot_msb} pi={slot_pi} left V3_PRESERVE_SLOTS — pick a '
+            f'different fixture slot')
+        assert slot_msb not in engine.V3_NB_RANDOMIZE_WHITELIST, (
+            f'{slot_msb} is whitelisted — pick a non-whitelisted '
+            f'fixture slot')
+        recipient = 'c3150'
         if recipient not in tags:
             pytest.skip(f'{recipient} not in loaded tags')
-
         recipient_is_boss = oops_v3.is_boss_tier_prefix(
             recipient, tags, prefix_variants)
-        for pi in (2, 3, 4, 5):
-            for seed in range(10):
-                rng = random.Random(seed)
-                result = oops_v3.pick_target_cp(
-                    recipient, tags, prefix_variants, prefix_count,
-                    recipient_is_boss, rng,
-                    slot_msb_name='m49_28_00_00.msb', slot_pi=pi,
-                    slot_variant_name='Test (Night Boss)')
-                assert result is None, (
-                    f'm49_28 pi={pi} seed={seed}: V3_PRESERVE_SLOTS gate '
-                    f'returned {result!r} instead of None')
+        for seed in range(10):
+            rng = random.Random(seed)
+            result = oops_v3.pick_target_cp(
+                recipient, tags, prefix_variants, prefix_count,
+                recipient_is_boss, rng,
+                slot_msb_name=slot_msb, slot_pi=slot_pi,
+                slot_variant_name='Test (Night Boss)')
+            assert result is None, (
+                f'{slot_msb} pi={slot_pi} seed={seed}: '
+                f'V3_PRESERVE_SLOTS gate returned {result!r} instead of None')
 
     def test_m46_62_cavalry_evergaol_preserved(
             self, engine, tags, prefix_variants, prefix_count):

@@ -140,7 +140,7 @@ def test_roundtrip_m46_56():
     src_path = os.path.join(_MMV_DIR, 'm46_56_00_00.emevd.dcx.js')
     if not os.path.isfile(src_path):
         return
-    original = _strip_cr(open(src_path).read())
+    original = _strip_cr(open(src_path, encoding="utf-8").read())
 
     t = ArenaTemplate(map_prefix="4656")
     t.add_boss("0800", 903100600, 921010)
@@ -167,7 +167,7 @@ def test_roundtrip_m46_56_canonical_options_default():
     src_path = os.path.join(_MMV_DIR, 'm46_56_00_00.emevd.dcx.js')
     if not os.path.isfile(src_path):
         return
-    original = _strip_cr(open(src_path).read())
+    original = _strip_cr(open(src_path, encoding="utf-8").read())
 
     # Build with ONLY map_prefix + bosses, no kwargs — pure defaults.
     t = ArenaTemplate(map_prefix="4656")

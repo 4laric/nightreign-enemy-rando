@@ -7,6 +7,11 @@ deleting the entry and noting the CHANGELOG version where it landed.
 
 Last updated: v0.27.3.
 
+> **Stale as of the v0.32 revival (2026-09).** This file predates the
+> revival and the v0.28–v0.32 releases; entries below may be resolved,
+> superseded, or no longer reproducible. Verify against the current engine
+> before acting on any thread.
+
 > **Scope note.** Active feature work and deferred-but-actionable items
 > live in `docs/TODO.md`. This file is narrower: open *questions* and
 > *uncertainties* — things we don't yet understand well enough to file
